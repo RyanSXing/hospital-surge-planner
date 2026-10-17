@@ -2,15 +2,36 @@
   height: auto;
   min-height: 100%;
 }
-.replay-page .replay-workspace {
+@media (min-width: 768px) {
+  .replay-page > .page-heading {
+    height: 88px;
+    min-height: 88px;
+    padding: 14px 24px;
+    flex: 0 0 auto;
+  }
+  .replay-page > .page-heading .eyebrow {
+    display: none;
+  }
+  .replay-page > .page-heading h1 {
+    font-size: 24px;
+  }
+}
+.replay-stage {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 212px);
+  min-height: 600px;
   flex: 0 0 auto;
-  min-height: 640px;
+}
+.replay-page .replay-workspace {
+  flex: 1 1 0;
+  min-height: 0;
   align-items: stretch;
 }
 .replay-page .replay-scene {
   flex: 1 1 0;
-  overflow: visible;
-  min-height: 640px;
+  overflow: hidden;
+  min-height: 0;
 }
 .replay-page .scene-topline,
 .replay-page .replay-summary {
@@ -18,24 +39,82 @@
 }
 .replay-canvas-viewport {
   overflow: auto;
-  flex: 0 0 auto;
-  min-height: 550px;
+  flex: 1 1 0;
+  min-height: 0;
+  container-type: size;
+  display: flex;
+  justify-content: safe center;
+  align-items: safe center;
 }
 .replay-page .replay-canvas {
   display: block;
   flex: none;
-  min-height: 550px;
-  min-width: 887px;
+  min-height: 0;
+  min-width: 0;
+  width: calc(100cqw * var(--replay-zoom, 1));
+  max-width: none;
   max-height: none;
-  height: auto;
-  aspect-ratio: 1000/620;
+  height: calc(100cqh * var(--replay-zoom, 1));
+  aspect-ratio: auto;
+  object-fit: fill;
 }
 .replay-page .replay-summary {
   margin-top: auto;
 }
 .replay-page .replay-inspector {
-  max-height: 760px;
+  max-height: none;
+  min-height: 0;
   overflow: auto;
+}
+.replay-page .replay-inspector > .inspector-section,
+.replay-page .replay-inspector > .inspector-header {
+  flex: 0 0 auto;
+}
+.replay-jump,
+.replay-jump label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.replay-jump label {
+  color: #a9bdca;
+  font-size: 12px;
+}
+.replay-jump input {
+  width: 190px;
+  min-height: 32px;
+  padding: 4px 6px;
+  font-size: 12px;
+}
+.replay-patient-resources summary {
+  color: #61cbe8;
+  font-size: 12px;
+  margin: 12px 0;
+  cursor: pointer;
+}
+.replay-event-list > button {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 0;
+  border-bottom: 1px solid #223e50;
+  padding: 10px 0;
+  background: transparent;
+  color: #9eb8c8;
+  cursor: pointer;
+}
+.replay-event-list > button strong {
+  display: block;
+  font-size: 12px;
+  color: #c9dce8;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+.replay-event-list > button small {
+  display: block;
+  font-size: 12px;
+  color: #9cb4c5;
+  overflow-wrap: anywhere;
 }
 .replay-page > .patient-census {
   flex: 0 0 auto;
@@ -51,22 +130,224 @@
   min-height: 0;
   overflow: auto;
 }
+.replay-evidence-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+  font-size: 12px;
+  color: var(--muted, #a9bdca);
+}
+.replay-evidence-label select {
+  width: 100%;
+  min-width: 0;
+}
+.replay-patient-only {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.replay-event-list {
+  max-height: 310px;
+  overflow: auto;
+}
+.replay-event-list > button {
+  width: 100%;
+  text-align: left;
+}
+.replay-event-pages {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  margin-top: 12px;
+}
+.replay-event-pages > div {
+  display: flex;
+  gap: 6px;
+}
+.replay-patient-history {
+  border-top: 1px solid #2b4555;
+  margin-top: 16px;
+  padding-top: 12px;
+}
+.replay-patient-history h4 {
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+.replay-neighbor-events {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.replay-patient-history .link-button {
+  display: block;
+  text-align: left;
+  font-size: 12px;
+}
+.replay-patient-history .link-button small {
+  display: block;
+  color: #a9bdca;
+  margin-top: 4px;
+}
+.replay-patient-history summary {
+  font-size: 12px;
+  cursor: pointer;
+  color: #61cbe8;
+}
+.replay-care-path {
+  border-left: 1px solid #2b4555;
+  list-style: none;
+  padding-left: 12px;
+  max-height: 250px;
+  overflow: auto;
+}
+.replay-care-path li {
+  padding: 0 0 14px;
+}
+.replay-care-path .future {
+  opacity: 0.7;
+}
+.replay-recorded-capacity .bed-grid {
+  margin: 12px 0;
+}
+.replay-assignment-counts {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  margin: 14px 0 8px;
+}
+.replay-annotations {
+  border: 1px solid #2b4555;
+  background: #0e202d;
+  padding: 10px 16px;
+  margin-top: 0;
+  flex: 0 0 auto;
+}
+.replay-annotations h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.replay-annotation-row {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  margin-top: 4px;
+}
+.replay-annotation-track {
+  height: 18px;
+  position: relative;
+  background: #08141d;
+  border: 1px solid #2b4555;
+  overflow: hidden;
+}
+.replay-annotation-track > button {
+  position: absolute;
+  top: 2px;
+  height: 12px;
+  min-width: 6px;
+  padding: 0;
+  border: 1px solid #30d7f1;
+  background: #175a6a;
+  border-radius: 2px;
+}
+.replay-annotation-track > button.planned {
+  border-style: dashed;
+  background: #173344;
+}
+.replay-annotation-track.staff > button {
+  border-color: #b48af2;
+  background: #473463;
+}
+.replay-annotation-track.intervention > button {
+  border-color: #49ddb4;
+  background: #1f594d;
+}
+.replay-annotation-track.shortage > button {
+  border-color: #ffc24b;
+  background: #6b4b1d;
+}
+.replay-annotation-track > small {
+  display: block;
+  color: #a9bdca;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+.replay-annotation-cursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #e6eff5;
+  z-index: 2;
+  pointer-events: none;
+}
+.replay-annotations > .small-copy:last-of-type {
+  margin: 8px 0 0;
+}
+@media (min-width: 768px) {
+  .replay-page .replay-controls {
+    min-height: 58px;
+    padding: 10px 20px 8px;
+  }
+  .replay-page .replay-scrubber {
+    height: 40px;
+    padding: 4px 20px 8px;
+  }
+  .replay-page .replay-scrubber input {
+    min-height: 24px;
+  }
+}
+@media (max-width: 767px) {
+  .replay-stage {
+    display: contents;
+  }
+  .replay-jump {
+    flex-basis: 100%;
+    width: 100%;
+  }
+  .replay-annotation-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  .replay-annotations > .spread {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
 @media (max-width: 767px) {
   .replay-page .replay-workspace {
+    flex: 0 0 auto;
     min-height: 0;
   }
   .replay-page .replay-scene {
+    flex: 0 0 auto;
     min-height: 0;
   }
   .replay-canvas-viewport {
     min-height: 300px;
+    flex: 0 0 300px;
   }
   .replay-page .replay-canvas {
-    min-height: 300px;
-    min-width: 484px;
+    min-height: 0;
+    min-width: 0;
   }
   .replay-page .replay-inspector {
-    max-height: 430px;
+    display: flex;
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    max-height: 600px;
+  }
+  .replay-page .replay-inspector .event-feed {
+    max-height: none;
+    border-left: 0;
   }
   .replay-page > .patient-census {
     max-height: 400px;

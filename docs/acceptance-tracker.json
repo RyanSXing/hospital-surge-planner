@@ -390,11 +390,14 @@
       "name": "2D replay",
       "stage": "P1",
       "requirement": "Play/pause, speeds, seek, token selection, unit detail, event feed; render the stored event log from one replication.",
-      "status": "implemented",
+      "status": "verified",
       "implementation": [
         "apps/web/src/pages/Replay.tsx",
         "apps/web/src/pages/patientProjection.ts",
-        "packages/engine/surge_engine/simulation.py"
+        "packages/engine/surge_engine/simulation.py",
+        "apps/web/src/pages/ReplayEvidence.tsx",
+        "apps/web/src/pages/replayBackdrop.ts",
+        "apps/web/src/pages/replayAnnotations.ts"
       ],
       "evidence": [
         "apps/web/e2e/workflows.spec.ts",
@@ -406,15 +409,15 @@
         "evidence/browser-replay-controls.json",
         "evidence/browser-resource-replay-final.json: play/pause/speeds, end seek, keyboard seek, exact forward/backward event sequences, reduced motion, unchanged input hash",
         "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
-        "docs/gap-audit.md: focused Replay completion remains pending; existing control/recovery tests cover only their stated behaviors"
+        "apps/web/e2e/replay-evidence.spec.ts: complete filtered event pages, preceding/next care path, exact slot/staff context, condition/intervention bands and desktop docked layout",
+        "apps/web/e2e/replay-resources.spec.ts: actual API capacity/equipment inventory and selected transport mission to patient, desktop/mobile",
+        "evidence/browser-replay-resources-report.json: 2 passed",
+        "apps/web/src/pages/replayAnnotations.test.ts: control-point curve domains follow engine precedence",
+        "evidence/browser-replay-500-local.json: exactly 500 rendered patient markers, 55.4\u201355.7 FPS active transitions, 2.2 ms paint p95; no concurrent load, errors, mutations or source changes",
+        "evidence/browser-replay-final-report.json: final desktop/mobile controls, UTC jump, reduced-motion snapped playback, exact canvas aspect ratio, complete evidence and resource inspection; 5 passed, 1 deliberate mobile control skip",
+        "evidence/backend-pytest-final.log: 184 Python tests passed; final frontend suite36 passed and production build passed"
       ],
-      "spec_line": 107,
-      "remaining_checks": [
-        "Event-type filtering and pagination of every event in the selected window",
-        "Selected-patient preceding/next events and care-path highlighting",
-        "Condition/intervention timeline annotations and state-derived bed/staff capacity context",
-        "Actual canvas redraw FPS and measured 500-visible-patient budget; rAF cadence alone does not prove rendering FPS"
-      ]
+      "spec_line": 107
     },
     {
       "id": "F21",
@@ -535,7 +538,10 @@
         "evidence/credential-rotation.json",
         "docs/hosted-verification.md: final runtime scans: zero HIGH/CRITICAL and daily maintenance timers",
         "Final hosted performance and compound browser workflow remain pending; initial 30-day/10-rep run 51.70 s and 30-day/100-rep run 150.08 s missed targets",
-        "docs/hosted-verification.md: e4c54e2 optimized 30-day/10-rep 45.237 s and 30-day/100-rep 93.523 s still exceed targets; final initializer patch measurements pending"
+        "docs/hosted-verification.md: e4c54e2 optimized 30-day/10-rep 45.237 s and 30-day/100-rep 93.523 s still exceed targets; final initializer patch measurements pending",
+        "evidence/cloud-acceptance.json: release c4ff451 authenticated smoke run run_6625cd08b9844acc932c and checksummed private export passed; 156 Python/31 frontend tests passed; final workload timings remain pending",
+        "evidence/cloud-benchmark-30d-10r.json and cloud-benchmark-30d-100r.json: c4ff451 worker35.328s/82.757s; both10s/60s targets missed. Warm bounded reads36\u2013111ms passed. Annual workload and final hosted browser workflow pending.",
+        "evidence/cloud-benchmark-365d-100r.json: c4ff451 completed100/100 in765.138s worker time, missing600s. Exact54,133-patient end state is bounded to500; warm reads47\u2013216ms passed, cold metrics7.13s/state12.05s are separate. Final optimized release and hosted browser verification pending."
       ],
       "spec_line": 113
     },
@@ -962,5 +968,5 @@
     }
   ],
   "last_reviewed_at": "2026-10-17",
-  "verification_scope": "Local implementation and observed tests. The hosted OCI deployment is tracked separately; no local benchmark is a cloud performance assertion."
+  "verification_scope": "Local implementation and observed tests; final release checks passed 184 Python tests and 36 frontend tests, plus production build. F20 has focused local browser and 500-marker rendering evidence. Hosted OCI deployment and performance are tracked separately under F26; no local benchmark is a cloud performance assertion."
 }

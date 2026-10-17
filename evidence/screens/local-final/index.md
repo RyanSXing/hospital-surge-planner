@@ -19,3 +19,7 @@ Maps wait for all six facility markers and 30 stable animation frames after fitt
 | mobile | Patient flow replay | [Screenshot](mobile-replay.png) · [Lower panel](mobile-replay-lower.png) | [Reference](../../../docs/reference/gotham-inspired-mockups/06-visual-patient-flow-replay.png) |
 
 The 56px topbar was additionally checked at [1600×900](desktop-overview-900px.png) and [1600×1000](desktop-overview-1000px.png), with six loaded facility markers and no horizontal overflow.
+
+## Latest Replay renderer check
+
+The [final annual-trace Replay capture](../../browser-replay-500-local.png) supersedes the earlier Replay layout above. Its separate [measurement](../../browser-replay-500-local.json) uses 500 rendered patient markers from an existing annual run. Hosted gallery refresh remains separate.

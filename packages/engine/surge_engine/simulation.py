@@ -104,6 +104,29 @@ class HospitalSimulation:
             )
             for u in dataset["units"]
         }
+        # Unit identities, kinds and capacity modes are fixed by the validated
+        # dataset. Interventions change their live capacity, never this inventory.
+        self._ordered_units = tuple(sorted(self.units.values(), key=lambda u: u["unit_id"]))
+        self._staff_units_by_kind = {
+            kind: tuple(
+                u for u in self.units.values() if u["kind"] == kind and u["capacity_mode"] == "staff_derived"
+            )
+            for kind in ("ward", "icu", "ed")
+        }
+        self._ordered_staff_units_by_kind = {
+            kind: tuple(
+                u for u in self._ordered_units if u["kind"] == kind and u["capacity_mode"] == "staff_derived"
+            )
+            for kind in ("ward", "icu", "ed")
+        }
+        main_facility = dataset.get("entry_streams", [{"destination_facility_id": "FAC-MAIN"}])[0].get(
+            "destination_facility_id", "FAC-MAIN"
+        )
+        self._main_care_units = tuple(
+            u
+            for u in self.units.values()
+            if u["facility_id"] == main_facility and u["kind"] in ("ward", "icu", "ed")
+        )
         self.slots = {s["slot_id"]: copy.deepcopy(s) for s in dataset["slots"]}
         for slot in self.slots.values():
             self.units[slot["unit_id"]]["slots"].append(slot["slot_id"])
@@ -138,6 +161,7 @@ class HospitalSimulation:
                 "failed": 0,
                 "portable": False,
             }
+        self._equipment_index = None
         self.vehicles = {
             v["vehicle_id"]: dict(
                 copy.deepcopy(v), location=v["home_facility_id"], available_at=0.0, mission=None
@@ -372,12 +396,15 @@ class HospitalSimulation:
                     continue
                 if condition.get("kind") not in ("arrival_multiplier", "care_mix_override"):
                     continue
-                lower = condition.get("_points", [(self.minute(condition.get("start_at", self.at(0))), 1)])[
-                    0
-                ][0]
-                upper = condition.get(
-                    "_points", [(self.minute(condition.get("end_at", self.at(self.horizon))), 1)]
-                )[-1][0]
+                points = condition.get("_points")
+                lower = (
+                    points[0][0] if points is not None else self.minute(condition.get("start_at", self.at(0)))
+                )
+                upper = (
+                    points[-1][0]
+                    if points is not None
+                    else self.minute(condition.get("end_at", self.at(self.horizon)))
+                )
                 if lower <= self.now < upper:
                     override = condition.get(
                         "care_mix_override",
@@ -1013,6 +1040,10 @@ class HospitalSimulation:
                         if p.get("unit_id") == u["unit_id"] and p["capability_code"] == "ICU_MONITOR"
                     ),
                 )
+        self._reserve_staff_count = sum(
+            sum(self.staff[s]["employment_pool"] == "reserve" for s in u["active_staff"])
+            for u in self.units.values()
+        )
 
     def refresh_slots(self, u):
         background = set(u["slots"][: u.get("background_occupied", 0)])
@@ -1050,10 +1081,14 @@ class HospitalSimulation:
         return sid in self.units[self.slots[sid]["unit_id"]]["_ready"]
 
     def equipment_candidates(self, unit, cap):
-        return sorted(
-            (p for p in self.pools.values() if p.get("unit_id") == unit and p["capability_code"] == cap),
-            key=lambda p: p["equipment_pool_id"],
-        )
+        if self._equipment_index is None:
+            index = defaultdict(list)
+            for pool in sorted(self.pools.values(), key=lambda p: p["equipment_pool_id"]):
+                index[(pool.get("unit_id"), pool["capability_code"])].append(pool)
+            self._equipment_index = index
+        # Entries reference live pools; quantity/availability changes need no
+        # rebuild. Creating a relocated pool explicitly invalidates the index.
+        return self._equipment_index.get((unit, cap), ())
 
     def equipment_available(self, pool):
         return max(
@@ -1336,14 +1371,7 @@ class HospitalSimulation:
 
     def allocate(self):
         for kind in ("icu", "ward", "ed"):
-            candidates = sorted(
-                (
-                    u
-                    for u in self.units.values()
-                    if u["kind"] == kind and u["capacity_mode"] == "staff_derived" and self.free(u) > 0
-                ),
-                key=lambda u: u["unit_id"],
-            )
+            candidates = [u for u in self._ordered_staff_units_by_kind[kind] if self.free(u) > 0]
             if not candidates:
                 continue
             groups = [(profile, heap) for (care, profile), heap in self.qheap.items() if care == kind]
@@ -1386,21 +1414,9 @@ class HospitalSimulation:
         if self.current_day:
             daily = self.daily[self.current_day]
             for kind in ("ward", "icu", "ed"):
-                occupied = sum(
-                    len(u["occupants"])
-                    for u in self.units.values()
-                    if u["kind"] == kind and u["capacity_mode"] == "staff_derived"
-                )
+                occupied = sum(len(u["occupants"]) for u in self._staff_units_by_kind[kind])
                 daily[kind + "_peak_occupied"] = max(daily[kind + "_peak_occupied"], occupied)
-            scoped = [
-                u
-                for u in self.units.values()
-                if u["facility_id"]
-                == self.data.get("entry_streams", [{"destination_facility_id": "FAC-MAIN"}])[0].get(
-                    "destination_facility_id", "FAC-MAIN"
-                )
-                and u["kind"] in ("ward", "icu", "ed")
-            ]
+            scoped = self._main_care_units
             ratios = [self.occupancy(u) / u["staffed"] for u in scoped if u["staffed"] > 0]
             daily["peak_staffed_utilization"] = (
                 max([daily.get("peak_staffed_utilization") or 0, *ratios])
@@ -1424,7 +1440,7 @@ class HospitalSimulation:
         for pool in self.pools.values():
             equipment[pool.get("unit_id")].append((pool["capability_code"], self.equipment_available(pool)))
         resources = defaultdict(list)
-        for unit in sorted(self.units.values(), key=lambda u: u["unit_id"]):
+        for unit in self._ordered_units:
             if unit["capacity_mode"] != "staff_derived":
                 continue
             occupied = self.occupancy(unit)
@@ -1452,7 +1468,7 @@ class HospitalSimulation:
             self._blocker_inputs[key] = inputs
             details = []
             if count > 0:
-                for unit in sorted(self.units.values(), key=lambda u: u["unit_id"]):
+                for unit in self._ordered_units:
                     if unit["kind"] != kind or unit["capacity_mode"] != "staff_derived":
                         continue
                     reasons = []
@@ -1935,6 +1951,7 @@ class HospitalSimulation:
                 failed=0,
                 pending_decommission=0,
             )
+        self._equipment_index = None
 
     def refresh_route(self, route_id):
         for key, base in self.base_routes.items():
@@ -2037,9 +2054,7 @@ class HospitalSimulation:
     def totals(self):
         result = {}
         for kind in ("ward", "icu", "ed"):
-            units = [
-                u for u in self.units.values() if u["kind"] == kind and u["capacity_mode"] == "staff_derived"
-            ]
+            units = self._staff_units_by_kind[kind]
             result[kind + "_occupied"] = sum(len(u["occupants"]) for u in units)
             result[kind + "_staffed"] = sum(u["staffed"] for u in units)
             result[kind + "_physical"] = sum(self.physical(u) for u in units)
@@ -2059,7 +2074,14 @@ class HospitalSimulation:
         elapsed = next_time - max(self.now, self.measure_start)
         if elapsed <= 0:
             return
-        totals = self.totals()
+        # Integration only consumes occupied/staffed counts. Avoid constructing
+        # unrelated physical, available, reserved and cleaning sample fields.
+        totals = {kind + suffix: 0 for kind in ("ward", "icu", "ed") for suffix in ("_occupied", "_staffed")}
+        for unit in self.units.values():
+            kind = unit["kind"]
+            if unit["capacity_mode"] == "staff_derived" and kind in ("ward", "icu", "ed"):
+                totals[kind + "_occupied"] += len(unit["occupants"])
+                totals[kind + "_staffed"] += unit["staffed"]
         hours = elapsed / 60
         self.metrics["inpatient_waiting_minutes"] += len(self.admission_pending) * elapsed
         self.metrics["ed_waiting_minutes"] += len(self.ed_pending) * elapsed
@@ -2077,13 +2099,7 @@ class HospitalSimulation:
         for k in ("ward", "icu", "ed"):
             self.metrics[k + "_occupied_hours"] += totals[k + "_occupied"] * hours
             self.metrics[k + "_staffed_hours"] += totals[k + "_staffed"] * hours
-        self.metrics["additional_staff_hours"] += (
-            sum(
-                sum(self.staff[s]["employment_pool"] == "reserve" for s in u["active_staff"])
-                for u in self.units.values()
-            )
-            * hours
-        )
+        self.metrics["additional_staff_hours"] += self._reserve_staff_count * hours
         for blocker in self.current_blockers.values():
             for reason in blocker["reasons"]:
                 self.blocker_patient_hours[reason] += blocker["patient_count"] * hours

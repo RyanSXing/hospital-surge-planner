@@ -1,0 +1,66 @@
+{
+  "recorded_at": "2026-10-17T10:33:54.865580+00:00",
+  "scope": "Read-only, single-trial serial-phase diagnostic of exact completed OCI artifacts; no cProfile overhead",
+  "run_group_id": "run_e168fed1a1414d989464",
+  "code_commit": "c4ff451f09f3974198aa19f9e2f8305f03167899",
+  "horizon_days": 365,
+  "replications": 100,
+  "input_artifact_compressed_sha256": "497e8fdf99f77e2cadd14781b52bdf91abd753981176f2832ffa50a7f7a688ce",
+  "input_artifact_compressed_bytes": 26922468,
+  "memory_address_space_limit_bytes": 10737418240,
+  "phases": [
+    {
+      "phase": "artifact_client_setup",
+      "wall_seconds": 1.94002017099956,
+      "cpu_seconds": 1.90497928,
+      "process_lifetime_peak_rss_bytes": 184553472
+    },
+    {
+      "phase": "read_and_decode_replications",
+      "wall_seconds": 22.881579031,
+      "cpu_seconds": 22.68863138,
+      "process_lifetime_peak_rss_bytes": 2801217536
+    },
+    {
+      "phase": "aggregate_results",
+      "wall_seconds": 36.58435437600019,
+      "cpu_seconds": 36.573042459999996,
+      "process_lifetime_peak_rss_bytes": 2801217536
+    },
+    {
+      "phase": "compact_summary",
+      "wall_seconds": 0.00041471900021861074,
+      "cpu_seconds": 0.0004155400000058762,
+      "process_lifetime_peak_rss_bytes": 2801217536
+    },
+    {
+      "phase": "period_aggregation_week",
+      "wall_seconds": 1.3159538049994808,
+      "cpu_seconds": 1.3156487199999987,
+      "process_lifetime_peak_rss_bytes": 2801217536
+    },
+    {
+      "phase": "period_aggregation_month",
+      "wall_seconds": 0.8611921210003857,
+      "cpu_seconds": 0.8609648799999974,
+      "process_lifetime_peak_rss_bytes": 2801217536
+    },
+    {
+      "phase": "read_and_decode_stored_aggregate",
+      "wall_seconds": 1.3253614720006226,
+      "cpu_seconds": 1.278889179999993,
+      "process_lifetime_peak_rss_bytes": 2801217536
+    },
+    {
+      "phase": "canonical_aggregate",
+      "wall_seconds": 1.3069804649994694,
+      "cpu_seconds": 1.3067353600000047,
+      "process_lifetime_peak_rss_bytes": 2801217536
+    }
+  ],
+  "compression": [],
+  "recomputed_aggregate_sha256": "262d9b75d04ec418047e03cf991f53d07ad8a07cacc5afb221d895a32ceeceab",
+  "recomputed_aggregate_matches_saved": true,
+  "candidate_aggregate_source_sha256": "6ce99ab2bb6ab92ecf920c264d7b941179e1cd70d9498a884b18ac8330fd6673",
+  "candidate_was_loaded_in_diagnostic_only": true
+}

@@ -1,0 +1,4089 @@
+{
+  "recorded_at": "2026-10-17T10:08:15.491006+00:00",
+  "label": "c4_standard_and_annual_benchmarks",
+  "scope": "Periodic Docker CPU/memory gauges and host available memory; not a continuous peak measurement",
+  "interval_seconds": 15,
+  "samples": [
+    {
+      "at": "2026-10-17T10:08:17.671168+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.10%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.82MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "28.9MB / 3.35MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.969MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "28.7MB / 29MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.48%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "1.89%",
+          "MemUsage": "301.4MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "217MB / 29.1MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "792.87%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "9.78%",
+          "MemUsage": "1.526GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "121MB / 5.65MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 618kB",
+          "CPUPerc": "0.64%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.1MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "983kB / 334MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "131kB / 45.1kB",
+          "CPUPerc": "0.49%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.03%",
+          "MemUsage": "4.797MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "58.9kB / 29.7kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 13769728000,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:08:34.861693+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.10%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.93MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "29MB / 3.39MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.04%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.207MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "28.7MB / 29MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.81%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "1.89%",
+          "MemUsage": "302.5MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "217MB / 29.2MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 15.2MB",
+          "CPUPerc": "766.52%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "10.20%",
+          "MemUsage": "1.592GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "121MB / 7.02MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 618kB",
+          "CPUPerc": "1.92%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.51MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "1.24MB / 334MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "139kB / 53.2kB",
+          "CPUPerc": "0.48%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.03%",
+          "MemUsage": "5.145MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "60.9kB / 30.3kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 13723176960,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:08:52.036287+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "18.19MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "29MB / 3.42MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.723MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "28.8MB / 29.1MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.29%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "1.89%",
+          "MemUsage": "301.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "217MB / 29.3MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 15.2MB",
+          "CPUPerc": "795.64%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "10.82%",
+          "MemUsage": "1.688GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "121MB / 8.25MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 725kB",
+          "CPUPerc": "0.77%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.72MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "1.48MB / 334MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "139kB / 53.2kB",
+          "CPUPerc": "1.90%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.03%",
+          "MemUsage": "5.586MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "61.6kB / 30.8kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 13602304000,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:09:09.116594+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.15%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.01MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "29.1MB / 3.46MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.617MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "28.8MB / 29.2MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.88%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "1.89%",
+          "MemUsage": "301.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "217MB / 29.4MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 15.2MB",
+          "CPUPerc": "86.09%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "3.51%",
+          "MemUsage": "561.6MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "121MB / 9.98MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "0B / 725kB",
+          "CPUPerc": "0.11%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.8MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "1.6MB / 335MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "147kB / 61.4kB",
+          "CPUPerc": "0.44%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.03%",
+          "MemUsage": "5.121MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "63.6kB / 31.4kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 14775074816,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:09:26.213446+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.08%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53MB / 5.06MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.03%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.996MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "52.6MB / 53.2MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "25.98%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "266MB / 53.2MB",
+          "PIDs": "23"
+        },
+        {
+          "BlockIO": "0B / 15.2MB",
+          "CPUPerc": "87.61%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "0.46%",
+          "MemUsage": "74.27MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "121MB / 13.4MB",
+          "PIDs": "12"
+        },
+        {
+          "BlockIO": "0B / 1.02MB",
+          "CPUPerc": "3.95%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.6MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "1.73MB / 382MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "156kB / 81.9kB",
+          "CPUPerc": "0.40%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.03%",
+          "MemUsage": "5.375MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "69.7kB / 33.6kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 14960816128,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:09:43.411716+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.13%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.11MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.1MB / 5.1MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.121MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "52.6MB / 53.2MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.92%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.4MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "266MB / 53.3MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 15.2MB",
+          "CPUPerc": "792.26%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "10.35%",
+          "MemUsage": "1.616GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "145MB / 13.5MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.02MB",
+          "CPUPerc": "0.50%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.19%",
+          "MemUsage": "31.1MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "1.8MB / 406MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "164kB / 94.2kB",
+          "CPUPerc": "0.49%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.03%",
+          "MemUsage": "5.383MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "75.6kB / 37.1kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 13510774784,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:10:00.631167+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.13%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.11MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.1MB / 5.13MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.43MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "52.7MB / 53.3MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.49%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "266MB / 53.3MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 15.2MB",
+          "CPUPerc": "795.19%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "13.01%",
+          "MemUsage": "2.03GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "145MB / 13.5MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.02MB",
+          "CPUPerc": "0.60%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.27MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "1.88MB / 406MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "188kB / 102kB",
+          "CPUPerc": "0.47%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.03%",
+          "MemUsage": "5.004MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "77.6kB / 37.8kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 13135781888,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:10:17.795963+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.36MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.2MB / 5.17MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.445MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "52.7MB / 53.3MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.90%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 53.4MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "796.50%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "15.82%",
+          "MemUsage": "2.469GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "146MB / 13.6MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.02MB",
+          "CPUPerc": "0.39%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.79MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "1.97MB / 406MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "188kB / 102kB",
+          "CPUPerc": "1.91%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.04%",
+          "MemUsage": "5.844MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "78.3kB / 38.3kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12676128768,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:10:35.005696+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.29MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.2MB / 5.2MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.04%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.438MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "52.8MB / 53.4MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "44.63%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.5MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 53.5MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "751.23%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "13.24%",
+          "MemUsage": "2.066GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "146MB / 15.8MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.02MB",
+          "CPUPerc": "1.09%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.23MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.08MB / 407MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "1.92MB / 111kB",
+          "CPUPerc": "0.50%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.04%",
+          "MemUsage": "6.734MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "81kB / 39.4kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 13037146112,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:10:52.193461+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.54MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.3MB / 5.24MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.723MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "52.8MB / 53.5MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.56%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 53.6MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "788.48%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "15.43%",
+          "MemUsage": "2.408GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "146MB / 15.9MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.02MB",
+          "CPUPerc": "0.33%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.65MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.16MB / 407MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "1.92MB / 111kB",
+          "CPUPerc": "1.92%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.04%",
+          "MemUsage": "7.156MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "81.6kB / 39.8kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12710047744,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:11:09.324655+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.57MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.3MB / 5.27MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.06%",
+          "MemUsage": "8.832MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "52.9MB / 53.5MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "2.16%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 53.7MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "749.52%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "15.73%",
+          "MemUsage": "2.454GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "146MB / 17MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.02MB",
+          "CPUPerc": "0.57%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.92MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.26MB / 407MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "1.93MB / 119kB",
+          "CPUPerc": "0.49%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.04%",
+          "MemUsage": "7.148MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "83.7kB / 40.5kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12414377984,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:11:26.481534+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.10%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "18.11MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.4MB / 5.31MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.559MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53MB / 53.6MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.29%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 53.7MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "796.11%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "15.90%",
+          "MemUsage": "2.481GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "146MB / 18.2MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.02MB",
+          "CPUPerc": "0.38%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.63MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.36MB / 407MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "1.93MB / 123kB",
+          "CPUPerc": "0.55%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.04%",
+          "MemUsage": "6.68MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "85.6kB / 41.2kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12635279360,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:11:43.670234+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.10%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.69MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.4MB / 5.34MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.383MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53MB / 53.6MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.83%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 53.8MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "784.99%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "18.17%",
+          "MemUsage": "2.836GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "146MB / 18.2MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.04MB",
+          "CPUPerc": "2.58%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.62MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.45MB / 408MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "1.93MB / 131kB",
+          "CPUPerc": "1.87%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.04%",
+          "MemUsage": "7.141MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "86.3kB / 41.7kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12227907584,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:12:00.883653+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.79MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.5MB / 5.38MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.04%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.227MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.1MB / 53.7MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.36%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 53.9MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "798.68%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "16.55%",
+          "MemUsage": "2.583GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "147MB / 20.5MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.06MB",
+          "CPUPerc": "0.45%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.54MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.56MB / 408MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "1.94MB / 139kB",
+          "CPUPerc": "0.47%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.04%",
+          "MemUsage": "7.113MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "88.3kB / 42.4kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12480458752,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:12:18.006659+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.94MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.5MB / 5.41MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.621MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.1MB / 53.7MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.94%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 54MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "792.20%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "18.30%",
+          "MemUsage": "2.855GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "147MB / 20.6MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.06MB",
+          "CPUPerc": "0.29%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.23MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.64MB / 408MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "1.94MB / 139kB",
+          "CPUPerc": "0.50%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.285MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "89kB / 42.8kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12225458176,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:12:35.139672+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.97MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.6MB / 5.45MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.457MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.2MB / 53.8MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.13%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 54.1MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "793.39%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "19.05%",
+          "MemUsage": "2.973GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "147MB / 21.4MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.06MB",
+          "CPUPerc": "0.53%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.96MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.74MB / 408MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "3.37MB / 147kB",
+          "CPUPerc": "0.50%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.977MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "91kB / 43.5kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12025790464,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:12:52.298632+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "18.25MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.6MB / 5.48MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.969MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.2MB / 53.8MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.02%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 54.1MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "794.87%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "18.85%",
+          "MemUsage": "2.942GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "147MB / 22.9MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.06MB",
+          "CPUPerc": "0.36%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.81MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.84MB / 408MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.37MB / 147kB",
+          "CPUPerc": "0.46%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.52MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "91.7kB / 43.9kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 12107661312,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:13:09.484649+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.13%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "18.05MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.7MB / 5.52MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "1.38%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.06%",
+          "MemUsage": "8.836MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.3MB / 53.9MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.57%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 54.2MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "785.74%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "20.90%",
+          "MemUsage": "3.261GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "147MB / 22.9MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.06MB",
+          "CPUPerc": "2.97%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "34.12MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "2.92MB / 409MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.38MB / 160kB",
+          "CPUPerc": "0.48%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.82MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "93.7kB / 44.7kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11755290624,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:13:26.663489+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.14%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.47MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.7MB / 5.55MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.426MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.3MB / 54MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "53.63%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.4MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 54.3MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "738.34%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "19.43%",
+          "MemUsage": "3.032GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "147MB / 25.2MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.06MB",
+          "CPUPerc": "0.42%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.36MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.04MB / 409MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.38MB / 160kB",
+          "CPUPerc": "0.47%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.848MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "94.4kB / 45.1kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11914735616,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:13:43.870634+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.57MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.8MB / 5.59MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.645MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.4MB / 54MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.22%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.8MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "267MB / 54.4MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "793.61%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "21.10%",
+          "MemUsage": "3.292GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "147MB / 25.3MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.08MB",
+          "CPUPerc": "0.51%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.96MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.12MB / 409MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.39MB / 168kB",
+          "CPUPerc": "0.46%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.508MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "97kB / 46.2kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11732418560,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:14:01.054587+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.14%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.54MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.8MB / 5.62MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.203MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.4MB / 54.1MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.67%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.1MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 54.5MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "786.15%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "22.28%",
+          "MemUsage": "3.477GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "148MB / 25.9MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.08MB",
+          "CPUPerc": "0.74%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.21MB / 409MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.4MB / 176kB",
+          "CPUPerc": "1.93%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.113MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "99.1kB / 46.9kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11511361536,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:14:18.259740+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.68MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.9MB / 5.66MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.449MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.5MB / 54.1MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.01%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.8MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 54.5MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "797.13%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "21.64%",
+          "MemUsage": "3.377GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "148MB / 27.6MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.19MB",
+          "CPUPerc": "0.60%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.5MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.32MB / 409MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.4MB / 188kB",
+          "CPUPerc": "0.47%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "99.8kB / 47.3kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11652411392,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:14:35.452030+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.93MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "53.9MB / 5.7MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.375MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.5MB / 54.2MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.31%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 54.6MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "795.94%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "23.45%",
+          "MemUsage": "3.66GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "148MB / 27.6MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.19MB",
+          "CPUPerc": "2.80%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.79MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.4MB / 410MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.4MB / 197kB",
+          "CPUPerc": "1.92%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.523MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "102kB / 48.1kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11317522432,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:14:52.633662+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.93MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54MB / 5.73MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.059MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.6MB / 54.2MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.84%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.1MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 54.7MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "796.14%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "22.18%",
+          "MemUsage": "3.462GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "148MB / 29.9MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.2MB",
+          "CPUPerc": "0.51%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.88MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.51MB / 410MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.4MB / 197kB",
+          "CPUPerc": "0.47%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.219MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "103kB / 48.6kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11488157696,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:15:09.809708+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.13%",
+          "MemUsage": "20.18MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54MB / 5.76MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.191MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.6MB / 54.3MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.30%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 54.8MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "796.01%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "23.85%",
+          "MemUsage": "3.721GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "148MB / 29.9MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.2MB",
+          "CPUPerc": "0.36%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.37MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.6MB / 410MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.41MB / 209kB",
+          "CPUPerc": "0.48%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.66MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "105kB / 49.3kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11290415104,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:15:26.978692+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.69MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.1MB / 5.8MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.293MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.7MB / 54.4MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.88%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.4MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 54.8MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "796.86%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "25.02%",
+          "MemUsage": "3.905GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "148MB / 30.5MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.21MB",
+          "CPUPerc": "2.69%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.56MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.68MB / 410MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.42MB / 217kB",
+          "CPUPerc": "0.55%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.129MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "107kB / 50kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11070177280,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:15:44.176424+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.1MB / 5.84MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.676MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.7MB / 54.4MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.45%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 54.9MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "794.56%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "24.45%",
+          "MemUsage": "3.816GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "149MB / 32.3MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.22MB",
+          "CPUPerc": "0.54%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.71MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.8MB / 410MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.42MB / 217kB",
+          "CPUPerc": "0.47%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.164MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "107kB / 50.5kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11171315712,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:16:01.354060+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.13%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.66MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.2MB / 5.87MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.867MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.8MB / 54.5MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.96%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 55MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "787.37%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "26.32%",
+          "MemUsage": "4.107GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "149MB / 32.3MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.22MB",
+          "CPUPerc": "0.54%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.47MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "3.88MB / 411MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.43MB / 225kB",
+          "CPUPerc": "1.85%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.625MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "109kB / 51.2kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10868744192,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:16:18.547650+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.93MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.2MB / 5.91MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.633MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.8MB / 54.5MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "46.61%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 55.1MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "747.95%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "25.01%",
+          "MemUsage": "3.904GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "149MB / 34.6MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.23MB",
+          "CPUPerc": "0.63%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.58MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4MB / 411MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.43MB / 225kB",
+          "CPUPerc": "0.48%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.902MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "110kB / 51.6kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10999566336,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:16:35.693330+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.99MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.3MB / 5.94MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.04%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.734MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "53.9MB / 54.6MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.85%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 55.2MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "796.72%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "26.75%",
+          "MemUsage": "4.174GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "149MB / 34.6MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.23MB",
+          "CPUPerc": "0.43%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.68MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.08MB / 411MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.44MB / 233kB",
+          "CPUPerc": "0.47%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.43MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "113kB / 52.7kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10792038400,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:16:52.874899+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.10%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.02MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.3MB / 5.98MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.203MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54MB / 54.6MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.51%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.6MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 55.2MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "788.59%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "27.85%",
+          "MemUsage": "4.346GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "149MB / 35.2MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.23MB",
+          "CPUPerc": "0.76%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "34.12MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.17MB / 411MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.44MB / 233kB",
+          "CPUPerc": "1.87%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.164MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "113kB / 53.2kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10584829952,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:17:10.061383+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.04MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.4MB / 6.01MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "1.31%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.648MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54MB / 54.7MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "1.45%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.5MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 55.3MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "792.11%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "27.11%",
+          "MemUsage": "4.231GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "149MB / 36.9MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "0B / 1.23MB",
+          "CPUPerc": "0.54%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "34.11MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.28MB / 412MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.44MB / 246kB",
+          "CPUPerc": "0.48%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.06%",
+          "MemUsage": "8.816MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "115kB / 53.9kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10731331584,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:17:27.277222+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.79MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.4MB / 6.05MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.04%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.125MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.1MB / 54.7MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.79%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "405MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 55.4MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "781.03%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "28.88%",
+          "MemUsage": "4.506GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "149MB / 37MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "24.6kB / 1.25MB",
+          "CPUPerc": "2.74%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.86MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.36MB / 412MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.45MB / 254kB",
+          "CPUPerc": "1.88%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.586MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "117kB / 54.5kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10420187136,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:17:44.468624+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.79MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.5MB / 6.08MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.582MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.1MB / 54.8MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "1.04%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.3MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "268MB / 55.5MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "760.32%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "27.88%",
+          "MemUsage": "4.35GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 39MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "32.8kB / 1.26MB",
+          "CPUPerc": "0.66%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "33.59MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.47MB / 412MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.45MB / 254kB",
+          "CPUPerc": "0.49%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.508MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "118kB / 55kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10438152192,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:18:01.639003+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.11%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.98MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.5MB / 6.12MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.539MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.2MB / 54.9MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.86%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.4MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 55.6MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "795.77%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "29.39%",
+          "MemUsage": "4.587GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 39.3MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "32.8kB / 1.35MB",
+          "CPUPerc": "0.33%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.21%",
+          "MemUsage": "34.07MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.56MB / 412MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.46MB / 262kB",
+          "CPUPerc": "0.47%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.41MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "120kB / 55.7kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10327646208,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:18:18.837115+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.95MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.6MB / 6.15MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.117MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.2MB / 54.9MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "1.31%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 55.6MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "791.84%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "31.09%",
+          "MemUsage": "4.852GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 39.6MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "1.63MB / 1.38MB",
+          "CPUPerc": "0.32%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.45MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.64MB / 412MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.46MB / 262kB",
+          "CPUPerc": "0.46%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.414MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "121kB / 56.1kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10064224256,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:18:35.931251+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.15%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.11%",
+          "MemUsage": "17.95MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.6MB / 6.19MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.449MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.3MB / 55MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "1.35%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.6MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 55.7MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "402.31%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "29.69%",
+          "MemUsage": "4.633GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 41.6MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "1.63MB / 1.46MB",
+          "CPUPerc": "0.39%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "34.8MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.75MB / 413MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.47MB / 270kB",
+          "CPUPerc": "0.40%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.008MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "123kB / 56.9kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10229657600,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:18:53.025522+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.14%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.44MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.7MB / 6.22MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.215MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.3MB / 55MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.91%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.6MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 55.8MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "400.62%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "30.68%",
+          "MemUsage": "4.787GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 41.7MB",
+          "PIDs": "150"
+        },
+        {
+          "BlockIO": "1.63MB / 1.49MB",
+          "CPUPerc": "0.49%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.32MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.84MB / 413MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.47MB / 270kB",
+          "CPUPerc": "0.40%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.934MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "123kB / 57.3kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10135900160,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:19:10.115058+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.14%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.44MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.7MB / 6.26MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "1.37%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.672MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.4MB / 55.1MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "49.81%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 55.9MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "100.30%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "19.91%",
+          "MemUsage": "3.108GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 42.8MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.63MB / 1.58MB",
+          "CPUPerc": "0.16%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.73MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.92MB / 413MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.48MB / 283kB",
+          "CPUPerc": "0.40%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.078MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "125kB / 58kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11611488256,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:19:27.200320+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.15%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.71MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.8MB / 6.29MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.07%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.06%",
+          "MemUsage": "9.203MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.4MB / 55.1MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "1.50%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.8MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 56MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "0B / 30.5MB",
+          "CPUPerc": "100.20%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "20.44%",
+          "MemUsage": "3.19GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 42.8MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.81MB",
+          "CPUPerc": "0.27%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "34.83MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.96MB / 413MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.49MB / 287kB",
+          "CPUPerc": "0.46%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.77MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "128kB / 59.1kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11833929728,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:19:44.277057+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.14%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "18.46MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.8MB / 6.33MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.004MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.5MB / 55.2MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.88%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.5MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 56MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "100.23%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "20.80%",
+          "MemUsage": "3.246GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 42.8MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.84MB",
+          "CPUPerc": "2.50%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.68MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "4.99MB / 413MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.49MB / 291kB",
+          "CPUPerc": "1.75%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.516MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "129kB / 59.7kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11805745152,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:20:01.359817+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.13%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.13%",
+          "MemUsage": "20.19MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.9MB / 6.37MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.06%",
+          "MemUsage": "8.938MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.5MB / 55.3MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "1.36%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 56.1MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "99.97%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "21.47%",
+          "MemUsage": "3.35GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "150MB / 42.9MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.86MB",
+          "CPUPerc": "0.45%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.06MB / 413MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.49MB / 311kB",
+          "CPUPerc": "0.38%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.301MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "131kB / 60.4kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11696123904,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:20:18.440176+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.16%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.45MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "54.9MB / 6.4MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.707MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.6MB / 55.3MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.88%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 56.2MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "100.27%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "22.15%",
+          "MemUsage": "3.456GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 42.9MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.88MB",
+          "CPUPerc": "0.19%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.04MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.13MB / 413MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.49MB / 311kB",
+          "CPUPerc": "0.40%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.125MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "132kB / 60.9kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11571851264,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:20:35.522850+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.15%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "55MB / 6.44MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.441MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.6MB / 55.4MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "1.37%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 56.3MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "99.80%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "22.88%",
+          "MemUsage": "3.571GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 42.9MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.9MB",
+          "CPUPerc": "0.45%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.58MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.21MB / 414MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.5MB / 324kB",
+          "CPUPerc": "0.42%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.961MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "134kB / 61.6kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11433496576,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:20:52.602814+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.12%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.45MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "55MB / 6.47MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.473MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.7MB / 55.4MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.79%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "405.2MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 56.3MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "100.04%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "23.67%",
+          "MemUsage": "3.693GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 43MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.92MB",
+          "CPUPerc": "0.32%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.84MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.28MB / 414MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.5MB / 324kB",
+          "CPUPerc": "0.39%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.602MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "134kB / 62kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11308834816,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:21:09.688735+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.14%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.46MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "55.1MB / 6.51MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.672MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.7MB / 55.5MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "1.35%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.7MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 56.4MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "100.12%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "24.82%",
+          "MemUsage": "3.873GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 43MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.93MB",
+          "CPUPerc": "2.42%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.83MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.34MB / 414MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.51MB / 332kB",
+          "CPUPerc": "1.81%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.41MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "136kB / 62.8kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11100073984,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:21:26.772376+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.15%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.46MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "55.1MB / 6.54MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.484MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.8MB / 55.5MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.95%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "404.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "269MB / 56.5MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "95.96%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "24.88%",
+          "MemUsage": "3.883GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 56.9MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.96MB",
+          "CPUPerc": "0.11%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "34.8MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.38MB / 414MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.52MB / 336kB",
+          "CPUPerc": "0.44%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.031MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "138kB / 63.4kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 11065950208,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:21:43.851874+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.13%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.22MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "55.2MB / 6.58MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.05%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.496MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.8MB / 55.6MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "1.37%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.53%",
+          "MemUsage": "405MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "270MB / 56.6MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "100.31%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "28.56%",
+          "MemUsage": "4.457GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 56.9MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 1.97MB",
+          "CPUPerc": "0.26%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.04MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.41MB / 414MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.52MB / 340kB",
+          "CPUPerc": "0.36%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.137MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "139kB / 63.9kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10465759232,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:22:00.927762+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.15%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.8MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "55.2MB / 6.61MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.06%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.469MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "54.9MB / 55.7MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "52.66%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "2.54%",
+          "MemUsage": "406.1MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "270MB / 56.7MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "100.35%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "29.17%",
+          "MemUsage": "4.553GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 57MB",
+          "PIDs": "20"
+        },
+        {
+          "BlockIO": "1.66MB / 2MB",
+          "CPUPerc": "0.22%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.22%",
+          "MemUsage": "35.4MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.45MB / 414MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "3.53MB / 348kB",
+          "CPUPerc": "0.42%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.375MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "141kB / 64.6kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 10377781248,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:22:18.022247+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.00%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.9MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "84.9MB / 10.7MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.00%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.172MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "84.3MB / 85.3MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "100.39%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "10.32%",
+          "MemUsage": "1.61GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "284MB / 86MB",
+          "PIDs": "23"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "0.00%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "0.26%",
+          "MemUsage": "42.12MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 84.7MB",
+          "PIDs": "3"
+        },
+        {
+          "BlockIO": "1.66MB / 2.09MB",
+          "CPUPerc": "0.02%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.39MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.5MB / 414MB",
+          "PIDs": "8"
+        },
+        {
+          "BlockIO": "3.53MB / 360kB",
+          "CPUPerc": "0.48%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.375MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "148kB / 67.5kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 13896175616,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:22:35.101018+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.03%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.84MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "89.1MB / 11MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.00%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.359MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "88.5MB / 89.6MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.07%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "9.72%",
+          "MemUsage": "1.517GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "284MB / 90.2MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "0.00%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "0.26%",
+          "MemUsage": "41.89MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 84.7MB",
+          "PIDs": "3"
+        },
+        {
+          "BlockIO": "1.66MB / 2.09MB",
+          "CPUPerc": "2.23%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.45MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.53MB / 414MB",
+          "PIDs": "8"
+        },
+        {
+          "BlockIO": "3.53MB / 360kB",
+          "CPUPerc": "1.69%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.539MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "149kB / 67.9kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 14016643072,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:22:52.180851+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.00%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.4MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "89.1MB / 11MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.00%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.906MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "88.5MB / 89.6MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.59%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "9.72%",
+          "MemUsage": "1.517GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "284MB / 90.2MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "0.00%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "0.26%",
+          "MemUsage": "41.89MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 84.7MB",
+          "PIDs": "3"
+        },
+        {
+          "BlockIO": "1.66MB / 2.09MB",
+          "CPUPerc": "0.14%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.89MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.55MB / 414MB",
+          "PIDs": "8"
+        },
+        {
+          "BlockIO": "3.53MB / 360kB",
+          "CPUPerc": "0.35%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.434MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "150kB / 68.3kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 14063816704,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    },
+    {
+      "at": "2026-10-17T10:23:09.259120+00:00",
+      "containers": [
+        {
+          "BlockIO": "0B / 4.1kB",
+          "CPUPerc": "0.00%",
+          "Container": "a4e339176069aa23af3d74cb3780691580ebf231fc5109a1caca5d0dfa2f54ae",
+          "ID": "a4e339176069",
+          "MemPerc": "0.12%",
+          "MemUsage": "19.4MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-tls-1",
+          "NetIO": "89.1MB / 11MB",
+          "PIDs": "13"
+        },
+        {
+          "BlockIO": "0B / 12.3kB",
+          "CPUPerc": "0.00%",
+          "Container": "6ceb1d3de3198c3f6c2448317bb722fe89d3d38cf2b3d595d82201381ae349eb",
+          "ID": "6ceb1d3de319",
+          "MemPerc": "0.05%",
+          "MemUsage": "7.781MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-web-1",
+          "NetIO": "88.5MB / 89.6MB",
+          "PIDs": "9"
+        },
+        {
+          "BlockIO": "184kB / 0B",
+          "CPUPerc": "0.08%",
+          "Container": "b9b467c4412cdb64b8d5e8f8a674df9dd679bc0b4f52af6420353a6308d35b05",
+          "ID": "b9b467c4412c",
+          "MemPerc": "9.72%",
+          "MemUsage": "1.517GiB / 15.61GiB",
+          "Name": "hospital-surge-planner-api-1",
+          "NetIO": "284MB / 90.2MB",
+          "PIDs": "22"
+        },
+        {
+          "BlockIO": "4.1kB / 30.5MB",
+          "CPUPerc": "0.00%",
+          "Container": "c42d7e92d0f1d5e256ca5a06ddbf5ed3ecc3c93812a17afef28e293848c6453e",
+          "ID": "c42d7e92d0f1",
+          "MemPerc": "0.26%",
+          "MemUsage": "41.89MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-worker-1",
+          "NetIO": "151MB / 84.7MB",
+          "PIDs": "3"
+        },
+        {
+          "BlockIO": "1.66MB / 2.15MB",
+          "CPUPerc": "0.00%",
+          "Container": "6fc3982fdb906326914df60c020ec440a716637fb18c46c47da386f2d916b0e9",
+          "ID": "6fc3982fdb90",
+          "MemPerc": "0.20%",
+          "MemUsage": "31.62MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-postgres-1",
+          "NetIO": "5.56MB / 414MB",
+          "PIDs": "8"
+        },
+        {
+          "BlockIO": "3.53MB / 360kB",
+          "CPUPerc": "0.35%",
+          "Container": "f606015e20b360ec495614cbc1e7cfd1795a03964b290126f9fad9b22c5c8ab6",
+          "ID": "f606015e20b3",
+          "MemPerc": "0.05%",
+          "MemUsage": "8.133MiB / 15.61GiB",
+          "Name": "hospital-surge-planner-redis-1",
+          "NetIO": "150kB / 68.8kB",
+          "PIDs": "6"
+        }
+      ],
+      "host_memory": {
+        "MemTotal_bytes": 16756023296,
+        "MemAvailable_bytes": 14062698496,
+        "SwapTotal_bytes": 0,
+        "SwapFree_bytes": 0
+      }
+    }
+  ]
+}

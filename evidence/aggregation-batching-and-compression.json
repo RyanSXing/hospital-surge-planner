@@ -1,0 +1,29 @@
+{
+  "recorded_at": "2026-10-17T10:41:22.876215+00:00",
+  "scope": "Exact-output row aggregation and gzip6 regression verification; hosted timings are one read-only diagnostic trial per candidate, not full-run acceptance",
+  "aggregate_source_sha256": "a856593ccc39eefe7be6c833a99ed700170fc18406123d458bf780c2a05b2f1c",
+  "tests": [
+    {
+      "command": ".venv/bin/pytest -q tests/test_engine.py tests/test_aggregate_batch.py tests/test_artifact_compression.py tests/test_artifacts.py tests/test_retention.py tests/test_series.py",
+      "passed": 49,
+      "seconds": 14.46
+    },
+    {
+      "command": ".venv/bin/pytest -q tests/test_aggregate_batch.py::test_numeric_subclasses_keep_the_scalar_acceptance_rules",
+      "passed": 1,
+      "seconds": 0.5
+    }
+  ],
+  "annual_saved_aggregate_hash_matches": true,
+  "annual_aggregate_sha256": "262d9b75d04ec418047e03cf991f53d07ad8a07cacc5afb221d895a32ceeceab",
+  "annual_aggregation_seconds": {
+    "baseline": 35.7849068710002,
+    "bounded_batch": 22.564759894999952,
+    "improvement_fraction": 0.3694336001392182
+  },
+  "gzip_level": 6,
+  "gzip_payload_byte_equality_verified": true,
+  "legacy_gzip9_read_verified": true,
+  "prior_unbounded_candidate_retained": "evidence/profile-cloud-annual-batched-candidate-initial.json",
+  "deployed_application_unchanged_during_diagnostics": true
+}

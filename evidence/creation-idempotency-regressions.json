@@ -1,7 +1,7 @@
 {
   "scope": "Isolated SQLite/FastAPI integration; response-loss retry regression",
   "before": "Same scenario creation request with same Idempotency-Key returned distinct scenario IDs",
-  "after": "18 cases covered: 15 passed in the full-file check; the three newly added concurrency tests then passed with the manual-retry case (4 passed, 14 deselected in 9.48 seconds) after correcting test multipart size limits. Full release suite is run independently.",
+  "after": "All 18 creation/idempotency cases passed as part of the complete release suite: 156 Python tests passed in 197.26 seconds.",
   "test_file": "tests/test_creation_idempotency.py",
   "checks": [
     "Same key and request yields one entity and one audit event",
@@ -18,5 +18,7 @@
     "Member creation replay returns one public member without password hash or salt",
     "Manual retry replay preserves current status, fencing attempt and retry generation"
   ],
-  "existing_boundary": "Uses the existing workspace-scoped idempotency registry and database uniqueness constraint; no schema migration"
+  "existing_boundary": "Uses the existing workspace-scoped idempotency registry and database uniqueness constraint; no schema migration",
+  "release_commit": "c4ff451f09f3974198aa19f9e2f8305f03167899",
+  "release_test_evidence": "evidence/backend-pytest-final.log"
 }

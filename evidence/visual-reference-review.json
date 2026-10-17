@@ -15,7 +15,9 @@
     "evidence/browser-overview-outlook.json",
     "evidence/browser-release-workflows.json",
     "evidence/screens/local-final/index.md: durable final 11-screen gallery, completed comparison preflight and loaded/fitted maps",
-    "evidence/browser-topbar-layout.json: exact 56px header at 1600x900 and 1600x1000"
+    "evidence/browser-topbar-layout.json: exact 56px header at 1600x900 and 1600x1000",
+    "evidence/browser-replay-500-local.png: final blueprint renderer, exactly 500-marker budget, readable cohort badge and docked controls at 1600\u00d71000",
+    "evidence/browser-replay-final-report.json: 5 passed, 1 deliberate mobile skip; desktop 1600×900 canvas aspect ratio/docking and mobile resource/evidence interactions"
   ],
   "reviewed": [
     "All seven desktop screens at 1600x1000 and mobile screens at 390x844",
@@ -24,7 +26,8 @@
     "Patient census, exact slot grid and independently scrollable unit inspector",
     "Candidate resource details, explicit readiness and actual bounded transfer",
     "Replay canvas and accessible census at desktop/mobile sizes",
-    "Overview operational capacity and forecast outlook at both sizes"
+    "Overview operational capacity and forecast outlook at both sizes",
+    "Final original blueprint Replay renderer and exact 500-marker local screenshot at 1600×1000; readable cohort and resource counts"
   ],
   "closed_findings": [
     {
@@ -36,18 +39,20 @@
       "issue": "Long unit inspector stretched the main Patients workspace",
       "repair": "Bounded sticky inspector with independent scrolling on desktop and natural mobile layout",
       "verification": "Browser asserts inspector scroll advances while main scroll position remains unchanged"
-    }
-  ],
-  "current_findings": [
+    },
     {
-      "issue": "Replay detail acceptance is incomplete despite passing basic controls/recovery flows",
-      "remaining": "Event-type filters and complete event paging, selected-patient event/care-path context, condition/intervention annotations, bed/staff capacity context, and actual redraw/500-visible-patient performance evidence",
-      "owner": "Root agent; next focused patch after current deployment"
+      "issue": "Replay timeline fell below the desktop viewport and the dense queue obscured its cohort badge",
+      "fix": "Responsive logical canvas aspect ratio, fixed desktop stage with independently scrolling inspector, and cohort badge painted above dots; final 1600\u00d71000 screenshot visually checked",
+      "evidence": "evidence/browser-replay-500-local.png"
     }
   ],
+  "current_findings": [],
   "boundaries": [
     "The schematic campus uses synthetic data-driven facility coordinates and unit counts, which differ from illustrative mockup content.",
     "Wide mobile patient/replay content scrolls inside its own container and remains available through accessible tabular controls.",
     "Hosted speed targets and the final hosted compound workflow are separate pending release gates."
+  ],
+  "pending_verification": [
+    "Hosted durable seven-screen gallery and final compound workflow after the optimized release; tracked under F26."
   ]
 }

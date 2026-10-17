@@ -19,6 +19,12 @@ Open [http://localhost:5173](http://localhost:5173). The API is [http://127.0.0.
 
 The frontend is React/TypeScript/Vite; the API is FastAPI; the model uses Python/NumPy/SimPy; durable deployment uses PostgreSQL, Redis/RQ, private OCI Object Storage and separate API/worker containers. Locked Python dependencies are in `uv.lock`; locked frontend dependencies are in `apps/web/package-lock.json`.
 
+## Data and visual assets
+
+`make generate-data` reproduces the planning and stress snapshots, historical arrivals, staff rosters, resource inventories and travel assumptions from the versioned generator in `packages/engine/surge_engine/generator.py`. Both snapshots pass the same import validation used by the app. Completed runs and exports retain their frozen inputs, generator version, seeds and checksums.
+
+The campus geometry, product mark, charts, capacity grids and Replay floor plan are original code-native assets. `apps/web/public/assets/campus.geojson` contains synthetic local geographic context; `apps/web/src/pages/replayBackdrop.ts` draws and caches the architectural schematic. Resource symbols and patient markers are drawn from the selected recorded state. The six supplied images remain design references under `docs/reference/`; their illustrative counts do not replace computed results. Locally served Barlow Condensed and IBM Plex Sans include their Open Font License notices in `apps/web/public/fonts/`; interface icons use the locked Lucide dependency.
+
 ## Developer commands
 
 | Command | Purpose |

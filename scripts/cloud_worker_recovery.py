@@ -4,6 +4,7 @@ This creates a synthetic test run, waits for durable progress, verifies the RQ
 job identity before SIGKILL, and checks that its pure simulation children exit.
 The RQ supervisor, API, database and all saved runs remain intact.
 """
+
 import argparse
 import json
 import subprocess
@@ -46,20 +47,29 @@ def main():
     summary = request("GET", "/workspaces/workspace-main/summary")
     if any(run["status"] not in {"SUCCEEDED", "FAILED", "CANCELLED"} for run in summary["runs"]):
         raise RuntimeError("Refusing fault injection while an existing workload is active")
-    scenario = request("POST", "/scenarios", json={
-        "name": "Controlled worker recovery verification", "dataset_version_id": args.dataset_id,
-        "horizon_calendar_days": 30, "replications": 30, "base_seed": 20261017,
-    })
+    scenario = request(
+        "POST",
+        "/scenarios",
+        json={
+            "name": "Controlled worker recovery verification",
+            "dataset_version_id": args.dataset_id,
+            "horizon_calendar_days": 30,
+            "replications": 30,
+            "base_seed": 20261017,
+        },
+    )
     run = request("POST", "/run-groups", json={"scenario_id": scenario["id"]})
     identity = run["id"]
     print(json.dumps({"run_group_id": identity, "phase": "waiting_for_durable_progress"}), flush=True)
     prior = wait(identity, lambda value: value["status"] == "RUNNING" and 0 < value["completed"] < 30)
     saved = request("GET", f"/run-groups/{identity}/replications?limit=200")["items"]
-    fingerprints = {item["id"]: {"seed": item["seed"], "sha256": item["aggregate_artifact"]["sha256"]} for item in saved}
+    fingerprints = {
+        item["id"]: {"seed": item["seed"], "sha256": item["aggregate_artifact"]["sha256"]} for item in saved
+    }
     assert fingerprints
     # The exact current RQ job identifies its supervisor. Only its direct job
     # child is killed; process-tree assertions prevent guessing another PID.
-    remote = '''import json,os,signal,time
+    remote = """import json,os,signal,time,tempfile
 from pathlib import Path
 from redis import Redis
 from rq import Worker
@@ -83,6 +93,8 @@ assert len(horses)==1
 horse=horses[0]
 children=[pid for pid,value in before.items() if value["ppid"]==horse and b"spawn_main" in value["command"]]
 assert horse>1 and children
+input_directories=[item.name for item in Path(tempfile.gettempdir()).glob(f"hsp-pool-{horse}-a*") if item.is_dir()]
+assert input_directories,"Expected private pool input directory is absent"
 os.kill(horse,signal.SIGKILL)
 started=time.monotonic()
 while time.monotonic()-started<10:
@@ -91,19 +103,34 @@ while time.monotonic()-started<10:
  time.sleep(0.1)
 assert not alive,"Simulation pool children survived their parent"
 assert supervisor in tree()
-print(json.dumps({"signal":"SIGKILL","target":"RQ job process only","supervisor_preserved":True,"pool_children_before":len(children),"pool_children_after":len(alive),"orphan_exit_seconds":time.monotonic()-started}))
-'''.replace("identity=IDENTITY", "identity=" + repr(identity))
+print(json.dumps({"signal":"SIGKILL","target":"RQ job process only","job_process_pid":horse,"supervisor_preserved":True,"pool_children_before":len(children),"pool_children_after":len(alive),"orphan_exit_seconds":time.monotonic()-started,"private_input_directories_before":input_directories}))
+""".replace("identity=IDENTITY", "identity=" + repr(identity))
     started = time.monotonic()
-    killed = subprocess.run([
-        str(ROOT / ".venv/bin/python"), str(ROOT / "scripts/oci_ssh.py"), "bash", "-lc",
-        "cd /opt/hospital-surge-planner && docker compose --env-file .env -f infra/compose.yaml exec -T worker python -",
-    ], input=remote.encode(), capture_output=True, check=False)
+    killed = subprocess.run(
+        [
+            str(ROOT / ".venv/bin/python"),
+            str(ROOT / "scripts/oci_ssh.py"),
+            "bash",
+            "-lc",
+            "cd /opt/hospital-surge-planner && docker compose --env-file .env -f infra/compose.yaml exec -T worker python -",
+        ],
+        input=remote.encode(),
+        capture_output=True,
+        check=False,
+    )
     if killed.returncode:
-        raise RuntimeError("Controlled process check failed; no unvalidated PID is targeted. Inspect private host diagnostics.")
+        raise RuntimeError(
+            "Controlled process check failed; no unvalidated PID is targeted. Inspect private host diagnostics."
+        )
     process_evidence = json.loads(killed.stdout)
     unavailable = client.get(f"/run-groups/{identity}/metrics")
     assert unavailable.status_code == 409
-    print(json.dumps({"run_group_id": identity, "phase": "waiting_for_natural_lease_recovery", **process_evidence}), flush=True)
+    print(
+        json.dumps(
+            {"run_group_id": identity, "phase": "waiting_for_natural_lease_recovery", **process_evidence}
+        ),
+        flush=True,
+    )
     complete = wait(identity, lambda value: value["status"] == "SUCCEEDED")
     after = request("GET", f"/run-groups/{identity}/replications?limit=200")["items"]
     assert len(after) == complete["completed"] == 30
@@ -114,14 +141,43 @@ print(json.dumps({"signal":"SIGKILL","target":"RQ job process only","supervisor_
     for key, frozen in fingerprints.items():
         assert by_id[key]["seed"] == frozen["seed"]
         assert by_id[key]["aggregate_artifact"]["sha256"] == frozen["sha256"]
+    check_inputs = """import json,tempfile
+from pathlib import Path
+names=NAMES
+remaining=[name for name in names if (Path(tempfile.gettempdir())/name).exists()]
+print(json.dumps({"abandoned_private_inputs_remaining":remaining}))
+""".replace("names=NAMES", "names=" + repr(process_evidence["private_input_directories_before"]))
+    checked = subprocess.run(
+        [
+            str(ROOT / ".venv/bin/python"),
+            str(ROOT / "scripts/oci_ssh.py"),
+            "bash",
+            "-lc",
+            "cd /opt/hospital-surge-planner && docker compose --env-file .env -f infra/compose.yaml exec -T worker python -",
+        ],
+        input=check_inputs.encode(),
+        capture_output=True,
+        check=True,
+    )
+    input_cleanup = json.loads(checked.stdout)
+    assert input_cleanup["abandoned_private_inputs_remaining"] == []
+    process_evidence.update(input_cleanup)
     report = {
-        "recorded_at": datetime.now(UTC).isoformat(), "base_url": base,
-        "run_group_id": identity, "scenario_id": scenario["id"], "code_commit": args.expected_commit,
-        "status": "passed", "process": process_evidence,
-        "completed_before_kill": prior["completed"], "preserved_replications_checked": len(fingerprints),
-        "completed_after_recovery": complete["completed"], "unique_replication_records": len(by_id),
-        "recovery_seconds": time.monotonic() - started, "lease_expiry_accelerated": False,
-        "incomplete_metrics_status": unavailable.status_code, "input_sha256": complete["input_sha256"],
+        "recorded_at": datetime.now(UTC).isoformat(),
+        "base_url": base,
+        "run_group_id": identity,
+        "scenario_id": scenario["id"],
+        "code_commit": args.expected_commit,
+        "status": "passed",
+        "process": process_evidence,
+        "completed_before_kill": prior["completed"],
+        "preserved_replications_checked": len(fingerprints),
+        "completed_after_recovery": complete["completed"],
+        "unique_replication_records": len(by_id),
+        "recovery_seconds": time.monotonic() - started,
+        "lease_expiry_accelerated": False,
+        "incomplete_metrics_status": unavailable.status_code,
+        "input_sha256": complete["input_sha256"],
         "saved_replication_seeds_and_checksums_preserved": True,
     }
     (ROOT / "evidence/hosted-worker-recovery.json").write_text(json.dumps(report, indent=2) + "\n")

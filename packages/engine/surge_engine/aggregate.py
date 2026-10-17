@@ -56,18 +56,67 @@ def aggregate_results(replications, scenario=None):
         for r in replications:
             for row in r.get(table, []):
                 indexed.setdefault(row[identity], []).append(row)
+        ordered = sorted(indexed.items())
         output = []
-        for key, rows in sorted(indexed.items()):
-            row = {identity: key}
-            for field in ("at", "elapsed_minutes", "start_at", "end_at", "local_date"):
-                if field in rows[0]:
-                    row[field] = rows[0][field]
-            fields = set().union(*(r.keys() for r in rows))
-            for field in fields:
-                if field in row:
+        # Keep source dictionaries hot while processing multiple fields.
+        for offset in range(0, len(ordered), 64):
+            numeric_fields = {}
+            for key, rows in ordered[offset : offset + 64]:
+                row = {identity: key}
+                for field in ("at", "elapsed_minutes", "start_at", "end_at", "local_date"):
+                    if field in rows[0]:
+                        row[field] = rows[0][field]
+                fields = set().union(*(r.keys() for r in rows))
+                for field in fields:
+                    if field in row:
+                        continue
+                    if any(isinstance(r.get(field), (int, float)) for r in rows):
+                        numeric_fields.setdefault(field, []).append((row, rows))
+                output.append(row)
+
+            # Regular time rows contain one finite numeric value per replication.
+            # Reduce the contiguous replication axis in one NumPy call per field,
+            # retaining the same value order and scalar arithmetic as stats().
+            # Imported/missing/bool/nonfinite values keep the original scalar path.
+            for field, entries in numeric_fields.items():
+                regular_rows = []
+                regular_values = []
+                for row, rows in entries:
+                    values = [r.get(field) for r in rows]
+                    if len(values) == len(replications) and all(type(v) in (int, float) for v in values):
+                        regular_rows.append(row)
+                        regular_values.append(values)
+                    else:
+                        row[field] = stats(values)
+                if not regular_values:
                     continue
-                if any(isinstance(r.get(field), (int, float)) for r in rows):
-                    row[field] = stats([r.get(field) for r in rows])
+                values = np.asarray(regular_values, dtype=float)
+                finite = np.isfinite(values).all(axis=1)
+                if not finite.all():
+                    for row, original, valid in zip(regular_rows, regular_values, finite):
+                        if not valid:
+                            row[field] = stats(original)
+                    regular_rows = [row for row, valid in zip(regular_rows, finite) if valid]
+                    values = values[finite]
+                    if not regular_rows:
+                        continue
+                p10, p50, p90 = np.percentile(values, [10, 50, 90], axis=1)
+                mean, minimum, maximum = (
+                    np.mean(values, axis=1),
+                    np.min(values, axis=1),
+                    np.max(values, axis=1),
+                )
+                for i, row in enumerate(regular_rows):
+                    row[field] = {
+                        "p10": float(p10[i]),
+                        "p50": float(p50[i]),
+                        "p90": float(p90[i]),
+                        "mean": float(mean[i]),
+                        "min": float(minimum[i]),
+                        "max": float(maximum[i]),
+                    }
+
+        for row, (_, rows) in zip(output, ordered):
             if table == "daily":
                 reasons = set().union(*(r.get("blocker_patient_hours", {}).keys() for r in rows))
                 row["blocker_patient_hours"] = {
@@ -78,7 +127,6 @@ def aggregate_results(replications, scenario=None):
                 row["zero_capacity_probability"] = sum(bool(r.get("zero_capacity")) for r in rows) / len(rows)
                 row["zero_capacity"] = any(r.get("zero_capacity", False) for r in rows)
             row["replication_count"] = len(rows)
-            output.append(row)
         return output
 
     unit_series = {}

@@ -1,0 +1,153 @@
+{
+  "recorded_at": "2026-10-17T10:26:23.658638+00:00",
+  "scope": "Read-only, single-trial serial-phase diagnostic of exact completed OCI artifacts; no cProfile overhead",
+  "run_group_id": "run_e168fed1a1414d989464",
+  "code_commit": "c4ff451f09f3974198aa19f9e2f8305f03167899",
+  "horizon_days": 365,
+  "replications": 100,
+  "input_artifact_compressed_sha256": "497e8fdf99f77e2cadd14781b52bdf91abd753981176f2832ffa50a7f7a688ce",
+  "input_artifact_compressed_bytes": 26922468,
+  "memory_address_space_limit_bytes": 10737418240,
+  "phases": [
+    {
+      "phase": "artifact_client_setup",
+      "wall_seconds": 2.0010748069998954,
+      "cpu_seconds": 1.9634308000000003,
+      "process_lifetime_peak_rss_bytes": 184209408
+    },
+    {
+      "phase": "read_and_decode_replications",
+      "wall_seconds": 23.072513105000326,
+      "cpu_seconds": 22.72278578,
+      "process_lifetime_peak_rss_bytes": 2800975872
+    },
+    {
+      "phase": "aggregate_results",
+      "wall_seconds": 35.7849068710002,
+      "cpu_seconds": 35.78053963999999,
+      "process_lifetime_peak_rss_bytes": 2800975872
+    },
+    {
+      "phase": "compact_summary",
+      "wall_seconds": 0.0003166980004607467,
+      "cpu_seconds": 0.000317199999997797,
+      "process_lifetime_peak_rss_bytes": 2800975872
+    },
+    {
+      "phase": "period_aggregation_week",
+      "wall_seconds": 1.3053531309997197,
+      "cpu_seconds": 1.3051972199999966,
+      "process_lifetime_peak_rss_bytes": 2800975872
+    },
+    {
+      "phase": "period_aggregation_month",
+      "wall_seconds": 0.8583161479991759,
+      "cpu_seconds": 0.8582236599999931,
+      "process_lifetime_peak_rss_bytes": 2800975872
+    },
+    {
+      "phase": "read_and_decode_stored_aggregate",
+      "wall_seconds": 1.300632241999665,
+      "cpu_seconds": 1.2713331399999959,
+      "process_lifetime_peak_rss_bytes": 2800975872
+    },
+    {
+      "phase": "canonical_aggregate",
+      "wall_seconds": 1.3013585440003226,
+      "cpu_seconds": 1.3011979799999978,
+      "process_lifetime_peak_rss_bytes": 2800975872
+    },
+    {
+      "phase": "canonical_replications",
+      "wall_seconds": 18.0350377449995,
+      "cpu_seconds": 18.032958480000005,
+      "process_lifetime_peak_rss_bytes": 3518308352
+    },
+    {
+      "phase": "gzip_level_1",
+      "wall_seconds": 2.0952252619999854,
+      "cpu_seconds": 2.094542379999993,
+      "process_lifetime_peak_rss_bytes": 3518308352
+    },
+    {
+      "phase": "gzip_level_3",
+      "wall_seconds": 2.2090139579995594,
+      "cpu_seconds": 2.20822729999999,
+      "process_lifetime_peak_rss_bytes": 3518308352
+    },
+    {
+      "phase": "gzip_level_6",
+      "wall_seconds": 5.747275462000289,
+      "cpu_seconds": 5.746302960000008,
+      "process_lifetime_peak_rss_bytes": 3518308352
+    },
+    {
+      "phase": "gzip_level_9",
+      "wall_seconds": 18.866064412000014,
+      "cpu_seconds": 18.862614480000005,
+      "process_lifetime_peak_rss_bytes": 3518308352
+    }
+  ],
+  "compression": [
+    {
+      "level": 1,
+      "compressed_bytes": 44157126,
+      "compressed_sha256": "83ce30066ee8aa4fccbff26e218ec181198a95b29ae12e2a92718fe8d3c57bb7",
+      "decompressed_bytes": 707167992,
+      "decompressed_sha256": "55e49734d0a2bce68ba0e9ed4a1c38c5e3c76f76d9e83fff930d571a54b45906",
+      "byte_for_byte_decompression_matches": true,
+      "matches_stored_compressed_artifact": false
+    },
+    {
+      "level": 3,
+      "compressed_bytes": 38512210,
+      "compressed_sha256": "d1c5df341e9de26b95ba9784d0a45aae79f15879fb6083678c96ab2298406560",
+      "decompressed_bytes": 707167992,
+      "decompressed_sha256": "55e49734d0a2bce68ba0e9ed4a1c38c5e3c76f76d9e83fff930d571a54b45906",
+      "byte_for_byte_decompression_matches": true,
+      "matches_stored_compressed_artifact": false
+    },
+    {
+      "level": 6,
+      "compressed_bytes": 30261834,
+      "compressed_sha256": "6a6256d7ec3e55f5c8b6335138799e1acaab20c59710505761e875a37335337b",
+      "decompressed_bytes": 707167992,
+      "decompressed_sha256": "55e49734d0a2bce68ba0e9ed4a1c38c5e3c76f76d9e83fff930d571a54b45906",
+      "byte_for_byte_decompression_matches": true,
+      "matches_stored_compressed_artifact": false
+    },
+    {
+      "level": 9,
+      "compressed_bytes": 26922468,
+      "compressed_sha256": "497e8fdf99f77e2cadd14781b52bdf91abd753981176f2832ffa50a7f7a688ce",
+      "decompressed_bytes": 707167992,
+      "decompressed_sha256": "55e49734d0a2bce68ba0e9ed4a1c38c5e3c76f76d9e83fff930d571a54b45906",
+      "byte_for_byte_decompression_matches": true,
+      "matches_stored_compressed_artifact": true
+    }
+  ],
+  "recomputed_aggregate_sha256": "262d9b75d04ec418047e03cf991f53d07ad8a07cacc5afb221d895a32ceeceab",
+  "recomputed_aggregate_matches_saved": true,
+  "canonical_replications_sha256": "55e49734d0a2bce68ba0e9ed4a1c38c5e3c76f76d9e83fff930d571a54b45906",
+  "canonical_replications_bytes": 707167992,
+  "persisted_execution_metrics": {
+    "run_group_id": "run_e168fed1a1414d989464",
+    "replication_count": 100,
+    "selected_trace_execution_metrics": {
+      "wall_seconds": 90.89793415399981,
+      "cpu_seconds": 90.78032428000002,
+      "terminated_children_cpu_seconds": 0,
+      "process_peak_rss_bytes": 4206047232,
+      "largest_terminated_child_peak_rss_bytes": 363212800,
+      "cpu_scope": "current process plus separately reported terminated child CPU",
+      "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+    },
+    "replication_wall_seconds": {
+      "minimum": 40.930379194000125,
+      "median": 42.47865170099976,
+      "maximum": 43.52493410900024,
+      "sum": 4236.115899456997
+    },
+    "replication_cpu_seconds_sum": 4175.74335914
+  }
+}

@@ -2134,6 +2134,43 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             }
         )
 
+    @router.get("/runs/{identity}/annotations")
+    def run_annotations(identity: str, user=Depends(current_user), session=Depends(db)):
+        from .replay_annotations import intervention_results, shortage_periods
+        from .responses import cached_response, json_response
+
+        row, trace = trace_for(session, user, identity)
+        run = owned_job(session, row.data["run_group_id"], user, "run")
+        artifact = row.data["trace_artifact"]
+        key = (
+            "replay-annotations-v2",
+            str(session.bind.url),
+            user["workspace_id"],
+            identity,
+            artifact["object_key"],
+            artifact["sha256"],
+            run.payload.get("scenario_revision_id"),
+        )
+        cached = cached_response(key)
+        if cached is not None:
+            return cached
+        scenario = run.payload["scenario"]
+        return json_response(
+            {
+                "scenario_revision_id": run.payload.get("scenario_revision_id"),
+                "conditions": scenario.get("conditions", []),
+                "planned_interventions": scenario.get("interventions", []),
+                "updates": scenario.get("updates", []),
+                "intervention_results": intervention_results(trace),
+                "shortage_periods": shortage_periods(trace),
+                "start_at": trace["start_at"],
+                "end_at": trace["end_at"],
+                "timezone": scenario.get("timezone", trace.get("timezone", "America/Chicago")),
+                "context": context(run, replication_id=identity),
+            },
+            key,
+        )
+
     @router.get("/runs/{identity}/events")
     def events(
         identity: str,
@@ -2142,6 +2179,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         after_sequence: int | None = None,
         before_sequence: int | None = None,
         patient_id: str | None = None,
+        event_type: str | None = Query(default=None, min_length=1, max_length=96),
         at: str | None = None,
         direction: str | None = None,
         limit: int = 200,
@@ -2171,7 +2209,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             upper = date(end_at) if end_at else None
         except (ValueError, TypeError):
             fail(422, "Invalid event interval")
-        items = [
+        window = [
             x
             for x in trace.get("events", [])
             if (
@@ -2190,15 +2228,27 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                     else date(x["occurred_at"]) < upper
                 )
             )
-            and (before_sequence is None or x.get("sequence_number", 0) < before_sequence)
-            and (after_sequence is None or x.get("sequence_number", 0) > after_sequence)
             and (not patient_id or x.get("patient_id") == patient_id)
+        ]
+        event_type_counts = {}
+        for item in window:
+            kind = item["event_type"]
+            event_type_counts[kind] = event_type_counts.get(kind, 0) + 1
+        items = [
+            item
+            for item in window
+            if (before_sequence is None or item.get("sequence_number", 0) < before_sequence)
+            and (after_sequence is None or item.get("sequence_number", 0) > after_sequence)
+            and (event_type is None or item["event_type"] == event_type)
         ]
         if direction == "before":
             items = list(reversed(items))
         value = listing(items, limit, cursor)
         return {
             **value,
+            "event_types": sorted(event_type_counts),
+            "event_type_counts": event_type_counts,
+            "window_total": len(window),
             "last_sequence": value["items"][-1]["sequence_number"] if value["items"] else after_sequence,
             "context": context(replication_id=identity),
         }

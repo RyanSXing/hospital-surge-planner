@@ -1,0 +1,98 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.12.13 (main, Jun 23 2026, 15:44:24) [Clang 22.1.3 ]",
+  "baseline_ref": "c4ff451f09f3974198aa19f9e2f8305f03167899",
+  "baseline_module_sha256": "c26f6ce69d3197c93270c3ca49846e6aac668adcd9b4eb17ff669d30955e6277",
+  "candidate_module_sha256": "977130adf30c1b1c6e6f77175f6cbf9e762bf55655b22413955b1e099eedc11e",
+  "exact_output_cases": {
+    "planning": {
+      "equal": true,
+      "sha256": "8a24d733d9917ecce1a6563914fc4e30227c36b4bbcccd63cfdb15166d9f06c8",
+      "bytes": 4955218
+    },
+    "stress": {
+      "equal": true,
+      "sha256": "e3737823bf117efe724235eecc85638c41c77f421e4ad992dadcdb7383bd2929",
+      "bytes": 3003551
+    },
+    "resources": {
+      "equal": true,
+      "sha256": "1c7ac83ecc8656415bd2fdb4b4049070c9e1492ee96c5a9ee242731ea6ee3909",
+      "bytes": 5594087
+    },
+    "branch": {
+      "equal": true,
+      "sha256": "9d531b73dbc3321c913b6753fd691c520d098f71051cb7671815bc83dc3a5531",
+      "bytes": 3939206
+    },
+    "reset": {
+      "equal": true,
+      "sha256": "c54deacc937a50eeb0d4926ac20980c18aa3094b25b66e35c7110f079c47860e",
+      "bytes": 1275746
+    },
+    "dst": {
+      "equal": true,
+      "sha256": "66b176394fc7d860c8b6eb32501dd1d514e46bbb2277a2fb046cf9adbe28064f",
+      "bytes": 20460392
+    },
+    "care_mix": {
+      "equal": true,
+      "sha256": "4521fcf9713e29b91ceef7f08a5af6468a4bdfb43746f07f1487ee13f22e52ff",
+      "bytes": 3388517
+    }
+  },
+  "timings": {
+    "nontrace": {
+      "seconds": {
+        "baseline": [
+          0.8222584159811959,
+          0.8470409999135882,
+          0.8371359159937128,
+          0.8535113329999149,
+          0.8771969159133732,
+          0.8631158750504255
+        ],
+        "candidate": [
+          0.6760719160083681,
+          0.6797854590695351,
+          0.6788418749347329,
+          0.6796028750250116,
+          0.7076712910784408,
+          0.7220186250051484
+        ]
+      },
+      "median_seconds": {
+        "baseline": 0.8502761664567515,
+        "candidate": 0.6796941670472734
+      },
+      "sha256": "d556a96a79085d8acdab30efe68482df59767325df334c84d0f8d5037c71a79e",
+      "reduction_percent": 20.061952356058967
+    },
+    "trace": {
+      "seconds": {
+        "baseline": [
+          1.4947539580753073,
+          1.679200042039156,
+          1.650185083039105,
+          1.6557910830015317,
+          1.7436417089775205,
+          1.7306146249175072
+        ],
+        "candidate": [
+          1.4304036669200286,
+          1.46273074997589,
+          1.4630242499988526,
+          1.4668965000892058,
+          1.4562125829979777,
+          1.4794662080239505
+        ]
+      },
+      "median_seconds": {
+        "baseline": 1.6674955625203438,
+        "candidate": 1.4628774999873713
+      },
+      "sha256": "91095a82c9937b924e3b8297342e86489cdbc831b5aa7eaacf7f557642e5fa4a",
+      "reduction_percent": 12.270980932848873
+    }
+  }
+}

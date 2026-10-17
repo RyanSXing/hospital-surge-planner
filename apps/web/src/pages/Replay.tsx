@@ -1,8 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./replay.css";
+import { drawReplayBackdrop } from "./replayBackdrop";
 import { usePatientPage } from "./usePatientPage";
-import { replayZone as zoneFor, replayCounts } from "./patientProjection";
 import {
+  ReplayAnnotations,
+  ReplayEventWindow,
+  ReplayPatientHistory,
+  ReplayRecordedCapacity,
+} from "./ReplayEvidence";
+import {
+  replayZone as zoneFor,
+  replayCounts,
+  replayPresence,
+} from "./patientProjection";
+import {
+  BedDouble,
   ChevronLeft,
   ChevronRight,
   Clock3,
@@ -14,14 +26,21 @@ import {
   RotateCcw,
   SkipBack,
   SkipForward,
+  Users,
 } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { api, atDay, fmt, items, localDate, patientId, post } from "../api";
 import { Badge, Button, EmptyState, ErrorBox } from "../components/ui";
-import { patientsOf, queueStats, statsFor, stateUnavailable } from "../model";
+import {
+  patientsOf,
+  queueStats,
+  statsFor,
+  stateUnavailable,
+  unitsOf,
+} from "../model";
 const zones = [
-  { id: "arrivals", name: "ED waiting", x: 20, y: 180, w: 125, h: 170 },
-  { id: "ed", name: "ED treatment & boarding", x: 190, y: 160, w: 210, h: 210 },
+  { id: "arrivals", name: "ED entry / waiting", x: 20, y: 180, w: 125, h: 170 },
+  { id: "ed", name: "ED treatment", x: 190, y: 160, w: 210, h: 210 },
   {
     id: "queue",
     name: "Direct holding / transit",
@@ -31,19 +50,34 @@ const zones = [
     h: 160,
   },
   { id: "ward", name: "Ward care", x: 655, y: 40, w: 310, h: 240 },
-  { id: "icu", name: "Intensive care", x: 655, y: 320, w: 150, h: 170 },
+  { id: "icu", name: "ICU care", x: 655, y: 320, w: 150, h: 170 },
   { id: "clinic", name: "Outpatient clinic", x: 190, y: 445, w: 210, h: 130 },
   {
+    id: "overflow",
+    name: "Overflow",
+    x: 440,
+    y: 445,
+    w: 160,
+    h: 130,
+  },
+  { id: "transport", name: "Transport", x: 845, y: 320, w: 120, h: 145 },
+  {
     id: "exit",
-    name: "Other active locations",
+    name: "Discharge",
     x: 845,
     y: 470,
     w: 120,
     h: 105,
   },
 ];
-function position(p: Entity) {
-  const z = zones.find((z) => z.id === zoneFor(p))!;
+function layoutZone(z: (typeof zones)[number], height: number) {
+  return { ...z, y: (z.y * height) / 620, h: (z.h * height) / 620 };
+}
+function position(p: Entity, height = 620) {
+  const z = layoutZone(
+    zones.find((z) => z.id === zoneFor(p))!,
+    height,
+  );
   let hash = 2166136261;
   for (const c of patientId(p)) {
     hash ^= c.charCodeAt(0);
@@ -51,7 +85,10 @@ function position(p: Entity) {
   }
   return {
     x: z.x + 18 + (hash % Math.max(1, z.w - 36)),
-    y: z.y + 65 + ((hash >>> 8) % Math.max(1, z.h - 100)),
+    y:
+      z.y +
+      Math.min(52, z.h - 14) +
+      ((hash >>> 8) % Math.max(1, Math.floor(z.h - 66))),
     zone: z,
   };
 }
@@ -66,9 +103,9 @@ const timestamp = (at: string) =>
   });
 export default function Replay({ ctx }: { ctx: PlanningContext }) {
   const canvas = useRef<HTMLCanvasElement>(null),
+    [canvasHeight, setCanvasHeight] = useState(620),
     [playing, setPlaying] = useState(false),
     [speed, setSpeed] = useState(4),
-    [events, setEvents] = useState<Entity[]>([]),
     [replications, setReplications] = useState<Entity[]>([]),
     [reduced, setReduced] = useState(
       () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -80,11 +117,45 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     [stepping, setStepping] = useState(false),
     [eventCursor, setEventCursor] = useState<Entity | null>(null),
     [selectedDetail, setSelectedDetail] = useState<Entity | null>(null);
-  const patients = patientsOf(ctx),
-    q = queueStats(ctx, "all"),
+  const motionState = useRef<{
+    rep: string;
+    at: number;
+    height: number;
+    points: Map<string, { x: number; y: number }>;
+  } | null>(null);
+  const drawnPoints = useRef(new Map<string, { x: number; y: number }>());
+  const unavailable = stateUnavailable(ctx);
+  const facilityTypes = useMemo(
+    () =>
+      Object.fromEntries(
+        (ctx.dataset?.facilities || []).map((facility: Entity) => [
+          facility.facility_id || facility.id,
+          facility.kind,
+        ]),
+      ),
+    [ctx.dataset?.facilities],
+  );
+  const patients = useMemo<Entity[]>(
+    () =>
+      patientsOf(ctx).map((patient: Entity) => ({
+        ...patient,
+        facility_type: facilityTypes[patient.facility_id],
+      })),
+    [ctx.state, ctx.dataset, unavailable, facilityTypes],
+  );
+  const selectedProjection = useMemo<Entity | null>(
+    () =>
+      selectedDetail
+        ? {
+            ...selectedDetail,
+            facility_type: facilityTypes[selectedDetail.facility_id],
+          }
+        : null,
+    [selectedDetail, facilityTypes],
+  );
+  const q = queueStats(ctx, "all"),
     ward = statsFor(ctx, "ward", "FAC-MAIN"),
-    icu = statsFor(ctx, "icu", "FAC-MAIN"),
-    unavailable = stateUnavailable(ctx);
+    icu = statsFor(ctx, "icu", "FAC-MAIN");
   const rep = ctx.activeReplicationId || ctx.run?.selected_replication_id;
   const start =
     ctx.run?.start_at ||
@@ -118,11 +189,36 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     patients.find(
       (p) => patientId(p) === patientId(ctx.selectedPatient || {}),
     ) ||
-    (selectedDetail &&
-    !["discharged", "departed"].includes(selectedDetail.state)
-      ? selectedDetail
+    (selectedProjection &&
+    patientId(selectedProjection) === patientId(ctx.selectedPatient || {}) &&
+    replayPresence(selectedProjection, ctx.selectedTime) === "active"
+      ? selectedProjection
       : null);
+  const inspected =
+    selectedDetail &&
+    patientId(selectedDetail) === patientId(ctx.selectedPatient || {})
+      ? selectedDetail
+      : selected || ctx.selectedPatient;
   const patientTotal = Number(ctx.state?.patient_total ?? patients.length);
+  const inspectedPresence = inspected
+    ? replayPresence(inspected, ctx.selectedTime)
+    : "unknown";
+  const pathSignature = JSON.stringify([
+    patientId(inspected || {}),
+    inspected?.state_intervals || [],
+  ]);
+  const recordedPath = useMemo(
+    () =>
+      (inspected?.state_intervals || []).map((interval: Entity) => ({
+        at: Date.parse(interval.start_at),
+        patient: {
+          ...interval,
+          facility_type: facilityTypes[interval.facility_id],
+          patient_id: patientId(inspected || {}),
+        },
+      })),
+    [pathSignature, facilityTypes],
+  );
   useEffect(() => {
     let ignore = false;
     setSelectedDetail(null);
@@ -140,7 +236,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       ignore = true;
     };
   }, [rep, ctx.selectedPatient?.patient_id, ctx.selectedTime]);
-  const visiblePatients = useMemo(() => {
+  const visiblePatients = useMemo<Entity[]>(() => {
     const sorted = [...patients].sort((a, b) =>
       patientId(a).localeCompare(patientId(b)),
     );
@@ -151,9 +247,49 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     return sorted.slice(0, 500);
   }, [patients, selected]);
   const { totals: zoneTotals, grouped: groups } = useMemo(
-    () => replayCounts(ctx.state?.patient_groups, patients, visiblePatients),
-    [ctx.state?.patient_groups, patients, visiblePatients],
+    () =>
+      replayCounts(
+        ctx.state?.patient_groups?.map((group: Entity) => ({
+          ...group,
+          facility_type: facilityTypes[group.facility_id],
+        })),
+        patients,
+        visiblePatients,
+      ),
+    [ctx.state?.patient_groups, patients, visiblePatients, facilityTypes],
   );
+  const zoneInventory = useMemo(() => {
+    const values: Record<
+      string,
+      { occupied: number; staffed: number; physical: number; assigned: number }
+    > = {};
+    for (const unit of unitsOf(ctx)) {
+      const zone =
+        unit.kind === "ed"
+          ? "ed"
+          : unit.kind === "clinic"
+            ? "clinic"
+            : facilityTypes[unit.facility_id] === "ward_overflow"
+              ? "overflow"
+              : unit.kind === "icu"
+                ? "icu"
+                : "ward";
+      const value = (values[zone] ||= {
+        occupied: 0,
+        staffed: 0,
+        physical: 0,
+        assigned: 0,
+      });
+      value.occupied += Number(unit.occupied || 0);
+      value.staffed += Number(unit.staffed || 0);
+      value.physical += Number(unit.physical || 0);
+      value.assigned += Object.values(unit.staff_by_role || {}).reduce<number>(
+        (total, count) => total + Number(count),
+        0,
+      );
+    }
+    return values;
+  }, [ctx.state, ctx.dataset, unavailable, facilityTypes]);
   const census = usePatientPage(
       rep,
       ctx.selectedTime,
@@ -167,7 +303,6 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   }, [rep]);
   useEffect(() => {
     let ignore = false;
-    setEvents([]);
     setReplications([]);
     if (!ctx.run?.id) return;
     const load = async () => {
@@ -194,23 +329,6 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       ignore = true;
     };
   }, [ctx.run?.id]);
-  useEffect(() => {
-    let ignore = false;
-    setEvents([]);
-    if (!rep) return;
-    api(
-      `/runs/${rep}/events?limit=100&at=${encodeURIComponent(ctx.selectedTime)}`,
-    )
-      .then((value) => {
-        if (!ignore) setEvents(items(value));
-      })
-      .catch((e) => {
-        if (!ignore) setError(e.message);
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [rep, ctx.selectedTime]);
   useEffect(() => {
     if (!pendingRep) return;
     let ignore = false;
@@ -246,13 +364,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     };
   }, [pendingRep, ctx.setReplication, ctx.notify]);
   useEffect(() => {
-    if (
-      !playing ||
-      reduced ||
-      ctx.stateLoading ||
-      unavailable ||
-      !Number.isFinite(endMs)
-    )
+    if (!playing || ctx.stateLoading || unavailable || !Number.isFinite(endMs))
       return;
     const timer = setTimeout(() => {
       if (document.hidden) {
@@ -267,7 +379,6 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   }, [
     playing,
     speed,
-    reduced,
     ctx.stateLoading,
     unavailable,
     currentMs,
@@ -282,89 +393,262 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     return () => document.removeEventListener("visibilitychange", listener);
   }, []);
   useEffect(() => {
+    const viewport = canvas.current?.parentElement;
+    if (!viewport) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) setCanvasHeight((1000 * height) / width);
+    });
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [ctx.run?.status]);
+  useEffect(() => {
     const node = canvas.current;
-    if (!node) return;
+    if (!node || unavailable) return;
     const g = node.getContext("2d");
     if (!g) return;
     const dpr = window.devicePixelRatio || 1,
       W = 1000,
-      H = 620;
+      H = canvasHeight;
     node.width = W * dpr;
     node.height = H * dpr;
     g.scale(dpr, dpr);
-    g.fillStyle = "#0c1a25";
-    g.fillRect(0, 0, W, H);
-    for (let x = 0; x < W; x += 20)
-      for (let y = 0; y < H; y += 20) {
-        g.fillStyle = "#152633";
-        g.fillRect(x, y, 1, 1);
-      }
-    g.lineCap = "round";
-    g.strokeStyle = "#253d4d";
-    g.lineWidth = 30;
-    g.beginPath();
-    g.moveTo(145, 265);
-    g.lineTo(650, 265);
-    g.lineTo(650, 405);
-    g.lineTo(840, 405);
-    g.lineTo(840, 520);
-    g.lineTo(845, 520);
-    g.moveTo(295, 370);
-    g.lineTo(295, 445);
-    g.stroke();
-    g.strokeStyle = "#426274";
-    g.lineWidth = 1;
-    g.setLineDash([5, 8]);
-    g.stroke();
-    g.setLineDash([]);
-    for (const z of zones) {
-      g.fillStyle =
-        z.id === "queue" ? "#28291e" : z.id === "ward" ? "#102d3d" : "#112431";
-      g.fillRect(z.x, z.y, z.w, z.h);
-      g.strokeStyle =
-        z.id === "queue" ? "#6f6235" : z.id === "ward" ? "#3b9bb6" : "#2b485a";
-      g.lineWidth = z.id === "ward" ? 1.5 : 1;
-      g.strokeRect(z.x + 0.5, z.y + 0.5, z.w - 1, z.h - 1);
-      g.fillStyle = "#dbe8f0";
-      g.font = "600 13px system-ui";
-      g.fillText(z.name, z.x + 10, z.y + 24);
-      g.fillStyle = "#91a7b5";
-      g.font = "11px system-ui";
-      const n = zoneTotals[z.id] || 0;
-      g.fillText(`${n} active patients`, z.x + 12, z.y + 44);
-      if (groups[z.id]) {
-        g.fillStyle = "#f3bc53";
-        g.font = "600 11px system-ui";
-        g.fillText(`+ ${fmt(groups[z.id])} grouped`, z.x + 12, z.y + z.h - 13);
-      }
-    }
-    for (const p of visiblePatients) {
-      const pos = position(p),
-        chosen = patientId(ctx.selectedPatient || {}) === patientId(p);
-      g.beginPath();
-      g.arc(pos.x, pos.y, chosen ? 6 : 3.6, 0, Math.PI * 2);
-      g.fillStyle = p.admission_pending
-        ? "#f3bc53"
-        : p.care_level === "icu"
-          ? "#ff7c88"
-          : "#61cbe8";
-      g.fill();
-      if (chosen) {
-        g.beginPath();
-        g.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
-        g.strokeStyle = "#64e3ed";
-        g.lineWidth = 1.5;
-        g.stroke();
-      }
-    }
-    g.fillStyle = "#728f9f";
-    g.font = "10px system-ui";
-    g.fillText(
-      "STATE SCHEMATIC · ED BOARDERS RETAIN ED SLOTS · NO INTERPOLATED CLINICAL EVENTS",
-      20,
-      602,
+    const previous = motionState.current;
+    const targetPoints = new Map(
+      visiblePatients.map((patient) => [
+        patientId(patient),
+        position(patient, H),
+      ]),
     );
-  }, [patients, visiblePatients, groups, zoneTotals, ctx.selectedPatient]);
+    const recordedTime = Date.parse(ctx.state?.at || ctx.selectedTime);
+    node.dataset.recordedAt = new Date(recordedTime).toISOString();
+    const originPoints = new Map(previous?.points || []);
+    for (const patient of visiblePatients) {
+      if (
+        !originPoints.has(patientId(patient)) &&
+        previous &&
+        Date.parse(patient.arrival_at) > previous.at &&
+        Date.parse(patient.arrival_at) <= recordedTime
+      )
+        originPoints.set(
+          patientId(patient),
+          position(
+            {
+              ...patient,
+              state:
+                patient.entry_type === "direct_ward"
+                  ? "direct_waiting"
+                  : "ed_waiting",
+            },
+            H,
+          ),
+        );
+    }
+    const movedMarkers = visiblePatients.filter((patient) => {
+      const prior = originPoints.get(patientId(patient));
+      const target = targetPoints.get(patientId(patient))!;
+      return prior && (prior.x !== target.x || prior.y !== target.y);
+    }).length;
+    const moving =
+      playing &&
+      !reduced &&
+      previous !== null &&
+      previous.rep === rep &&
+      previous.height === H &&
+      recordedTime > previous.at &&
+      movedMarkers > 0;
+    node.dataset.previousMarkers = String(previous?.points.size || 0);
+    node.dataset.movedMarkers = String(movedMarkers);
+    node.dataset.visibleMarkers = String(visiblePatients.length);
+    motionState.current = {
+      rep: rep || "",
+      at: recordedTime,
+      height: H,
+      points: targetPoints,
+    };
+    function draw(progress: number) {
+      if (!g || !node) return;
+      node.dataset.animating = String(moving && progress < 1);
+      g.fillStyle = "#0c1a25";
+      g.fillRect(0, 0, W, H);
+      drawReplayBackdrop(g, W, H);
+      g.lineCap = "round";
+      g.strokeStyle = "#253d4d";
+      g.lineWidth = 30;
+      g.beginPath();
+      const yScale = H / 620;
+      g.moveTo(145, 265 * yScale);
+      g.lineTo(650, 265 * yScale);
+      g.lineTo(650, 405 * yScale);
+      g.lineTo(840, 405 * yScale);
+      g.lineTo(840, 520 * yScale);
+      g.lineTo(845, 520 * yScale);
+      g.moveTo(295, 370 * yScale);
+      g.lineTo(295, 445 * yScale);
+      g.moveTo(520, 345 * yScale);
+      g.lineTo(520, 445 * yScale);
+      g.stroke();
+      g.strokeStyle = "#426274";
+      g.lineWidth = 1;
+      g.setLineDash([5, 8]);
+      g.stroke();
+      g.setLineDash([]);
+      for (const original of zones) {
+        const z = layoutZone(original, H);
+        g.fillStyle =
+          z.id === "queue"
+            ? "#28291e"
+            : z.id === "ward"
+              ? "#102d3d"
+              : "#112431";
+        g.fillRect(z.x, z.y, z.w, z.h);
+        g.strokeStyle =
+          z.id === "queue"
+            ? "#6f6235"
+            : z.id === "ward"
+              ? "#3b9bb6"
+              : "#2b485a";
+        g.lineWidth = z.id === "ward" ? 1.5 : 1;
+        g.strokeRect(z.x + 0.5, z.y + 0.5, z.w - 1, z.h - 1);
+        g.fillStyle = "#dbe8f0";
+        g.font = "600 13px system-ui";
+        g.fillText(z.name, z.x + 10, z.y + 24);
+        g.fillStyle = "#91a7b5";
+        g.font = "11px system-ui";
+        const n = zoneTotals[z.id] || 0;
+        if (z.id !== "exit" || z.h > 60)
+          g.fillText(
+            z.id === "exit" ? "Path endpoint" : `${n} active`,
+            z.x + 12,
+            z.y + 44,
+          );
+        const inventory = zoneInventory[z.id];
+        if (inventory && z.w >= 150) {
+          const x = z.x + z.w - 81;
+          g.strokeStyle = "#b2d5e9";
+          g.lineWidth = 1.2;
+          g.strokeRect(x, z.y + 15, 14, 7);
+          g.beginPath();
+          g.moveTo(x, z.y + 12);
+          g.lineTo(x, z.y + 26);
+          g.moveTo(x + 14, z.y + 18);
+          g.lineTo(x + 14, z.y + 26);
+          g.stroke();
+          g.fillStyle = "#c6e3ee";
+          g.font = "10px system-ui";
+          g.fillText(
+            `${inventory.occupied}/${inventory.staffed}`,
+            x + 20,
+            z.y + 23,
+          );
+          g.fillStyle = "#60bfff";
+          g.fillRect(x + 1, z.y + 37, 7, 8);
+          g.beginPath();
+          g.arc(x + 4.5, z.y + 33, 2.4, 0, Math.PI * 2);
+          g.fill();
+          g.fillStyle = "#a9ccdf";
+          g.fillText(`${inventory.assigned} assigned`, x + 13, z.y + 44);
+        }
+      }
+      if (recordedPath.length) {
+        const path = recordedPath
+          .filter((value: { at: number }) => value.at <= recordedTime)
+          .map((value: { patient: Entity }) => position(value.patient, H));
+        g.beginPath();
+        for (let i = 0; i < path.length; i++) {
+          if (i === 0) g.moveTo(path[i].x, path[i].y);
+          else g.lineTo(path[i].x, path[i].y);
+        }
+        g.strokeStyle = "#49dddf";
+        g.lineWidth = 2;
+        g.setLineDash([4, 4]);
+        g.stroke();
+        g.setLineDash([]);
+      }
+      const framePoints = new Map<string, { x: number; y: number }>();
+      for (const p of visiblePatients) {
+        const target = targetPoints.get(patientId(p))!;
+        const prior = originPoints.get(patientId(p));
+        const pos =
+          moving && prior
+            ? {
+                x: prior.x + (target.x - prior.x) * progress,
+                y: prior.y + (target.y - prior.y) * progress,
+              }
+            : target;
+        framePoints.set(patientId(p), pos);
+        const chosen = patientId(ctx.selectedPatient || {}) === patientId(p);
+        g.beginPath();
+        g.arc(pos.x, pos.y, chosen ? 6 : 3.6, 0, Math.PI * 2);
+        g.fillStyle = p.admission_pending
+          ? "#f3bc53"
+          : p.care_level === "icu"
+            ? "#ff7c88"
+            : "#61cbe8";
+        g.fill();
+        if (chosen) {
+          g.beginPath();
+          g.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
+          g.strokeStyle = "#64e3ed";
+          g.lineWidth = 1.5;
+          g.stroke();
+        }
+      }
+      drawnPoints.current = framePoints;
+      for (const original of zones) {
+        if (!groups[original.id]) continue;
+        const z = layoutZone(original, H),
+          width = Math.min(z.w - 16, 138),
+          x = z.x + (z.w - width) / 2,
+          y = z.y + z.h - 26;
+        g.fillStyle = "#152a35";
+        g.fillRect(x, y, width, 22);
+        g.strokeStyle = "#c69745";
+        g.lineWidth = 1;
+        g.strokeRect(x, y, width, 22);
+        g.fillStyle = "#f3bc53";
+        g.font = "600 10px system-ui";
+        g.fillText(`1 marker = ${fmt(groups[z.id])}`, x + 7, y + 15);
+      }
+      g.fillStyle = "#728f9f";
+      g.font = "10px system-ui";
+      g.fillText(
+        "STATE SCHEMATIC · ED BOARDERS RETAIN ED SLOTS · NO INTERPOLATED CLINICAL EVENTS",
+        20,
+        H - 14,
+      );
+    }
+    let frame = 0;
+    if (moving) {
+      const began = performance.now();
+      const paint = (now: number) => {
+        const progress = Math.min(1, (now - began) / 180);
+        draw(progress);
+        if (progress < 1) frame = requestAnimationFrame(paint);
+      };
+      draw(0);
+      frame = requestAnimationFrame(paint);
+    } else draw(1);
+    return () => {
+      cancelAnimationFrame(frame);
+      node.dataset.animating = "false";
+    };
+  }, [
+    patients,
+    visiblePatients,
+    groups,
+    zoneTotals,
+    ctx.selectedPatient,
+    recordedPath,
+    playing,
+    reduced,
+    rep,
+    unavailable,
+    ctx.state?.at,
+    ctx.selectedTime,
+    canvasHeight,
+    zoneInventory,
+  ]);
   async function chooseReplication(id: string) {
     setPlaying(false);
     setError("");
@@ -513,292 +797,432 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           {ctx.stateError || "Loading the exact state at this timestamp…"}
         </div>
       ) : null}
-      <div className="replay-workspace">
-        <div className="replay-scene">
-          <div className="scene-topline">
-            <span className="scene-tag">
-              <span className="cyan-dot" />
-              REPLICATION {Number(repIndex) + 1}
-            </span>
-            <div className="scene-legend">
+      <div className="replay-stage">
+        <div className="replay-workspace">
+          <div className="replay-scene">
+            <div className="scene-topline">
+              <span className="scene-tag">
+                <span className="cyan-dot" />
+                REPLICATION {Number(repIndex) + 1}
+              </span>
+              <div className="scene-legend">
+                <span>
+                  <i className="cyan-dot" />
+                  Active
+                </span>
+                <span>
+                  <i className="amber-dot" />
+                  Inpatient waiting
+                </span>
+                <span>
+                  <i className="red-dot" />
+                  ICU care
+                </span>
+                <span>
+                  <BedDouble size={14} /> Occupied / staffed
+                </span>
+                <span>
+                  <Users size={14} /> Assigned staff
+                </span>
+                <Button
+                  small
+                  aria-label="Zoom out"
+                  onClick={() => setZoom((z) => Math.max(0.75, z - 0.25))}
+                >
+                  <Minus size={13} />
+                </Button>
+                <Button
+                  small
+                  aria-label="Zoom in"
+                  onClick={() => setZoom((z) => Math.min(2, z + 0.25))}
+                >
+                  <Plus size={13} />
+                </Button>
+                <Button
+                  small
+                  aria-label="Reset schematic zoom"
+                  onClick={() => setZoom(1)}
+                >
+                  <RotateCcw size={13} />
+                </Button>
+              </div>
+            </div>
+            <div className="replay-canvas-viewport">
+              <canvas
+                ref={canvas}
+                className="replay-canvas"
+                style={{ "--replay-zoom": zoom } as React.CSSProperties}
+                role="img"
+                aria-label={`Hospital state schematic: ${patientTotal} active patients; ${q.total} awaiting inpatient placement. Every patient is available in the accessible census below.`}
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect(),
+                    x = ((e.clientX - rect.left) / rect.width) * 1000,
+                    y = ((e.clientY - rect.top) / rect.height) * canvasHeight;
+                  let best: Entity | null = null,
+                    distance = 18;
+                  for (const p of visiblePatients) {
+                    const pos =
+                        drawnPoints.current.get(patientId(p)) ||
+                        position(p, canvasHeight),
+                      d = Math.hypot(pos.x - x, pos.y - y);
+                    if (d < distance) {
+                      best = p;
+                      distance = d;
+                    }
+                  }
+                  if (best) ctx.setPatient(best);
+                }}
+              />
+            </div>
+            <div className="replay-summary">
               <span>
-                <i className="cyan-dot" />
-                Active
+                <strong>{fmt(patientTotal)}</strong> active patients
               </span>
               <span>
-                <i className="amber-dot" />
-                Inpatient waiting
+                <strong className="amber">{fmt(q.total)}</strong> inpatient
+                requests
               </span>
-              <Button
-                small
-                aria-label="Zoom out"
-                onClick={() => setZoom((z) => Math.max(0.75, z - 0.25))}
-              >
-                <Minus size={13} />
-              </Button>
-              <Button
-                small
-                aria-label="Zoom in"
-                onClick={() => setZoom((z) => Math.min(2, z + 0.25))}
-              >
-                <Plus size={13} />
-              </Button>
-              <Button
-                small
-                aria-label="Reset schematic zoom"
-                onClick={() => setZoom(1)}
-              >
-                <RotateCcw size={13} />
-              </Button>
+              <span>
+                {inspected
+                  ? `Highlighted recorded path: ${patientId(inspected)}.`
+                  : patientTotal > visiblePatients.length
+                    ? `${visiblePatients.length} individual markers; ${fmt(patientTotal - visiblePatients.length)} grouped. Full census below.`
+                    : "Exact recorded state; schematic positions only."}
+              </span>
             </div>
           </div>
-          <div className="replay-canvas-viewport">
-            <canvas
-              ref={canvas}
-              className="replay-canvas"
-              style={{ width: `${zoom * 100}%`, maxWidth: "none" }}
-              role="img"
-              aria-label={`Hospital state schematic: ${patientTotal} active patients; ${q.total} awaiting inpatient placement. Every patient is available in the accessible census below.`}
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect(),
-                  x = ((e.clientX - rect.left) / rect.width) * 1000,
-                  y = ((e.clientY - rect.top) / rect.height) * 620;
-                let best: Entity | null = null,
-                  distance = 18;
-                for (const p of visiblePatients) {
-                  const pos = position(p),
-                    d = Math.hypot(pos.x - x, pos.y - y);
-                  if (d < distance) {
-                    best = p;
-                    distance = d;
-                  }
-                }
-                if (best) ctx.setPatient(best);
+          <aside className="inspector replay-inspector">
+            <div className="inspector-header">
+              <div className="inspector-icon">
+                <Clock3 size={19} />
+              </div>
+              <div>
+                <span className="eyebrow">SELECTED SIMULATED TIME</span>
+                <h2>{timestamp(ctx.selectedTime)}</h2>
+              </div>
+            </div>
+            <div className="inspector-section">
+              <h3>
+                {inspected ? patientId(inspected) : "Main hospital capacity"}
+              </h3>
+              {inspected ? (
+                <dl className="detail-list">
+                  <div>
+                    <dt>State</dt>
+                    <dd>
+                      {inspectedPresence === "not_arrived"
+                        ? "Not yet arrived"
+                        : inspectedPresence === "departed"
+                          ? "Discharged"
+                          : inspected.state?.replaceAll("_", " ") ||
+                            "Loading patient state…"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Actual unit / slot</dt>
+                    <dd>
+                      {inspectedPresence !== "active"
+                        ? "No active location at this timestamp"
+                        : inspected.unit_id || "Transit / queue"}
+                      <br />
+                      {inspectedPresence === "active"
+                        ? inspected.slot_id || "No treatment slot"
+                        : ""}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Required care</dt>
+                    <dd>
+                      {inspected.target_unit_kind || inspected.care_level}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Unresolved request</dt>
+                    <dd>
+                      {inspectedPresence === "active" &&
+                      inspected.admission_pending
+                        ? "Yes; waiting continues"
+                        : "No"}
+                    </dd>
+                  </div>
+                  {inspectedPresence === "active" &&
+                  inspected.pending_transfer ? (
+                    <div>
+                      <dt>Destination</dt>
+                      <dd>{inspected.pending_transfer.destination_unit_id}</dd>
+                    </div>
+                  ) : null}
+                </dl>
+              ) : (
+                <>
+                  <div className="replay-count">
+                    <span>Main ward</span>
+                    <strong>
+                      {ward.occupied} <small>/ {ward.staffed}</small>
+                    </strong>
+                  </div>
+                  <div className="replay-count">
+                    <span>ICU</span>
+                    <strong>
+                      {icu.occupied} <small>/ {icu.staffed}</small>
+                    </strong>
+                  </div>
+                  <p className="small-copy muted">
+                    Occupied / staffed. Partner patients remain tracked
+                    separately in the full census.
+                  </p>
+                </>
+              )}
+              {inspected && inspectedPresence === "active" ? (
+                <div className="replay-patient-resources">
+                  {inspected.blockers?.length ? (
+                    <div className="constraint-callout">
+                      <strong className="amber">
+                        Recorded placement blockers
+                      </strong>
+                      <ul>
+                        {inspected.blockers.map((reason: string) => (
+                          <li key={reason}>{reason.replaceAll("_", " ")}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                  <details>
+                    <summary>Occupied resources and requirements</summary>
+                    <p className="small-copy">
+                      Allocated:{" "}
+                      {(inspected.allocated_resource_ids || []).join(" · ") ||
+                        inspected.slot_id ||
+                        "No allocated resource recorded"}
+                    </p>
+                    <ul className="requirements-list">
+                      {(
+                        inspected.inpatient_resource_requirements ||
+                        inspected.resource_requirements ||
+                        []
+                      ).map((requirement: Entity | string, index: number) => (
+                        <li key={index}>
+                          {typeof requirement === "string"
+                            ? requirement.replaceAll("_", " ")
+                            : `${String(requirement.capability_code || requirement.resource_type || "Resource").replaceAll("_", " ")} × ${requirement.quantity ?? 1}`}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                  {inspected.pending_transfer ? (
+                    <details
+                      key={inspected.pending_transfer.request_id}
+                      className="replay-transfer-detail"
+                    >
+                      <summary>
+                        Inspect transfer · {inspected.pending_transfer.status}
+                      </summary>
+                      <dl className="detail-list">
+                        <div>
+                          <dt>Request</dt>
+                          <dd>{inspected.pending_transfer.request_id}</dd>
+                        </div>
+                        <div>
+                          <dt>Source</dt>
+                          <dd>
+                            {inspected.pending_transfer.source_unit_id ||
+                              "Holding queue"}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Destination / reservation</dt>
+                          <dd>
+                            {inspected.pending_transfer.destination_unit_id}
+                            <br />
+                            {inspected.pending_transfer.destination_slot_id}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Vehicle</dt>
+                          <dd>{inspected.pending_transfer.vehicle_id}</dd>
+                        </div>
+                        <div>
+                          <dt>Planned departure</dt>
+                          <dd>
+                            {timestamp(
+                              inspected.pending_transfer.planned_departure_at,
+                            )}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Planned arrival</dt>
+                          <dd>
+                            {timestamp(
+                              inspected.pending_transfer.planned_arrival_at,
+                            )}
+                          </dd>
+                        </div>
+                      </dl>
+                      <p className="small-copy muted">
+                        The source place remains occupied until recorded
+                        departure. Planned times do not imply arrival has
+                        occurred.
+                      </p>
+                    </details>
+                  ) : null}
+                </div>
+              ) : null}
+              <Button small onClick={() => ctx.setPage("patients")}>
+                Inspect detailed census <ChevronRight size={13} />
+              </Button>
+              {inspected ? (
+                <ReplayPatientHistory
+                  patient={inspected}
+                  at={ctx.selectedTime}
+                  cursor={eventCursor}
+                  onSelect={(event) => {
+                    move(event.occurred_at);
+                    setEventCursor(event);
+                  }}
+                />
+              ) : null}
+            </div>
+            <ReplayRecordedCapacity ctx={ctx} />
+            <ReplayEventWindow
+              rep={rep || ""}
+              at={ctx.selectedTime}
+              patient={inspected || null}
+              cursor={eventCursor}
+              onSelect={(event) => {
+                move(event.occurred_at);
+                setEventCursor(event);
               }}
             />
-          </div>
-          <div className="replay-summary">
-            <span>
-              <strong>{fmt(patientTotal)}</strong> active patients
-            </span>
-            <span>
-              <strong className="amber">{fmt(q.total)}</strong> inpatient
-              requests
-            </span>
-            <span>
-              {patientTotal > visiblePatients.length
-                ? `${visiblePatients.length} individual markers; ${fmt(patientTotal - visiblePatients.length)} grouped. Full census below.`
-                : "Exact recorded state; schematic positions only."}
-            </span>
-          </div>
+          </aside>
         </div>
-        <aside className="inspector replay-inspector">
-          <div className="inspector-header">
-            <div className="inspector-icon">
-              <Clock3 size={19} />
-            </div>
-            <div>
-              <span className="eyebrow">SELECTED SIMULATED TIME</span>
-              <h2>{timestamp(ctx.selectedTime)}</h2>
-            </div>
-          </div>
-          <div className="inspector-section">
-            <h3>{selected ? patientId(selected) : "Main hospital capacity"}</h3>
-            {selected ? (
-              <dl className="detail-list">
-                <div>
-                  <dt>State</dt>
-                  <dd>{selected.state?.replaceAll("_", " ")}</dd>
-                </div>
-                <div>
-                  <dt>Actual unit / slot</dt>
-                  <dd>
-                    {selected.unit_id || "Transit / queue"}
-                    <br />
-                    {selected.slot_id || "No treatment slot"}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Required care</dt>
-                  <dd>{selected.target_unit_kind || selected.care_level}</dd>
-                </div>
-                <div>
-                  <dt>Unresolved request</dt>
-                  <dd>
-                    {selected.admission_pending
-                      ? "Yes; waiting continues"
-                      : "No"}
-                  </dd>
-                </div>
-                {selected.pending_transfer ? (
-                  <div>
-                    <dt>Destination</dt>
-                    <dd>{selected.pending_transfer.destination_unit_id}</dd>
-                  </div>
-                ) : null}
-              </dl>
-            ) : (
-              <>
-                <div className="replay-count">
-                  <span>Main ward</span>
-                  <strong>
-                    {ward.occupied} <small>/ {ward.staffed}</small>
-                  </strong>
-                </div>
-                <div className="replay-count">
-                  <span>ICU</span>
-                  <strong>
-                    {icu.occupied} <small>/ {icu.staffed}</small>
-                  </strong>
-                </div>
-                <p className="small-copy muted">
-                  Occupied / staffed. Partner patients remain tracked separately
-                  in the full census.
-                </p>
-              </>
-            )}
-            <Button small onClick={() => ctx.setPage("patients")}>
-              Inspect detailed census <ChevronRight size={13} />
+        <div className="replay-controls">
+          <div className="playback-buttons">
+            <button
+              aria-label="Return to run start"
+              onClick={() => move(start)}
+            >
+              <SkipBack size={17} />
+            </button>
+            <button
+              aria-label="Previous recorded event"
+              disabled={stepping || unavailable}
+              onClick={() => void step("before")}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <Button
+              primary
+              disabled={unavailable || currentMs >= endMs}
+              onClick={() => setPlaying(!playing)}
+              aria-label={playing ? "Pause replay" : "Play replay"}
+            >
+              {playing ? <Pause size={18} /> : <Play size={18} />}
             </Button>
-          </div>
-          <div className="inspector-section event-feed">
-            <div className="spread">
-              <h3>Event window</h3>
-              <Badge>{events.length} loaded</Badge>
-            </div>
-            {eventCursor &&
-            Date.parse(eventCursor.occurred_at) === currentMs ? (
-              <div className="info-note">
-                <strong>
-                  Event {eventCursor.sequence_number}:{" "}
-                  {eventCursor.event_type?.replaceAll("_", " ")}
-                </strong>
-                <p>
-                  Sequence controls include events sharing this timestamp. The
-                  state shown reflects all events at this instant.
-                </p>
-              </div>
-            ) : null}
-            <p className="small-copy muted">
-              One hour before and after the selected timestamp. Choose an event
-              to inspect its resulting state.
-            </p>
-            {events
-              .slice(-15)
-              .reverse()
-              .map((e) => (
+            <button
+              aria-label="Next recorded event"
+              disabled={stepping || unavailable}
+              onClick={() => void step("after")}
+            >
+              <ChevronRight size={18} />
+            </button>
+            <button aria-label="Go to run horizon" onClick={() => move(end)}>
+              <SkipForward size={17} />
+            </button>
+            <div className="segmented">
+              {[1, 4, 16].map((v) => (
                 <button
-                  key={e.event_id || e.sequence_number}
-                  onClick={() => {
-                    move(e.occurred_at);
-                    setEventCursor(e);
-                  }}
+                  className={speed === v ? "active" : ""}
+                  key={v}
+                  onClick={() => setSpeed(v)}
                 >
-                  <span className="event-time">
-                    {localDate(e.occurred_at, {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    })}
-                  </span>
-                  <div>
-                    <strong>{e.event_type?.replaceAll("_", " ")}</strong>
-                    <small>
-                      {e.patient_id ||
-                        e.reason_code ||
-                        e.to_unit_id ||
-                        "Resource state change"}
-                    </small>
-                  </div>
+                  {v}×
                 </button>
               ))}
-            {!events.length ? (
-              <p className="small-copy muted">
-                No events in this window. Step to the nearest recorded event.
-              </p>
-            ) : null}
+            </div>
           </div>
-        </aside>
-      </div>
-      <div className="replay-controls">
-        <div className="playback-buttons">
-          <button aria-label="Return to run start" onClick={() => move(start)}>
-            <SkipBack size={17} />
-          </button>
-          <button
-            aria-label="Previous recorded event"
-            disabled={stepping || unavailable}
-            onClick={() => void step("before")}
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <Button
-            primary
-            disabled={reduced || unavailable || currentMs >= endMs}
-            onClick={() => setPlaying(!playing)}
-            aria-label={playing ? "Pause replay" : "Play replay"}
-          >
-            {playing ? <Pause size={18} /> : <Play size={18} />}
-          </Button>
-          <button
-            aria-label="Next recorded event"
-            disabled={stepping || unavailable}
-            onClick={() => void step("after")}
-          >
-            <ChevronRight size={18} />
-          </button>
-          <button aria-label="Go to run horizon" onClick={() => move(end)}>
-            <SkipForward size={17} />
-          </button>
-          <div className="segmented">
-            {[1, 4, 16].map((v) => (
-              <button
-                className={speed === v ? "active" : ""}
-                key={v}
-                onClick={() => setSpeed(v)}
-              >
-                {v}×
-              </button>
-            ))}
+          <div className="replay-time">
+            <strong>{timestamp(ctx.selectedTime)}</strong>
+            <span>1× = one elapsed simulation hour per second</span>
           </div>
-        </div>
-        <div className="replay-time">
-          <strong>{timestamp(ctx.selectedTime)}</strong>
-          <span>1× = one elapsed simulation hour per second</span>
-        </div>
-        <label className="reduced-motion">
-          <input
-            type="checkbox"
-            checked={reduced}
-            onChange={(e) => {
-              setReduced(e.target.checked);
-              setPlaying(false);
+          <form
+            className="replay-jump"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const value = new FormData(event.currentTarget).get("at");
+              const instant = Date.parse(`${value}Z`);
+              if (
+                Number.isFinite(instant) &&
+                instant >= startMs &&
+                instant <= endMs
+              )
+                move(new Date(instant).toISOString());
+              else setError("Choose a UTC time within this completed run.");
             }}
+          >
+            <label>
+              Jump (UTC)
+              <input
+                key={ctx.selectedTime}
+                name="at"
+                aria-label="Jump replay UTC date and time"
+                type="datetime-local"
+                required
+                min={new Date(startMs).toISOString().slice(0, 19)}
+                max={new Date(endMs).toISOString().slice(0, 19)}
+                defaultValue={new Date(currentMs).toISOString().slice(0, 19)}
+                step="1"
+              />
+            </label>
+            <Button small type="submit">
+              Go
+            </Button>
+          </form>
+          <label className="reduced-motion">
+            <input
+              type="checkbox"
+              checked={reduced}
+              onChange={(e) => {
+                setReduced(e.target.checked);
+                setPlaying(false);
+              }}
+            />
+            Reduced motion
+          </label>
+        </div>
+        <div className="replay-scrubber">
+          <span>{localDate(start)}</span>
+          <input
+            aria-label="Replay timestamp across actual elapsed horizon"
+            type="range"
+            min={0}
+            max={Math.max(0, (endMs - startMs) / 60000)}
+            step={1}
+            value={Math.max(
+              0,
+              Math.min(
+                (endMs - startMs) / 60000,
+                (currentMs - startMs) / 60000,
+              ),
+            )}
+            onChange={(e) =>
+              move(
+                new Date(
+                  startMs + Number(e.target.value) * 60000,
+                ).toISOString(),
+              )
+            }
           />
-          Reduced motion
-        </label>
-      </div>
-      <div className="replay-scrubber">
-        <span>{localDate(start)}</span>
-        <input
-          aria-label="Replay timestamp across actual elapsed horizon"
-          type="range"
-          min={0}
-          max={Math.max(0, (endMs - startMs) / 60000)}
-          step={1}
-          value={Math.max(
-            0,
-            Math.min((endMs - startMs) / 60000, (currentMs - startMs) / 60000),
-          )}
-          onChange={(e) =>
-            move(
-              new Date(startMs + Number(e.target.value) * 60000).toISOString(),
-            )
-          }
+          <span>
+            {localDate(end)} · {fmt(durationHours)} elapsed h
+          </span>
+        </div>
+        <ReplayAnnotations
+          rep={rep || ""}
+          start={start}
+          end={end}
+          at={ctx.selectedTime}
+          onSeek={move}
         />
-        <span>
-          {localDate(end)} · {fmt(durationHours)} elapsed h
-        </span>
       </div>
       <div className="spread" style={{ padding: "12px 0" }}>
         <Button

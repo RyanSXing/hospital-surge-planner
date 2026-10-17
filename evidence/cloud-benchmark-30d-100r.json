@@ -1,9 +1,9 @@
 {
-  "recorded_at": "2026-10-17T09:26:57.273471+00:00",
+  "recorded_at": "2026-10-17T10:07:49.224784+00:00",
   "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
   "scope": "Actual public HTTPS, OCI A2 ARM8 physical cores/16GiB, PostgreSQL, Redis worker and private ObjectStorage",
-  "scenario_id": "scenario_b05b075efed6420fa15b",
-  "run_group_id": "run_54f88351a3f345cea406",
+  "scenario_id": "scenario_4a7b63dd8602456abcf6",
+  "run_group_id": "run_6b5b8fc192fa40edb6d6",
   "horizon_days": 30,
   "replications": 100,
   "health": {
@@ -14,144 +14,144 @@
   },
   "status": "SUCCEEDED",
   "completed": 100,
-  "pipeline_seconds": 94.21658583299723,
+  "pipeline_seconds": 84.99284645804437,
   "pipeline_timing_is_resumed": false,
   "manifest": {
     "schema_version": "1.0",
-    "run_group_id": "run_54f88351a3f345cea406",
+    "run_group_id": "run_6b5b8fc192fa40edb6d6",
     "workspace_id": "workspace-main",
     "dataset_version_id": "dataset_245582261d284b6a9b1c",
-    "scenario_revision_id": "revision_376b79562c85459c8a06",
+    "scenario_revision_id": "revision_1d0e4447804b487a967b",
     "model_version": "1.0.0",
-    "code_commit": "e4c54e2bdd8f0ad1322574256df7b1932430ffb2",
-    "input_sha256": "deba5ef0cdd368f4bdf73b983dcd3f145c928fb57c1c6cdd96d93f1a78df144f",
+    "code_commit": "c4ff451f09f3974198aa19f9e2f8305f03167899",
+    "input_sha256": "c6226c5b91f50e3eabe1cc8bad1a0ad1c1c0d6ac9898a5442a268c368d7dfec6",
     "generator_version": "1.0.0",
     "timezone": "America/Chicago",
     "start_at": "2026-10-16T05:00:00Z",
     "end_at": "2026-11-15T06:00:00Z",
-    "created_at": "2026-10-17T09:26:57.256649Z",
+    "created_at": "2026-10-17T10:07:49.204770Z",
     "replications_requested": 100,
     "replications_completed": 100,
     "seed_policy": "keyed-streams-v1",
     "base_seed": 20261016,
-    "selected_replication_id": "run_54f88351a3f345cea406_rep_0068",
+    "selected_replication_id": "run_6b5b8fc192fa40edb6d6_rep_0068",
     "selected_replication_index": 68,
     "status": "SUCCEEDED",
     "data_origin": "synthetic",
     "artifacts": [
       {
-        "object_key": "workspace-main/run_54f88351a3f345cea406/artifact_b6bb7104e93c4dc7bbd9/aggregate.json.gz",
-        "sha256": "b51824dd44aec43544917ace1beda02f2f504d6be8652c4173d1592f5ff720eb",
-        "byte_size": 143240,
+        "object_key": "workspace-main/run_6b5b8fc192fa40edb6d6/artifact_028233a7eb864f42a9b3/aggregate.json.gz",
+        "sha256": "bdb302bcbfdb00018899041eab518b17120adece263b59ae65a8587452bb7893",
+        "byte_size": 143244,
         "media_type": "application/gzip",
         "name": "aggregate.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T09:28:26.922712Z"
+        "created_at": "2026-10-17T10:09:09.102975Z"
       },
       {
-        "object_key": "workspace-main/run_54f88351a3f345cea406/artifact_80011cb54cdd44db8e4b/replications.json.gz",
-        "sha256": "84049702745b82f8ca88b27118d529103d59f12750323afe7e2e9d187cfa01e9",
-        "byte_size": 2673478,
+        "object_key": "workspace-main/run_6b5b8fc192fa40edb6d6/artifact_55dca274ea2947168fde/replications.json.gz",
+        "sha256": "85db0a2dde2bcd76836b284dd62cbe41975486d618c93118cb69608d95740e13",
+        "byte_size": 2673933,
         "media_type": "application/gzip",
         "name": "replications.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T09:28:30.258023Z"
+        "created_at": "2026-10-17T10:09:12.445558Z"
       },
       {
-        "object_key": "workspace-main/run_54f88351a3f345cea406/artifact_89d1206bab1f49d18ee7/selected-trace.json.gz",
-        "sha256": "f883dd7a97652b4a9020283ef4a7147b04bf7a25f7391c9f729f662037595007",
-        "byte_size": 1127853,
+        "object_key": "workspace-main/run_6b5b8fc192fa40edb6d6/artifact_fba432921142442c90c3/selected-trace.json.gz",
+        "sha256": "cc40ea9eb552ca5d8c23cbf29b2ca1148b3385318ef71f0320e331112c6fe17d",
+        "byte_size": 1127720,
         "media_type": "application/gzip",
         "name": "selected-trace.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T09:28:26.458836Z"
+        "created_at": "2026-10-17T10:09:08.606621Z"
       },
       {
-        "object_key": "workspace-main/run_54f88351a3f345cea406/artifact_f8a7417c58ae4c7cae43/inputs.json.gz",
-        "sha256": "b37db2697e1521c20b095b871b915857058b8bcb575d21fdf98809bb92164e94",
-        "byte_size": 707752,
+        "object_key": "workspace-main/run_6b5b8fc192fa40edb6d6/artifact_072dbac7c7d0472b8f53/inputs.json.gz",
+        "sha256": "71295a6e16e6421d581101e89e16b40b907660769b799f3180a3a0363236a55f",
+        "byte_size": 707753,
         "media_type": "application/gzip",
         "name": "inputs.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T09:28:31.429824Z"
+        "created_at": "2026-10-17T10:09:13.629840Z"
       }
     ],
-    "completed_at": "2026-10-17T09:28:31.429968Z",
+    "completed_at": "2026-10-17T10:09:13.630007Z",
     "warnings": [
       "Synthetic assumptions; simulation ranges are not clinical predictions."
     ]
   },
   "reads": {
     "metrics": {
-      "cold_seconds": 0.8357009999454021,
+      "cold_seconds": 0.6914164169575088,
       "warm_seconds": [
-        0.11267724999925122,
-        0.08726179198129103,
-        0.08267887501278892,
-        0.08121091697830707,
-        0.08375312498537824
+        0.10341479204362258,
+        0.08246487501310185,
+        0.08310237503610551,
+        0.08356333296978846,
+        0.08264504099497572
       ],
-      "warm_p95_seconds": 0.11267724999925122
+      "warm_p95_seconds": 0.10341479204362258
     },
     "end_state": {
-      "cold_seconds": 0.7572664159815758,
+      "cold_seconds": 1.0038856660248712,
       "warm_seconds": [
-        0.05773658398538828,
-        0.060323124984279275,
-        0.058061417017597705,
-        0.05776262504514307,
-        0.057844750001095235
+        0.05885391600895673,
+        0.06022225000197068,
+        0.05836712499149144,
+        0.05966991698369384,
+        0.06256720796227455
       ],
-      "warm_p95_seconds": 0.060323124984279275,
+      "warm_p95_seconds": 0.06256720796227455,
       "patient_total": 4245,
       "returned_patients": 500
     },
     "census": {
-      "cold_seconds": 0.05474558298010379,
+      "cold_seconds": 0.056909749982878566,
       "warm_seconds": [
-        0.05590895900968462,
-        0.05376520799472928,
-        0.05591608403483406,
-        0.05548837495734915,
-        0.05102654203074053
+        0.05401195795275271,
+        0.053348375018686056,
+        0.05436962499516085,
+        0.05326799995964393,
+        0.0514906250173226
       ],
-      "warm_p95_seconds": 0.05591608403483406
+      "warm_p95_seconds": 0.05436962499516085
     },
     "events": {
-      "cold_seconds": 0.04179458401631564,
+      "cold_seconds": 0.039456750033423305,
       "warm_seconds": [
-        0.04181245795916766,
-        0.04170283296843991,
-        0.04243404197040945,
-        0.042627083021216094,
-        0.04269016702892259
+        0.03875154198613018,
+        0.037924333999399096,
+        0.03830025001661852,
+        0.03836824995232746,
+        0.039011500019114465
       ],
-      "warm_p95_seconds": 0.04269016702892259
+      "warm_p95_seconds": 0.039011500019114465
     },
     "checkpoints": {
-      "cold_seconds": 0.039912457985337824,
+      "cold_seconds": 0.036106874991673976,
       "warm_seconds": [
-        0.03860799997346476,
-        0.038501499977428466,
-        0.03894162504002452,
-        0.03968745801830664,
-        0.0418912090244703
+        0.03604174999054521,
+        0.03549525002017617,
+        0.03622237499803305,
+        0.035471957991831005,
+        0.035495374992024153
       ],
-      "warm_p95_seconds": 0.0418912090244703
+      "warm_p95_seconds": 0.03622237499803305
     }
   },
   "worker_execution_metrics": {
-    "wall_seconds": 93.52291536500024,
-    "cpu_seconds": 32.21421644,
-    "terminated_children_cpu_seconds": 439.02609700000005,
-    "process_peak_rss_bytes": 723193856,
-    "largest_terminated_child_peak_rss_bytes": 345628672,
+    "wall_seconds": 82.75703943100052,
+    "cpu_seconds": 31.05698516,
+    "terminated_children_cpu_seconds": 433.440128,
+    "process_peak_rss_bytes": 722935808,
+    "largest_terminated_child_peak_rss_bytes": 345268224,
     "cpu_scope": "current process plus separately reported terminated child CPU",
     "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
   },
-  "worker_started_to_durable_completion_seconds": 93.52291536500024
+  "worker_started_to_durable_completion_seconds": 82.75703943100052
 }

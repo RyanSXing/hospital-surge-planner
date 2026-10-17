@@ -229,7 +229,11 @@ class ArtifactStore:
 
     def put_json(self, workspace, owner, name, value):
         return self.write(
-            workspace, owner, name + ".json.gz", gzip.compress(canonical(value), mtime=0), "application/gzip"
+            workspace,
+            owner,
+            name + ".json.gz",
+            gzip.compress(canonical(value), compresslevel=6, mtime=0),
+            "application/gzip",
         )
 
     def get_json(self, metadata):

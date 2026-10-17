@@ -1,0 +1,17 @@
+{
+  "recorded_at": "2026-10-17T10:05:25.677809+00:00",
+  "scope": "Read-only artifact bucket metadata and every persisted Document/Job/Audit JSON object_key reference; current idle snapshot only",
+  "mutated": false,
+  "warning": "Unreferenced objects are candidates for investigation, not authorization to delete. Missing keys may be intentionally retained deletion tombstones.",
+  "rows_scanned": {
+    "documents": 310,
+    "jobs": 12,
+    "audit": 65
+  },
+  "reference_keys": 310,
+  "bucket_objects": 310,
+  "bucket_bytes": 27227477,
+  "unreferenced_candidates": [],
+  "unreferenced_bytes": 0,
+  "referenced_keys_absent_from_bucket": []
+}

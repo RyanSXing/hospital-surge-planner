@@ -1,4 +1,6 @@
 import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+import { resolve } from "node:path";
 import {
   api,
   assertPageHealthy,
@@ -25,7 +27,9 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
   console.log("workflow: scenario screen loaded");
   await page
     .getByLabel("Scenario name", { exact: true })
-    .fill("E2E 70 percent surge " + Date.now());
+    .fill(
+      process.env.E2E_SCENARIO_NAME || "E2E 70 percent surge " + Date.now(),
+    );
   await page.getByLabel("Increase in ED arrivals").fill("70");
   await page.getByLabel("Planning horizon").fill("3");
   await page.getByLabel("Simulation runs").selectOption("10");
@@ -167,8 +171,32 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
   const download = page.waitForEvent("download");
   await page.getByRole("link", { name: "Download export" }).click();
   const file = await download;
-  await file.saveAs(info.outputPath("planning-export.zip"));
+  const exportPath = info.outputPath("planning-export.zip");
+  await file.saveAs(exportPath);
   expect(await file.failure()).toBeNull();
+  const exportChecksums = JSON.parse(
+    execFileSync(
+      resolve(process.cwd(), "../../.venv/bin/python"),
+      [
+        "-c",
+        `import hashlib,json,sys,zipfile
+from pathlib import Path
+path=Path(sys.argv[1])
+with zipfile.ZipFile(path) as bundle:
+    names=[name for name in bundle.namelist() if not name.endswith('/')]
+    assert len(names)==len(set(names)), 'Duplicate ZIP member'
+    checksums=json.loads(bundle.read('checksums.json'))
+    assert set(checksums)==set(names)-{'checksums.json'}, 'Checksum coverage differs from ZIP contents'
+    for name,expected in checksums.items():
+        assert hashlib.sha256(bundle.read(name)).hexdigest()==expected, 'Checksum mismatch: '+name
+    print(json.dumps({'all_checksums_verified':True,'complete_member_coverage':True,'files':names,'archive_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'archive_bytes':path.stat().st_size}))
+`,
+        exportPath,
+      ],
+      { encoding: "utf8" },
+    ),
+  );
+  expect(exportChecksums.all_checksums_verified).toBe(true);
   expect(errors).toEqual([]);
   record("workflow", {
     scenario_id: context.scenario.id,
@@ -176,6 +204,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
     comparison_id: comparison.id,
     branch_run_id: branchRun.id,
     export_filename: file.suggestedFilename(),
+    export_checksums: exportChecksums,
     page_errors: errors,
   });
 });

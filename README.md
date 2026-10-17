@@ -8,6 +8,8 @@ The complete initial scope is P0 and P1 in [the build specification](docs/refere
 
 Open [Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io). Private sign-in details are saved locally in `data/deployment/access.md`, outside version control. [Hosted verification](docs/hosted-verification.md) records the deployed release, completed workloads, measured performance limits, recovery and backup evidence.
 
+The app has two primary pages: **Overview** for the current hospital baseline and simulation setup, and **Analysis** with **Summary**, **Replay**, **Analytics**, and **Comparison**. Analytics includes ensemble outcomes, patient/unit inspection, and resources. The [workflow guide](docs/overview-analysis-flow.md) describes navigation, saved result context, and compatibility with older shared links.
+
 ## Start locally
 
 Prerequisites: Python 3.12, `uv`, Node.js 24 and npm. Docker is needed for the PostgreSQL/Redis deployment stack, but the local development path uses SQLite and local artifacts.

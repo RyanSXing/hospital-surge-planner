@@ -20,7 +20,7 @@ test("cohort edit and stream changes retain compatible visible mix semantics", a
   const context = await scenario(page, "cohort mix edit semantics", {
     conditions: [original],
   });
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   const block = page.getByRole("button", {
     name: "Declared ward cohort Planning assumption",
     exact: true,
@@ -99,7 +99,7 @@ test("custom imported curves, multiple windows and timeline moves retain exact i
   const context = await scenario(page, "exact imported curves", {
     conditions: [curve],
   });
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await expect(page.getByLabel("Scenario preset")).toHaveValue("custom");
   await page
     .getByLabel("Scenario name", { exact: true })

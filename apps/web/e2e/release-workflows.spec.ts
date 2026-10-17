@@ -22,7 +22,7 @@ test("calendar horizons, complete library search, pagination, clone and archive 
       horizon_calendar_days: 3,
       replications: 1,
     });
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await page.getByLabel("Horizon unit").selectOption("weeks");
   await page.getByLabel("Planning horizon").fill("2");
   const saveWeeks = page.waitForResponse(
@@ -161,7 +161,7 @@ test("ICU transfer to a clinic is rejected and ward transfer reserves and travel
       })
     ).id,
   );
-  await open(page, context.scenario.id, "resources", initial.id);
+  await open(page, context.scenario.id, "analytics-resources", initial.id);
   await page
     .getByRole("button", { name: "Plan transfer", exact: true })
     .click();
@@ -268,7 +268,7 @@ test("patient filters and unit evidence expose exact selected-run details", asyn
       })
     ).id,
   );
-  await open(page, context.scenario.id, "patients", run.id);
+  await open(page, context.scenario.id, "analytics-patients", run.id);
   await page.getByLabel("Patient state filter").selectOption("waiting");
   await page
     .getByText("Care, waiting, arrival and remaining-stay filters", {

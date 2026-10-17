@@ -8,7 +8,7 @@ test("a slower destination check cannot overwrite the current transfer choice", 
     horizon_calendar_days: 1,
     replications: 1,
   });
-  await open(page, context.scenario.id, "resources");
+  await open(page, context.scenario.id, "analytics-resources");
   let release!: () => void;
   const barrier = new Promise<void>((resolve) => {
     release = resolve;

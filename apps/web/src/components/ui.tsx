@@ -276,9 +276,12 @@ export function Modal({
       ).filter((e) => e.tabIndex !== -1 && e.getClientRects().length > 0);
     if (!node?.contains(document.activeElement)) focusable()[0]?.focus();
     function key(e: KeyboardEvent) {
-      const dialogs = document.querySelectorAll(
-        '[role="dialog"][aria-modal="true"]',
-      );
+      // Page-level editors stay mounted to retain drafts. Their hidden dialogs
+      // must not intercept keyboard input in the active workspace.
+      if (!node?.getClientRects().length) return;
+      const dialogs = Array.from(
+        document.querySelectorAll('[role="dialog"][aria-modal="true"]'),
+      ).filter((dialog) => dialog.getClientRects().length > 0);
       if (dialogs[dialogs.length - 1] !== node) return;
       if (e.key === "Escape") {
         e.preventDefault();
@@ -312,7 +315,11 @@ export function Modal({
     document.addEventListener("keydown", key);
     return () => {
       document.removeEventListener("keydown", key);
-      if (returnFocus.current?.isConnected) returnFocus.current.focus();
+      if (
+        returnFocus.current?.isConnected &&
+        returnFocus.current.getClientRects().length
+      )
+        returnFocus.current.focus();
     };
   }, []);
   return (

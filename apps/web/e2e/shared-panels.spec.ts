@@ -1,5 +1,13 @@
 import { test, expect } from "@playwright/test";
-import { api, open, scenario, waitRun, capture, record } from "./helpers";
+import {
+  api,
+  open,
+  scenario,
+  waitRun,
+  capture,
+  record,
+  type WorkspaceView,
+} from "./helpers";
 
 test("linked workspaces keep time docks visible and collapse panels without changing the run", async ({
   page,
@@ -27,29 +35,38 @@ test("linked workspaces keep time docks visible and collapse panels without chan
         mutations.push(new URL(request.url()).pathname);
   });
   const evidence: Record<string, unknown> = {};
-  for (const view of ["patients", "resources", "compare", "replay"] as const) {
+  const views: [
+    WorkspaceView,
+    "patients" | "resources" | "compare" | "replay",
+  ][] = [
+    ["analytics-patients", "patients"],
+    ["analytics-resources", "resources"],
+    ["comparison", "compare"],
+    ["replay", "replay"],
+  ];
+  for (const [view, panel] of views) {
     await page.setViewportSize({ width: 1600, height: 900 });
     await open(page, context.scenario.id, view, run.id);
     await expect(page.locator(".state-banner")).toHaveCount(0);
-    const dock = page.locator(`#${view}-timeline-dock`),
-      inspector = page.locator(`#${view}-inspector-dock`);
+    const dock = page.locator(`#${panel}-timeline-dock`),
+      inspector = page.locator(`#${panel}-inspector-dock`);
     await expect(dock).toBeVisible();
     await expect(inspector).toBeVisible();
     const bounds = await dock.boundingBox();
     expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(877);
     expect(bounds!.height).toBeGreaterThanOrEqual(180);
     const selected = new URL(page.url());
-    await page.getByLabel(`Hide ${view} inspector`, { exact: true }).click();
+    await page.getByLabel(`Hide ${panel} inspector`, { exact: true }).click();
     await expect(inspector).toBeHidden();
     await expect(dock).toBeVisible();
-    await page.getByLabel(`Show ${view} inspector`, { exact: true }).click();
+    await page.getByLabel(`Show ${panel} inspector`, { exact: true }).click();
     await expect(inspector).toBeVisible();
-    await page.getByLabel(`Hide ${view} timeline`, { exact: true }).click();
+    await page.getByLabel(`Hide ${panel} timeline`, { exact: true }).click();
     await expect(dock).toBeHidden();
     await expect(inspector).toBeVisible();
-    await page.getByLabel(`Show ${view} timeline`, { exact: true }).click();
+    await page.getByLabel(`Show ${panel} timeline`, { exact: true }).click();
     const handle = page.getByRole("separator", {
-      name: `Resize ${view} timeline`,
+      name: `Resize ${panel} timeline`,
     });
     await handle.focus();
     await page.keyboard.press("Home");
@@ -76,8 +93,8 @@ test("linked workspaces keep time docks visible and collapse panels without chan
         page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       )
       .toBe(true);
-    await capture(page, `shared-panels-${view}`, info);
-    evidence[view] = {
+    await capture(page, `shared-panels-${panel}`, info);
+    evidence[panel] = {
       dock: bounds,
       independent_collapse: true,
       keyboard_resize: true,

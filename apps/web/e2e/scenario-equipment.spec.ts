@@ -6,7 +6,7 @@ test("planned equipment quantities use prior exact inventory and reject saturati
 }, info) => {
   test.skip(info.project.name !== "desktop");
   const context = await scenario(page, "exact equipment quantities");
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   const add = async () => {
     await page
       .getByRole("button", { name: "Add equipment availability", exact: true })
@@ -107,7 +107,7 @@ test("inherited observed equipment failures bound future planned repairs and fai
     "POST",
     { run: false },
   );
-  await open(page, branch.scenario.id, "scenarios");
+  await open(page, branch.scenario.id, "overview");
   await page
     .getByRole("button", { name: "Add equipment availability", exact: true })
     .click();

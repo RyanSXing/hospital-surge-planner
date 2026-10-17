@@ -24,11 +24,12 @@ import {
 
 const pages: [PageId, string][] = [
   ["overview", "Overview"],
-  ["scenarios", "Scenarios"],
+  ["summary", "Analysis · Summary"],
+  ["replay", "Analysis · Replay"],
+  ["analytics", "Analysis · Analytics"],
+  ["comparison", "Analysis · Comparison"],
   ["patients", "Patients & units"],
   ["resources", "Resources"],
-  ["compare", "Compare responses"],
-  ["replay", "Flow replay"],
   ["data", "Data & setup"],
 ];
 

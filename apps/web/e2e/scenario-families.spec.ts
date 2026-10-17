@@ -20,7 +20,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const context = await scenario(page, "all editable assumption families");
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await page.getByLabel("Increase in ED arrivals").fill("70");
   await expect(page.getByLabel("Scenario preset")).toHaveValue("sustained");
   const openFamily = async (name: string) => {
@@ -229,6 +229,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
   await page.locator("main").evaluate((element) => {
     element.scrollTop = 0;
   });
+  await page.locator(".plan-family-track").last().scrollIntoViewIfNeeded();
   const railBounds = await page
     .locator(".plan-family-track")
     .evaluateAll((elements) =>
@@ -305,7 +306,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
     state.units.find((u: any) => u.unit_id === "UNIT-WARD-A").staffed,
   ).toBe(40);
   const immutable = JSON.stringify(frozen);
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await page
     .getByLabel("Scenario name", { exact: true })
     .fill("Later draft edits preserve completed forecast");
@@ -339,7 +340,7 @@ test("scenario resource forms and independent inspector remain keyboard accessib
 }, info) => {
   test.skip(info.project.name !== "mobile");
   const context = await scenario(page, "mobile exact scenario controls");
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await page.getByRole("button", { name: "Hide scenario inspector" }).click();
   await expect(page.locator("#scenario-inspector-dock")).toBeHidden();
   await expect(

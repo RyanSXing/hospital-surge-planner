@@ -51,7 +51,7 @@ test("historical results retain frozen dates and assumptions beside an edited dr
     },
   );
   expect(changed.ok()).toBe(true);
-  await open(page, context.scenario.id, "resources", run.id);
+  await open(page, context.scenario.id, "analytics-resources", run.id);
   await expect(page.locator(".site-inspector")).toContainText(
     "Frozen reserve assignment",
   );
@@ -81,7 +81,7 @@ test("historical results retain frozen dates and assumptions beside an edited dr
     await page.getByRole("button", { name: "Toggle navigation" }).click();
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("button", { name: "Scenarios", exact: true })
+    .getByRole("button", { name: "Overview", exact: true })
     .click();
   await expect(page.getByLabel("Scenario name", { exact: true })).toHaveValue(
     editedName,
@@ -166,7 +166,7 @@ test("completed comparisons and source search preserve distinct frozen and rebas
   );
   expect(changed.ok()).toBe(true);
   await page.goto(
-    `/?scenario=${context.scenario.id}&run=${reference.id}&view=compare&comparison=${comparison.id}`,
+    `/?scenario=${context.scenario.id}&run=${reference.id}&view=analysis&analysis=comparison&comparison=${comparison.id}`,
   );
   await expect(page.locator(".comparison-context")).toContainText(
     context.scenario.name,
@@ -182,7 +182,7 @@ test("completed comparisons and source search preserve distinct frozen and rebas
   await expect(assumptions).toContainText(String(context.scenario.base_seed));
   await expect(assumptions).not.toContainText("Rebased live draft");
   await assumptions.getByRole("button", { name: "Close dialog" }).click();
-  await open(page, context.scenario.id, "patients", reference.id);
+  await open(page, context.scenario.id, "analytics-patients", reference.id);
   await page.locator(".patient-table tbody .link-button").first().click();
   const checked = page.waitForResponse(
     (response) =>
@@ -201,7 +201,7 @@ test("completed comparisons and source search preserve distinct frozen and rebas
   await expect(page.locator(".eligibility-row").first()).toBeVisible();
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("button", { name: "Scenarios", exact: true })
+    .getByRole("button", { name: "Overview", exact: true })
     .click();
   await expect(page.getByLabel("Scenario name", { exact: true })).toHaveValue(
     "Rebased live draft",

@@ -1,0 +1,162 @@
+/* Primary workflow: prepare in Overview, inspect results in Analysis. */
+.workspace-view[hidden] {
+  display: none !important;
+}
+.workspace-view {
+  min-width: 0;
+  min-height: 100%;
+}
+.sidebar-workflow {
+  margin: 27px 19px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.sidebar-workflow > .eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.3px;
+}
+.sidebar-workflow p {
+  display: flex;
+  gap: 9px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 13px;
+  line-height: 1.6;
+}
+.sidebar-workflow p > span {
+  color: var(--cyan);
+  font-size: 10px;
+  padding-top: 1px;
+}
+.analysis-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 51px;
+  background: #0c1c28;
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.analysis-bar nav {
+  display: flex;
+  gap: 5px;
+  align-self: stretch;
+}
+.analysis-bar nav > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 15px;
+  color: #9fb8c8;
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+}
+.analysis-bar nav > button.active {
+  color: #8bdcf1;
+  border-bottom-color: var(--cyan);
+  background: #14304477;
+}
+.analysis-bar nav > button:hover {
+  background: #14304477;
+}
+.analysis-run-context {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.analysis-run-context small {
+  padding: 2px 6px;
+  font-size: 10px;
+  background: #173040;
+  border: 1px solid var(--border);
+}
+.status-dot.running {
+  background: var(--amber);
+}
+.analysis-empty {
+  display: flex;
+  min-height: 430px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+  padding: 45px 24px;
+  text-align: center;
+}
+.analysis-empty > svg {
+  color: var(--cyan);
+}
+.analysis-empty p {
+  color: var(--muted);
+  max-width: 550px;
+  line-height: 1.8;
+}
+.analysis-empty .button {
+  margin-top: 6px;
+}
+.history-loading {
+  position: absolute;
+  inset: 0;
+  background: #08141de8;
+  z-index: 15;
+  display: grid;
+  place-items: center;
+}
+.planning-overview-configuration .scenarios-page > .page-heading .eyebrow {
+  font-size: 10px;
+}
+@media (min-width: 768px) {
+  .workspace .replay-stage {
+    height: calc(100dvh - 263px);
+  }
+}
+@media (min-width: 768px) and (max-width: 1300px) {
+  .sidebar-workflow {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .analysis-run-context {
+    display: none;
+  }
+  .analysis-bar nav {
+    flex: 1;
+  }
+  .analysis-bar nav > button {
+    flex: 1;
+  }
+}
+@media (max-width: 767px) {
+  .analysis-bar {
+    padding: 0 10px;
+    min-height: 49px;
+    gap: 0;
+  }
+  .analysis-bar nav {
+    width: 100%;
+    gap: 0;
+  }
+  .analysis-bar nav > button {
+    padding: 12px 7px;
+    font-size: 12px;
+    gap: 5px;
+  }
+  .analysis-bar nav > button > svg {
+    width: 13px;
+    height: 13px;
+  }
+  .sidebar-workflow {
+    margin-top: 20px;
+  }
+  .breadcrumb > strong {
+    white-space: nowrap;
+  }
+}

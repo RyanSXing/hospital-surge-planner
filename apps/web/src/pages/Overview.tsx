@@ -88,11 +88,11 @@ export default function Overview({
       <div className="page-heading">
         <div>
           <div className="eyebrow">
-            OPERATIONS WORKSPACE <span className="eyebrow-divider">/</span>{" "}
-            CAPACITY PLANNING
+            ANALYSIS <span className="eyebrow-divider">/</span>{" "}
+            SUMMARY
           </div>
-          <h1>Command overview</h1>
-          <p>Understand pressure. Explore your next response.</p>
+          <h1>Results summary</h1>
+          <p>See the forecast, locate pressure, and explore your next response.</p>
         </div>
         <div className="heading-actions">
           <button

@@ -19,23 +19,43 @@ export async function api(
   return response.json();
 }
 export async function login(page: Page) {
-  let r = await page.request.post("/api/auth/login", {
-    data: { demo_role: "admin" },
-  });
-  if (!r.ok()) {
+  const credentials = () => {
     const env = readFileSync(
-        process.env.E2E_AUTH_ENV_FILE || resolve(process.cwd(), "../../.env"),
-        "utf8",
-      ),
-      password = env
-        .match(/^ADMIN_PASSWORD=(.*)$/m)?.[1]
-        ?.trim()
-        .replace(/^(["'])(.*)\1$/, "$2");
-    r = await page.request.post("/api/auth/login", {
-      data: { username: "admin", password },
+      process.env.E2E_AUTH_ENV_FILE || resolve(process.cwd(), "../../.env"),
+      "utf8",
+    );
+    const password = env
+      .match(/^ADMIN_PASSWORD=(.*)$/m)?.[1]
+      ?.trim()
+      .replace(/^(["'])(.*)\1$/, "$2");
+    return { username: "admin", password };
+  };
+  // Production has no seeded development session. Avoid knowingly invalid
+  // sign-ins, and honor the real authentication rate limit during long suites.
+  const data = process.env.E2E_AUTH_ENV_FILE
+    ? credentials()
+    : { demo_role: "admin" };
+  let response = await page.request.post("/api/auth/login", { data });
+  if (response.status() === 429) {
+    await expect
+      .poll(
+        async () => {
+          response = await page.request.post("/api/auth/login", { data });
+          return response.status();
+        },
+        { timeout: 75_000, intervals: [2000, 4000] },
+      )
+      .not.toBe(429);
+  }
+  if (!response.ok() && !process.env.E2E_AUTH_ENV_FILE) {
+    response = await page.request.post("/api/auth/login", {
+      data: credentials(),
     });
   }
-  expect(r.ok()).toBeTruthy();
+  expect(
+    response.ok(),
+    `Sign-in returned HTTP ${response.status()}`,
+  ).toBeTruthy();
 }
 export async function scenario(
   page: Page,
@@ -58,7 +78,7 @@ export async function scenario(
     );
   expect(dataset).toBeTruthy();
   const chosen = await api(page.request, "/scenarios", "POST", {
-    name: `E2E ${name} ${Date.now()}`,
+    name: `E2E ${process.env.E2E_RUN_TAG ? process.env.E2E_RUN_TAG + " " : ""}${name} ${Date.now()}`,
     dataset_version_id: dataset.id,
     horizon_calendar_days: 3,
     replications: 10,
@@ -80,19 +100,42 @@ export async function waitRun(page: Page, runId: string) {
     .toBe("SUCCEEDED");
   return result;
 }
+export type WorkspaceView =
+  | "overview"
+  | "summary"
+  | "replay"
+  | "analytics-outcomes"
+  | "analytics-patients"
+  | "analytics-resources"
+  | "comparison"
+  | "data";
+
+export function workspaceViewQuery(view: WorkspaceView) {
+  if (view === "overview" || view === "data") return `view=${view}`;
+  if (view === "analytics-outcomes")
+    return "view=analysis&analysis=analytics&section=outcomes";
+  if (view === "analytics-patients")
+    return "view=analysis&analysis=analytics&section=patients";
+  if (view === "analytics-resources")
+    return "view=analysis&analysis=analytics&section=resources";
+  return `view=analysis&analysis=${view}`;
+}
+
 export async function open(
   page: Page,
   scenarioId: string,
-  view = "overview",
+  view: WorkspaceView = "overview",
   runId?: string,
 ) {
   await page.goto(
-    `/?scenario=${scenarioId}&view=${view}${runId ? `&run=${runId}` : ""}`,
+    `/?scenario=${scenarioId}&${workspaceViewQuery(view)}${runId ? `&run=${runId}` : ""}`,
   );
   await expect(page.locator(".app-shell")).toBeVisible();
   await expect(page.getByText("Loading planning workspace")).toHaveCount(0);
   await page
-    .locator(".page-heading,.overview-page,.patients-page")
+    .locator(
+      ".page-heading:visible,.overview-page:visible,.patients-page:visible,.analysis-empty:visible",
+    )
     .first()
     .waitFor({ state: "visible" });
 }

@@ -64,7 +64,15 @@ const choices = [
   },
 ];
 const palette = ["#ff6c79", "#efbd60", "#57d8eb", "#55d9bf"];
-export default function Compare({ ctx }: { ctx: PlanningContext }) {
+export default function Compare({
+  ctx,
+  comparisonId,
+  onComparisonSelect,
+}: {
+  ctx: PlanningContext;
+  comparisonId?: string | null;
+  onComparisonSelect?: (id: string | null) => void;
+}) {
   const panels = usePlanningPanels(180);
   const [selected, setSelected] = useState([
       "physical_overflow",
@@ -170,8 +178,14 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
   useEffect(() => {
     let ignore = false;
     const stored =
-      sessionStorage.getItem(`hospital.comparison.${ctx.scenario?.id}`) ||
-      new URLSearchParams(location.search).get("comparison");
+      comparisonId !== undefined
+        ? comparisonId
+        : new URLSearchParams(location.search).get("comparison") ||
+          sessionStorage.getItem(`hospital.comparison.${ctx.scenario?.id}`);
+    if (stored === comparison?.id) return;
+    setComparison(null);
+    setChosen("");
+    setFetchError("");
     if (stored)
       api(`/comparisons/${stored}`)
         .then((c) => {
@@ -183,7 +197,7 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
     return () => {
       ignore = true;
     };
-  }, [ctx.scenario?.id]);
+  }, [ctx.scenario?.id, comparisonId]);
   useEffect(() => {
     if (
       !comparison?.id ||
@@ -201,6 +215,7 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
   }, [comparison?.id, comparison?.status]);
   function persist(c: Entity) {
     accept(c);
+    onComparisonSelect?.(c.id);
     sessionStorage.setItem(`hospital.comparison.${ctx.scenario?.id}`, c.id);
     const u = new URL(location.href);
     u.searchParams.set("comparison", c.id);
@@ -465,6 +480,7 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
                   : [...v, o.kind],
               );
               setComparison(null);
+              onComparisonSelect?.(null);
               sessionStorage.removeItem(
                 `hospital.comparison.${ctx.scenario?.id}`,
               );

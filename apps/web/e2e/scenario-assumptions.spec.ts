@@ -6,7 +6,7 @@ test("advanced assumptions save preserves unsaved visual conditions", async ({
 }, info) => {
   test.skip(info.project.name !== "desktop");
   const context = await scenario(page, "visual draft to assumptions");
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await page.getByLabel("Increase in ED arrivals").fill("70");
   await page
     .getByRole("button", { name: "Add one-time incident batches", exact: true })

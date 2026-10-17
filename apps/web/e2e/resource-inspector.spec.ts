@@ -17,7 +17,7 @@ test("resource tables use persistent selected-time inspectors and reloadable lin
     ).id,
   );
   const dataset = await api(page.request, `/datasets/${context.dataset.id}`);
-  await open(page, context.scenario.id, "resources", run.id);
+  await open(page, context.scenario.id, "analytics-resources", run.id);
   const cases = [
     ["Staff", "staff", dataset.staff[0].staff_id],
     [

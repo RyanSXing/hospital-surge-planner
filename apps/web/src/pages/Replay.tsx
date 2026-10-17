@@ -424,9 +424,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     const dpr = window.devicePixelRatio || 1,
       W = 1000,
       H = canvasHeight;
-    node.width = W * dpr;
-    node.height = H * dpr;
-    g.scale(dpr, dpr);
+    node.width = Math.round(W * dpr);
+    node.height = Math.round(H * dpr);
+    g.scale(node.width / W, node.height / H);
     const previous = motionState.current;
     const targetPoints = new Map(
       visiblePatients.map((patient) => [

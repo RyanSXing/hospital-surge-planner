@@ -26,7 +26,7 @@ const fields: [string, string, string][] = [
   ["patients_transferred", "Interfacility transfers", "patients"],
   ["unserved_at_horizon", "Unresolved inpatient requests at end", "patients"],
   ["staff_deficit_hours", "Staffing coverage deficit", "place-hours"],
-  ["equipment_deficit_hours", "Equipment coverage deficit", "place-hours"],
+  ["equipment_deficit_hours", "Equipment coverage deficit", "equipment-hours"],
   ["additional_staff_hours", "Additional staff assignments", "staff-hours"],
   [
     "temporary_site_patients_served",
@@ -284,9 +284,9 @@ export default function ComparisonDetails({
             <div className="plan-actions">
               <Button
                 small
-                onClick={() => ctx.openRun(p.run_group_id, "overview")}
+                onClick={() => ctx.openRun(p.run_group_id, "summary")}
               >
-                Open in overview <ArrowUpRight size={13} />
+                Open in summary <ArrowUpRight size={13} />
               </Button>
               <Button
                 small

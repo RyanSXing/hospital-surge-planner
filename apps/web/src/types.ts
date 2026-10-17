@@ -1,6 +1,9 @@
 export type Entity = Record<string, any>;
 export type PageId =
   | "overview"
+  | "summary"
+  | "analytics"
+  | "comparison"
   | "scenarios"
   | "patients"
   | "resources"

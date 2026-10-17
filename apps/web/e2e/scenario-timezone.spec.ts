@@ -8,7 +8,7 @@ test("scenario fields preserve the second repeated Chicago hour and reject the s
   const context = await scenario(page, "Chicago DST planning times", {
     horizon_calendar_days: 30,
   });
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await page
     .getByRole("button", { name: "Add equipment availability", exact: true })
     .click();

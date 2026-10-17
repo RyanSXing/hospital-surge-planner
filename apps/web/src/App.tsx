@@ -71,33 +71,50 @@ import AlertsDialog from "./components/AlertsDialog";
 import SearchDialog from "./components/SearchDialog";
 import { resourceFacility } from "./entityLocation";
 import {
+  destination,
+  isAnalysisPage,
+  readNavigation,
+  writeNavigation,
+} from "./navigation";
+import type { AnalysisPage, AnalyticsSection } from "./navigation";
+import "./workspaceFlow.css";
+import {
   actualInventory,
   searchEntityId,
   type SearchKind,
 } from "./components/workspaceSearch";
-const Overview = lazy(() => import("./pages/Overview")),
+const Summary = lazy(() => import("./pages/Overview")),
+  PlanningOverview = lazy(() => import("./pages/PlanningOverview")),
+  Analytics = lazy(() => import("./pages/Analytics")),
   Scenarios = lazy(() => import("./pages/Scenarios")),
-  Patients = lazy(() => import("./pages/Patients")),
-  Resources = lazy(() => import("./pages/Resources")),
   Compare = lazy(() => import("./pages/Compare")),
   Replay = lazy(() => import("./pages/Replay")),
   DataSetup = lazy(() => import("./pages/DataSetup"));
-const nav = [
-  { id: "overview", name: "Overview", icon: Map },
-  { id: "scenarios", name: "Scenarios", icon: SlidersHorizontal },
-  { id: "patients", name: "Patients & units", icon: Users },
-  { id: "resources", name: "Resources", icon: Building2 },
-  { id: "compare", name: "Compare responses", icon: GitCompareArrows },
-  { id: "replay", name: "Flow replay", icon: Play },
+const analysisNav = [
+  { id: "summary", name: "Summary", icon: Map },
+  { id: "replay", name: "Replay", icon: Play },
+  { id: "analytics", name: "Analytics", icon: Activity },
+  { id: "comparison", name: "Comparison", icon: GitCompareArrows },
 ] as const;
 export default function App() {
   const queryClient = useQueryClient();
-  const [page, setPageState] = useState<PageId>(
-      () =>
-        (new URLSearchParams(location.search).get("view") ||
-          "overview") as PageId,
-    ),
-    [dataset, setDatasetState] = useState<Dataset | null>(null),
+  const [route, setRoute] = useState(() =>
+    readNavigation(new URLSearchParams(location.search)),
+  );
+  const { page, section: analyticsSection } = route;
+  const lastAnalysisPage = useRef<AnalysisPage>(
+    isAnalysisPage(page) ? page : "summary",
+  );
+  const [restoringLocation, setRestoringLocation] = useState(false);
+  const historyRequest = useRef(0);
+  const [comparisonSelection, setComparisonSelection] = useState<
+    string | null | undefined
+  >(() => new URLSearchParams(location.search).get("comparison") || undefined);
+  const [comparisonVisited, setComparisonVisited] = useState(
+    page === "comparison",
+  );
+  const [overviewVisited, setOverviewVisited] = useState(page === "overview");
+  const [dataset, setDatasetState] = useState<Dataset | null>(null),
     [draftDataset, setDraftDataset] = useState<Dataset | null>(null),
     [scenario, setScenario] = useState<Scenario | null>(null),
     [run, setRun] = useState<RunGroup | null>(null),
@@ -243,6 +260,7 @@ export default function App() {
         `/runs/${activeReplicationId || run?.selected_replication_id}/state?at=${encodeURIComponent(selectedTime)}`,
       ),
     enabled:
+      page !== "overview" &&
       !!(activeReplicationId || run?.selected_replication_id) &&
       run?.status === "SUCCEEDED",
     staleTime: Infinity,
@@ -251,7 +269,7 @@ export default function App() {
       run?.status === "SUCCEEDED" ? metricsQuery.data || null : null,
     state = run?.status === "SUCCEEDED" ? stateQuery.data || null : null;
   const resultScenario = run?.scenario_context || scenario;
-  const editingContext = ["scenarios", "compare", "data"].includes(page);
+  const editingContext = ["overview", "comparison", "data"].includes(page);
   const presentationScenario = editingContext ? scenario : resultScenario;
   const inspectionDataset = editingContext ? draftDataset || dataset : dataset;
   const draftDatasetDiffers =
@@ -267,12 +285,29 @@ export default function App() {
       inspectionDataset?.timezone ||
       "America/Chicago",
   );
-  const setPage = useCallback((p: PageId) => {
-    setPageState(p);
-    setMobileNav(false);
-    const u = new URL(location.href);
-    u.searchParams.set("view", p);
-    history.replaceState({}, "", u);
+  const setPage = useCallback(
+    (p: PageId) => {
+      ++historyRequest.current;
+      setRestoringLocation(false);
+      const next = destination(p, analyticsSection);
+      setRoute(next);
+      setMobileNav(false);
+      if (isAnalysisPage(next.page)) lastAnalysisPage.current = next.page;
+      if (next.page === "comparison") setComparisonVisited(true);
+      if (next.page === "overview") setOverviewVisited(true);
+      const url = writeNavigation(new URL(location.href), next);
+      if (url.href !== location.href) history.pushState({}, "", url);
+    },
+    [analyticsSection],
+  );
+  const setAnalyticsSection = useCallback((section: AnalyticsSection) => {
+    ++historyRequest.current;
+    setRestoringLocation(false);
+    const next = { page: "analytics" as const, section };
+    setRoute(next);
+    lastAnalysisPage.current = "analytics";
+    const url = writeNavigation(new URL(location.href), next);
+    if (url.href !== location.href) history.pushState({}, "", url);
   }, []);
   const setTime = useCallback((t: string) => setSelectedTime(t), []);
   const selectedDay = Math.max(
@@ -323,6 +358,7 @@ export default function App() {
     [],
   );
   const refresh = useCallback(async () => {
+    setComparisonSelection(null);
     const contextUrl = new URL(location.href);
     contextUrl.searchParams.delete("comparison");
     history.replaceState({}, "", contextUrl);
@@ -331,11 +367,14 @@ export default function App() {
     setDraftDataset(s.draft_dataset || s.dataset);
     setScenario(s.scenario);
     setRun(s.run_group || s.run || null);
+    setReplication("");
+    setPatient(null);
     await queryClient.invalidateQueries({ queryKey: ["summary"] });
   }, [queryClient]);
   async function saveScenario(p: Entity) {
     return action("Saving scenario", async () => {
       if (p.__select) {
+        setComparisonSelection(null);
         const contextUrl = new URL(location.href);
         contextUrl.searchParams.delete("comparison");
         history.replaceState({}, "", contextUrl);
@@ -369,7 +408,7 @@ export default function App() {
       return s;
     });
   }
-  async function openRun(id: string, target: PageId = "overview") {
+  async function openRun(id: string, target: PageId = "summary") {
     await action("Opening evaluated result", async () => {
       const selected = await api(
         `/workspaces/workspace-main/summary?run_group_id=${encodeURIComponent(id)}`,
@@ -411,6 +450,7 @@ export default function App() {
       setPatient(null);
       setScenario(chosen);
       setSelectedTime(chosen.start_at);
+      setPage("summary");
       await queryClient.invalidateQueries({ queryKey: ["run"] });
       notify(
         "Simulation queued. Progress reflects completed patient-flow runs.",
@@ -419,6 +459,7 @@ export default function App() {
   }
   async function loadDataset(fixture: string) {
     await action("Loading synthetic dataset", async () => {
+      setComparisonSelection(null);
       const contextUrl = new URL(location.href);
       contextUrl.searchParams.delete("comparison");
       history.replaceState({}, "", contextUrl);
@@ -490,7 +531,7 @@ export default function App() {
       if (kind === "facility") {
         prepareInspection();
         setFacility(id);
-        setPage("overview");
+        setPage("summary");
         return;
       }
       if (kind === "route" || kind === "update") {
@@ -555,17 +596,26 @@ export default function App() {
     dataset: editingContext ? draftDataset || dataset : dataset,
     scenario,
     resultScenario: editingContext ? null : resultScenario,
-    run: draftDatasetDiffers ? null : run,
+    run: page === "overview" || draftDatasetDiffers ? null : run,
     canWrite: user?.role !== "viewer",
     role: user?.role,
-    activeReplicationId: draftDatasetDiffers ? "" : activeReplicationId,
+    activeReplicationId:
+      page === "overview" || draftDatasetDiffers ? "" : activeReplicationId,
     setReplication,
-    metrics: draftDatasetDiffers ? null : metrics,
-    state: editingContext ? inspectionState : state,
-    stateLoading: !draftDatasetDiffers && stateQuery.isFetching,
-    stateError: draftDatasetDiffers ? null : stateQuery.error?.message || null,
-    selectedTime,
-    selectedDay,
+    metrics: page === "overview" || draftDatasetDiffers ? null : metrics,
+    state:
+      page === "overview" ? null : editingContext ? inspectionState : state,
+    stateLoading:
+      page !== "overview" && !draftDatasetDiffers && stateQuery.isFetching,
+    stateError:
+      page === "overview" || draftDatasetDiffers
+        ? null
+        : stateQuery.error?.message || null,
+    selectedTime:
+      page === "overview"
+        ? inspectionDataset?.snapshot_at || selectedTime
+        : selectedTime,
+    selectedDay: page === "overview" ? 0 : selectedDay,
     selectedFacility,
     selectedPatient,
     selectedUnit,
@@ -600,6 +650,99 @@ export default function App() {
     loadDataset,
     notify,
   };
+  // Global result tools use the selected frozen run even while Overview shows
+  // the source baseline and an independently editable scenario draft.
+  const resultToolsCtx: PlanningContext = {
+    ...ctx,
+    dataset,
+    run,
+    metrics,
+    state,
+    selectedTime,
+    selectedDay,
+    resultScenario,
+    activeReplicationId,
+    stateLoading: stateQuery.isFetching,
+    stateError: stateQuery.error?.message || null,
+  };
+  useEffect(() => {
+    document.title = `${page === "overview" ? "Overview" : page === "data" ? "Data & setup" : `Analysis · ${analysisNav.find((item) => item.id === page)?.name}`} | Hospital Surge Planner`;
+    document.getElementById("main-content")?.scrollTo({ top: 0 });
+  }, [page, analyticsSection]);
+  useEffect(() => {
+    async function restoreHistory() {
+      const request = ++historyRequest.current;
+      const params = new URLSearchParams(location.search);
+      const next = readNavigation(params);
+      setRestoringLocation(true);
+      try {
+        let restoredDataset = dataset;
+        let restoredScenario = scenario;
+        if (
+          params.get("scenario") !== scenario?.id ||
+          params.get("run") !== (run?.id || null)
+        ) {
+          const selection = new URLSearchParams();
+          if (params.get("scenario"))
+            selection.set("scenario_id", params.get("scenario")!);
+          if (params.get("run"))
+            selection.set("run_group_id", params.get("run")!);
+          const selected = await api(
+            `/workspaces/workspace-main/summary${selection.size ? `?${selection}` : ""}`,
+          );
+          if (request !== historyRequest.current) return;
+          restoredDataset = selected.dataset;
+          restoredScenario = selected.scenario;
+          setDataset(selected.dataset);
+          setDraftDataset(selected.draft_dataset || selected.dataset);
+          setScenario(selected.scenario);
+          setRun(
+            params.get("run")
+              ? selected.run_group || selected.run || null
+              : null,
+          );
+        }
+        if (request !== historyRequest.current) return;
+        setRoute(next);
+        if (isAnalysisPage(next.page)) lastAnalysisPage.current = next.page;
+        if (next.page === "comparison") setComparisonVisited(true);
+        if (next.page === "overview") setOverviewVisited(true);
+        setComparisonSelection(params.get("comparison"));
+        setMobileNav(false);
+        setSelectedTime(
+          params.get("at") ||
+            restoredScenario?.start_at ||
+            restoredDataset?.snapshot_at ||
+            "2026-10-16T05:00:00Z",
+        );
+        setFacilityState(params.get("facility") || "FAC-MAIN");
+        setReplication(params.get("replication") || "");
+        setPatient(
+          params.get("patient") ? { patient_id: params.get("patient") } : null,
+        );
+        setSelectedUnit(params.get("unit") || "");
+        setSelectedResource(
+          params.get("resource") && params.get("resource_type")
+            ? {
+                id: params.get("resource")!,
+                kind: params.get("resource_type")!,
+              }
+            : null,
+        );
+        const value = params.get("grain");
+        setGrain(value === "week" || value === "month" ? value : "day");
+      } catch (failure) {
+        if (request === historyRequest.current)
+          setError(
+            `Could not restore workspace: ${failure instanceof Error ? failure.message : String(failure)}`,
+          );
+      } finally {
+        if (request === historyRequest.current) setRestoringLocation(false);
+      }
+    }
+    window.addEventListener("popstate", restoreHistory);
+    return () => window.removeEventListener("popstate", restoreHistory);
+  }, [dataset, scenario?.id, run?.id, setDataset]);
   useEffect(() => {
     function key(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -614,19 +757,9 @@ export default function App() {
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
   }, []);
-  const previousRunId = useRef<string | undefined>(undefined);
   useEffect(() => {
-    if (previousRunId.current && run?.id && previousRunId.current !== run.id) {
-      setReplication("");
-      setPatient(null);
-      setSelectedResource(null);
-      setSelectedUnit("");
-    }
-    previousRunId.current = run?.id;
-  }, [run?.id]);
-  useEffect(() => {
-    if (!dataset || !scenario) return;
-    const u = new URL(location.href);
+    if (!dataset || !scenario || restoringLocation) return;
+    const u = writeNavigation(new URL(location.href), route);
     u.searchParams.set("scenario", scenario.id);
     u.searchParams.set("dataset", inspectionDataset?.id || dataset.id);
     u.searchParams.set("at", selectedTime);
@@ -662,6 +795,8 @@ export default function App() {
     selectedPatient,
     selectedUnit,
     selectedResource,
+    route,
+    restoringLocation,
   ]);
   const active =
     run &&
@@ -738,22 +873,44 @@ export default function App() {
         </div>
       </header>
       <aside className={`sidebar ${mobileNav ? "open" : ""}`}>
-        <div className="sidebar-section-label">PLAN & EXPLORE</div>
+        <div className="sidebar-section-label">PLANNING WORKSPACE</div>
         <nav aria-label="Main navigation">
-          {nav.map((n) => (
-            <button
-              key={n.id}
-              className={page === n.id ? "active" : ""}
-              onClick={() => setPage(n.id)}
-            >
-              <n.icon size={18} />
-              <span>{n.name}</span>
-              {page === n.id ? <i /> : null}
-            </button>
-          ))}
+          <button
+            aria-label="Overview"
+            className={page === "overview" ? "active" : ""}
+            aria-current={page === "overview" ? "page" : undefined}
+            onClick={() => setPage("overview")}
+          >
+            <Hospital size={18} />
+            <span>Overview</span>
+            {page === "overview" ? <i /> : null}
+          </button>
+          <button
+            aria-label="Analysis"
+            className={isAnalysisPage(page) ? "active" : ""}
+            aria-current={isAnalysisPage(page) ? "page" : undefined}
+            onClick={() => setPage(lastAnalysisPage.current)}
+          >
+            <Activity size={18} />
+            <span>Analysis</span>
+            {isAnalysisPage(page) ? <i /> : null}
+          </button>
         </nav>
+        <div className="sidebar-workflow">
+          <span className="eyebrow">YOUR WORKFLOW</span>
+          <p>
+            <span>01</span> Review the baseline
+          </p>
+          <p>
+            <span>02</span> Configure &amp; simulate
+          </p>
+          <p>
+            <span>03</span> Analyze &amp; compare
+          </p>
+        </div>
         <div className="sidebar-bottom">
           <button
+            aria-label="Data & setup"
             className={page === "data" ? "active" : ""}
             onClick={() => setPage("data")}
           >
@@ -787,8 +944,18 @@ export default function App() {
             <span>Workspace</span>
             <ChevronRight size={11} />
             <strong>
-              {nav.find((n) => n.id === page)?.name || "Data & setup"}
+              {page === "overview"
+                ? "Overview"
+                : page === "data"
+                  ? "Data & setup"
+                  : "Analysis"}
             </strong>
+            {isAnalysisPage(page) ? (
+              <>
+                <ChevronRight size={11} />
+                <strong>{analysisNav.find((n) => n.id === page)?.name}</strong>
+              </>
+            ) : null}
             <span className="context-divider" />
             <span>
               Dataset{" "}
@@ -830,26 +997,9 @@ export default function App() {
               <ArrowDownToLine size={13} />
               Export
             </button>
-            {page !== "scenarios" ? (
-              <Button
-                small
-                primary
-                disabled={
-                  user?.role === "viewer" || !!busy || !!active || !scenario
-                }
-                title={
-                  user?.role === "viewer"
-                    ? "Viewer access is read-only"
-                    : undefined
-                }
-                onClick={() => runScenario()}
-              >
-                {active ? (
-                  <LoaderCircle size={13} className="spin" />
-                ) : (
-                  <Play size={12} />
-                )}{" "}
-                {active ? "Running" : "Run scenario"}
+            {isAnalysisPage(page) ? (
+              <Button small onClick={() => setPage("overview")}>
+                <SlidersHorizontal size={13} /> Edit scenario
               </Button>
             ) : null}
           </div>
@@ -867,6 +1017,7 @@ export default function App() {
                 const u = new URL(location.href);
                 u.searchParams.set("comparison", run.comparison_id);
                 history.replaceState({}, "", u);
+                setComparisonSelection(run.comparison_id);
                 setPage("compare");
               }}
             >
@@ -874,7 +1025,7 @@ export default function App() {
             </button>
           </div>
         ) : null}
-        {stateQuery.error ? (
+        {page !== "overview" && stateQuery.error ? (
           <div className="global-error">
             <ErrorBox
               error={`Selected run state unavailable: ${stateQuery.error.message}`}
@@ -936,7 +1087,7 @@ export default function App() {
               Results are from saved revision {run.source_draft_revision}. The
               current draft has changes.
             </span>
-            {page !== "scenarios" ? (
+            {page !== "overview" ? (
               <button
                 disabled={user?.role === "viewer"}
                 onClick={() => runScenario()}
@@ -946,7 +1097,9 @@ export default function App() {
             ) : null}
           </div>
         ) : null}
-        {stateQuery.isFetching && run?.status === "SUCCEEDED" ? (
+        {page !== "overview" &&
+        stateQuery.isFetching &&
+        run?.status === "SUCCEEDED" ? (
           <div className="state-banner">
             <LoaderCircle className="spin" size={12} />
             Reconstructing selected run at{" "}
@@ -986,7 +1139,42 @@ export default function App() {
             </Button>
           </div>
         ) : null}
-        <main id="main-content" tabIndex={-1}>
+        {isAnalysisPage(page) ? (
+          <div className="analysis-bar">
+            <nav aria-label="Analysis navigation">
+              {analysisNav.map((item) => (
+                <button
+                  key={item.id}
+                  aria-current={page === item.id ? "page" : undefined}
+                  className={page === item.id ? "active" : ""}
+                  onClick={() => setPage(item.id)}
+                >
+                  <item.icon size={15} />
+                  <span>{item.name}</span>
+                </button>
+              ))}
+            </nav>
+            <div
+              className="analysis-run-context"
+              aria-label="Selected analysis run"
+            >
+              <span className={`status-dot${active ? " running" : ""}`} />
+              <span>
+                {run
+                  ? `${completed} / ${total} runs · ${run.status.toLowerCase().replaceAll("_", " ")}`
+                  : "No simulation selected"}
+              </span>
+              {run?.source_draft_revision ? (
+                <small>REV {run.source_draft_revision}</small>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+        <main
+          id="main-content"
+          tabIndex={-1}
+          aria-busy={restoringLocation || summary.isLoading}
+        >
           {summary.isLoading ? (
             <div className="workspace-loading">
               <Busy label="Preparing your planning workspace" />
@@ -996,21 +1184,92 @@ export default function App() {
             </div>
           ) : dataset ? (
             <Suspense fallback={<Busy label="Opening workspace view" />}>
-              {page === "overview" ? (
-                <Overview ctx={ctx} onUpdate={() => openUpdate()} />
-              ) : page === "scenarios" ? (
-                <Scenarios ctx={ctx} />
-              ) : page === "patients" ? (
-                <Patients ctx={ctx} onUpdate={openUpdate} />
-              ) : page === "resources" ? (
-                <Resources ctx={ctx} onUpdate={openUpdate} />
-              ) : page === "compare" ? (
-                <Compare ctx={ctx} />
+              {overviewVisited ? (
+                <div
+                  className="workspace-view planning-view"
+                  hidden={page !== "overview"}
+                >
+                  <PlanningOverview
+                    ctx={{ ...ctx, dataset: draftDataset || dataset, run }}
+                    configuration={
+                      <Scenarios
+                        ctx={{
+                          ...ctx,
+                          dataset: draftDataset || dataset,
+                          run: null,
+                          metrics: null,
+                          state: null,
+                          stateLoading: false,
+                          stateError: null,
+                          resultScenario: null,
+                          selectedTime: (draftDataset || dataset).snapshot_at,
+                          selectedDay: 0,
+                          busy: active ? "Simulation in progress" : busy,
+                        }}
+                      />
+                    }
+                    onInspectBaseline={() => setPage("data")}
+                    onOpenAnalysis={() => setPage("summary")}
+                  />
+                </div>
+              ) : null}
+              {page === "summary" ? (
+                run?.status === "SUCCEEDED" ? (
+                  <Summary ctx={ctx} onUpdate={() => openUpdate()} />
+                ) : (
+                  <div className="analysis-empty">
+                    {active ? (
+                      <LoaderCircle size={32} className="spin" />
+                    ) : (
+                      <Activity size={32} />
+                    )}
+                    <span className="eyebrow">ANALYSIS · SUMMARY</span>
+                    <h1>
+                      {active
+                        ? "Your simulation is running"
+                        : run
+                          ? "Simulation needs attention"
+                          : "Your analysis starts here"}
+                    </h1>
+                    <p>
+                      {active
+                        ? "Computed outcomes will appear here as soon as all runs finish. You can continue reviewing your baseline while the simulation runs."
+                        : "Configure your hospital scenario in Overview and run a simulation to explore its results, replay, and analytics."}
+                    </p>
+                    <Button primary onClick={() => setPage("overview")}>
+                      Go to Overview <ArrowRight size={15} />
+                    </Button>
+                  </div>
+                )
+              ) : page === "analytics" ? (
+                <Analytics
+                  ctx={ctx}
+                  section={analyticsSection}
+                  onSectionChange={setAnalyticsSection}
+                  onUpdate={openUpdate}
+                />
               ) : page === "replay" ? (
                 <Replay ctx={ctx} />
-              ) : (
+              ) : page === "data" ? (
                 <DataSetup ctx={ctx} />
-              )}
+              ) : null}
+              {comparisonVisited ? (
+                <div
+                  className="workspace-view comparison-view"
+                  hidden={page !== "comparison"}
+                >
+                  <Compare
+                    key={scenario?.id}
+                    comparisonId={comparisonSelection}
+                    onComparisonSelect={setComparisonSelection}
+                    ctx={{
+                      ...ctx,
+                      dataset: draftDataset || dataset,
+                      resultScenario: null,
+                    }}
+                  />
+                </div>
+              ) : null}
             </Suspense>
           ) : (
             <div className="workspace-loading">
@@ -1021,6 +1280,11 @@ export default function App() {
               </Button>
             </div>
           )}
+          {restoringLocation ? (
+            <div className="history-loading">
+              <Busy label="Opening saved workspace context" />
+            </div>
+          ) : null}
         </main>
         <footer className="statusbar">
           <span>
@@ -1070,10 +1334,29 @@ export default function App() {
         </div>
       ) : null}
       {searchOpen ? (
-        <SearchDialog ctx={ctx} onClose={() => setSearchOpen(false)} />
+        <SearchDialog
+          ctx={
+            page === "overview" && !draftDatasetDiffers
+              ? {
+                  ...ctx,
+                  run,
+                  state: inspectionState,
+                  stateLoading: stateQuery.isFetching,
+                  stateError: stateQuery.error?.message || null,
+                  selectedTime,
+                  selectedDay,
+                  activeReplicationId,
+                }
+              : ctx
+          }
+          onClose={() => setSearchOpen(false)}
+        />
       ) : null}
       {exportOpen ? (
-        <ExportDialog ctx={ctx} onClose={() => setExportOpen(false)} />
+        <ExportDialog
+          ctx={resultToolsCtx}
+          onClose={() => setExportOpen(false)}
+        />
       ) : null}
       {updateOpen ? (
         <UpdateDialog
@@ -1086,7 +1369,10 @@ export default function App() {
         />
       ) : null}
       {alertsOpen ? (
-        <AlertsDialog ctx={ctx} onClose={() => setAlertsOpen(false)} />
+        <AlertsDialog
+          ctx={resultToolsCtx}
+          onClose={() => setAlertsOpen(false)}
+        />
       ) : null}
       {helpOpen ? (
         <Modal

@@ -583,8 +583,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     <div className="scenarios-page page-scroll">
       <div className="page-heading">
         <div>
-          <div className="eyebrow">SCENARIO WORKSPACE</div>
-          <h1>Build a surge scenario</h1>
+          <div className="eyebrow">SIMULATION SETUP</div>
+          <h2 className="scenario-editor-title">Configure your simulation</h2>
           <p>Shape demand, available resources, and your response over time.</p>
         </div>
         <div className="heading-actions">

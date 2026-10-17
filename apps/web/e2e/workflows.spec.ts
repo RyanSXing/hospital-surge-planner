@@ -27,7 +27,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
   page.on("pageerror", (e) => errors.push(e.message));
   const context = await scenario(page, "complete workflow");
   console.log("workflow: created", context.scenario.id);
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   console.log("workflow: scenario screen loaded");
   await page
     .getByLabel("Scenario name", { exact: true })
@@ -76,13 +76,13 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
   console.log("workflow: run complete");
   const frozen = await api(page.request, "/run-groups/" + run.id);
   expect(frozen.replications_completed || frozen.completed).toBe(10);
-  await open(page, context.scenario.id, "patients", run.id);
+  await open(page, context.scenario.id, "analytics-patients", run.id);
   await page.locator(".patient-table tbody .link-button").first().click();
   await expect(page.locator(".patient-inspector")).toContainText(
     "SELECTED PATIENT",
   );
   await capture(page, "workflow-patient", info);
-  await open(page, context.scenario.id, "compare", run.id);
+  await open(page, context.scenario.id, "comparison", run.id);
   await page.getByLabel("Comparison simulation runs").selectOption("10");
   const compared = page.waitForResponse(
     (r) =>
@@ -137,7 +137,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
     "Interfacility transfers",
   );
   await page
-    .getByRole("button", { name: "Open in overview", exact: true })
+    .getByRole("button", { name: "Open in summary", exact: true })
     .last()
     .click();
   await expect
@@ -162,7 +162,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
     .getByRole("button", { name: "Save selected plan", exact: true })
     .click();
   expect((await saved).ok()).toBeTruthy();
-  await open(page, context.scenario.id, "overview", run.id);
+  await open(page, context.scenario.id, "summary", run.id);
   await page.getByRole("button", { name: "Record update" }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByLabel("Additional patients")).toBeVisible();

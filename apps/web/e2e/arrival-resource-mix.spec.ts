@@ -8,7 +8,7 @@ test("reported arrival resource mixtures are editable, validated and retained af
     horizon_calendar_days: 1,
     replications: 1,
   });
-  await open(page, context.scenario.id, "resources");
+  await open(page, context.scenario.id, "analytics-resources");
   await page
     .locator(".page-heading")
     .getByRole("button", { name: /Record update/ })

@@ -155,7 +155,7 @@ export default function AlertsDialog({
                       ctx.setFacility(
                         a.scope_filters?.facility_id || "FAC-MAIN",
                       );
-                      ctx.setPage("overview");
+                      ctx.setPage("summary");
                       onClose();
                     }}
                   >

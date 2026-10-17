@@ -186,7 +186,8 @@ export default function AddSiteDialog({
               travel_minutes: travel,
               loading_minutes: 10,
               unloading_minutes: 10,
-              estimate_source: source,
+              estimate_source: "manual",
+              source,
               effective_at: ctx.dataset?.snapshot_at,
             },
           });

@@ -236,12 +236,14 @@ test("replay exposes complete filtered events, patient history and recorded reso
       .poll(() =>
         page.locator(".replay-canvas").evaluate((node: HTMLCanvasElement) => {
           const bounds = node.getBoundingClientRect();
+          // Raster dimensions are integers. Verify the aspect within one
+          // backing pixel even when the new navigation makes the scene short.
           return Math.abs(
-            node.width / node.height - bounds.width / bounds.height,
+            node.height - (node.width * bounds.height) / bounds.width,
           );
         }),
       )
-      .toBeLessThan(0.01);
+      .toBeLessThanOrEqual(1);
   }
   await capture(page, "replay-complete-evidence", info);
   const later = new Date(Date.parse(run.start_at) + 24 * 3600000).toISOString();

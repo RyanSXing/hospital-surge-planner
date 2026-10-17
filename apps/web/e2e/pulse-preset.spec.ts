@@ -30,7 +30,7 @@ test("short arrival pulse is editable, undoable and frozen as one additive batch
       },
     ],
   });
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await page.getByLabel("Scenario preset").selectOption("pulse");
   const pulse = page.getByRole("button", {
     name: "Short arrival pulse Planning assumption",
@@ -127,7 +127,7 @@ test("short arrival pulse rejects a horizon ending before day-two noon", async (
   const context = await scenario(page, "short pulse horizon", {
     horizon_calendar_days: 1,
   });
-  await open(page, context.scenario.id, "scenarios");
+  await open(page, context.scenario.id, "overview");
   await page.getByLabel("Scenario preset").selectOption("pulse");
   await expect(page.getByRole("alert")).toContainText(
     "local day 2 from 12:00 to 13:00",

@@ -38,7 +38,7 @@ test("observed reset preserves an explicit-offset snapshot cutoff finer than one
     "POST",
     {},
   );
-  await open(page, context.scenario.id, "resources");
+  await open(page, context.scenario.id, "analytics-resources");
   await page
     .locator(".page-heading")
     .getByRole("button", { name: "Record update", exact: true })

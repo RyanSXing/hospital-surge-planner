@@ -1,9 +1,164 @@
-import {test,expect} from '@playwright/test';
-import {api,capture,open,record,scenario,waitRun} from './helpers';
+import { test, expect } from "@playwright/test";
+import { api, capture, open, record, scenario, waitRun } from "./helpers";
 
-test('candidate site requirements become a feasible saved and simulated resource response',async({page},info)=>{
- test.skip(info.project.name==='mobile','Resource mutation lifecycle is exercised once.');
- const context=await scenario(page,'candidate resource workflow',{horizon_calendar_days:1,replications:1});const original=await api(page.request,`/datasets/${context.dataset.id}`);await open(page,context.scenario.id,'resources');await page.getByRole('button',{name:'Add candidate site',exact:true}).click();const dialog=page.getByRole('dialog');await expect(dialog).toContainText('Add a candidate site');const name=`Audit neighborhood clinic ${Date.now()}`;await dialog.getByLabel('Site name',{exact:true}).fill(name);await dialog.getByLabel('Installed treatment / shelter places').fill('12');await dialog.getByLabel('Source / provenance').fill('Browser acceptance declared fictional inventory');await dialog.getByLabel('Requirements and uncertainty notes').fill('Twelve spaces require declared reserve staffing and portable kits before receiving.');await dialog.getByRole('button',{name:'Save candidate inventory'}).click();await expect(dialog).toHaveCount(0,{timeout:30000});await expect(page.locator('.site-inspector h2')).toHaveText(name);const scenarioId=new URL(page.url()).searchParams.get('scenario')!;expect(scenarioId).not.toBe(context.scenario.id);const freshScenario=await api(page.request,`/scenarios/${scenarioId}`),dataset=await api(page.request,`/datasets/${freshScenario.dataset_version_id}`);expect(dataset.id).not.toBe(original.id);const site=dataset.facilities.find((f:any)=>f.name===name),unit=dataset.units.find((u:any)=>u.facility_id===site.facility_id);expect(dataset.slots.filter((s:any)=>s.unit_id===unit.unit_id)).toHaveLength(12);expect(dataset.capacity_policies.some((p:any)=>p.capacity_policy_id===unit.capacity_policy_id&&p.slots_per_nurse===4)).toBeTruthy();expect(dataset.routes.filter((r:any)=>r.from_facility_id===site.facility_id||r.to_facility_id===site.facility_id)).toHaveLength(original.facilities.length*2);expect(dataset.clinic_policies.some((p:any)=>p.site_id===site.facility_id)).toBeTruthy();expect(dataset.staff).toHaveLength(original.staff.length);expect(dataset.equipment_pools).toHaveLength(original.equipment_pools.length);
- await page.getByRole('button',{name:'Assign resources & schedule'}).click();await expect(dialog).toContainText('Plan resources');await expect(dialog.getByRole('button',{name:'Save proposed response'})).toBeDisabled();await expect(dialog).toContainText('Allocate one declared clinic kit for each enabled space');await dialog.getByLabel(/CLINIC_KIT · EQ-RES-CLINIC-KIT/).fill('8');await dialog.getByLabel('Nurses',{exact:true}).fill('0');await dialog.getByLabel('Providers',{exact:true}).fill('0');await dialog.getByLabel('Support',{exact:true}).fill('0');await dialog.getByRole('button',{name:'Validate prerequisites'}).click();await expect(dialog).toContainText('Unmet prerequisites');await expect(dialog.getByRole('button',{name:'Save proposed response'})).toBeDisabled();await dialog.getByLabel('Nurses',{exact:true}).fill('2');await dialog.getByLabel('Providers',{exact:true}).fill('1');await dialog.getByLabel('Support',{exact:true}).fill('1');await dialog.getByRole('button',{name:'Validate prerequisites'}).click();await expect(dialog).toContainText('Declared prerequisites fit');await dialog.getByRole('button',{name:'Save proposed response'}).click();await expect(dialog).toHaveCount(0);const saved=await api(page.request,`/scenarios/${scenarioId}`),response=saved.interventions.find((p:any)=>p.facility_id===site.facility_id);expect(response).toMatchObject({unit_id:unit.unit_id,kind:'clinic',nurses:2,providers:1,support:1,enabled_slots:8,equipment_allocations:[{equipment_pool_id:'EQ-RES-CLINIC-KIT',quantity:8}]});await capture(page,'new-candidate-resources',info);
- const short=await api(page.request,'/scenarios','POST',{name:'E2E candidate response evaluation',dataset_version_id:dataset.id,start_at:saved.start_at,horizon_calendar_days:1,replications:1,conditions:[],interventions:[response]}),run=await waitRun(page,(await api(page.request,'/run-groups','POST',{scenario_id:short.id})).id),at=new Date(Date.parse(saved.start_at)+8*3600000).toISOString(),state=await api(page.request,`/runs/${run.selected_replication_id}/state?at=${encodeURIComponent(at)}`),actual=state.units.find((u:any)=>u.unit_id===unit.unit_id);expect(actual.staffed_capacity??actual.staffed).toBe(8);expect(actual.enabled_capacity??actual.enabled).toBe(8);const old=await api(page.request,`/datasets/${original.id}`);expect(old.facilities).toHaveLength(original.facilities.length);expect(old.facilities.some((f:any)=>f.facility_id===site.facility_id)).toBeFalsy();record('candidate-resource-response',{source_dataset_id:original.id,dataset_id:dataset.id,scenario_id:scenarioId,evaluation_run_id:run.id,facility_id:site.facility_id,unit_id:unit.unit_id,declared_places:12,staff_supported_places:8,at,actual_unit:actual});
+test("candidate site requirements become a feasible saved and simulated resource response", async ({
+  page,
+}, info) => {
+  test.skip(
+    info.project.name === "mobile",
+    "Resource mutation lifecycle is exercised once.",
+  );
+  const context = await scenario(page, "candidate resource workflow", {
+    horizon_calendar_days: 1,
+    replications: 1,
+  });
+  const original = await api(page.request, `/datasets/${context.dataset.id}`);
+  await open(page, context.scenario.id, "analytics-resources");
+  await page
+    .getByRole("button", { name: "Add candidate site", exact: true })
+    .click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toContainText("Add a candidate site");
+  const name = `Audit neighborhood clinic ${Date.now()}`;
+  await dialog.getByLabel("Site name", { exact: true }).fill(name);
+  await dialog.getByLabel("Installed treatment / shelter places").fill("12");
+  await dialog
+    .getByLabel("Source / provenance")
+    .fill("Browser acceptance declared fictional inventory");
+  await dialog
+    .getByLabel("Requirements and uncertainty notes")
+    .fill(
+      "Twelve spaces require declared reserve staffing and portable kits before receiving.",
+    );
+  await dialog
+    .getByRole("button", { name: "Save candidate inventory" })
+    .click();
+  await expect(dialog).toHaveCount(0, { timeout: 30000 });
+  await expect(page.locator(".site-inspector h2")).toHaveText(name);
+  const scenarioId = new URL(page.url()).searchParams.get("scenario")!;
+  expect(scenarioId).not.toBe(context.scenario.id);
+  const freshScenario = await api(page.request, `/scenarios/${scenarioId}`),
+    dataset = await api(
+      page.request,
+      `/datasets/${freshScenario.dataset_version_id}`,
+    );
+  expect(dataset.id).not.toBe(original.id);
+  const site = dataset.facilities.find((f: any) => f.name === name),
+    unit = dataset.units.find((u: any) => u.facility_id === site.facility_id);
+  expect(
+    dataset.slots.filter((s: any) => s.unit_id === unit.unit_id),
+  ).toHaveLength(12);
+  expect(
+    dataset.capacity_policies.some(
+      (p: any) =>
+        p.capacity_policy_id === unit.capacity_policy_id &&
+        p.slots_per_nurse === 4,
+    ),
+  ).toBeTruthy();
+  expect(
+    dataset.routes.filter(
+      (r: any) =>
+        r.from_facility_id === site.facility_id ||
+        r.to_facility_id === site.facility_id,
+    ),
+  ).toHaveLength(original.facilities.length * 2);
+  for (const route of dataset.routes.filter(
+    (r: any) =>
+      r.from_facility_id === site.facility_id ||
+      r.to_facility_id === site.facility_id,
+  )) {
+    expect(route.estimate_source).toBe("manual");
+    expect(route.source).toBe(
+      "Browser acceptance declared fictional inventory",
+    );
+  }
+  expect(
+    dataset.clinic_policies.some((p: any) => p.site_id === site.facility_id),
+  ).toBeTruthy();
+  expect(dataset.staff).toHaveLength(original.staff.length);
+  expect(dataset.equipment_pools).toHaveLength(original.equipment_pools.length);
+  await page
+    .getByRole("button", { name: "Assign resources & schedule" })
+    .click();
+  await expect(dialog).toContainText("Plan resources");
+  await expect(
+    dialog.getByRole("button", { name: "Save proposed response" }),
+  ).toBeDisabled();
+  await expect(dialog).toContainText(
+    "Allocate one declared clinic kit for each enabled space",
+  );
+  await dialog.getByLabel(/CLINIC_KIT · EQ-RES-CLINIC-KIT/).fill("8");
+  await dialog.getByLabel("Nurses", { exact: true }).fill("0");
+  await dialog.getByLabel("Providers", { exact: true }).fill("0");
+  await dialog.getByLabel("Support", { exact: true }).fill("0");
+  await dialog.getByRole("button", { name: "Validate prerequisites" }).click();
+  await expect(dialog).toContainText("Unmet prerequisites");
+  await expect(
+    dialog.getByRole("button", { name: "Save proposed response" }),
+  ).toBeDisabled();
+  await dialog.getByLabel("Nurses", { exact: true }).fill("2");
+  await dialog.getByLabel("Providers", { exact: true }).fill("1");
+  await dialog.getByLabel("Support", { exact: true }).fill("1");
+  await dialog.getByRole("button", { name: "Validate prerequisites" }).click();
+  await expect(dialog).toContainText("Declared prerequisites fit");
+  await dialog.getByRole("button", { name: "Save proposed response" }).click();
+  await expect(dialog).toHaveCount(0);
+  const saved = await api(page.request, `/scenarios/${scenarioId}`),
+    response = saved.interventions.find(
+      (p: any) => p.facility_id === site.facility_id,
+    );
+  expect(response).toMatchObject({
+    unit_id: unit.unit_id,
+    kind: "clinic",
+    nurses: 2,
+    providers: 1,
+    support: 1,
+    enabled_slots: 8,
+    equipment_allocations: [
+      { equipment_pool_id: "EQ-RES-CLINIC-KIT", quantity: 8 },
+    ],
+  });
+  await capture(page, "new-candidate-resources", info);
+  const short = await api(page.request, "/scenarios", "POST", {
+      name: "E2E candidate response evaluation",
+      dataset_version_id: dataset.id,
+      start_at: saved.start_at,
+      horizon_calendar_days: 1,
+      replications: 1,
+      conditions: [],
+      interventions: [response],
+    }),
+    run = await waitRun(
+      page,
+      (
+        await api(page.request, "/run-groups", "POST", {
+          scenario_id: short.id,
+        })
+      ).id,
+    ),
+    at = new Date(Date.parse(saved.start_at) + 8 * 3600000).toISOString(),
+    state = await api(
+      page.request,
+      `/runs/${run.selected_replication_id}/state?at=${encodeURIComponent(at)}`,
+    ),
+    actual = state.units.find((u: any) => u.unit_id === unit.unit_id);
+  expect(actual.staffed_capacity ?? actual.staffed).toBe(8);
+  expect(actual.enabled_capacity ?? actual.enabled).toBe(8);
+  const old = await api(page.request, `/datasets/${original.id}`);
+  expect(old.facilities).toHaveLength(original.facilities.length);
+  expect(
+    old.facilities.some((f: any) => f.facility_id === site.facility_id),
+  ).toBeFalsy();
+  record("candidate-resource-response", {
+    source_dataset_id: original.id,
+    dataset_id: dataset.id,
+    scenario_id: scenarioId,
+    evaluation_run_id: run.id,
+    facility_id: site.facility_id,
+    unit_id: unit.unit_id,
+    declared_places: 12,
+    staff_supported_places: 8,
+    at,
+    actual_unit: actual,
+  });
 });

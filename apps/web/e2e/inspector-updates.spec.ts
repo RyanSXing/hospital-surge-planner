@@ -23,7 +23,7 @@ test("cancelled runs explain their state and retry the same frozen input snapsho
     },
   );
   expect(changed.ok()).toBe(true);
-  await open(page, context.scenario.id, "overview", run.id);
+  await open(page, context.scenario.id, "summary", run.id);
   await expect(
     page.getByText("Simulation cancelled.", { exact: true }),
   ).toBeVisible();
@@ -89,7 +89,7 @@ test("inspector updates retain selected entities, exact time and frozen parent p
       u.unit_id !== "UNIT-WARD-A",
   );
   expect(unit).toBeTruthy();
-  const url = `/?scenario=${context.scenario.id}&run=${run.id}&view=patients&unit=${unit.unit_id}&at=${encodeURIComponent(at)}`;
+  const url = `/?scenario=${context.scenario.id}&run=${run.id}&view=analysis&analysis=analytics&section=patients&unit=${unit.unit_id}&at=${encodeURIComponent(at)}`;
   await page.goto(url);
   const inspector = page.locator("#patients-inspector-dock");
   const change = inspector.getByRole("button", {
@@ -155,7 +155,7 @@ test("inspector updates retain selected entities, exact time and frozen parent p
   ];
   for (const item of cases) {
     await page.goto(
-      `/?scenario=${context.scenario.id}&run=${run.id}&view=resources&resource_type=${item.kind}&resource=${item.id}&at=${encodeURIComponent(at)}`,
+      `/?scenario=${context.scenario.id}&run=${run.id}&view=analysis&analysis=analytics&section=resources&resource_type=${item.kind}&resource=${item.id}&at=${encodeURIComponent(at)}`,
     );
     const button = page
       .locator("#resources-inspector-dock")

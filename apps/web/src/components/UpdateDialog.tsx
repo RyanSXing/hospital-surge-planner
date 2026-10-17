@@ -9,6 +9,8 @@ import type {
 import { createUpdate, applyUpdate } from "../commands";
 import { api, ApiError, fmt, items, localDate, patientId, post } from "../api";
 import { Badge, Button, Busy, ErrorBox, Modal } from "./ui";
+import { ZonedDateTimeInput } from "./ZonedDateTimeInput";
+import { utcMinute } from "../zonedTime";
 
 type SourceMode = "selected_replication" | "paired_ensemble" | "observed_reset";
 const updateKinds = [
@@ -46,7 +48,7 @@ export default function UpdateDialog({
     [type, setType] = useState<UpdateCreate["type"]>("arrival_batch"),
     [sourceMode, setSourceMode] = useState<SourceMode>("selected_replication"),
     [when, setWhen] = useState(
-      (ctx.selectedTime || ctx.scenario?.start_at || "").slice(0, 16),
+      utcMinute(ctx.selectedTime || ctx.scenario?.start_at || ""),
     );
   const [count, setCount] = useState(20),
     [spread, setSpread] = useState(60),
@@ -144,7 +146,7 @@ export default function UpdateDialog({
       .then((data) => {
         if (!ignore) {
           setObserved(data);
-          setWhen(data.snapshot_at.slice(0, 16));
+          setWhen(utcMinute(data.snapshot_at));
         }
       })
       .catch((e) => {
@@ -154,7 +156,12 @@ export default function UpdateDialog({
       ignore = true;
     };
   }, [observedId]);
-  const effective = when ? `${when}:00Z` : "";
+  const effective =
+    sourceMode === "observed_reset" && observed
+      ? observed.snapshot_at
+      : when
+        ? `${when}:00Z`
+        : "";
   let payload: Entity = {};
   let payloadError = "";
   try {
@@ -231,7 +238,7 @@ export default function UpdateDialog({
     try {
       const request: ResetReconciliation = {
         observed_dataset_version_id: observed.id,
-        effective_at: isoMinute(when),
+        effective_at: observed.snapshot_at,
         parent_scenario_revision_id: complete
           ? ctx.run?.scenario_revision_id
           : undefined,
@@ -274,7 +281,11 @@ export default function UpdateDialog({
         throw new Error(
           "Complete a parent simulation first, or save this planning input without a forecast.",
         );
-      const time = savedEvent?.effective_at || isoMinute(when),
+      const time =
+          savedEvent?.effective_at ||
+          (sourceMode === "observed_reset" && observed
+            ? observed.snapshot_at
+            : isoMinute(when)),
         origin =
           sourceMode === "observed_reset"
             ? "observed_reset"
@@ -658,25 +669,39 @@ export default function UpdateDialog({
                   </p>
                 </>
               )}
-              <label>
-                Effective time (UTC)
-                <input
-                  type="datetime-local"
-                  value={when}
-                  onChange={(e) => {
-                    setWhen(e.target.value);
-                    setConfirmed(false);
-                    setReconciliation(null);
-                  }}
-                  disabled={!!savedEvent || sourceMode === "observed_reset"}
-                />
-                <small className="muted">
-                  Display charts use America/Chicago. This form uses explicit
-                  UTC to avoid ambiguous daylight-saving hours.
-                </small>
-              </label>
+              <ZonedDateTimeInput
+                label="Effective time"
+                value={when}
+                timeZone={
+                  (ctx.resultScenario || ctx.scenario)?.timezone ||
+                  "America/Chicago"
+                }
+                onChange={(value) => {
+                  setWhen(value);
+                  setConfirmed(false);
+                  setReconciliation(null);
+                }}
+                disabled={!!savedEvent || sourceMode === "observed_reset"}
+                required
+              />
               {sourceMode === "observed_reset" ? (
                 <>
+                  {observed ? (
+                    <p className="small-copy">
+                      Exact snapshot cutoff:{" "}
+                      {localDate(observed.snapshot_at, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        fractionalSecondDigits: 3,
+                        timeZoneName: "short",
+                      })}
+                      . The complete snapshot retains this exact instant.
+                    </p>
+                  ) : null}
                   <Button
                     disabled={!observed || previewBusy}
                     onClick={previewReset}

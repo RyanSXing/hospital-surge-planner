@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Truck,
   Users,
+  X,
 } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { api, fmt, items, localDate } from "../api";
@@ -19,13 +20,22 @@ import {
   Button,
   CapacityBar,
   ErrorBox,
-  Modal,
   PanelTitle,
 } from "../components/ui";
 import CampusMap from "../components/CampusMap";
 import TransferPlanner from "../components/TransferPlanner";
 import SiteActivationDialog from "../components/SiteActivationDialog";
 import AddSiteDialog from "../components/AddSiteDialog";
+import {
+  PlanningPanelControls,
+  PlanningTimelineDock,
+  usePlanningPanels,
+} from "../components/PlanningPanels";
+import {
+  actualInventory,
+  searchEntityId,
+  type SearchKind,
+} from "../components/workspaceSearch";
 import { nameOf, statsFor, unitsOf } from "../model";
 import "./resources.css";
 
@@ -37,6 +47,7 @@ export default function Resources({
   ctx: PlanningContext;
   onUpdate: () => void;
 }) {
+  const panels = usePlanningPanels(180);
   const [transfer, setTransfer] = useState(false),
     [tab, setTab] = useState("sites"),
     [addSite, setAddSite] = useState(false),
@@ -47,6 +58,28 @@ export default function Resources({
     [capabilityFilter, setCapabilityFilter] = useState("all"),
     [readinessFilter, setReadinessFilter] = useState("all"),
     [availabilityFilter, setAvailabilityFilter] = useState("all");
+  useEffect(() => {
+    if (ctx.selectedResource)
+      setTab(
+        (
+          {
+            staff: "staff",
+            equipment_pool: "equipment",
+            vehicle: "transport",
+            slot: "sites",
+            route: "transport",
+            update: "updates",
+          } as Record<string, string>
+        )[ctx.selectedResource.kind] || "sites",
+      );
+  }, [ctx.selectedResource?.kind, ctx.selectedResource?.id]);
+  useEffect(() => {
+    panels.setInspectorHidden(false);
+  }, [
+    ctx.selectedFacility,
+    ctx.selectedResource?.kind,
+    ctx.selectedResource?.id,
+  ]);
   const facilities = ctx.dataset?.facilities || [],
     facility =
       facilities.find((f) => facilityId(f) === ctx.selectedFacility) ||
@@ -109,7 +142,10 @@ export default function Resources({
         (p: Entity) => p.capacity_policy_id === u.capacity_policy_id,
       ) || {},
   }));
-  const planned = (ctx.scenario?.interventions || []).filter(
+  const recorded = ctx.stateLoading || ctx.stateError ? null : ctx.state;
+  const planned = (
+    (ctx.resultScenario || ctx.scenario)?.interventions || []
+  ).filter(
     (p) =>
       p.enabled !== false &&
       (p.facility_id === id ||
@@ -117,9 +153,30 @@ export default function Resources({
           (u) => u.unit_id === (p.unit_id || p.destination_unit_id),
         )),
   );
-  const siteEquipment = (ctx.dataset?.equipment_pools || []).filter(
-    (p: Entity) => selectedUnits.some((u) => u.unit_id === p.unit_id),
-  );
+  const selectedCurrentUnits = currentUnits.filter((u) => u.facility_id === id),
+    selectedUnitIds = new Set(selectedUnits.map((u) => String(u.unit_id))),
+    assignedStaff = new Set(
+      selectedCurrentUnits.flatMap((u) =>
+        Array.isArray(u.active_staff_ids) ? u.active_staff_ids : [],
+      ),
+    ),
+    siteEquipment = actualInventory(
+      "equipment_pool",
+      ctx.dataset?.equipment_pools,
+      recorded?.equipment_pools,
+    ).filter(
+      (p) =>
+        selectedUnitIds.has(String(p.unit_id || "")) || p.facility_id === id,
+    ),
+    siteSlots = (ctx.dataset?.slots || []).filter((slot) =>
+      selectedUnitIds.has(String(slot.unit_id)),
+    ),
+    installedPlaces = siteSlots.filter(
+      (slot) => slot.installation_status === "installed",
+    ).length,
+    plannedPlaces = siteSlots.filter(
+      (slot) => slot.installation_status === "planned",
+    ).length;
   const routes = (ctx.dataset?.routes || []).filter(
     (r: Entity) => r.to_facility_id === id,
   );
@@ -146,11 +203,21 @@ export default function Resources({
     if (partner) setTransfer(true);
     else if (!shelter) setActivation(section);
   }
-  const staff = ctx.dataset?.staff || [],
+  const staff = actualInventory("staff", ctx.dataset?.staff, recorded?.staff),
+    equipment = actualInventory(
+      "equipment_pool",
+      ctx.dataset?.equipment_pools,
+      recorded?.equipment_pools,
+    ),
+    vehicles = actualInventory(
+      "vehicle",
+      ctx.dataset?.vehicles,
+      recorded?.vehicles,
+    ),
     reserve = staff.filter((s) => s.employment_pool === "reserve"),
     hospital = staff.filter((s) => s.employment_pool === "hospital");
   return (
-    <div className="resources-page">
+    <div className="resources-page planning-panel-page">
       <div className="page-heading">
         <div>
           <div className="eyebrow">REGIONAL RESOURCES</div>
@@ -158,6 +225,7 @@ export default function Resources({
           <p>Connect available space, people, and capabilities.</p>
         </div>
         <div className="heading-actions">
+          <PlanningPanelControls panels={panels} name="resources" />
           <Button
             disabled={ctx.canWrite === false}
             onClick={() => setTransfer(true)}
@@ -191,7 +259,10 @@ export default function Resources({
             <button
               className={tab === key ? "active" : ""}
               key={String(key)}
-              onClick={() => setTab(String(key))}
+              onClick={() => {
+                ctx.clearResource();
+                setTab(String(key));
+              }}
             >
               <I size={15} />
               {String(label)}
@@ -201,9 +272,9 @@ export default function Resources({
                   : key === "staff"
                     ? staff.length
                     : key === "equipment"
-                      ? ctx.dataset?.equipment_pools.length
+                      ? equipment.length
                       : key === "transport"
-                        ? ctx.dataset?.vehicles?.length
+                        ? vehicles.length
                         : relevantUpdates.length}
               </span>
             </button>
@@ -325,44 +396,39 @@ export default function Resources({
             </aside>
             <div className="resource-map">
               <CampusMap ctx={ctx} resources />
-              {!shelter ? (
-                <div className="dependency-overlay">
-                  <span className="eyebrow">
-                    INSPECT ACTIVATION DEPENDENCIES
-                  </span>
+              {!active(facility) && !shelter ? (
+                <section
+                  className="dependency-overlay candidate-dependency-overlay"
+                  aria-labelledby="candidate-dependency-title"
+                >
+                  <div className="candidate-dependency-heading">
+                    <div>
+                      <span className="eyebrow">ACTIVATION PATH</span>
+                      <strong id="candidate-dependency-title">
+                        {nameOf(facility)}
+                      </strong>
+                    </div>
+                    <Badge tone="neutral">Candidate</Badge>
+                  </div>
                   <div className="dependency-nodes">
                     {[
                       [
                         "space",
                         Building2,
-                        "Space",
-                        selectedUnits.reduce(
-                          (n, u) =>
-                            n +
-                            (ctx.dataset?.slots || []).filter(
-                              (s) =>
-                                s.unit_id === u.unit_id &&
-                                s.installation_status !== "removed",
-                            ).length,
-                          0,
-                        ),
+                        "declared places",
+                        `${installedPlaces} installed / ${plannedPlaces} planned`,
                       ],
-                      [
-                        "staff",
-                        Users,
-                        "Personnel",
-                        `${planned.length} planned actions`,
-                      ],
+                      ["staff", Users, "assigned staff", assignedStaff.size],
                       [
                         "equipment",
                         Boxes,
-                        "Equipment",
-                        `${siteEquipment.length} local pools`,
+                        "equipment pools",
+                        siteEquipment.length,
                       ],
                       [
-                        "readiness",
+                        "setup",
                         Clock3,
-                        "Readiness",
+                        "setup lead time",
                         `${Number(facility.activation_minutes || 0) / 60}h setup`,
                       ],
                     ].map(([key, Icon, label, value]) => {
@@ -370,7 +436,12 @@ export default function Resources({
                       return (
                         <button
                           key={String(key)}
-                          onClick={() => plan(String(key))}
+                          onClick={() =>
+                            plan(
+                              String(key) === "setup" ? "space" : String(key),
+                            )
+                          }
+                          aria-label={`Plan ${String(label)} for ${nameOf(facility)}`}
                         >
                           <I size={19} />
                           <strong>{String(value)}</strong>
@@ -379,345 +450,416 @@ export default function Resources({
                       );
                     })}
                   </div>
+                  <div className="dependency-flow" aria-hidden="true">
+                    <span />
+                  </div>
+                  <button
+                    className="dependency-target"
+                    onClick={() => plan("staff")}
+                    aria-label={`Plan activation for ${nameOf(facility)}`}
+                  >
+                    <MapPin size={15} />
+                    <span>
+                      <strong>{nameOf(facility)}</strong>
+                      <small>Candidate site · resource schedule required</small>
+                    </span>
+                    <ChevronRight size={15} />
+                  </button>
                   <p className="small-copy muted">
-                    Select a dependency to inspect required, declared, and
-                    committed resources.
+                    Select a dependency to schedule the declared resource
+                    requirement at the selected time.
                   </p>
-                </div>
+                </section>
               ) : null}
             </div>
-            <aside className="inspector site-inspector">
-              <div className="inspector-header">
-                <div className="inspector-icon">
-                  <MapPin size={20} />
-                </div>
-                <div>
-                  <span className="eyebrow">SELECTED SITE</span>
-                  <h2>{nameOf(facility)}</h2>
-                </div>
-              </div>
-              <div className="inspector-section">
-                <Badge tone={active(facility) ? "success" : "neutral"}>
-                  {type.replaceAll("_", " ")} ·{" "}
-                  {active(facility) ? "active" : "candidate"}
-                </Badge>
-                <h3 className="section-space">Capacity & capability</h3>
-                {ctx.stateError ? (
-                  <ErrorBox error={ctx.stateError} />
-                ) : clinic ? (
-                  <>
-                    <CapacityBar
-                      label="Outpatient treatment"
-                      {...outpatient}
-                      capacity={outpatient.staffed}
-                    />
+            <aside
+              className="inspector site-inspector"
+              id="resources-inspector-dock"
+              hidden={panels.inspectorHidden}
+            >
+              {ctx.selectedResource ? (
+                <ResourceSelection ctx={ctx} updates={updates} />
+              ) : (
+                <>
+                  <div className="inspector-header">
+                    <div className="inspector-icon">
+                      <MapPin size={20} />
+                    </div>
+                    <div>
+                      <span className="eyebrow">SELECTED SITE</span>
+                      <h2>{nameOf(facility)}</h2>
+                    </div>
+                  </div>
+                  <div className="inspector-section">
+                    <Badge tone={active(facility) ? "success" : "neutral"}>
+                      {type.replaceAll("_", " ")} ·{" "}
+                      {active(facility) ? "active" : "candidate"}
+                    </Badge>
+                    <h3 className="section-space">Capacity & capability</h3>
+                    {ctx.stateError ? (
+                      <ErrorBox error={ctx.stateError} />
+                    ) : clinic ? (
+                      <>
+                        <CapacityBar
+                          label="Outpatient treatment"
+                          {...outpatient}
+                          capacity={outpatient.staffed}
+                        />
+                        <dl className="detail-list">
+                          <div>
+                            <dt>Receiving headroom</dt>
+                            <dd>{outpatient.available}</dd>
+                          </div>
+                          <div>
+                            <dt>Enabled / reserved</dt>
+                            <dd>
+                              {outpatient.enabled} / {outpatient.reserved}
+                            </dd>
+                          </div>
+                        </dl>
+                        <div className="constraint-callout">
+                          <strong className="amber">
+                            No inpatient / ICU capability
+                          </strong>
+                          <p>
+                            Only explicitly eligible ambulatory arrivals can use
+                            this service.
+                          </p>
+                        </div>
+                      </>
+                    ) : shelter ? (
+                      <div className="info-note">
+                        Shelter places provide nonclinical capacity. They cannot
+                        receive inpatient or ICU placements.
+                      </div>
+                    ) : (
+                      <>
+                        <CapacityBar
+                          label="Ward"
+                          {...ward}
+                          capacity={ward.staffed}
+                        />
+                        {selectedUnits.some((u) => u.kind === "icu") ? (
+                          <CapacityBar
+                            label="ICU"
+                            {...icu}
+                            capacity={icu.staffed}
+                          />
+                        ) : null}
+                      </>
+                    )}
+                    <p className="small-copy muted">
+                      {(facility.capabilities || []).join(" · ")}
+                    </p>
+                  </div>
+                  <div className="inspector-section">
+                    <h3>Requirements & readiness</h3>
+                    {policies
+                      .filter((p) =>
+                        ["ward", "clinic", "icu"].includes(p.unit.kind),
+                      )
+                      .map(({ unit, policy }) => (
+                        <p className="small-copy" key={unit.unit_id}>
+                          <strong>{unit.name}</strong>
+                          <br />
+                          {unit.capacity_mode === "advertised_aggregate"
+                            ? "Partner advertises staffed capacity."
+                            : `${policy.slots_per_nurse ?? "—"} places / nurse; provider gate ${policy.minimum_provider_count ?? 0}, support gate ${policy.minimum_support_count ?? 0}.`}
+                        </p>
+                      ))}
                     <dl className="detail-list">
                       <div>
-                        <dt>Receiving headroom</dt>
-                        <dd>{outpatient.available}</dd>
+                        <dt>Setup lead time</dt>
+                        <dd>
+                          {Number(facility.activation_minutes || 0) / 60} hours
+                        </dd>
                       </div>
                       <div>
-                        <dt>Enabled / reserved</dt>
+                        <dt>Site equipment pools</dt>
+                        <dd>{siteEquipment.length}</dd>
+                      </div>
+                      <div>
+                        <dt>Staffing source</dt>
                         <dd>
-                          {outpatient.enabled} / {outpatient.reserved}
+                          {partner
+                            ? "Partner-advertised"
+                            : facility.status === "candidate"
+                              ? "Unallocated reserve"
+                              : "Declared roster + planned reserve"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Incoming route assumptions</dt>
+                        <dd>{routes.length}</dd>
+                      </div>
+                      <div>
+                        <dt>Coordinates</dt>
+                        <dd>
+                          {facility.latitude}, {facility.longitude}
                         </dd>
                       </div>
                     </dl>
-                    <div className="constraint-callout">
-                      <strong className="amber">
-                        No inpatient / ICU capability
-                      </strong>
-                      <p>
-                        Only explicitly eligible ambulatory arrivals can use
-                        this service.
-                      </p>
-                    </div>
-                  </>
-                ) : shelter ? (
-                  <div className="info-note">
-                    Shelter places provide nonclinical capacity. They cannot
-                    receive inpatient or ICU placements.
-                  </div>
-                ) : (
-                  <>
-                    <CapacityBar
-                      label="Ward"
-                      {...ward}
-                      capacity={ward.staffed}
-                    />
-                    {selectedUnits.some((u) => u.kind === "icu") ? (
-                      <CapacityBar
-                        label="ICU"
-                        {...icu}
-                        capacity={icu.staffed}
-                      />
-                    ) : null}
-                  </>
-                )}
-                <p className="small-copy muted">
-                  {(facility.capabilities || []).join(" · ")}
-                </p>
-              </div>
-              <div className="inspector-section">
-                <h3>Requirements & readiness</h3>
-                {policies
-                  .filter((p) =>
-                    ["ward", "clinic", "icu"].includes(p.unit.kind),
-                  )
-                  .map(({ unit, policy }) => (
-                    <p className="small-copy" key={unit.unit_id}>
-                      <strong>{unit.name}</strong>
-                      <br />
-                      {unit.capacity_mode === "advertised_aggregate"
-                        ? "Partner advertises staffed capacity."
-                        : `${policy.slots_per_nurse ?? "—"} places / nurse; provider gate ${policy.minimum_provider_count ?? 0}, support gate ${policy.minimum_support_count ?? 0}.`}
-                    </p>
-                  ))}
-                <dl className="detail-list">
-                  <div>
-                    <dt>Setup lead time</dt>
-                    <dd>
-                      {Number(facility.activation_minutes || 0) / 60} hours
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Site equipment pools</dt>
-                    <dd>{siteEquipment.length}</dd>
-                  </div>
-                  <div>
-                    <dt>Staffing source</dt>
-                    <dd>
-                      {partner
-                        ? "Partner-advertised"
-                        : facility.status === "candidate"
-                          ? "Unallocated reserve"
-                          : "Declared roster + planned reserve"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Incoming route assumptions</dt>
-                    <dd>{routes.length}</dd>
-                  </div>
-                  <div>
-                    <dt>Coordinates</dt>
-                    <dd>
-                      {facility.latitude}, {facility.longitude}
-                    </dd>
-                  </div>
-                </dl>
-                {planned.length ? (
-                  <div className="constraint-callout">
-                    <strong>{planned.length} saved resource responses</strong>
-                    {planned.map((p, i) => (
-                      <p className="small-copy" key={p.id || i}>
-                        {p.name || p.kind} ·{" "}
-                        {localDate(p.start_at, {
-                          month: "short",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                    ))}
-                  </div>
-                ) : null}
-                <Button
-                  primary
-                  className="full-width"
-                  disabled={ctx.canWrite === false || shelter || !!ctx.busy}
-                  onClick={() => plan()}
-                >
-                  {partner
-                    ? "Plan receiving transfer"
-                    : facility.kind === "hospital" &&
-                        facility.status === "active"
-                      ? "Allocate reserve to existing beds"
-                      : "Assign resources & schedule"}
-                  <ArrowUpRight size={15} />
-                </Button>
-                <details className="resource-source">
-                  <summary>Source and assumptions</summary>
-                  <p>
-                    {facility.source ||
-                      facility.provenance?.description ||
-                      (facility.synthetic
-                        ? "Synthetic generator"
-                        : "Imported source")}
-                  </p>
-                  {facility.resource_requirements ? (
-                    <pre>
-                      {JSON.stringify(facility.resource_requirements, null, 2)}
-                    </pre>
-                  ) : null}
-                  <p>
-                    {facility.provenance?.notes ||
-                      "Travel, staffing and equipment assumptions are included in the dataset."}
-                  </p>
-                </details>
-              </div>
-              <div className="inspector-section">
-                <div className="spread">
-                  <h3>Recent updates</h3>
-                  <button
-                    className="text-button"
-                    onClick={() => setTab("updates")}
-                  >
-                    View all
-                  </button>
-                </div>
-                {updateError ? (
-                  <ErrorBox error={updateError} />
-                ) : relevantUpdates.length ? (
-                  relevantUpdates.slice(0, 3).map((u) => (
-                    <div className="update-mini" key={u.id}>
-                      <span className="cyan-dot" />
-                      <div>
-                        <strong>{u.type?.replaceAll("_", " ")}</strong>
-                        <small>
-                          {localDate(u.effective_at, {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </small>
+                    {planned.length ? (
+                      <div className="constraint-callout">
+                        <strong>
+                          {planned.length} saved resource responses
+                        </strong>
+                        {planned.map((p, i) => (
+                          <p className="small-copy" key={p.id || i}>
+                            {p.name || p.kind} ·{" "}
+                            {localDate(p.start_at, {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        ))}
                       </div>
+                    ) : null}
+                    <Button
+                      primary
+                      className="full-width"
+                      disabled={ctx.canWrite === false || shelter || !!ctx.busy}
+                      onClick={() => plan()}
+                    >
+                      {partner
+                        ? "Plan receiving transfer"
+                        : facility.kind === "hospital" &&
+                            facility.status === "active"
+                          ? "Allocate reserve to existing beds"
+                          : "Assign resources & schedule"}
+                      <ArrowUpRight size={15} />
+                    </Button>
+                    <details className="resource-source">
+                      <summary>Source and assumptions</summary>
+                      <p>
+                        {facility.source ||
+                          facility.provenance?.description ||
+                          (facility.synthetic
+                            ? "Synthetic generator"
+                            : "Imported source")}
+                      </p>
+                      {facility.resource_requirements ? (
+                        <pre>
+                          {JSON.stringify(
+                            facility.resource_requirements,
+                            null,
+                            2,
+                          )}
+                        </pre>
+                      ) : null}
+                      <p>
+                        {facility.provenance?.notes ||
+                          "Travel, staffing and equipment assumptions are included in the dataset."}
+                      </p>
+                    </details>
+                  </div>
+                  <div className="inspector-section">
+                    <div className="spread">
+                      <h3>Recent updates</h3>
+                      <button
+                        className="text-button"
+                        onClick={() => setTab("updates")}
+                      >
+                        View all
+                      </button>
                     </div>
-                  ))
-                ) : (
-                  <p className="small-copy muted">
-                    No recorded updates for this scenario.
-                  </p>
-                )}
-                <Button
-                  className="full-width"
-                  disabled={ctx.canWrite === false}
-                  onClick={onUpdate}
-                >
-                  Record timestamped update
-                </Button>
-              </div>
+                    {updateError ? (
+                      <ErrorBox error={updateError} />
+                    ) : relevantUpdates.length ? (
+                      relevantUpdates.slice(0, 3).map((u) => (
+                        <div className="update-mini" key={u.id}>
+                          <span className="cyan-dot" />
+                          <div>
+                            <strong>{u.type?.replaceAll("_", " ")}</strong>
+                            <small>
+                              {localDate(u.effective_at, {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </small>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="small-copy muted">
+                        No recorded updates for this scenario.
+                      </p>
+                    )}
+                    <Button
+                      className="full-width"
+                      disabled={ctx.canWrite === false}
+                      onClick={onUpdate}
+                    >
+                      Record timestamped update
+                    </Button>
+                  </div>
+                </>
+              )}
             </aside>
           </div>
         </>
       ) : (
-        <div className="resource-table-page">
-          {tab === "staff" ? (
-            <>
-              <div className="resource-summary-strip">
-                <div>
-                  <Users size={22} />
-                  <strong>{staff.length}</strong>
-                  <span>declared staff</span>
+        <div className="resource-table-workspace">
+          <div className="resource-table-page">
+            {tab === "staff" ? (
+              <>
+                <div className="resource-summary-strip">
+                  <div>
+                    <Users size={22} />
+                    <strong>{staff.length}</strong>
+                    <span>declared staff</span>
+                  </div>
+                  <div>
+                    <strong>{hospital.length}</strong>
+                    <span>hospital roster</span>
+                  </div>
+                  <div>
+                    <strong>{reserve.length}</strong>
+                    <span>reserve roster</span>
+                  </div>
+                  <div>
+                    <strong>{new Set(staff.map((s) => s.team_id)).size}</strong>
+                    <span>declared teams</span>
+                  </div>
                 </div>
-                <div>
-                  <strong>{hospital.length}</strong>
-                  <span>hospital roster</span>
-                </div>
-                <div>
-                  <strong>{reserve.length}</strong>
-                  <span>reserve roster</span>
-                </div>
-                <div>
-                  <strong>{new Set(staff.map((s) => s.team_id)).size}</strong>
-                  <span>declared teams</span>
-                </div>
+                <ResourceTable
+                  rows={staff}
+                  onInspect={(row) =>
+                    ctx.inspectEntity("staff", row.staff_id || row.id)
+                  }
+                  columns={[
+                    "staff_id",
+                    "role",
+                    "employment_pool",
+                    "team_id",
+                    "capabilities",
+                  ]}
+                />
+              </>
+            ) : tab === "equipment" ? (
+              <>
+                <PanelTitle
+                  title="Reusable equipment inventory"
+                  eyebrow="EXCLUSIVE RESOURCE ALLOCATIONS"
+                />
+                {ctx.state &&
+                ctx.state.equipment_pool_state_available === false ? (
+                  <p className="info-note">
+                    This stored run predates individual equipment-pool history.
+                    The table shows source inventory; run the scenario again to
+                    inspect selected-time allocations.
+                  </p>
+                ) : null}
+                <ResourceTable
+                  rows={equipment}
+                  onInspect={(row) =>
+                    ctx.inspectEntity(
+                      "equipment_pool",
+                      row.equipment_pool_id || row.id,
+                    )
+                  }
+                  columns={[
+                    "equipment_pool_id",
+                    "unit_id",
+                    "quantity",
+                    "unserviceable_quantity",
+                    "portable",
+                    "capability_code",
+                  ]}
+                />
+              </>
+            ) : tab === "transport" ? (
+              <>
+                <PanelTitle
+                  title="Transport resources"
+                  eyebrow="LOCATION, AVAILABILITY & DIRECTED ROUTES"
+                />
+                <ResourceTable
+                  rows={vehicles}
+                  onInspect={(row) =>
+                    ctx.inspectEntity("vehicle", row.vehicle_id || row.id)
+                  }
+                  columns={[
+                    "vehicle_id",
+                    "location",
+                    "patient_capacity",
+                    "capabilities",
+                    "available_at",
+                  ]}
+                />
+                <PanelTitle title="Assumed travel matrix" />
+                <ResourceTable
+                  rows={ctx.dataset?.routes || []}
+                  onInspect={(row) =>
+                    ctx.inspectEntity("route", row.route_id || row.id)
+                  }
+                  columns={[
+                    "route_id",
+                    "from_facility_id",
+                    "to_facility_id",
+                    "travel_minutes",
+                    "estimate_source",
+                  ]}
+                />
+              </>
+            ) : (
+              <>
+                <PanelTitle
+                  title="Operational update history"
+                  eyebrow="APPEND-ONLY SCENARIO RECORD"
+                  actions={
+                    <Button
+                      primary
+                      disabled={ctx.canWrite === false}
+                      onClick={onUpdate}
+                    >
+                      <Plus size={14} />
+                      Record update
+                    </Button>
+                  }
+                />
+                {updateError ? <ErrorBox error={updateError} /> : null}
+                <ResourceTable
+                  rows={relevantUpdates}
+                  onInspect={(row) => ctx.inspectEntity("update", row.id)}
+                  columns={[
+                    "id",
+                    "type",
+                    "effective_at",
+                    "recorded_at",
+                    "source",
+                    "state_origin",
+                    "status",
+                  ]}
+                />
+              </>
+            )}
+          </div>
+          <aside
+            className="inspector resource-inspector"
+            id="resources-inspector-dock"
+            hidden={panels.inspectorHidden}
+          >
+            {ctx.selectedResource ? (
+              <ResourceSelection ctx={ctx} updates={updates} />
+            ) : (
+              <div className="inspector-section resource-inspector-empty">
+                <Users size={30} />
+                <h3>Inspect a resource</h3>
+                <p className="small-copy muted">
+                  Choose Details to inspect its source record and available
+                  ledger at the selected time.
+                </p>
               </div>
-              <ResourceTable
-                rows={staff}
-                columns={[
-                  "staff_id",
-                  "role",
-                  "employment_pool",
-                  "team_id",
-                  "capabilities",
-                ]}
-              />
-            </>
-          ) : tab === "equipment" ? (
-            <>
-              <PanelTitle
-                title="Reusable equipment inventory"
-                eyebrow="EXCLUSIVE RESOURCE ALLOCATIONS"
-              />
-              <ResourceTable
-                rows={ctx.dataset?.equipment_pools || []}
-                columns={[
-                  "equipment_pool_id",
-                  "unit_id",
-                  "quantity",
-                  "unserviceable_quantity",
-                  "portable",
-                  "capability_code",
-                ]}
-              />
-            </>
-          ) : tab === "transport" ? (
-            <>
-              <PanelTitle
-                title="Transport resources"
-                eyebrow="LOCATION, AVAILABILITY & DIRECTED ROUTES"
-              />
-              <ResourceTable
-                rows={(ctx.dataset?.vehicles || []).map((v: Entity) => ({
-                  ...v,
-                  ...(ctx.state?.vehicles || []).find(
-                    (s: Entity) => s.vehicle_id === v.vehicle_id,
-                  ),
-                }))}
-                columns={[
-                  "vehicle_id",
-                  "location",
-                  "patient_capacity",
-                  "capabilities",
-                  "available_at",
-                ]}
-              />
-              <PanelTitle title="Assumed travel matrix" />
-              <ResourceTable
-                rows={ctx.dataset?.routes || []}
-                columns={[
-                  "route_id",
-                  "from_facility_id",
-                  "to_facility_id",
-                  "travel_minutes",
-                  "estimate_source",
-                ]}
-              />
-            </>
-          ) : (
-            <>
-              <PanelTitle
-                title="Operational update history"
-                eyebrow="APPEND-ONLY SCENARIO RECORD"
-                actions={
-                  <Button
-                    primary
-                    disabled={ctx.canWrite === false}
-                    onClick={onUpdate}
-                  >
-                    <Plus size={14} />
-                    Record update
-                  </Button>
-                }
-              />
-              {updateError ? <ErrorBox error={updateError} /> : null}
-              <ResourceTable
-                rows={relevantUpdates}
-                columns={[
-                  "id",
-                  "type",
-                  "effective_at",
-                  "recorded_at",
-                  "source",
-                  "state_origin",
-                  "status",
-                ]}
-              />
-            </>
-          )}
+            )}
+          </aside>
         </div>
       )}
+      <PlanningTimelineDock panels={panels} name="resources" ctx={ctx} />
       {transfer ? (
         <TransferPlanner ctx={ctx} onClose={() => setTransfer(false)} />
       ) : null}
@@ -736,16 +878,143 @@ export default function Resources({
     </div>
   );
 }
+function ResourceSelection({
+  ctx,
+  updates,
+}: {
+  ctx: PlanningContext;
+  updates: Entity[];
+}) {
+  const selection = ctx.selectedResource!;
+  const tables: Record<string, string> = {
+    staff: "staff",
+    equipment_pool: "equipment_pools",
+    vehicle: "vehicles",
+    slot: "slots",
+    route: "routes",
+  };
+  const table = tables[selection.kind];
+  const record =
+    selection.kind === "update"
+      ? updates.find((value) => value.id === selection.id)
+      : selection.kind === "route"
+        ? ctx.dataset?.routes?.find(
+            (value: Entity) => (value.route_id || value.id) === selection.id,
+          )
+        : table
+          ? actualInventory(
+              selection.kind as SearchKind,
+              ctx.dataset?.[table] || [],
+              ctx.stateLoading || ctx.stateError
+                ? []
+                : ctx.state?.[table] || [],
+            ).find(
+              (value) =>
+                searchEntityId(selection.kind as SearchKind, value) ===
+                selection.id,
+            )
+          : null;
+  const assignments =
+    selection.kind === "staff"
+      ? unitsOf(ctx).filter((unit) =>
+          unit.active_staff_ids?.includes(selection.id),
+        )
+      : [];
+  return (
+    <>
+      <div className="inspector-header">
+        <div className="inspector-icon">
+          <Boxes size={20} />
+        </div>
+        <div>
+          <span className="eyebrow">
+            SELECTED {selection.kind.replaceAll("_", " ")}
+          </span>
+          <h2>{selection.id}</h2>
+        </div>
+        <button
+          className="icon-button"
+          aria-label="Clear selected resource"
+          onClick={ctx.clearResource}
+        >
+          <X size={18} />
+        </button>
+      </div>
+      <div className="inspector-section">
+        <p className="small-copy muted">
+          Frozen dataset {ctx.dataset?.id}
+          {ctx.run?.status === "SUCCEEDED" &&
+          ctx.state &&
+          !ctx.stateLoading &&
+          !ctx.stateError
+            ? ` · selected simulation time ${localDate(ctx.selectedTime, { hour: "2-digit", minute: "2-digit" })}`
+            : " · source snapshot"}
+          .{" "}
+          {selection.kind === "update"
+            ? "Recorded update document; effective time and state origin determine its application."
+            : selection.kind === "route"
+              ? "Declared synthetic travel assumption from the source snapshot."
+              : record?.search_source === "selected_time_state"
+                ? "Created in the selected recorded trajectory; no source-snapshot row."
+                : record?.search_source === "recorded_overlay"
+                  ? "Recorded state overlays the frozen source record."
+                  : "Source-snapshot record; no individual selected-time overlay is recorded."}
+        </p>
+        {ctx.stateLoading ? (
+          <p role="status">Loading the selected-time resource ledger…</p>
+        ) : null}
+        {ctx.stateError ? <ErrorBox error={ctx.stateError} /> : null}
+        {selection.kind === "staff" &&
+        ctx.state &&
+        !ctx.stateLoading &&
+        !ctx.stateError ? (
+          <p>
+            Recorded assignments:{" "}
+            {assignments.map(nameOf).join(" · ") || "No active unit assignment"}
+            .
+          </p>
+        ) : null}
+        {record ? (
+          <dl className="resource-record">
+            {Object.entries(record)
+              .filter(
+                ([key]) =>
+                  !["search_kind", "search_source", "current"].includes(key),
+              )
+              .map(([key, value]) => (
+                <div key={key}>
+                  <dt>{key.replaceAll("_", " ")}</dt>
+                  <dd>
+                    {value && typeof value === "object" ? (
+                      <pre>{JSON.stringify(value, null, 2)}</pre>
+                    ) : (
+                      String(value ?? "Not recorded")
+                    )}
+                  </dd>
+                </div>
+              ))}
+          </dl>
+        ) : (
+          <p>
+            This resource is not present in the selected dataset or recorded
+            state.
+          </p>
+        )}
+      </div>
+    </>
+  );
+}
 function ResourceTable({
   rows,
   columns,
+  onInspect,
 }: {
   rows: Entity[];
   columns: string[];
+  onInspect: (row: Entity) => void;
 }) {
   const [query, setQuery] = useState(""),
     [page, setPage] = useState(0),
-    [selected, setSelected] = useState<Entity | null>(null),
     pageSize = 50,
     filtered = rows.filter(
       (row) =>
@@ -802,7 +1071,7 @@ function ResourceTable({
                     </td>
                   ))}
                   <td>
-                    <Button small onClick={() => setSelected(r)}>
+                    <Button small onClick={() => onInspect(r)}>
                       Details
                     </Button>
                   </td>
@@ -840,24 +1109,6 @@ function ResourceTable({
           Next
         </Button>
       </div>
-      {selected ? (
-        <Modal title="Resource record" onClose={() => setSelected(null)}>
-          <dl className="resource-record">
-            {Object.entries(selected).map(([key, value]) => (
-              <div key={key}>
-                <dt>{key.replaceAll("_", " ")}</dt>
-                <dd>
-                  {value && typeof value === "object" ? (
-                    <pre>{JSON.stringify(value, null, 2)}</pre>
-                  ) : (
-                    String(value ?? "—")
-                  )}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </Modal>
-      ) : null}
     </>
   );
 }

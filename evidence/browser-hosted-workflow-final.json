@@ -1,0 +1,50 @@
+{
+  "scenario_id": "scenario_10a00701b97d41dc9a8d",
+  "run_id": "run_66e36400680445258e44",
+  "comparison_id": "comparison_23af8a51fcde4483997a",
+  "branch_run_id": "run_0f8ca05a1303435b8b9d",
+  "export_filename": "hospital-surge-planner.zip",
+  "export_checksums": {
+    "all_checksums_verified": true,
+    "complete_member_coverage": true,
+    "files": [
+      "events.csv",
+      "events.jsonl",
+      "daily.csv",
+      "metrics.csv",
+      "manifest.json",
+      "model-manifest.json",
+      "dataset.json",
+      "scenario.json",
+      "metrics.json",
+      "inputs/patients.csv",
+      "inputs/facilities.csv",
+      "inputs/units.csv",
+      "inputs/slots.csv",
+      "inputs/staff.csv",
+      "inputs/assignments.csv",
+      "inputs/equipment_pools.csv",
+      "inputs/routes.csv",
+      "inputs/vehicles.csv",
+      "dataset-manifest.json",
+      "assumptions.csv",
+      "README.md",
+      "checksums.json"
+    ],
+    "archive_sha256": "dc6e4af9690efb2288d38d7ecd97beeb9a268299b2547c7b4232611d1593d874",
+    "archive_bytes": 1318743
+  },
+  "page_errors": [],
+  "deployed_commit": "e2e65eb81c023ae8b4385742756662be524c29fb",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scenario_name": "Surge response exercise \u2014 70% higher ED arrivals",
+  "scope": "Authenticated hosted browser interaction coverage: baseline run\u2192comparison\u2192saved plan\u2192arrival update branch\u2192Replay\u2192export with all ZIP checksums verified. This candidate failed to persist the intended70% arrival condition.",
+  "captured_archive": "output/accepted-hosted-planning-export.zip",
+  "known_failure": {
+    "area": "F06 numeric arrival edit from Baseline preset",
+    "expected": "User-entered70% increase persists as an arrival_multiplier condition with1.7 multiplier",
+    "actual": "Frozen/exported scenario.conditions is empty. shape=baseline suppressed the entered percent.",
+    "proof": "Verified scenario.json from checksum-validated captured archive",
+    "consequence": "Do not cite this run as70% surge acceptance; repeat after fix and assert frozen conditions."
+  }
+}

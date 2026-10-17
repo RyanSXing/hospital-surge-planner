@@ -7,6 +7,7 @@ import {
   inputDifferences,
   horizonDays,
   mixError,
+  planningEnd,
 } from "./scenarioEditor";
 import type { EditorValues } from "./scenarioEditor";
 const source = () =>
@@ -59,6 +60,62 @@ const values = (): EditorValues => ({
   mix: { "RP-ICU-VENT": 0.3, "RP-WARD": 0.7 },
 });
 describe("scenario input edits", () => {
+  it("does not replace an invalid or skipped local-time input with the default window", () => {
+    for (const field of ["windowStartAt", "windowEndAt"] as const) {
+      expect(() =>
+        buildScenarioPatch(source(), { ...values(), [field]: "" }),
+      ).toThrow();
+    }
+  });
+  it("keeps a reset branch's fractional exclusive endpoint in defaults and validation", () => {
+    const branch = {
+      ...source(),
+      end_at: "2026-11-02T17:00:00Z",
+      horizon_calendar_days: 2,
+    };
+    expect(planningEnd(branch, branch.start_at, 2)).toBe(branch.end_at);
+    const patch = buildScenarioPatch(branch, {
+      ...values(),
+      days: 2,
+      endDay: 2,
+    });
+    expect(
+      patch.conditions
+        .find((c) => c.kind === "arrival_multiplier")
+        ?.control_points.at(-1).at,
+    ).toBe(new Date(branch.end_at).toISOString());
+    expect(() =>
+      buildScenarioPatch(branch, {
+        ...values(),
+        days: 2,
+        endDay: 2,
+        windowEndAt: "2026-11-03T06:00:00Z",
+      }),
+    ).toThrow("horizon");
+  });
+  it("turns a nonzero baseline percentage into a modeled step without requiring another preset click", () => {
+    const baseline = { ...source(), conditions: [] };
+    for (const percent of [70, -30]) {
+      const patch = buildScenarioPatch(baseline, {
+        ...values(),
+        conditionId: "",
+        shape: "baseline",
+        percent,
+        mixMode: "default",
+      });
+      expect(patch.conditions).toHaveLength(1);
+      expect(patch.conditions[0]).toMatchObject({
+        kind: "arrival_multiplier",
+        shape: "step",
+        surge_percent: percent,
+      });
+      expect(
+        patch.conditions[0].control_points.map(
+          (p: { multiplier: number }) => p.multiplier,
+        ),
+      ).toEqual([1 + percent / 100, 1 + percent / 100]);
+    }
+  });
   it("preserves imported resource profiles and unrelated conditions without mutating saved inputs", () => {
     const s = source(),
       before = JSON.stringify(s),

@@ -62,6 +62,12 @@ def payload_errors(record, dataset):
             or not math.isclose(sum(mix.values()), 1, abs_tol=1e-6)
         ):
             error("care_mix", "Explicit discharge, ward and ICU fractions must be nonnegative and sum to one")
+        elif any(
+            s.get("entry_stream_id") == payload.get("entry_stream_id")
+            and s.get("entry_type") == "direct_ward"
+            for s in dataset.get("entry_streams", [])
+        ) and any(weight > 0 and care != "ward" for care, weight in mix.items()):
+            error("care_mix", "Direct ward incidents must request ward care only")
         if "spread_minutes" in payload and (
             not isinstance(payload["spread_minutes"], (int, float))
             or not math.isfinite(payload["spread_minutes"])

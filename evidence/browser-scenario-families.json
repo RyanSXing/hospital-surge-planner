@@ -1,0 +1,42 @@
+{
+  "scenario_id": "scenario_f7768ac26d09438087f3",
+  "run_id": "run_6e1d6cc22788435e8a1e",
+  "frozen_revision": "revision_7985f05ba2134de08c2a",
+  "all_collections_frozen": true,
+  "all_six_resource_rails_visible_together": [
+    {
+      "name": "Arrival cohorts timeline",
+      "top": 637.65625,
+      "bottom": 690.65625
+    },
+    {
+      "name": "Staff availability timeline",
+      "top": 690.65625,
+      "bottom": 743.65625
+    },
+    {
+      "name": "Physical, ready & usable capacity timeline",
+      "top": 743.65625,
+      "bottom": 812.65625
+    },
+    {
+      "name": "Equipment availability timeline",
+      "top": 812.65625,
+      "bottom": 865.65625
+    },
+    {
+      "name": "Sites & transfers timeline",
+      "top": 865.65625,
+      "bottom": 918.65625
+    },
+    {
+      "name": "One-time incident batches timeline",
+      "top": 918.65625,
+      "bottom": 971.65625
+    }
+  ],
+  "synthetic_incident_count": 7,
+  "explicit_incident_mix_preserved": true,
+  "completed_inputs_immutable": true,
+  "page_errors": []
+}

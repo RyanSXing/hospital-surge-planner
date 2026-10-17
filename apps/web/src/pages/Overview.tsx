@@ -192,7 +192,7 @@ export default function Overview({
           unit="patient-hours"
           change={
             ctx.metrics
-              ? ctx.scenario?.measurement_start_at
+              ? (ctx.resultScenario || ctx.scenario)?.measurement_start_at
                 ? "From update cutoff · Median across runs"
                 : "Full horizon · Median across runs"
               : "Run a scenario to calculate"

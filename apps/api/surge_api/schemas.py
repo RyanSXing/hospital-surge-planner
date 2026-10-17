@@ -36,6 +36,9 @@ class Condition(Command):
     staff_ids: list[str] | None = None
     care_mix_override: dict[str, float] | None = None
     count: int | None = Field(default=None, ge=0)
+    at: str | None = None
+    spread_minutes: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    care_mix: dict[str, float] | None = None
 
 
 class EquipmentAllocation(Command):
@@ -75,7 +78,7 @@ class ScenarioPatch(Command):
     base_seed: int | None = Field(default=None, ge=0)
     conditions: list[Condition] | None = None
     interventions: list[Intervention] | None = None
-    updates: list[dict[str, Any]] | None = None
+    updates: list["ScenarioEvent"] | None = None
 
 
 class ScenarioCreate(ScenarioPatch):
@@ -112,6 +115,16 @@ class OperationalPayload(Command):
     effective_at: str | None = None
     until: str | None = None
     observed_dataset_version_id: str | None = None
+    equipment_pool_id: str | None = None
+    pool_id: str | None = None
+    enabled_capacity: int | None = Field(default=None, ge=0)
+    advertised_staffed_capacity: int | None = Field(default=None, ge=0)
+    quantity: int | None = Field(default=None, ge=0)
+    quantity_delta: int | None = None
+    operation: Literal["add", "fail", "repair", "decommission"] | None = None
+    route_id: str | None = None
+    travel_minutes: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    unavailable: bool | None = None
 
 
 UpdateKind = Literal[
@@ -139,6 +152,19 @@ class UpdateCreate(Command):
     source: str = "user_planning_input"
     replication_id: str | None = None
     idempotency_key: str | None = Field(default=None, max_length=256)
+
+
+class ScenarioEvent(Command):
+    """A frozen reported event or an explicitly synthetic future resource change."""
+
+    type: UpdateKind
+    effective_at: str
+    payload: OperationalPayload
+    id: str | None = None
+    update_id: str | None = None
+    source: str | None = None
+    input_kind: Literal["planned_assumption"] | None = None
+    state_origin: StateOrigin | None = None
 
 
 class BranchSource(Command):
@@ -238,6 +264,7 @@ class JobView(Command):
     end_at: str | None = None
     error: str | None = None
     compute_estimate: dict[str, Any] | None = None
+    scenario_context: dict[str, Any] | None = None
 
 
 def command_dict(value):

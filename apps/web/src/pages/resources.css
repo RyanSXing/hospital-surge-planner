@@ -41,6 +41,135 @@
 .dependency-nodes button strong {
   font-size: 13px;
 }
+.candidate-dependency-overlay {
+  width: min(470px, calc(100% - 32px));
+}
+.candidate-dependency-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.candidate-dependency-heading > div {
+  min-width: 0;
+}
+.candidate-dependency-heading .eyebrow {
+  display: block;
+  margin-bottom: 4px;
+}
+.candidate-dependency-heading > div > strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.candidate-dependency-overlay .dependency-nodes {
+  margin-top: 10px;
+}
+.candidate-dependency-overlay .dependency-nodes button {
+  min-height: 82px;
+  justify-content: center;
+}
+.candidate-dependency-overlay .dependency-nodes button strong {
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.candidate-dependency-overlay .dependency-nodes button span {
+  line-height: 1.2;
+}
+.dependency-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 15px;
+}
+.dependency-flow > span {
+  width: 1px;
+  height: 100%;
+  background: var(--cyan);
+  position: relative;
+}
+.dependency-flow > span::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  bottom: -1px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--cyan);
+}
+.dependency-target {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid var(--cyan);
+  border-radius: 7px;
+  color: var(--text);
+  background: rgba(24, 190, 209, 0.1);
+  text-align: left;
+  cursor: pointer;
+}
+.dependency-target > svg:first-child {
+  color: var(--cyan);
+  flex: 0 0 auto;
+}
+.dependency-target > span {
+  min-width: 0;
+  flex: 1;
+}
+.dependency-target strong,
+.dependency-target small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dependency-target strong {
+  font-size: 13px;
+}
+.dependency-target small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.dependency-target:hover,
+.dependency-target:focus-visible {
+  background: rgba(24, 190, 209, 0.18);
+}
+@media (min-width: 1024px) {
+  .resources-page.planning-panel-page .candidate-dependency-overlay {
+    top: 62px;
+    right: auto;
+    bottom: auto;
+    left: 16px;
+    width: min(440px, calc(100% - 32px));
+    padding: 12px;
+  }
+  .resources-page.planning-panel-page .candidate-dependency-overlay > .eyebrow,
+  .resources-page.planning-panel-page .candidate-dependency-overlay > p {
+    display: block;
+  }
+  .resources-page.planning-panel-page .candidate-dependency-overlay > p {
+    margin: 8px 0 0;
+    line-height: 1.35;
+  }
+  .resources-page.planning-panel-page .candidate-dependency-overlay .dependency-nodes {
+    gap: 6px;
+  }
+  .resources-page.planning-panel-page .candidate-dependency-overlay .dependency-nodes button {
+    min-height: 72px;
+    padding: 7px 5px;
+  }
+  .resources-page.planning-panel-page .candidate-dependency-overlay .dependency-nodes button svg {
+    width: 16px;
+    height: 16px;
+  }
+  .resources-page.planning-panel-page .candidate-dependency-overlay .dependency-nodes button strong {
+    font-size: 14px;
+  }
+}
 .activation-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -136,6 +265,48 @@
 }
 .resource-record dd {
   margin: 0;
+  overflow-wrap: anywhere;
+}
+.resource-table-workspace {
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.resource-table-workspace > .resource-table-page {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: auto;
+}
+.resource-inspector {
+  width: 340px;
+  min-width: 320px;
+  overflow: auto;
+  border-left: 1px solid var(--border);
+}
+.resource-inspector .inspector-header h2,
+.site-inspector .inspector-header h2 {
+  overflow-wrap: anywhere;
+}
+.resource-inspector-empty {
+  text-align: center;
+  margin-top: 50px;
+}
+@media (max-width: 1023px) {
+  .resource-table-workspace {
+    display: block;
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+  .resource-table-workspace > .resource-table-page {
+    overflow: visible;
+  }
+  .resource-inspector {
+    width: 100%;
+    min-width: 0;
+    max-height: 600px;
+    border-top: 1px solid var(--border);
+  }
 }
 .resource-record pre,
 .resource-source pre {

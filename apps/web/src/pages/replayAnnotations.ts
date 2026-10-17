@@ -28,3 +28,17 @@ export function conditionReplayInterval(
         : condition.end_at || condition.at || runEnd,
   };
 }
+
+export function updateReplayInterval(update: Entity): Entity {
+  const planned = update.input_kind === "planned_assumption";
+  const type = String(update.type || "update").replaceAll("_", " ");
+  return {
+    ...update,
+    start_at: update.effective_at,
+    end_at: planned
+      ? update.payload?.until || update.effective_at
+      : update.effective_at,
+    label: `${type} · ${planned ? "synthetic planned assumption" : `reported update${update.state_origin ? ` / ${String(update.state_origin).replaceAll("_", " ")}` : ""}`}`,
+    planned: true,
+  };
+}

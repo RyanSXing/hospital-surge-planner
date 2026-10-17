@@ -1,0 +1,193 @@
+/* Keep the decision chain visible with the fixed selected-time dock at desktop sizes. */
+@media (min-width: 1024px) {
+  .compare-page.planning-panel-page > .page-heading {
+    min-height: 64px;
+    padding: 10px 24px;
+  }
+
+  .compare-page .page-heading h1 {
+    font-size: 22px;
+    line-height: 1.1;
+  }
+
+  .compare-page .page-heading p {
+    margin: 3px 0 0;
+  }
+
+  .compare-page .heading-actions {
+    gap: 7px;
+  }
+
+  .compare-page .comparison-context {
+    min-height: 32px;
+    margin: 0 18px 7px;
+    padding: 5px 10px;
+  }
+
+  .compare-page .response-selector {
+    margin: 0 18px 7px;
+  }
+
+  .compare-page .response-selector > button {
+    padding: 5px 8px;
+  }
+
+  .compare-page .comparison-preflight {
+    margin: 0 18px 7px;
+    padding: 0 10px;
+  }
+
+  .compare-page .comparison-preflight > summary {
+    min-height: 24px;
+    padding-block: 3px;
+  }
+
+  .compare-page .comparison-body {
+    gap: 14px;
+    margin: 0 18px;
+  }
+
+  .compare-page .comparison-main {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .compare-page .capacity-plan-cards {
+    gap: 9px;
+  }
+
+  .compare-page .capacity-plan-cards .plan-card-header {
+    min-height: 40px;
+    padding: 6px 10px;
+  }
+
+  .compare-page .capacity-plan-cards .plan-card-header .eyebrow {
+    display: none;
+  }
+
+  .compare-page .capacity-plan-cards .plan-card-header h2 {
+    font-size: 13px;
+    line-height: 1.15;
+  }
+
+  .compare-page .capacity-plan-cards .plan-grid {
+    padding: 5px 10px;
+  }
+
+  .compare-page .capacity-plan-cards .plan-grid .micro-label {
+    display: block;
+    font-size: 10px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .compare-page .capacity-diagram {
+    grid-template-columns: repeat(25, minmax(0, 1fr));
+    min-height: 0;
+    margin: 0 0 4px;
+  }
+
+  .compare-page .capacity-plan-cards .plan-capacity {
+    margin-top: 0;
+  }
+
+  .compare-page .capacity-plan-cards .plan-capacity > span {
+    display: none;
+  }
+
+  .compare-page .plan-inline-outcome {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    min-height: 23px;
+    color: var(--muted);
+    font-size: 10px;
+  }
+
+  .compare-page .plan-inline-outcome > strong {
+    color: var(--text);
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .compare-page .plan-inline-outcome small {
+    margin-left: 3px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 400;
+  }
+
+  .compare-page .plan-inline-outcome .button {
+    min-height: 24px;
+    margin-left: auto;
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+
+  .compare-page .capacity-plan-cards .plan-status {
+    min-height: 24px;
+    padding: 4px 10px;
+    line-height: 1.45;
+  }
+
+  .compare-page .comparison-chart {
+    margin-top: 0;
+    padding: 8px 12px;
+  }
+
+  .compare-page .comparison-chart-controls {
+    margin-top: 5px;
+  }
+
+  .compare-page .comparison-chart .chart-wrap {
+    margin-top: 5px;
+  }
+
+  .compare-page .comparison-outcomes {
+    display: none;
+  }
+
+  .compare-page .outcome-card {
+    padding: 6px 10px;
+  }
+
+  .compare-page .outcome-number {
+    font-size: 20px;
+    margin: 3px 0 5px;
+  }
+
+  .compare-page .outcome-card .outcome-bar {
+    margin-bottom: 4px;
+  }
+
+  .compare-page .outcome-card dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px 8px;
+  }
+
+  .compare-page .outcome-card dl > div {
+    display: block;
+  }
+
+  .compare-page .outcome-card dt,
+  .compare-page .outcome-card dd {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .compare-page .outcome-card dt {
+    font-size: 10px;
+  }
+
+  .compare-page .outcome-card dd {
+    font-size: 11px;
+  }
+
+  .compare-page > .timeline-panel {
+    margin: 0 18px;
+  }
+}

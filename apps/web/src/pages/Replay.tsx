@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./replay.css";
 import { drawReplayBackdrop } from "./replayBackdrop";
+import {
+  PlanningPanelControls,
+  PlanningTimelineDock,
+  usePlanningPanels,
+} from "../components/PlanningPanels";
 import { usePatientPage } from "./usePatientPage";
 import {
   ReplayAnnotations,
@@ -31,6 +36,8 @@ import {
 import type { Entity, PlanningContext } from "../types";
 import { api, atDay, fmt, items, localDate, patientId, post } from "../api";
 import { Badge, Button, EmptyState, ErrorBox } from "../components/ui";
+import { ZonedDateTimeInput } from "../components/ZonedDateTimeInput";
+import { utcMinute } from "../zonedTime";
 import {
   patientsOf,
   queueStats,
@@ -102,6 +109,7 @@ const timestamp = (at: string) =>
     timeZoneName: "short",
   });
 export default function Replay({ ctx }: { ctx: PlanningContext }) {
+  const panels = usePlanningPanels(260);
   const canvas = useRef<HTMLCanvasElement>(null),
     [canvasHeight, setCanvasHeight] = useState(620),
     [playing, setPlaying] = useState(false),
@@ -113,6 +121,8 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     [pendingRep, setPendingRep] = useState(""),
     [error, setError] = useState(""),
     [zoom, setZoom] = useState(1),
+    [mobileFocus, setMobileFocus] = useState("all"),
+    [jumpTime, setJumpTime] = useState(utcMinute(ctx.selectedTime)),
     [stateFilter, setStateFilter] = useState("all"),
     [stepping, setStepping] = useState(false),
     [eventCursor, setEventCursor] = useState<Entity | null>(null),
@@ -123,6 +133,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     height: number;
     points: Map<string, { x: number; y: number }>;
   } | null>(null);
+  useEffect(() => setJumpTime(utcMinute(ctx.selectedTime)), [ctx.selectedTime]);
   const drawnPoints = useRef(new Map<string, { x: number; y: number }>());
   const unavailable = stateUnavailable(ctx);
   const facilityTypes = useMemo(
@@ -160,7 +171,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   const start =
     ctx.run?.start_at ||
     ctx.metrics?.start_at ||
-    ctx.scenario?.start_at ||
+    (ctx.resultScenario || ctx.scenario)?.start_at ||
     ctx.dataset?.snapshot_at ||
     "";
   const end =
@@ -169,9 +180,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     (start
       ? atDay(
           start,
-          ctx.scenario?.horizon_calendar_days || 30,
+          (ctx.resultScenario || ctx.scenario)?.horizon_calendar_days || 30,
           0,
-          ctx.scenario?.timezone || "America/Chicago",
+          (ctx.resultScenario || ctx.scenario)?.timezone || "America/Chicago",
         )
       : "");
   const startMs = Date.parse(start),
@@ -261,7 +272,13 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   const zoneInventory = useMemo(() => {
     const values: Record<
       string,
-      { occupied: number; staffed: number; physical: number; assigned: number }
+      {
+        occupied: number;
+        staffed: number;
+        physical: number;
+        assigned: number;
+        background: number;
+      }
     > = {};
     for (const unit of unitsOf(ctx)) {
       const zone =
@@ -279,10 +296,12 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         staffed: 0,
         physical: 0,
         assigned: 0,
+        background: 0,
       });
       value.occupied += Number(unit.occupied || 0);
       value.staffed += Number(unit.staffed || 0);
       value.physical += Number(unit.physical || 0);
+      value.background += Number(unit.background_occupied || 0);
       value.assigned += Object.values(unit.staff_by_role || {}).reduce<number>(
         (total, count) => total + Number(count),
         0,
@@ -290,6 +309,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     }
     return values;
   }, [ctx.state, ctx.dataset, unavailable, facilityTypes]);
+  const backgroundOccupants = Object.values(zoneInventory).reduce(
+    (total, inventory) => total + inventory.background,
+    0,
+  );
   const census = usePatientPage(
       rep,
       ctx.selectedTime,
@@ -397,7 +420,12 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     if (!viewport) return;
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      if (width > 0 && height > 0) setCanvasHeight((1000 * height) / width);
+      if (width > 0 && height > 0)
+        setCanvasHeight(
+          window.matchMedia("(max-width: 767px)").matches
+            ? 620
+            : (1000 * height) / width,
+        );
     });
     observer.observe(viewport);
     return () => observer.disconnect();
@@ -743,7 +771,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       </div>
     );
   return (
-    <div className="replay-page">
+    <div className="replay-page planning-panels">
       <div className="page-heading">
         <div>
           <div className="eyebrow">SIMULATION EXPLORER</div>
@@ -751,6 +779,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           <p>Explore the recorded events behind one computed outcome.</p>
         </div>
         <div className="heading-actions">
+          <PlanningPanelControls panels={panels} name="replay" />
           <Badge tone="cyan">One simulation trajectory</Badge>
           <label className="micro-label">
             Replication
@@ -803,7 +832,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             <div className="scene-topline">
               <span className="scene-tag">
                 <span className="cyan-dot" />
-                REPLICATION {Number(repIndex) + 1}
+                REPLICATION {Number(repIndex) + 1} · ALL SITES
               </span>
               <div className="scene-legend">
                 <span>
@@ -818,7 +847,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                   <i className="red-dot" />
                   ICU care
                 </span>
-                <span>
+                <span title="Bed totals cover all modeled sites, including anonymous partner occupancy.">
                   <BedDouble size={14} /> Occupied / staffed
                 </span>
                 <span>
@@ -847,13 +876,52 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                 </Button>
               </div>
             </div>
+            <div className="replay-mobile-navigation">
+              <label>
+                Focus care zone
+                <select
+                  value={mobileFocus}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setMobileFocus(value);
+                    const node = canvas.current,
+                      viewport = node?.parentElement;
+                    if (!node || !viewport) return;
+                    const zone = zones.find((zone) => zone.id === value);
+                    const scale = node.getBoundingClientRect().width / 1000;
+                    viewport.scrollTo({
+                      left: zone
+                        ? (zone.x + zone.w / 2) * scale -
+                          viewport.clientWidth / 2
+                        : 0,
+                      top: zone
+                        ? (zone.y + zone.h / 2) * scale -
+                          viewport.clientHeight / 2
+                        : 0,
+                      behavior: reduced ? "instant" : "smooth",
+                    });
+                  }}
+                >
+                  <option value="all">Explore all zones</option>
+                  {zones.map((zone) => (
+                    <option key={zone.id} value={zone.id}>
+                      {zone.name} · {fmt(zoneTotals[zone.id] || 0)} patients
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p>
+                Swipe the schematic to explore. Tap a patient to inspect their
+                recorded care path.
+              </p>
+            </div>
             <div className="replay-canvas-viewport">
               <canvas
                 ref={canvas}
                 className="replay-canvas"
                 style={{ "--replay-zoom": zoom } as React.CSSProperties}
                 role="img"
-                aria-label={`Hospital state schematic: ${patientTotal} active patients; ${q.total} awaiting inpatient placement. Every patient is available in the accessible census below.`}
+                aria-label={`Hospital state schematic across all sites: ${patientTotal} active patients; ${q.total} awaiting inpatient placement. Bed totals also include ${backgroundOccupants} anonymous partner occupants. Every individual patient is available in the accessible census below.`}
                 onClick={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect(),
                     x = ((e.clientX - rect.left) / rect.width) * 1000,
@@ -887,11 +955,17 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                   ? `Highlighted recorded path: ${patientId(inspected)}.`
                   : patientTotal > visiblePatients.length
                     ? `${visiblePatients.length} individual markers; ${fmt(patientTotal - visiblePatients.length)} grouped. Full census below.`
-                    : "Exact recorded state; schematic positions only."}
+                    : backgroundOccupants > 0
+                      ? `Beds include ${fmt(backgroundOccupants)} anonymous partner occupants; positions are schematic.`
+                      : "Exact recorded state; schematic positions only."}
               </span>
             </div>
           </div>
-          <aside className="inspector replay-inspector">
+          <aside
+            className="inspector replay-inspector"
+            id="replay-inspector-dock"
+            hidden={panels.inspectorHidden}
+          >
             <div className="inspector-header">
               <div className="inspector-icon">
                 <Clock3 size={19} />
@@ -1095,134 +1169,134 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             />
           </aside>
         </div>
-        <div className="replay-controls">
-          <div className="playback-buttons">
-            <button
-              aria-label="Return to run start"
-              onClick={() => move(start)}
-            >
-              <SkipBack size={17} />
-            </button>
-            <button
-              aria-label="Previous recorded event"
-              disabled={stepping || unavailable}
-              onClick={() => void step("before")}
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <Button
-              primary
-              disabled={unavailable || currentMs >= endMs}
-              onClick={() => setPlaying(!playing)}
-              aria-label={playing ? "Pause replay" : "Play replay"}
-            >
-              {playing ? <Pause size={18} /> : <Play size={18} />}
-            </Button>
-            <button
-              aria-label="Next recorded event"
-              disabled={stepping || unavailable}
-              onClick={() => void step("after")}
-            >
-              <ChevronRight size={18} />
-            </button>
-            <button aria-label="Go to run horizon" onClick={() => move(end)}>
-              <SkipForward size={17} />
-            </button>
-            <div className="segmented">
-              {[1, 4, 16].map((v) => (
-                <button
-                  className={speed === v ? "active" : ""}
-                  key={v}
-                  onClick={() => setSpeed(v)}
-                >
-                  {v}×
-                </button>
-              ))}
+        <PlanningTimelineDock panels={panels} name="replay">
+          <div className="replay-controls">
+            <div className="playback-buttons">
+              <button
+                aria-label="Return to run start"
+                onClick={() => move(start)}
+              >
+                <SkipBack size={17} />
+              </button>
+              <button
+                aria-label="Previous recorded event"
+                disabled={stepping || unavailable}
+                onClick={() => void step("before")}
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <Button
+                primary
+                disabled={unavailable || currentMs >= endMs}
+                onClick={() => setPlaying(!playing)}
+                aria-label={playing ? "Pause replay" : "Play replay"}
+              >
+                {playing ? <Pause size={18} /> : <Play size={18} />}
+              </Button>
+              <button
+                aria-label="Next recorded event"
+                disabled={stepping || unavailable}
+                onClick={() => void step("after")}
+              >
+                <ChevronRight size={18} />
+              </button>
+              <button aria-label="Go to run horizon" onClick={() => move(end)}>
+                <SkipForward size={17} />
+              </button>
+              <div className="segmented">
+                {[1, 4, 16].map((v) => (
+                  <button
+                    className={speed === v ? "active" : ""}
+                    key={v}
+                    onClick={() => setSpeed(v)}
+                  >
+                    {v}×
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="replay-time">
-            <strong>{timestamp(ctx.selectedTime)}</strong>
-            <span>1× = one elapsed simulation hour per second</span>
-          </div>
-          <form
-            className="replay-jump"
-            onSubmit={(event) => {
-              event.preventDefault();
-              const value = new FormData(event.currentTarget).get("at");
-              const instant = Date.parse(`${value}Z`);
-              if (
-                Number.isFinite(instant) &&
-                instant >= startMs &&
-                instant <= endMs
-              )
-                move(new Date(instant).toISOString());
-              else setError("Choose a UTC time within this completed run.");
-            }}
-          >
-            <label>
-              Jump (UTC)
-              <input
-                key={ctx.selectedTime}
-                name="at"
-                aria-label="Jump replay UTC date and time"
-                type="datetime-local"
-                required
-                min={new Date(startMs).toISOString().slice(0, 19)}
-                max={new Date(endMs).toISOString().slice(0, 19)}
-                defaultValue={new Date(currentMs).toISOString().slice(0, 19)}
-                step="1"
-              />
-            </label>
-            <Button small type="submit">
-              Go
-            </Button>
-          </form>
-          <label className="reduced-motion">
-            <input
-              type="checkbox"
-              checked={reduced}
-              onChange={(e) => {
-                setReduced(e.target.checked);
-                setPlaying(false);
+            <div className="replay-time">
+              <strong>{timestamp(ctx.selectedTime)}</strong>
+              <span>1× = one elapsed simulation hour per second</span>
+            </div>
+            <form
+              className="replay-jump"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const instant = Date.parse(`${jumpTime}Z`);
+                if (
+                  Number.isFinite(instant) &&
+                  instant >= startMs &&
+                  instant <= endMs
+                )
+                  move(new Date(instant).toISOString());
+                else
+                  setError(
+                    "Choose a valid local time within this completed run.",
+                  );
               }}
+            >
+              <ZonedDateTimeInput
+                label="Jump replay date and time"
+                value={jumpTime}
+                onChange={setJumpTime}
+                timeZone={
+                  (ctx.resultScenario || ctx.scenario)?.timezone ||
+                  "America/Chicago"
+                }
+                required
+              />
+              <Button small type="submit">
+                Go
+              </Button>
+            </form>
+            <label className="reduced-motion">
+              <input
+                type="checkbox"
+                checked={reduced}
+                onChange={(e) => {
+                  setReduced(e.target.checked);
+                  setPlaying(false);
+                }}
+              />
+              Reduced motion
+            </label>
+          </div>
+          <div className="replay-scrubber">
+            <span>{localDate(start)}</span>
+            <input
+              aria-label="Replay timestamp across actual elapsed horizon"
+              type="range"
+              min={0}
+              max={Math.max(0, (endMs - startMs) / 60000)}
+              step={1}
+              value={Math.max(
+                0,
+                Math.min(
+                  (endMs - startMs) / 60000,
+                  (currentMs - startMs) / 60000,
+                ),
+              )}
+              onChange={(e) =>
+                move(
+                  new Date(
+                    startMs + Number(e.target.value) * 60000,
+                  ).toISOString(),
+                )
+              }
             />
-            Reduced motion
-          </label>
-        </div>
-        <div className="replay-scrubber">
-          <span>{localDate(start)}</span>
-          <input
-            aria-label="Replay timestamp across actual elapsed horizon"
-            type="range"
-            min={0}
-            max={Math.max(0, (endMs - startMs) / 60000)}
-            step={1}
-            value={Math.max(
-              0,
-              Math.min(
-                (endMs - startMs) / 60000,
-                (currentMs - startMs) / 60000,
-              ),
-            )}
-            onChange={(e) =>
-              move(
-                new Date(
-                  startMs + Number(e.target.value) * 60000,
-                ).toISOString(),
-              )
-            }
+            <span>
+              {localDate(end)} · {fmt(durationHours)} elapsed h
+            </span>
+          </div>
+          <ReplayAnnotations
+            rep={rep || ""}
+            start={start}
+            end={end}
+            at={ctx.selectedTime}
+            onSeek={move}
           />
-          <span>
-            {localDate(end)} · {fmt(durationHours)} elapsed h
-          </span>
-        </div>
-        <ReplayAnnotations
-          rep={rep || ""}
-          start={start}
-          end={end}
-          at={ctx.selectedTime}
-          onSeek={move}
-        />
+        </PlanningTimelineDock>
       </div>
       <div className="spread" style={{ padding: "12px 0" }}>
         <Button

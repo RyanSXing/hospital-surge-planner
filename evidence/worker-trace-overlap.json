@@ -1,0 +1,30 @@
+{
+  "recorded_at": "2026-10-17T11:36:20.758687+00:00",
+  "status": "targeted_regressions_passed_not_yet_deployed",
+  "changes": [
+    "Select the representative trajectory with one shared exact median/tie function.",
+    "Reuse one existing spawned child after every ordinary trajectory finishes; overlap only pure selected trace computation with parent aggregation and artifact serialization.",
+    "Keep all artifact and fenced database publication in the parent.",
+    "Check cancellation, deadline, lease ownership and child failure throughout aggregation and period summaries."
+  ],
+  "validation": {
+    "command": ".venv/bin/pytest -q tests/test_worker_overlap.py tests/test_worker_pool.py tests/test_worker_fencing.py tests/test_aggregate_batch.py tests/test_engine_aggregate.py tests/test_api.py::test_parallel_replications_and_export_without_trace",
+    "passed": 46,
+    "seconds": 51.34,
+    "log": "evidence/worker-overlap-tests.log",
+    "ruff": "passed"
+  },
+  "coverage": [
+    "Exact complete spawned trace equals serial output except execution timing, including equipment-pool state history.",
+    "Barrier proof: parent summaries and input upload proceed while selected trace is active, after all ordinary tasks finish.",
+    "Aggregate/trace exceptions, user cancellation, deadline and lost attempt ownership never publish an incomplete manifest.",
+    "Saved ordinary replication artifacts survive failed finalization; temporary uploads are cleaned.",
+    "Real SIGKILL of the parent stops the known selected-trace child; abandoned private inputs are scavenged."
+  ],
+  "hosted_performance": "Not measured for this candidate. The prior e2e65eb annual workload completed in 622.256253138 worker seconds and missed the 600-second target.",
+  "source_sha256": {
+    "apps/api/surge_api/worker.py": "25baadee4dce2fdf950517943b776d1c45a7052aef5055b65e4b7f97e78d6ce9",
+    "packages/engine/surge_engine/aggregate.py": "a08d08722f29b634de1f35adc1dffe7e66a93e248813c7710c8c5b807aa35c62",
+    "tests/test_worker_overlap.py": "c222af153ef7501a7d0ca4c5fbc7529dcd9fb7ccdbfd901c9e7c807af1782b66"
+  }
+}

@@ -1,0 +1,141 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.7.0
+rootdir: /Users/rsxing/Downloads/Agies
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1
+collected 232 items
+
+tests/test_aggregate_batch.py .............                              [  5%]
+tests/test_api.py ...................                                    [ 13%]
+tests/test_artifact_compression.py ..                                    [ 14%]
+tests/test_artifacts.py ...                                              [ 15%]
+tests/test_comparisons.py ..                                             [ 16%]
+tests/test_compute.py ...                                                [ 18%]
+tests/test_creation_idempotency.py ..................                    [ 25%]
+tests/test_data_workflows.py ...                                         [ 27%]
+tests/test_dataset_cards.py ...                                          [ 28%]
+tests/test_engine.py ............................                        [ 40%]
+tests/test_engine_aggregate.py .......                                   [ 43%]
+tests/test_engine_indices.py ........                                    [ 46%]
+tests/test_orphan_retention.py ..........                                [ 51%]
+tests/test_patient_queries.py ...                                        [ 52%]
+tests/test_replay_annotations.py .....                                   [ 54%]
+tests/test_reset_reconciliation.py .                                     [ 55%]
+tests/test_retention.py ..                                               [ 56%]
+tests/test_review_api.py ............                                    [ 61%]
+tests/test_review_observability.py ...                                   [ 62%]
+tests/test_review_worker_metrics.py ..                                   [ 63%]
+tests/test_scenario_planning.py .........                                [ 67%]
+tests/test_schedule_window.py ..............                             [ 73%]
+tests/test_series.py ...                                                 [ 74%]
+tests/test_snapshot_cache.py FF...                                       [ 76%]
+tests/test_summary_context.py .............                              [ 82%]
+tests/test_worker_fencing.py ......                                      [ 84%]
+tests/test_worker_overlap.py ..........                                  [ 89%]
+tests/test_worker_pool.py .........                                      [ 93%]
+tests/test_worker_queue_security.py .                                    [ 93%]
+tests/test_worker_retry.py ............                                  [ 98%]
+tests/test_worker_uploads.py ...                                         [100%]
+
+=================================== FAILURES ===================================
+_ test_cached_recorder_preserves_complete_trace_and_reconstruction[planning_baseline] _
+
+fixture = 'planning_baseline'
+
+    @pytest.mark.parametrize("fixture", ["planning_baseline", "stress_snapshot"])
+    def test_cached_recorder_preserves_complete_trace_and_reconstruction(fixture):
+        dataset = generate_dataset(fixture, days=3)
+        scenario = {
+            "horizon_calendar_days": 3,
+            "base_seed": 41021,
+            "conditions": [{"kind": "arrival_multiplier", "surge_percent": 70}],
+            "interventions": [
+                {"id": "clinic", "kind": "clinic", "nurses": 2, "enabled_slots": 8, "activation_minutes": 60},
+                {"id": "transport", "kind": "partner_transfer", "activation_minutes": 120},
+            ],
+            "updates": [
+                {
+                    "update_id": "equipment-fails",
+                    "type": "equipment_change",
+                    "effective_at": "2026-10-16T08:00:00Z",
+                    "payload": {"equipment_pool_id": "EQ-ICU-VENT", "operation": "fail", "quantity": 3},
+                },
+                {
+                    "update_id": "equipment-recovers",
+                    "type": "equipment_change",
+                    "effective_at": "2026-10-17T08:00:00Z",
+                    "payload": {"equipment_pool_id": "EQ-ICU-VENT", "operation": "repair", "quantity": 3},
+                },
+            ],
+        }
+        with (
+            patch.object(HospitalSimulation, "record_state", uncached_record_state),
+            patch.object(HospitalSimulation, "update_blockers", uncached_update_blockers),
+        ):
+            expected = run_replication(dataset, scenario)
+        actual = run_replication(dataset, scenario)
+>       assert actual == expected
+E       AssertionError: assert {'replication...': 41021, ...} == {'replication...': 41021, ...}
+E         
+E         Omitting 27 identical items, use -vv to show
+E         Differing items:
+E         {'equipment_pool_history': {'EQ-ED-MONITOR': [{'at': '2026-10-16T05:00:00Z', 'elapsed_minutes': 0.0, 'equipment_pool_i...minutes': 60.0, 'equipment_pool_id': 'EQ-RES-CLINIC-KIT', 'source_equipment_pool_id': 'EQ-RES-CLINIC-KIT', ...}], ...}} != {'equipment_pool_history': {}}
+E         Use -v to get more diff
+
+tests/test_snapshot_cache.py:75: AssertionError
+_ test_cached_recorder_preserves_complete_trace_and_reconstruction[stress_snapshot] _
+
+fixture = 'stress_snapshot'
+
+    @pytest.mark.parametrize("fixture", ["planning_baseline", "stress_snapshot"])
+    def test_cached_recorder_preserves_complete_trace_and_reconstruction(fixture):
+        dataset = generate_dataset(fixture, days=3)
+        scenario = {
+            "horizon_calendar_days": 3,
+            "base_seed": 41021,
+            "conditions": [{"kind": "arrival_multiplier", "surge_percent": 70}],
+            "interventions": [
+                {"id": "clinic", "kind": "clinic", "nurses": 2, "enabled_slots": 8, "activation_minutes": 60},
+                {"id": "transport", "kind": "partner_transfer", "activation_minutes": 120},
+            ],
+            "updates": [
+                {
+                    "update_id": "equipment-fails",
+                    "type": "equipment_change",
+                    "effective_at": "2026-10-16T08:00:00Z",
+                    "payload": {"equipment_pool_id": "EQ-ICU-VENT", "operation": "fail", "quantity": 3},
+                },
+                {
+                    "update_id": "equipment-recovers",
+                    "type": "equipment_change",
+                    "effective_at": "2026-10-17T08:00:00Z",
+                    "payload": {"equipment_pool_id": "EQ-ICU-VENT", "operation": "repair", "quantity": 3},
+                },
+            ],
+        }
+        with (
+            patch.object(HospitalSimulation, "record_state", uncached_record_state),
+            patch.object(HospitalSimulation, "update_blockers", uncached_update_blockers),
+        ):
+            expected = run_replication(dataset, scenario)
+        actual = run_replication(dataset, scenario)
+>       assert actual == expected
+E       AssertionError: assert {'replication...': 41021, ...} == {'replication...': 41021, ...}
+E         
+E         Omitting 27 identical items, use -vv to show
+E         Differing items:
+E         {'equipment_pool_history': {'EQ-ED-MONITOR': [{'at': '2026-10-16T05:00:00Z', 'elapsed_minutes': 0.0, 'equipment_pool_i...minutes': 60.0, 'equipment_pool_id': 'EQ-RES-CLINIC-KIT', 'source_equipment_pool_id': 'EQ-RES-CLINIC-KIT', ...}], ...}} != {'equipment_pool_history': {}}
+E         Use -v to get more diff
+
+tests/test_snapshot_cache.py:75: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /Users/rsxing/Downloads/Agies/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_snapshot_cache.py::test_cached_recorder_preserves_complete_trace_and_reconstruction[planning_baseline]
+FAILED tests/test_snapshot_cache.py::test_cached_recorder_preserves_complete_trace_and_reconstruction[stress_snapshot]
+============= 2 failed, 230 passed, 1 warning in 232.06s (0:03:52) =============

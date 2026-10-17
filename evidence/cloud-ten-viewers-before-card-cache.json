@@ -1,0 +1,50 @@
+{
+  "recorded_at": "2026-10-17T09:14:29.391945+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scope": "Ten distinct viewer accounts and HTTPS sessions; warmed, bounded reads from Chicago OCI to this workstation",
+  "run_group_id": "run_7a5233d308aa409d84f5",
+  "viewers": 10,
+  "status": "PASSED",
+  "requests": 250,
+  "elapsed_seconds": 20.429600374947768,
+  "viewer_mutations_rejected": true,
+  "endpoints": {
+    "metrics_week": {
+      "samples": 50,
+      "p50_seconds": 0.13330335399950854,
+      "p95_seconds": 0.2542646724090446,
+      "max_seconds": 0.2692923330469057,
+      "within_500ms_target": true
+    },
+    "initial_state": {
+      "samples": 50,
+      "p50_seconds": 0.04811206250451505,
+      "p95_seconds": 0.12092335622000974,
+      "max_seconds": 0.15359766699839383,
+      "within_500ms_target": true
+    },
+    "census_50": {
+      "samples": 50,
+      "p50_seconds": 0.050721812003757805,
+      "p95_seconds": 0.11601791047432926,
+      "max_seconds": 0.11996858299244195,
+      "within_500ms_target": true
+    },
+    "events_20": {
+      "samples": 50,
+      "p50_seconds": 0.050053520972141996,
+      "p95_seconds": 0.0982019774877699,
+      "max_seconds": 0.11373029195237905,
+      "within_500ms_target": true
+    },
+    "datasets": {
+      "samples": 50,
+      "p50_seconds": 3.3732121874927543,
+      "p95_seconds": 4.2135308687196815,
+      "max_seconds": 4.505304042017087,
+      "within_500ms_target": false
+    }
+  },
+  "all_p95_within_500ms": false,
+  "temporary_accounts_disabled": 10
+}

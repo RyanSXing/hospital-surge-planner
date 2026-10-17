@@ -182,6 +182,90 @@ def test_run_replay_export_import_roundtrip(client):
     assert committed.json()["patients"] == original["patients"]
 
 
+def test_selected_time_equipment_pools_include_site_split_and_backward_seek(client):
+    from datetime import timedelta
+
+    from surge_engine.common import dt
+
+    context = setup_context(client)
+    dataset = client.get(f"/api/datasets/{context['dataset']['id']}").json()
+    start = dataset["snapshot_at"]
+    active = [
+        assignment["staff_id"]
+        for assignment in dataset["assignments"]
+        if assignment.get("reserve_pool_id") and assignment["start_at"] <= start < assignment["end_at"]
+    ]
+    staff = {person["staff_id"]: person for person in dataset["staff"]}
+    assigned = [
+        next(staff_id for staff_id in active if staff[staff_id]["role"] == role)
+        for role in ("rn", "provider", "support")
+    ]
+    source = next(
+        pool
+        for pool in dataset["equipment_pools"]
+        if pool["capability_code"] == "CLINIC_KIT" and pool["portable"]
+    )
+    target = "UNIT-CLINIC-NORTH"
+    scenario = create_short_scenario(
+        client,
+        context,
+        replications=1,
+        interventions=[
+            {
+                "kind": "clinic",
+                "unit_id": target,
+                "activation_minutes": 60,
+                "enabled_slots": 4,
+                "assigned_staff_ids": assigned,
+                "equipment_allocations": [{"equipment_pool_id": source["equipment_pool_id"], "quantity": 4}],
+            }
+        ],
+    )
+    run = client.post("/api/run-groups", json={"scenario_id": scenario["id"]}).json()
+    execute_job(run["id"], client.database_url)
+    completed = client.get(f"/api/run-groups/{run['id']}").json()
+    assert completed["status"] == "SUCCEEDED", completed
+    selected = completed["selected_replication_id"]
+    before_at = (dt(start) + timedelta(minutes=30)).isoformat()
+    after_at = (dt(start) + timedelta(minutes=90)).isoformat()
+    before = {
+        pool["equipment_pool_id"]: pool
+        for pool in client.get(f"/api/runs/{selected}/state", params={"at": before_at}).json()[
+            "equipment_pools"
+        ]
+    }
+    after = {
+        pool["equipment_pool_id"]: pool
+        for pool in client.get(f"/api/runs/{selected}/state", params={"at": after_at}).json()[
+            "equipment_pools"
+        ]
+    }
+    split_id = f"{source['equipment_pool_id']}-{target}"
+    assert split_id not in before
+    assert after[source["equipment_pool_id"]]["quantity"] == source["quantity"] - 4
+    split = after[split_id]
+    assert split["equipment_pool_id"] == split_id
+    assert split["source_equipment_pool_id"] == source["equipment_pool_id"]
+    assert split["created_in_trajectory"]
+    assert split["facility_id"] == "FAC-CLINIC-NORTH"
+    assert split["unit_id"] == target
+    assert split["capability_code"] == "CLINIC_KIT"
+    assert split["portable"]
+    assert split["quantity"] == 4
+    assert all(
+        isinstance(split[field], int) and split[field] >= 0
+        for field in ("in_use", "reserved", "failed", "pending_decommission")
+    )
+    assert split["available"] == max(
+        0,
+        split["quantity"]
+        - split["in_use"]
+        - split["reserved"]
+        - split["failed"]
+        - split["pending_decommission"],
+    )
+
+
 def test_cross_workspace_resource_hidden(client):
     setup_context(client)
     with client.app.state.Session.begin() as session:
@@ -525,7 +609,16 @@ def test_bounded_state_keeps_exact_counts_and_paginated_filters(client):
                     "kind": "ed",
                     "occupied": 0,
                 }
-            ]
+            ],
+            "EAST-WARD": [
+                {
+                    "elapsed_minutes": 0,
+                    "unit_id": "EAST-WARD",
+                    "facility_id": "FAC-EAST",
+                    "kind": "ward",
+                    "occupied": 0,
+                }
+            ],
         },
         "patients": [
             {
@@ -533,11 +626,19 @@ def test_bounded_state_keeps_exact_counts_and_paginated_filters(client):
                 "state_intervals": [
                     {
                         "start_elapsed_minutes": 0,
-                        "state": "ed_waiting" if i % 2 else "direct_waiting",
+                        "state": "in_transit" if i == 1200 else ("ed_waiting" if i % 2 else "direct_waiting"),
                         "care_level": "ward",
                         "facility_id": "FAC-MAIN",
                         "unit_id": None,
                         "admission_pending": i % 2 == 0,
+                        "pending_transfer": (
+                            {
+                                "status": "departed",
+                                "destination_unit_id": "EAST-WARD",
+                            }
+                            if i == 1200
+                            else None
+                        ),
                     }
                 ],
             }
@@ -558,6 +659,15 @@ def test_bounded_state_keeps_exact_counts_and_paginated_filters(client):
     assert len(response["patients"]) == 500 and response["patient_total"] == 1250
     assert response["patient_counts"]["by_facility"]["FAC-MAIN"] == 1250
     assert response["queue_counts"]["FAC-MAIN"]["total"] == 625
+    assert all(patient["patient_id"] != "P1200" for patient in response["patients"])
+    assert response["transfer_paths"] == [
+        {
+            "from_facility_id": "FAC-MAIN",
+            "to_facility_id": "FAC-EAST",
+            "count": 1,
+            "status_counts": {"departed": 1},
+        }
+    ]
     assert response["queue_counts"]["FAC-MAIN"]["ed"] == 625
     assert sum(g["count"] for g in response["patient_groups"]) == 1250
     assert sum(g["count"] for g in response["patient_groups"] if g["admission_pending"]) == 625

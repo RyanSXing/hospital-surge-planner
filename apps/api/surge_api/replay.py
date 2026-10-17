@@ -48,6 +48,7 @@ def exact_state(trace, at):
         )
         blockers = defaultdict(Counter)
         groups = Counter()
+        transfers = defaultdict(Counter)
         for patient in value["patients"]:
             site = (
                 patient.get("facility_id") or units.get(patient.get("unit_id"), {}).get("facility_id") or main
@@ -69,6 +70,14 @@ def exact_state(trace, at):
                     patient.get("eligible_for_transfer"),
                 )
             ] += 1
+            transfer = patient.get("pending_transfer") or {}
+            transfer_status = transfer.get("status")
+            destination = (
+                transfer.get("destination_facility_id")
+                or units.get(transfer.get("destination_unit_id"), {}).get("facility_id")
+            )
+            if transfer_status in {"requested", "reserved", "departed"} and destination:
+                transfers[(site, destination)][transfer_status] += 1
             if patient.get("admission_pending"):
                 queues[site]["total"] += 1
                 required = patient.get("target_unit_kind", care)
@@ -105,6 +114,18 @@ def exact_state(trace, at):
                     count=count,
                 )
                 for group, count in groups.items()
+            ],
+            # A complete selected-time route aggregate calculated before
+            # `bounded_state` samples the patient inspection list. It contains
+            # no patient IDs or route animation data.
+            transfer_paths=[
+                {
+                    "from_facility_id": source,
+                    "to_facility_id": destination,
+                    "count": sum(statuses.values()),
+                    "status_counts": dict(sorted(statuses.items())),
+                }
+                for (source, destination), statuses in sorted(transfers.items())
             ],
         )
         # A few neighboring seeks share exact reconstructed state; no history

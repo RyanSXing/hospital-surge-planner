@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { api, capture, open, record, scenario, waitRun } from "./helpers";
+import { utcToWall } from "../src/zonedTime";
 
 test("replay exposes complete filtered events, patient history and recorded resources", async ({
   page,
@@ -36,6 +37,32 @@ test("replay exposes complete filtered events, patient history and recorded reso
   const url = new URL(page.url());
   url.searchParams.set("at", at);
   await page.goto(url.toString());
+  if (info.project.name === "mobile") {
+    const viewport = page.locator(".replay-canvas-viewport");
+    await expect(page.getByLabel("Focus care zone")).toBeVisible();
+    await expect
+      .poll(() =>
+        viewport.evaluate(
+          (element) => element.scrollWidth - element.clientWidth,
+        ),
+      )
+      .toBeGreaterThan(500);
+    await page.getByLabel("Focus care zone").selectOption("ward");
+    await expect
+      .poll(() => viewport.evaluate((element) => element.scrollLeft))
+      .toBeGreaterThan(400);
+    const geometry = await page
+      .locator(".replay-canvas")
+      .evaluate((element) => element.getBoundingClientRect().toJSON());
+    expect(geometry.width).toBeGreaterThanOrEqual(1000);
+    expect(geometry.height).toBeCloseTo(620, 0);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBeTruthy();
+    await capture(page, "replay-mobile-readable-zones", info);
+  }
   const feed = page.locator(".event-feed");
   const events = await api(
     page.request,
@@ -204,15 +231,17 @@ test("replay exposes complete filtered events, patient history and recorded reso
       expect(box.height).toBeGreaterThan(20);
     }
     expect(docked[".replay-canvas"].width).toBeGreaterThan(900);
-    const ratioError = await page
-      .locator(".replay-canvas")
-      .evaluate((node: HTMLCanvasElement) => {
-        const bounds = node.getBoundingClientRect();
-        return Math.abs(
-          node.width / node.height - bounds.width / bounds.height,
-        );
-      });
-    expect(ratioError).toBeLessThan(0.01);
+    // ResizeObserver and the canvas effect settle after the viewport resize.
+    await expect
+      .poll(() =>
+        page.locator(".replay-canvas").evaluate((node: HTMLCanvasElement) => {
+          const bounds = node.getBoundingClientRect();
+          return Math.abs(
+            node.width / node.height - bounds.width / bounds.height,
+          );
+        }),
+      )
+      .toBeLessThan(0.01);
   }
   await capture(page, "replay-complete-evidence", info);
   const later = new Date(Date.parse(run.start_at) + 24 * 3600000).toISOString();
@@ -270,8 +299,8 @@ test("replay exposes complete filtered events, patient history and recorded reso
   );
   const jumped = new Date(Date.parse(run.start_at) + 3 * 3600000).toISOString();
   await page
-    .getByLabel("Jump replay UTC date and time")
-    .fill(jumped.slice(0, 16));
+    .getByLabel("Jump replay date and time", { exact: false })
+    .fill(utcToWall(jumped, "America/Chicago"));
   await page
     .locator(".replay-jump")
     .getByRole("button", { name: "Go", exact: true })

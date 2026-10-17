@@ -39,6 +39,7 @@ export interface RunGroup extends Entity {
   replications_completed: number;
   replications_requested: number;
   selected_replication_id?: string;
+  scenario_context?: Scenario | null;
 }
 export interface Metrics extends Entity {
   scalar_metrics: Record<string, Entity>;
@@ -48,6 +49,7 @@ export interface Metrics extends Entity {
 export interface PlanningContext {
   dataset: Dataset | null;
   scenario: Scenario | null;
+  resultScenario?: Scenario | null;
   run: RunGroup | null;
   metrics: Metrics | null;
   state: Entity | null;
@@ -55,6 +57,8 @@ export interface PlanningContext {
   selectedDay: number;
   selectedFacility: string;
   selectedPatient: Entity | null;
+  selectedUnit: string;
+  selectedResource: { kind: string; id: string } | null;
   grain: Grain;
   loading: boolean;
   canWrite?: boolean;
@@ -71,6 +75,9 @@ export interface PlanningContext {
   setDay: (d: number) => void;
   setFacility: (s: string) => void;
   setPatient: (p: Entity | null) => void;
+  setUnit: (id: string) => void;
+  inspectEntity: (kind: string, id: string) => void;
+  clearResource: () => void;
   setGrain: (g: Grain) => void;
   refresh: () => Promise<void>;
   action: <T>(name: string, f: () => Promise<T>) => Promise<T | undefined>;

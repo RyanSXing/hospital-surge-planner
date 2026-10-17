@@ -18,6 +18,11 @@ export interface EditorValues {
   peakDay: number;
   mixMode: MixMode;
   mix: Record<string, number>;
+  customPoints?: { at: string; multiplier: number }[];
+  windowStartAt?: string;
+  windowEndAt?: string;
+  editArrival?: boolean;
+  editLegacyStaff?: boolean;
 }
 export function clampWindow(start: number, end: number, days: number) {
   const a = Math.max(0, Math.min(Math.round(start), days - 1));
@@ -27,8 +32,10 @@ export function clampWindow(start: number, end: number, days: number) {
   };
 }
 export function conditionWindow(scenario: Scenario, condition?: Entity) {
-  const start = condition?.start_at || condition?.control_points?.[0]?.at;
-  const end = condition?.end_at || condition?.control_points?.at(-1)?.at;
+  const curve =
+    condition?.control_points?.length >= 2 ? condition?.control_points : null;
+  const start = curve?.[0]?.at || condition?.start_at;
+  const end = curve?.at(-1)?.at || condition?.end_at;
   return clampWindow(
     start ? localDayIndex(scenario.start_at, start, scenario.timezone) : 0,
     end
@@ -45,6 +52,16 @@ export function mixError(mode: MixMode, mix: Record<string, number>) {
     Math.abs(values.reduce((a, b) => a + b, 0) - 1) > 1e-8
     ? "Care fractions must be nonnegative and total 100%."
     : "";
+}
+export function planningEnd(
+  scenario: Scenario | null,
+  startAt: string,
+  days: number,
+) {
+  return (
+    scenario?.end_at ||
+    atDay(startAt, days, 0, scenario?.timezone || "America/Chicago")
+  );
 }
 export function buildScenarioPatch(
   scenario: Scenario | null,
@@ -73,8 +90,16 @@ export function buildScenarioPatch(
   if (invalid) throw new Error(invalid);
   const { startDay, endDay } = clampWindow(value.startDay, value.endDay, days),
     zone = scenario?.timezone || "America/Chicago";
-  const a = atDay(startAt, startDay, 0, zone),
-    b = atDay(startAt, endDay, 0, zone),
+  const exclusiveEnd = planningEnd(scenario, startAt, days);
+  const a = value.windowStartAt ?? atDay(startAt, startDay, 0, zone),
+    b =
+      value.windowEndAt ??
+      new Date(
+        Math.min(
+          Date.parse(atDay(startAt, endDay, 0, zone)),
+          Date.parse(exclusiveEnd),
+        ),
+      ).toISOString(),
     m = 1 + percent / 100;
   const selected = (scenario?.conditions || []).find(
     (c) =>
@@ -83,68 +108,122 @@ export function buildScenarioPatch(
         ? c.id === conditionId
         : (c.entry_stream_id || "ED_MAIN") === stream),
   );
+  if (
+    value.editArrival !== false &&
+    (!(Date.parse(a) < Date.parse(b)) ||
+      Date.parse(a) < Date.parse(startAt) ||
+      Date.parse(b) > Date.parse(exclusiveEnd))
+  )
+    throw new Error(
+      "Arrival window must be ordered and lie within the scenario horizon.",
+    );
   let peak = Math.max(startDay, Math.min(value.peakDay, endDay));
   const peakAt =
     peak > startDay && peak < endDay
       ? atDay(startAt, peak, 0, zone)
       : new Date((Date.parse(a) + Date.parse(b)) / 2).toISOString();
   const control_points =
-    shape === "wave"
-      ? [
-          { at: a, multiplier: 1 },
-          { at: peakAt, multiplier: m },
-          { at: b, multiplier: 1 },
-        ]
-      : [
-          { at: a, multiplier: shape === "ramp" ? 1 : m },
-          { at: b, multiplier: m },
-        ];
+    shape === "custom"
+      ? (value.customPoints || []).map((p) => ({ ...p }))
+      : shape === "wave"
+        ? [
+            { at: a, multiplier: 1 },
+            { at: peakAt, multiplier: m },
+            { at: b, multiplier: 1 },
+          ]
+        : [
+            { at: a, multiplier: shape === "ramp" ? 1 : m },
+            { at: b, multiplier: m },
+          ];
+  if (
+    value.editArrival !== false &&
+    shape === "custom" &&
+    (control_points.length < 2 ||
+      control_points.some(
+        (p, i) =>
+          !Number.isFinite(Date.parse(p.at)) ||
+          Date.parse(p.at) < Date.parse(startAt) ||
+          Date.parse(p.at) > Date.parse(exclusiveEnd) ||
+          !Number.isFinite(p.multiplier) ||
+          p.multiplier < 0 ||
+          (i > 0 && Date.parse(p.at) <= Date.parse(control_points[i - 1].at)),
+      ))
+  )
+    throw new Error(
+      "Custom arrival curves need at least two ordered timestamps and nonnegative multipliers.",
+    );
   const preserved = (scenario?.conditions || []).filter(
     (c) =>
-      c !== selected &&
-      !(staffConditionId
-        ? c.id === staffConditionId
-        : ["staff_absence", "staff_unavailability"].includes(c.kind) &&
-          c.unit_id === "UNIT-WARD-A"),
+      (value.editArrival === false || c !== selected) &&
+      !(
+        value.editLegacyStaff !== false &&
+        (staffConditionId
+          ? c.id === staffConditionId
+          : ["staff_absence", "staff_unavailability"].includes(c.kind) &&
+            c.unit_id === "UNIT-WARD-A")
+      ),
   );
   const conditions: Entity[] = [];
-  if ((percent !== 0 && shape !== "baseline") || mixMode !== "default") {
+  if (
+    value.editArrival !== false &&
+    (percent !== 0 || mixMode !== "default" || shape === "custom")
+  ) {
     const edited: Entity = {
       ...selected,
-      id: selected?.id || `condition-arrivals-${stream}`,
+      id: selected?.id || conditionId || `condition-arrivals-${stream}`,
       kind: "arrival_multiplier",
       entry_stream_id: stream,
-      shape: shape === "wave" || shape === "ramp" ? "piecewise_linear" : "step",
-      surge_percent: shape === "baseline" ? 0 : percent,
-      start_at: a,
-      end_at: b,
-      control_points:
-        shape === "baseline"
-          ? control_points.map((p) => ({ ...p, multiplier: 1 }))
-          : control_points,
+      shape: ["wave", "ramp", "custom"].includes(shape)
+        ? "piecewise_linear"
+        : "step",
+      surge_percent:
+        shape === "custom"
+          ? (Math.max(...control_points.map((p) => p.multiplier)) - 1) * 100
+          : percent,
+      start_at: shape === "custom" ? control_points[0].at : a,
+      end_at: shape === "custom" ? control_points.at(-1)!.at : b,
+      control_points,
       source: selected?.source || "user_assumption",
     };
     if (mixMode === "default") delete edited.care_mix_override;
     else edited.care_mix_override = { ...mix };
     conditions.push(edited);
   }
-  if (absence)
+  if (absence && value.editLegacyStaff !== false)
     conditions.push({
       id: staffConditionId || "condition-staff",
       kind: "staff_absence",
       unit_id: "UNIT-WARD-A",
       absence_percent: absence,
-      start_at: a,
-      end_at: b,
+      start_at: shape === "custom" ? control_points[0].at : a,
+      end_at: shape === "custom" ? control_points.at(-1)!.at : b,
       source: "user_assumption",
     });
+  // Replacing one input must not change its ordering relative to explicit cohort overrides.
+  const ordered = [...preserved];
+  for (const edited of conditions) {
+    const original = (scenario?.conditions || []).find(
+      (c) =>
+        c.id === edited.id ||
+        (edited.kind === "arrival_multiplier" && c === selected),
+    );
+    if (original) {
+      const index = scenario!.conditions.indexOf(original);
+      const before = new Set(scenario!.conditions.slice(0, index));
+      const insertion = ordered.reduce(
+        (n, c, i) => (before.has(c) ? i + 1 : n),
+        0,
+      );
+      ordered.splice(insertion, 0, edited);
+    } else ordered.push(edited);
+  }
   return {
     name,
     start_at: startAt,
     base_seed: seed,
     horizon_calendar_days: days,
     replications,
-    conditions: [...preserved, ...conditions],
+    conditions: ordered,
   };
 }
 export function inputDifferences(before: Entity, after: Entity) {

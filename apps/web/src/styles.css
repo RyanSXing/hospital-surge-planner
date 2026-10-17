@@ -742,6 +742,25 @@ main {
 .maplibregl-canvas {
   outline: none;
 }
+.campus-map .maplibregl-ctrl-scale {
+  margin: 0 0 12px 12px;
+  min-width: 56px;
+  padding: 2px 6px 1px;
+  border: 0;
+  border-bottom: 2px solid #9eb7c6;
+  background: rgb(7 21 29 / 88%);
+  box-shadow: 0 0 0 1px rgb(128 176 198 / 32%);
+  color: #d5e5ec;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.45px;
+  line-height: 16px;
+  text-align: center;
+}
+.campus-map .map-legend {
+  padding-left: 128px;
+}
 .map-topline {
   position: absolute;
   top: 16px;

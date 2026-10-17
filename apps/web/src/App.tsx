@@ -68,6 +68,12 @@ import UpdateDialog from "./components/UpdateDialog";
 import AdminDialog from "./components/AdminDialog";
 import AlertsDialog from "./components/AlertsDialog";
 import SearchDialog from "./components/SearchDialog";
+import { resourceFacility } from "./entityLocation";
+import {
+  actualInventory,
+  searchEntityId,
+  type SearchKind,
+} from "./components/workspaceSearch";
 const Overview = lazy(() => import("./pages/Overview")),
   Scenarios = lazy(() => import("./pages/Scenarios")),
   Patients = lazy(() => import("./pages/Patients")),
@@ -91,11 +97,17 @@ export default function App() {
           "overview") as PageId,
     ),
     [dataset, setDatasetState] = useState<Dataset | null>(null),
+    [draftDataset, setDraftDataset] = useState<Dataset | null>(null),
     [scenario, setScenario] = useState<Scenario | null>(null),
     [run, setRun] = useState<RunGroup | null>(null),
     [selectedTime, setSelectedTime] = useState("2026-10-16T05:00:00Z"),
     [selectedFacility, setFacilityState] = useState("FAC-MAIN"),
     [selectedPatient, setPatient] = useState<Entity | null>(null),
+    [selectedUnit, setSelectedUnit] = useState(""),
+    [selectedResource, setSelectedResource] = useState<{
+      kind: string;
+      id: string;
+    } | null>(null),
     [grain, setGrain] = useState<Grain>("day"),
     [busy, setBusy] = useState<string | null>(null),
     [error, setError] = useState<string | null>(null),
@@ -114,36 +126,39 @@ export default function App() {
   const setDataset = useCallback((value: Dataset | null) => {
     setPresentationTimezone(value?.timezone || "America/Chicago");
     setDatasetState(value);
+    setDraftDataset(value);
+    setSelectedUnit("");
+    setSelectedResource(null);
   }, []);
   const setFacility = useCallback((value: string) => {
     setFacilityState(value);
     setPatient(null);
+    setSelectedUnit("");
+    setSelectedResource(null);
   }, []);
+  const setUnit = useCallback((id: string) => {
+    setSelectedUnit(id);
+    setPatient(null);
+    setSelectedResource(null);
+  }, []);
+  const clearResource = useCallback(() => setSelectedResource(null), []);
   const summary = useQuery({
     queryKey: ["summary"],
     queryFn: async () => {
-      const [s, u] = await Promise.all([
-        api("/workspaces/workspace-main/summary"),
-        api("/me"),
-      ]);
-      setUser(u);
       const params = new URLSearchParams(location.search);
-      if (params.get("scenario")) {
-        const chosen = await api(`/scenarios/${params.get("scenario")}`);
-        s.scenario = chosen;
-        s.dataset = await api(`/datasets/${chosen.dataset_version_id}`);
-        s.run =
-          (s.runs || []).find((r: Entity) => r.scenario_id === chosen.id) ||
-          null;
-        s.run_group = s.run;
-      }
-      if (params.get("run")) {
-        const chosen = await api(`/run-groups/${params.get("run")}`);
-        if (chosen.scenario_id === s.scenario?.id) {
-          s.run = chosen;
-          s.run_group = chosen;
-        }
-      }
+      const selection = new URLSearchParams();
+      if (params.get("scenario"))
+        selection.set("scenario_id", params.get("scenario")!);
+      if (params.get("run")) selection.set("run_group_id", params.get("run")!);
+      const [s] = await Promise.all([
+        api(
+          `/workspaces/workspace-main/summary${selection.size ? `?${selection}` : ""}`,
+        ),
+        api("/me").then((user) => {
+          setUser(user);
+          return user;
+        }),
+      ]);
       return s;
     },
     retry: 1,
@@ -161,12 +176,24 @@ export default function App() {
     if (summary.data && !dataset) {
       const d = summary.data.dataset;
       setDataset(d);
+      setDraftDataset(summary.data.draft_dataset || d);
       setScenario(summary.data.scenario);
       setRun(summary.data.run_group || summary.data.run || null);
       if (d?.snapshot_at) {
         const params = new URLSearchParams(location.search);
         setSelectedTime(params.get("at") || d.snapshot_at);
-        setFacility(params.get("facility") || "FAC-MAIN");
+        const initialUnit = d.units?.find(
+          (value: Entity) => value.unit_id === params.get("unit"),
+        );
+        setFacility(
+          initialUnit?.facility_id || params.get("facility") || "FAC-MAIN",
+        );
+        if (params.get("unit")) setUnit(params.get("unit")!);
+        if (params.get("resource") && params.get("resource_type"))
+          setSelectedResource({
+            kind: params.get("resource_type")!,
+            id: params.get("resource")!,
+          });
         const g = params.get("grain");
         if (g === "day" || g === "week" || g === "month") setGrain(g);
         if (params.get("replication"))
@@ -214,8 +241,26 @@ export default function App() {
       run?.status === "SUCCEEDED",
     staleTime: Infinity,
   });
-  const metrics = metricsQuery.data || null,
-    state = stateQuery.data || null;
+  const metrics =
+      run?.status === "SUCCEEDED" ? metricsQuery.data || null : null,
+    state = run?.status === "SUCCEEDED" ? stateQuery.data || null : null;
+  const resultScenario = run?.scenario_context || scenario;
+  const editingContext = ["scenarios", "compare", "data"].includes(page);
+  const presentationScenario = editingContext ? scenario : resultScenario;
+  const inspectionDataset = editingContext ? draftDataset || dataset : dataset;
+  const draftDatasetDiffers =
+    editingContext && inspectionDataset?.id !== dataset?.id;
+  const inspectionState =
+    inspectionDataset?.id === dataset?.id &&
+    !stateQuery.isFetching &&
+    !stateQuery.error
+      ? state
+      : null;
+  setPresentationTimezone(
+    presentationScenario?.timezone ||
+      inspectionDataset?.timezone ||
+      "America/Chicago",
+  );
   const setPage = useCallback((p: PageId) => {
     setPageState(p);
     setMobileNav(false);
@@ -227,26 +272,30 @@ export default function App() {
   const selectedDay = Math.max(
     0,
     localDayIndex(
-      scenario?.start_at || dataset?.snapshot_at || selectedTime,
+      presentationScenario?.start_at ||
+        inspectionDataset?.snapshot_at ||
+        selectedTime,
       selectedTime,
-      scenario?.timezone || dataset?.timezone,
+      presentationScenario?.timezone || inspectionDataset?.timezone,
     ),
   );
   const setDay = useCallback(
     (d: number) =>
       setSelectedTime(
         atDay(
-          scenario?.start_at || dataset?.snapshot_at || "2026-10-16T05:00:00Z",
+          presentationScenario?.start_at ||
+            inspectionDataset?.snapshot_at ||
+            "2026-10-16T05:00:00Z",
           d,
           0,
-          scenario?.timezone || dataset?.timezone,
+          presentationScenario?.timezone || inspectionDataset?.timezone,
         ),
       ),
     [
-      scenario?.start_at,
-      scenario?.timezone,
-      dataset?.snapshot_at,
-      dataset?.timezone,
+      presentationScenario?.start_at,
+      presentationScenario?.timezone,
+      inspectionDataset?.snapshot_at,
+      inspectionDataset?.timezone,
     ],
   );
   const action = useCallback(
@@ -273,6 +322,7 @@ export default function App() {
     history.replaceState({}, "", contextUrl);
     const s = await api("/workspaces/workspace-main/summary");
     setDataset(s.dataset);
+    setDraftDataset(s.draft_dataset || s.dataset);
     setScenario(s.scenario);
     setRun(s.run_group || s.run || null);
     await queryClient.invalidateQueries({ queryKey: ["summary"] });
@@ -283,14 +333,14 @@ export default function App() {
         const contextUrl = new URL(location.href);
         contextUrl.searchParams.delete("comparison");
         history.replaceState({}, "", contextUrl);
-        const s = await api<Scenario>(`/scenarios/${p.__select}`);
-        setScenario(s);
-        setDataset(await api<Dataset>(`/datasets/${s.dataset_version_id}`));
-        const summary = await api("/workspaces/workspace-main/summary");
-        setRun(
-          (summary.runs || []).find((r: Entity) => r.scenario_id === s.id) ||
-            null,
+        const selected = await api(
+          `/workspaces/workspace-main/summary?scenario_id=${encodeURIComponent(p.__select)}`,
         );
+        const s = selected.scenario as Scenario;
+        setDataset(selected.dataset);
+        setDraftDataset(selected.draft_dataset || selected.dataset);
+        setScenario(s);
+        setRun(selected.run_group || selected.run || null);
         setReplication("");
         setPatient(null);
         setSelectedTime(s.start_at);
@@ -315,15 +365,17 @@ export default function App() {
   }
   async function openRun(id: string, target: PageId = "overview") {
     await action("Opening evaluated result", async () => {
-      const r = await api<RunGroup>(`/run-groups/${id}`);
-      const s = await api<Scenario>(`/scenarios/${r.scenario_id}`);
-      setDataset(
-        await api<Dataset>(
-          `/datasets/${r.dataset_version_id || s.dataset_version_id}`,
-        ),
+      const selected = await api(
+        `/workspaces/workspace-main/summary?run_group_id=${encodeURIComponent(id)}`,
       );
+      const r = (selected.run_group || selected.run) as RunGroup;
+      const s = selected.scenario as Scenario;
+      setDataset(selected.dataset);
+      setDraftDataset(selected.draft_dataset || selected.dataset);
       setScenario(s);
       setRun(r);
+      setSelectedResource(null);
+      setSelectedUnit("");
       setReplication("");
       setPatient(null);
       setSelectedTime(r.start_at || s.start_at);
@@ -339,7 +391,16 @@ export default function App() {
         scenario_id: chosen.id,
         replications: chosen.replications,
       });
+      if (dataset?.id !== chosen.dataset_version_id) {
+        const selected = await api(
+          `/workspaces/workspace-main/summary?run_group_id=${encodeURIComponent(r.id)}`,
+        );
+        setDataset(selected.dataset);
+        setDraftDataset(selected.draft_dataset || selected.dataset);
+      }
       setRun(r);
+      setSelectedResource(null);
+      setSelectedUnit("");
       setReplication("");
       setPatient(null);
       setScenario(chosen);
@@ -396,22 +457,113 @@ export default function App() {
       notify("Dataset loaded. Scenario assumptions are ready to review.");
     });
   }
+  const inspectEntity = useCallback(
+    (kind: string, id: string) => {
+      if (!inspectionDataset) return;
+      const prepareInspection = () => {
+        if (inspectionDataset.id !== dataset?.id) {
+          setRun(null);
+          setReplication("");
+          setDataset(inspectionDataset);
+          setSelectedTime(inspectionDataset.snapshot_at);
+        }
+      };
+      if (kind === "unit") {
+        const unit = actualInventory(
+          "unit",
+          inspectionDataset.units,
+          inspectionState?.units,
+        ).find((value) => (value.unit_id || value.id) === id);
+        if (!unit) return;
+        prepareInspection();
+        setFacilityState(unit.facility_id);
+        setUnit(id);
+        setPage("patients");
+        return;
+      }
+      if (kind === "facility") {
+        prepareInspection();
+        setFacility(id);
+        setPage("overview");
+        return;
+      }
+      if (kind === "route" || kind === "update") {
+        prepareInspection();
+        setPatient(null);
+        setSelectedUnit("");
+        setSelectedResource({ kind, id });
+        setPage("resources");
+        return;
+      }
+      const inventory: Record<string, Entity[]> = {
+        staff: inspectionDataset.staff || [],
+        equipment_pool: inspectionDataset.equipment_pools || [],
+        vehicle: inspectionDataset.vehicles || [],
+        slot: inspectionDataset.slots || [],
+      };
+      const identity: Record<string, string> = {
+        staff: "staff_id",
+        equipment_pool: "equipment_pool_id",
+        vehicle: "vehicle_id",
+        slot: "slot_id",
+      };
+      const stateTable: Record<string, string> = {
+        staff: "staff",
+        equipment_pool: "equipment_pools",
+        vehicle: "vehicles",
+        slot: "slots",
+      };
+      const row = identity[kind]
+        ? actualInventory(
+            kind as SearchKind,
+            inventory[kind],
+            inspectionState?.[stateTable[kind]],
+          ).find((value) => searchEntityId(kind as SearchKind, value) === id)
+        : undefined;
+      if (!row) return;
+      prepareInspection();
+      const facility = resourceFacility(
+        kind,
+        id,
+        row,
+        inspectionDataset.units || [],
+        inspectionState?.units || [],
+      );
+      if (facility) setFacilityState(facility);
+      setPatient(null);
+      setSelectedUnit("");
+      setSelectedResource({ kind, id });
+      setPage("resources");
+    },
+    [
+      dataset?.id,
+      inspectionDataset,
+      inspectionState,
+      setDataset,
+      setFacility,
+      setPage,
+      setUnit,
+    ],
+  );
   const ctx: PlanningContext = {
-    dataset,
+    dataset: editingContext ? draftDataset || dataset : dataset,
     scenario,
-    run,
+    resultScenario: editingContext ? null : resultScenario,
+    run: draftDatasetDiffers ? null : run,
     canWrite: user?.role !== "viewer",
     role: user?.role,
-    activeReplicationId,
+    activeReplicationId: draftDatasetDiffers ? "" : activeReplicationId,
     setReplication,
-    metrics,
-    state,
-    stateLoading: stateQuery.isFetching,
-    stateError: stateQuery.error?.message || null,
+    metrics: draftDatasetDiffers ? null : metrics,
+    state: editingContext ? inspectionState : state,
+    stateLoading: !draftDatasetDiffers && stateQuery.isFetching,
+    stateError: draftDatasetDiffers ? null : stateQuery.error?.message || null,
     selectedTime,
     selectedDay,
     selectedFacility,
     selectedPatient,
+    selectedUnit,
+    selectedResource,
     grain,
     loading: summary.isLoading,
     busy,
@@ -421,7 +573,18 @@ export default function App() {
     setTime,
     setDay,
     setFacility,
-    setPatient,
+    setPatient: (patient) => {
+      if (patient && draftDatasetDiffers && inspectionDataset) {
+        setRun(null);
+        setReplication("");
+        setDataset(inspectionDataset);
+        setSelectedTime(inspectionDataset.snapshot_at);
+      }
+      setPatient(patient);
+    },
+    setUnit,
+    inspectEntity,
+    clearResource,
     setGrain,
     refresh,
     action,
@@ -447,9 +610,11 @@ export default function App() {
   }, []);
   const previousRunId = useRef<string | undefined>(undefined);
   useEffect(() => {
-    if (previousRunId.current && previousRunId.current !== run?.id) {
+    if (previousRunId.current && run?.id && previousRunId.current !== run.id) {
       setReplication("");
       setPatient(null);
+      setSelectedResource(null);
+      setSelectedUnit("");
     }
     previousRunId.current = run?.id;
   }, [run?.id]);
@@ -457,7 +622,7 @@ export default function App() {
     if (!dataset || !scenario) return;
     const u = new URL(location.href);
     u.searchParams.set("scenario", scenario.id);
-    u.searchParams.set("dataset", dataset.id);
+    u.searchParams.set("dataset", inspectionDataset?.id || dataset.id);
     u.searchParams.set("at", selectedTime);
     u.searchParams.set("facility", selectedFacility);
     u.searchParams.set("grain", grain);
@@ -469,9 +634,19 @@ export default function App() {
     if (selectedPatient)
       u.searchParams.set("patient", patientId(selectedPatient));
     else u.searchParams.delete("patient");
+    if (selectedUnit) u.searchParams.set("unit", selectedUnit);
+    else u.searchParams.delete("unit");
+    if (selectedResource) {
+      u.searchParams.set("resource", selectedResource.id);
+      u.searchParams.set("resource_type", selectedResource.kind);
+    } else {
+      u.searchParams.delete("resource");
+      u.searchParams.delete("resource_type");
+    }
     history.replaceState({}, "", u);
   }, [
     dataset?.id,
+    inspectionDataset?.id,
     scenario?.id,
     run?.id,
     selectedTime,
@@ -479,6 +654,8 @@ export default function App() {
     grain,
     activeReplicationId,
     selectedPatient,
+    selectedUnit,
+    selectedResource,
   ]);
   const active =
     run &&
@@ -511,8 +688,9 @@ export default function App() {
         <button className="hospital-selector" onClick={() => setPage("data")}>
           <Hospital size={18} />
           <span>
-            {dataset?.facilities?.find((f) => f.facility_id === "FAC-MAIN")
-              ?.name || "Central Hospital"}
+            {inspectionDataset?.facilities?.find(
+              (f) => f.facility_id === "FAC-MAIN",
+            )?.name || "Central Hospital"}
             <small>Planning workspace</small>
           </span>
           <ChevronDown size={13} />
@@ -520,8 +698,8 @@ export default function App() {
         <div className="top-context">
           <span className="top-context-label">SCENARIO</span>
           <strong>
-            {run?.comparison_id
-              ? run.scenario_name || scenario?.name
+            {!editingContext && run
+              ? resultScenario?.name || run.scenario_name || scenario?.name
               : scenario?.name || "Preparing workspace"}
           </strong>
           {dataset ? <Badge tone="warning">Synthetic dataset</Badge> : null}
@@ -608,17 +786,23 @@ export default function App() {
             <span className="context-divider" />
             <span>
               Dataset{" "}
-              <b>{dataset?.fixture?.replaceAll("_", " ") || "loading"}</b>
+              <b>
+                {inspectionDataset?.fixture?.replaceAll("_", " ") ||
+                  inspectionDataset?.name ||
+                  "loading"}
+              </b>
             </span>
-            {scenario?.revision ? (
-              <span className="revision-tag">REV {scenario.revision}</span>
+            {presentationScenario?.revision ? (
+              <span className="revision-tag">
+                REV {presentationScenario.revision}
+              </span>
             ) : null}
           </div>
           <div className="context-actions">
             <span>
               <CalendarDays size={13} />
-              {scenario
-                ? `${localDate(scenario.start_at)} – ${localDate(atDay(scenario.start_at, scenario.horizon_calendar_days - 1, 0, scenario.timezone))}`
+              {presentationScenario
+                ? `${localDate(presentationScenario.start_at)} – ${localDate(atDay(presentationScenario.start_at, presentationScenario.horizon_calendar_days - 1, 0, presentationScenario.timezone))}`
                 : "—"}
             </span>
             <button
@@ -640,26 +824,28 @@ export default function App() {
               <ArrowDownToLine size={13} />
               Export
             </button>
-            <Button
-              small
-              primary
-              disabled={
-                user?.role === "viewer" || !!busy || !!active || !scenario
-              }
-              title={
-                user?.role === "viewer"
-                  ? "Viewer access is read-only"
-                  : undefined
-              }
-              onClick={() => runScenario()}
-            >
-              {active ? (
-                <LoaderCircle size={13} className="spin" />
-              ) : (
-                <Play size={12} />
-              )}{" "}
-              {active ? "Running" : "Run scenario"}
-            </Button>
+            {page !== "scenarios" ? (
+              <Button
+                small
+                primary
+                disabled={
+                  user?.role === "viewer" || !!busy || !!active || !scenario
+                }
+                title={
+                  user?.role === "viewer"
+                    ? "Viewer access is read-only"
+                    : undefined
+                }
+                onClick={() => runScenario()}
+              >
+                {active ? (
+                  <LoaderCircle size={13} className="spin" />
+                ) : (
+                  <Play size={12} />
+                )}{" "}
+                {active ? "Running" : "Run scenario"}
+              </Button>
+            ) : null}
           </div>
         </div>
         {run?.comparison_id ? (
@@ -736,12 +922,14 @@ export default function App() {
               Results are from saved revision {run.source_draft_revision}. The
               current draft has changes.
             </span>
-            <button
-              disabled={user?.role === "viewer"}
-              onClick={() => runScenario()}
-            >
-              Rerun updated scenario <ArrowRight size={12} />
-            </button>
+            {page !== "scenarios" ? (
+              <button
+                disabled={user?.role === "viewer"}
+                onClick={() => runScenario()}
+              >
+                Rerun updated scenario <ArrowRight size={12} />
+              </button>
+            ) : null}
           </div>
         ) : null}
         {stateQuery.isFetching && run?.status === "SUCCEEDED" ? (
@@ -828,7 +1016,9 @@ export default function App() {
               ? `${completed} completed runs · Model ${run.model_version || "1.0"}`
               : "Versioned inputs · Reproducible simulation"}{" "}
             <b>·</b>{" "}
-            {scenario?.timezone || dataset?.timezone || "America/Chicago"}
+            {presentationScenario?.timezone ||
+              inspectionDataset?.timezone ||
+              "America/Chicago"}
           </span>
           <button onClick={() => setHelpOpen(true)}>
             Assumptions & provenance <ArrowUpRight size={10} />

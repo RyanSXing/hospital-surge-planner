@@ -1,11 +1,11 @@
 {
-  "recorded_at": "2026-10-17T09:52:44.134Z",
+  "recorded_at": "2026-10-17T12:36:04.663Z",
   "base_url": "http://127.0.0.1:5173",
   "scope": "Existing completed workflow; navigation and screenshots only; no simulation or data mutations",
   "deployed_commit": null,
-  "scenario_id": "scenario_8f005d96e2cc4a2f9106",
-  "run_id": "run_8fc0866a891243fcb208",
-  "comparison_id": "comparison_eac7d18eda3d48be9294",
+  "scenario_id": "scenario_13df470853084727986b",
+  "run_id": "run_a003c2b5424944afa2e0",
+  "comparison_id": "comparison_6a8feb3804454294aaf8",
   "screens": [
     {
       "mode": "desktop",
@@ -22,42 +22,42 @@
         "projected_spread_px": 296,
         "markers": [
           {
-            "label": "Select Demo Central Hospital: Active · ED 12/24 · ICU 8/12 · WARD 64/80",
+            "label": "Select Demo Central Hospital: active · ED 12/24 · ICU 8/12 · WARD 64/80",
             "x": 757,
             "y": 466,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Partner East: Active · ICU 3/4 · WARD 20/24",
+            "label": "Select Demo Partner East: active · ICU 3/4 · WARD 20/24",
             "x": 862,
             "y": 424,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Partner West: Active · ICU 4/4 · WARD 24/28",
+            "label": "Select Demo Partner West: active · ICU 4/4 · WARD 24/28",
             "x": 611,
             "y": 484,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Clinic North: Candidate · CLINIC 0/0",
+            "label": "Select Demo Clinic North: candidate · CLINIC 0/0",
             "x": 763,
             "y": 350,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Overflow South: Candidate · WARD 0/0",
+            "label": "Select Demo Overflow South: candidate · WARD 0/0",
             "x": 736,
             "y": 604,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Shelter West: Active · SHELTER 0/24 · Nonclinical",
+            "label": "Select Demo Shelter West: active · SHELTER 0/24 · Nonclinical",
             "x": 566,
             "y": 456,
             "width": 30,
@@ -93,9 +93,7 @@
       "horizontal_overflow": false,
       "reference": "03-patient-unit-explorer.png",
       "map": null,
-      "additional_files": [
-        "desktop-patients-lower.png"
-      ]
+      "additional_files": []
     },
     {
       "mode": "desktop",
@@ -109,47 +107,47 @@
       "map": {
         "marker_count": 6,
         "stable_animation_frames": 30,
-        "projected_spread_px": 492,
+        "projected_spread_px": 370,
         "markers": [
           {
-            "label": "Select Demo Central Hospital: Active · ED 12/24 · ICU 8/12 · WARD 64/80",
-            "x": 895,
-            "y": 620.8,
+            "label": "Select Demo Central Hospital: active · ED 12/24 · ICU 8/12 · WARD 64/80",
+            "x": 878,
+            "y": 517.5,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Partner East: Active · ICU 3/4 · WARD 20/24",
-            "x": 1070,
-            "y": 550.8,
+            "label": "Select Demo Partner East: active · ICU 3/4 · WARD 20/24",
+            "x": 1009,
+            "y": 465.5,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Partner West: Active · ICU 4/4 · WARD 24/28",
-            "x": 653,
-            "y": 650.8,
+            "label": "Select Demo Partner West: active · ICU 4/4 · WARD 24/28",
+            "x": 696,
+            "y": 540.5,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Clinic North: Candidate · CLINIC 0/0",
-            "x": 906,
-            "y": 427.8,
+            "label": "Select Demo Clinic North: candidate · CLINIC 0/0",
+            "x": 886,
+            "y": 372.5,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Overflow South: Candidate · WARD 0/0",
-            "x": 860,
-            "y": 849.8,
+            "label": "Select Demo Overflow South: candidate · WARD 0/0",
+            "x": 851,
+            "y": 690.5,
             "width": 30,
             "height": 30
           },
           {
-            "label": "Select Demo Shelter West: Active · SHELTER 0/24 · Nonclinical",
-            "x": 578,
-            "y": 603.8,
+            "label": "Select Demo Shelter West: active · SHELTER 0/24 · Nonclinical",
+            "x": 639,
+            "y": 505.5,
             "width": 30,
             "height": 30
           }
@@ -157,7 +155,9 @@
         "scale": "300 m",
         "canvas": true
       },
-      "additional_files": []
+      "additional_files": [
+        "desktop-resources-candidate.png"
+      ]
     },
     {
       "mode": "desktop",
@@ -169,9 +169,7 @@
       "horizontal_overflow": false,
       "reference": "05-visual-plan-comparison-v2.png",
       "map": null,
-      "additional_files": [
-        "desktop-compare-lower.png"
-      ]
+      "additional_files": []
     },
     {
       "mode": "desktop",
@@ -216,42 +214,42 @@
         "projected_spread_px": 210,
         "markers": [
           {
-            "label": "Select Demo Central Hospital: Active · ED 12/24 · ICU 8/12 · WARD 64/80",
+            "label": "Select Demo Central Hospital: active · ED 12/24 · ICU 8/12 · WARD 64/80",
             "x": 203,
             "y": 619.4,
             "width": 44,
             "height": 44
           },
           {
-            "label": "Select Demo Partner East: Active · ICU 3/4 · WARD 20/24",
+            "label": "Select Demo Partner East: active · ICU 3/4 · WARD 20/24",
             "x": 278,
             "y": 589.4,
             "width": 44,
             "height": 44
           },
           {
-            "label": "Select Demo Partner West: Active · ICU 4/4 · WARD 24/28",
+            "label": "Select Demo Partner West: active · ICU 4/4 · WARD 24/28",
             "x": 100,
             "y": 631.4,
             "width": 44,
             "height": 44
           },
           {
-            "label": "Select Demo Clinic North: Candidate · CLINIC 0/0",
+            "label": "Select Demo Clinic North: candidate · CLINIC 0/0",
             "x": 208,
             "y": 536.4,
             "width": 44,
             "height": 44
           },
           {
-            "label": "Select Demo Overflow South: Candidate · WARD 0/0",
+            "label": "Select Demo Overflow South: candidate · WARD 0/0",
             "x": 188,
             "y": 717.4,
             "width": 44,
             "height": 44
           },
           {
-            "label": "Select Demo Shelter West: Active · SHELTER 0/24 · Nonclinical",
+            "label": "Select Demo Shelter West: active · SHELTER 0/24 · Nonclinical",
             "x": 68,
             "y": 612.4,
             "width": 44,
@@ -304,7 +302,8 @@
       "reference": "06-visual-patient-flow-replay.png",
       "map": null,
       "additional_files": [
-        "mobile-replay-lower.png"
+        "mobile-replay-lower.png",
+        "mobile-replay-zone.png"
       ]
     }
   ],

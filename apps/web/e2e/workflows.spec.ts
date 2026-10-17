@@ -20,6 +20,10 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
     "Full computational workflow runs on desktop; every screen is audited on mobile separately.",
   );
   const errors: string[] = [];
+  const workflowDays = Number(process.env.E2E_WORKFLOW_DAYS || 3);
+  expect(
+    Number.isInteger(workflowDays) && workflowDays >= 1 && workflowDays <= 365,
+  ).toBe(true);
   page.on("pageerror", (e) => errors.push(e.message));
   const context = await scenario(page, "complete workflow");
   console.log("workflow: created", context.scenario.id);
@@ -31,7 +35,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
       process.env.E2E_SCENARIO_NAME || "E2E 70 percent surge " + Date.now(),
     );
   await page.getByLabel("Increase in ED arrivals").fill("70");
-  await page.getByLabel("Planning horizon").fill("3");
+  await page.getByLabel("Planning horizon").fill(String(workflowDays));
   await page.getByLabel("Simulation runs").selectOption("10");
   console.log("workflow: fields configured");
   const submitted = page.waitForResponse(
@@ -46,6 +50,28 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
   console.log("workflow: submit clicked");
   const queued = await (await submitted).json();
   console.log("workflow: queued", queued.id);
+  const savedInputs = await api(
+    page.request,
+    "/scenarios/" + context.scenario.id,
+  );
+  const savedArrival = savedInputs.conditions.find(
+    (c: any) =>
+      c.kind === "arrival_multiplier" && c.entry_stream_id === "ED_MAIN",
+  );
+  expect(savedInputs.horizon_calendar_days).toBe(workflowDays);
+  expect(savedArrival).toMatchObject({ surge_percent: 70, shape: "step" });
+  expect(savedArrival.control_points.map((p: any) => p.multiplier)).toEqual([
+    1.7, 1.7,
+  ]);
+  const frozenInputs = savedInputs.revisions.find(
+    (r: any) => r.id === queued.scenario_revision_id,
+  );
+  expect(
+    frozenInputs,
+    "The run must freeze the browser-edited 70% input",
+  ).toBeTruthy();
+  expect(frozenInputs.conditions).toEqual(savedInputs.conditions);
+  expect(frozenInputs.horizon_calendar_days).toBe(workflowDays);
   const run = await waitRun(page, queued.id);
   console.log("workflow: run complete");
   const frozen = await api(page.request, "/run-groups/" + run.id);
@@ -74,9 +100,21 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
         result = await api(page.request, "/comparisons/" + comparison.id);
         return result.status;
       },
-      { timeout: 150000, intervals: [1000, 2000] },
+      {
+        timeout: process.env.E2E_BASE_URL ? 300000 : 150000,
+        intervals: [1000, 2000],
+      },
     )
     .toBe("SUCCEEDED");
+  for (const [index, plan] of result.plans.entries()) {
+    const last = plan.metrics.series.at(-1);
+    const card = page.locator(".capacity-plan-cards .plan-card").nth(index);
+    await expect(card.locator(".micro-label")).toContainText("HORIZON END");
+    await expect(card.locator(".capacity-diagram")).toHaveAttribute(
+      "aria-label",
+      `${Math.round(last.ward_physical.p50)} physical ward places; ${Math.round(last.ward_staffed.p50)} staffing-supported; capacity diagram without patient assignments`,
+    );
+  }
   expect(result.plans.length).toBe(3);
   await expect(
     page.getByText("10 runs per plan", { exact: true }),
@@ -181,6 +219,8 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
         "-c",
         `import hashlib,json,sys,zipfile
 from pathlib import Path
+from datetime import datetime,timedelta
+from zoneinfo import ZoneInfo
 path=Path(sys.argv[1])
 with zipfile.ZipFile(path) as bundle:
     names=[name for name in bundle.namelist() if not name.endswith('/')]
@@ -189,9 +229,19 @@ with zipfile.ZipFile(path) as bundle:
     assert set(checksums)==set(names)-{'checksums.json'}, 'Checksum coverage differs from ZIP contents'
     for name,expected in checksums.items():
         assert hashlib.sha256(bundle.read(name)).hexdigest()==expected, 'Checksum mismatch: '+name
-    print(json.dumps({'all_checksums_verified':True,'complete_member_coverage':True,'files':names,'archive_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'archive_bytes':path.stat().st_size}))
+    scenario=json.loads(bundle.read('scenario.json'))
+    assert scenario['horizon_calendar_days']==int(sys.argv[2]), 'Export must contain the selected calendar horizon'
+    arrival=next((c for c in scenario['conditions'] if c.get('kind')=='arrival_multiplier' and c.get('entry_stream_id')=='ED_MAIN'),None)
+    assert arrival and arrival.get('surge_percent')==70, 'Export must contain the browser-created 70% surge'
+    assert [p['multiplier'] for p in arrival['control_points']]==[1.7,1.7], 'Export must contain actual modeled multipliers'
+    start=datetime.fromisoformat(scenario['start_at'].replace('Z','+00:00'))
+    expected_end=start.astimezone(ZoneInfo(scenario['timezone']))+timedelta(days=int(sys.argv[2]))
+    assert datetime.fromisoformat(arrival['control_points'][0]['at'].replace('Z','+00:00'))==start
+    assert datetime.fromisoformat(arrival['control_points'][-1]['at'].replace('Z','+00:00'))==expected_end, 'Arrival increase must span the full chosen calendar horizon'
+    print(json.dumps({'exported_arrival_condition':arrival,'all_checksums_verified':True,'complete_member_coverage':True,'files':names,'archive_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'archive_bytes':path.stat().st_size}))
 `,
         exportPath,
+        String(workflowDays),
       ],
       { encoding: "utf8" },
     ),
@@ -200,8 +250,12 @@ with zipfile.ZipFile(path) as bundle:
   expect(errors).toEqual([]);
   record("workflow", {
     scenario_id: context.scenario.id,
+    horizon_calendar_days: workflowDays,
     run_id: run.id,
     comparison_id: comparison.id,
+    saved_arrival_condition: savedArrival,
+    frozen_scenario_revision_id: frozenInputs.id,
+    saved_and_frozen_conditions_equal: true,
     branch_run_id: branchRun.id,
     export_filename: file.suggestedFilename(),
     export_checksums: exportChecksums,

@@ -1,0 +1,61 @@
+{
+  "deployed_commit": "e2e65eb81c023ae8b4385742756662be524c29fb",
+  "active_jobs": [],
+  "job_count": 29,
+  "disks": {
+    "/": {
+      "total_bytes": 50884108288,
+      "used_bytes": 24767840256,
+      "free_bytes": 26099490816
+    },
+    "/mnt/hospital-data": {
+      "total_bytes": 105089261568,
+      "used_bytes": 1717190656,
+      "free_bytes": 97986584576
+    }
+  },
+  "memory": {
+    "MemTotal": 16756023296,
+    "MemAvailable": 13980872704
+  },
+  "containers": [
+    {
+      "Service": "api",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "hospital-surge-planner-api:e2e65eb81c023ae8b4385742756662be524c29fb"
+    },
+    {
+      "Service": "postgres",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "hospital-surge-planner-postgres:17.11-patched"
+    },
+    {
+      "Service": "redis",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "hospital-surge-planner-redis:7.4.11-patched"
+    },
+    {
+      "Service": "tls",
+      "State": "running",
+      "Health": "",
+      "Image": "hospital-surge-planner-caddy:2.11.7-patched"
+    },
+    {
+      "Service": "web",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "hospital-surge-planner-web:e2e65eb81c023ae8b4385742756662be524c29fb"
+    },
+    {
+      "Service": "worker",
+      "State": "running",
+      "Health": "",
+      "Image": "hospital-surge-planner-api:e2e65eb81c023ae8b4385742756662be524c29fb"
+    }
+  ],
+  "recorded_at": "2026-10-17T12:28:35.425566+00:00",
+  "scope": "Read-only active-job/container/disk/memory snapshot before next release; no deployment or cleanup performed."
+}

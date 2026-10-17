@@ -1,0 +1,50 @@
+{
+  "run_id": "run_9d7a8a39716e45139c39",
+  "input_sha256": "6e7909822a6d3437aca44124ba1022472c9226c9db050602180696efc59ee80e",
+  "views": {
+    "patients": {
+      "dock": {
+        "x": 178,
+        "y": 695,
+        "width": 1422,
+        "height": 180
+      },
+      "independent_collapse": true,
+      "keyboard_resize": true,
+      "context_preserved": true
+    },
+    "resources": {
+      "dock": {
+        "x": 178,
+        "y": 695,
+        "width": 1422,
+        "height": 180
+      },
+      "independent_collapse": true,
+      "keyboard_resize": true,
+      "context_preserved": true
+    },
+    "compare": {
+      "dock": {
+        "x": 178,
+        "y": 670,
+        "width": 1422,
+        "height": 180
+      },
+      "independent_collapse": true,
+      "keyboard_resize": true,
+      "context_preserved": true
+    },
+    "replay": {
+      "dock": {
+        "x": 178,
+        "y": 615,
+        "width": 1422,
+        "height": 260
+      },
+      "independent_collapse": true,
+      "keyboard_resize": true,
+      "context_preserved": true
+    }
+  }
+}

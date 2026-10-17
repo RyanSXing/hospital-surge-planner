@@ -1,8 +1,81 @@
 {
-  "scenario_id": "scenario_8f005d96e2cc4a2f9106",
-  "run_id": "run_8fc0866a891243fcb208",
-  "comparison_id": "comparison_eac7d18eda3d48be9294",
-  "branch_run_id": "run_3ed1e8e2a8df485db0b9",
+  "scenario_id": "scenario_13df470853084727986b",
+  "horizon_calendar_days": 3,
+  "run_id": "run_a003c2b5424944afa2e0",
+  "comparison_id": "comparison_6a8feb3804454294aaf8",
+  "saved_arrival_condition": {
+    "kind": "arrival_multiplier",
+    "start_at": "2026-10-16T05:00:00.000Z",
+    "end_at": "2026-10-19T05:00:00.000Z",
+    "entry_stream_id": "ED_MAIN",
+    "surge_percent": 70,
+    "control_points": [
+      {
+        "at": "2026-10-16T05:00:00.000Z",
+        "multiplier": 1.7
+      },
+      {
+        "at": "2026-10-19T05:00:00.000Z",
+        "multiplier": 1.7
+      }
+    ],
+    "id": "condition-arrivals-ED_MAIN",
+    "shape": "step",
+    "source": "user_assumption"
+  },
+  "frozen_scenario_revision_id": "revision_623efa22d5ad424d9086",
+  "saved_and_frozen_conditions_equal": true,
+  "branch_run_id": "run_e200c9af48664cc58ec4",
   "export_filename": "hospital-surge-planner.zip",
+  "export_checksums": {
+    "exported_arrival_condition": {
+      "control_points": [
+        {
+          "at": "2026-10-16T05:00:00.000Z",
+          "multiplier": 1.7
+        },
+        {
+          "at": "2026-10-19T05:00:00.000Z",
+          "multiplier": 1.7
+        }
+      ],
+      "end_at": "2026-10-19T05:00:00.000Z",
+      "entry_stream_id": "ED_MAIN",
+      "id": "condition-arrivals-ED_MAIN",
+      "kind": "arrival_multiplier",
+      "shape": "step",
+      "source": "user_assumption",
+      "start_at": "2026-10-16T05:00:00.000Z",
+      "surge_percent": 70
+    },
+    "all_checksums_verified": true,
+    "complete_member_coverage": true,
+    "files": [
+      "events.csv",
+      "events.jsonl",
+      "daily.csv",
+      "metrics.csv",
+      "manifest.json",
+      "model-manifest.json",
+      "dataset.json",
+      "scenario.json",
+      "metrics.json",
+      "inputs/patients.csv",
+      "inputs/facilities.csv",
+      "inputs/units.csv",
+      "inputs/slots.csv",
+      "inputs/staff.csv",
+      "inputs/assignments.csv",
+      "inputs/equipment_pools.csv",
+      "inputs/routes.csv",
+      "inputs/vehicles.csv",
+      "dataset-manifest.json",
+      "assumptions.csv",
+      "README.md",
+      "checksums.json"
+    ],
+    "archive_sha256": "4a63c0ce43bf5285a44d68d65aaed17e04669dedc357c7366f8bd7000c10e5a4",
+    "archive_bytes": 1334926
+  },
   "page_errors": []
 }

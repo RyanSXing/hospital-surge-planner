@@ -1,0 +1,529 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/replay-evidence.spec.ts",
+      "e2e/scenario-families.spec.ts",
+      "e2e/map-search.spec.ts",
+      "e2e/workflows.spec.ts",
+      "e2e/operational-time.spec.ts",
+      "--project=desktop",
+      "--output=../../output/playwright/root-final-repaired"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "map-search.spec.ts",
+      "file": "map-search.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "workspace search keeps completed-run context and map controls preserve their routes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10554,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:23:44.753Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11063396553d6831a315-5fee0aaec281bbb11b04",
+          "file": "map-search.spec.ts",
+          "line": 44,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "operational-time.spec.ts",
+      "file": "operational-time.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "observed reset preserves an explicit-offset snapshot cutoff finer than one minute",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5981,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:23:55.631Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3468c252d222fd2c99df-1f811811348041a34848",
+          "file": "operational-time.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "replay-evidence.spec.ts",
+      "file": "replay-evidence.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "replay exposes complete filtered events, patient history and recorded resources",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6217,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.01\u001b[39m\nReceived:   \u001b[31m0.7548719355182762\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.01\u001b[39m\nReceived:   \u001b[31m0.7548719355182762\u001b[39m\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts:242:24",
+                    "location": {
+                      "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts",
+                      "column": 24,
+                      "line": 242
+                    },
+                    "snippet": "  240 |         );\n  241 |       });\n> 242 |     expect(ratioError).toBeLessThan(0.01);\n      |                        ^\n  243 |   }\n  244 |   await capture(page, \"replay-complete-evidence\", info);\n  245 |   const later = new Date(Date.parse(run.start_at) + 24 * 3600000).toISOString();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts",
+                        "column": 24,
+                        "line": 242
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.01\u001b[39m\nReceived:   \u001b[31m0.7548719355182762\u001b[39m\n\n  240 |         );\n  241 |       });\n> 242 |     expect(ratioError).toBeLessThan(0.01);\n      |                        ^\n  243 |   }\n  244 |   await capture(page, \"replay-complete-evidence\", info);\n  245 |   const later = new Date(Date.parse(run.start_at) + 24 * 3600000).toISOString();\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts:242:24"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:24:01.633Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts",
+                    "column": 24,
+                    "line": 242
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "63fcc6edbf8bcc3a4a60-72f22dfec2a2b45c8e9f",
+          "file": "replay-evidence.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "scenario-families.spec.ts",
+      "file": "scenario-families.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "all visual scenario families save canonical inputs and compute actual effects",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 23396,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog').getByLabel('Declared shift').locator('option').first()\nExpected substring: \u001b[32m\"GMT-5\"\u001b[39m\nReceived string:    \u001b[31m\"Named unavailable staff\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('dialog').getByLabel('Declared shift').locator('option').first() with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog').getByLabel('Declared shift').locator('option').first()\u001b[22m\n\u001b[2m    43 × locator resolved to <option value=\"named\">Named unavailable staff</option>\u001b[22m\n\u001b[2m       - unexpected value \"Named unavailable staff\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog').getByLabel('Declared shift').locator('option').first()\nExpected substring: \u001b[32m\"GMT-5\"\u001b[39m\nReceived string:    \u001b[31m\"Named unavailable staff\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('dialog').getByLabel('Declared shift').locator('option').first() with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog').getByLabel('Declared shift').locator('option').first()\u001b[22m\n\u001b[2m    43 × locator resolved to <option value=\"named\">Named unavailable staff</option>\u001b[22m\n\u001b[2m       - unexpected value \"Named unavailable staff\"\u001b[22m\n\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts:113:5",
+                    "location": {
+                      "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                      "column": 5,
+                      "line": 113
+                    },
+                    "snippet": "  111 |   await expect(\n  112 |     d.getByLabel(\"Declared shift\").locator(\"option\").first(),\n> 113 |   ).toContainText(\"GMT-5\");\n      |     ^\n  114 |   await d.getByLabel(\"Absent percentage\", { exact: true }).fill(\"100\");\n  115 |   await d.getByRole(\"button\", { name: \"Apply assumption\" }).click();\n  116 |   await expect(page.getByRole(\"dialog\")).toHaveCount(0);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                        "column": 5,
+                        "line": 113
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog').getByLabel('Declared shift').locator('option').first()\nExpected substring: \u001b[32m\"GMT-5\"\u001b[39m\nReceived string:    \u001b[31m\"Named unavailable staff\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('dialog').getByLabel('Declared shift').locator('option').first() with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog').getByLabel('Declared shift').locator('option').first()\u001b[22m\n\u001b[2m    43 × locator resolved to <option value=\"named\">Named unavailable staff</option>\u001b[22m\n\u001b[2m       - unexpected value \"Named unavailable staff\"\u001b[22m\n\n\n  111 |   await expect(\n  112 |     d.getByLabel(\"Declared shift\").locator(\"option\").first(),\n> 113 |   ).toContainText(\"GMT-5\");\n      |     ^\n  114 |   await d.getByLabel(\"Absent percentage\", { exact: true }).fill(\"100\");\n  115 |   await d.getByRole(\"button\", { name: \"Apply assumption\" }).click();\n  116 |   await expect(page.getByRole(\"dialog\")).toHaveCount(0);\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts:113:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:24:08.303Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                    "column": 5,
+                    "line": 113
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-2cad9db3e046a52776e6",
+          "file": "scenario-families.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "scenario resource forms and independent inspector remain keyboard accessible on mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                    "line": 335,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 210,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:24:32.489Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                        "line": 335,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-4ead91729ce654e1385e",
+          "file": "scenario-families.spec.ts",
+          "line": 332,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "workflows.spec.ts",
+      "file": "workflows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "configure, compute, inspect, compare, update, replay and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29777,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "workflow: created scenario_91a9b037ac6e4dd48c61\n"
+                    },
+                    {
+                      "text": "workflow: scenario screen loaded\n"
+                    },
+                    {
+                      "text": "workflow: fields configured\n"
+                    },
+                    {
+                      "text": "workflow: submit clicked\n"
+                    },
+                    {
+                      "text": "workflow: queued run_1b5cc9cba92a479cb1d2\n"
+                    },
+                    {
+                      "text": "workflow: run complete\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:24:33.021Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workflow-patient",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-291190d91ce3401a8bd656ea15497ca476ff7249.png"
+                    },
+                    {
+                      "name": "workflow-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-96d39cb25af203ec4c1a59628039e3ee8f0eafe1.png"
+                    },
+                    {
+                      "name": "workflow-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-2fa5aafe4b0256a125d493914754a374dbff722f.png"
+                    },
+                    {
+                      "name": "workflow-replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-middle-9a95af10a9670c3b26f0862e87feb747631b059f.png"
+                    },
+                    {
+                      "name": "workflow-replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-final-repaired/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-lower-71e9bbf9ca99579776e320dd520a161fae9fa296.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "26aa48cee8983222f549-582cfc57ecd6a6d378f0",
+          "file": "workflows.spec.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T12:23:44.319Z",
+    "duration": 78594.476,
+    "expected": 3,
+    "skipped": 1,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

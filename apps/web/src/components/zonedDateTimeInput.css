@@ -1,0 +1,31 @@
+.zoned-date-time {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.zoned-date-time > label {
+  display: block;
+  margin: 0;
+}
+.zoned-date-time > label > span {
+  color: #b4c8d5;
+  font-size: 12px;
+}
+.zoned-date-time > input,
+.zoned-date-time select {
+  width: 100%;
+  min-width: 0;
+}
+.zoned-date-time > small {
+  color: #ffb9ad;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.zoned-date-time .zoned-occurrence {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #f2d094;
+  font-size: 12px;
+}

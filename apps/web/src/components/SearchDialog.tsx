@@ -1,15 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Building2,
+  BedDouble,
   ChevronRight,
   Hospital,
   Layers,
+  Package,
   Search,
+  Stethoscope,
+  Truck,
   Users,
 } from "lucide-react";
 import type { Entity, PageId, PlanningContext } from "../types";
 import { api, idOf, items, patientId } from "../api";
 import { Busy, ErrorBox, Modal } from "./ui";
+import {
+  resourceSearchRows,
+  searchEntityId,
+  searchKindLabel,
+  searchProvenanceLabel,
+  type SearchKind,
+} from "./workspaceSearch";
 
 const pages: [PageId, string][] = [
   ["overview", "Overview"],
@@ -22,7 +33,14 @@ const pages: [PageId, string][] = [
 ];
 
 const entityKey = (row: Entity) =>
-  row.patient_id || row.unit_id || row.facility_id || idOf(row);
+  row.patient_id ||
+  row.unit_id ||
+  row.facility_id ||
+  row.staff_id ||
+  row.equipment_pool_id ||
+  row.vehicle_id ||
+  row.slot_id ||
+  idOf(row);
 
 function useSearchPage(url: string) {
   const request = useRef(0);
@@ -113,7 +131,7 @@ export default function SearchDialog({
   onClose: () => void;
 }) {
   const [search, setSearch] = useState("");
-  const [resourceLimit, setResourceLimit] = useState(10);
+  const [resourceLimit, setResourceLimit] = useState(12);
   const term = search.trim(),
     encoded = encodeURIComponent(term);
   const rep = ctx.activeReplicationId || ctx.run?.selected_replication_id;
@@ -129,23 +147,29 @@ export default function SearchDialog({
   const scenarios = useSearchPage(
     term ? `/scenarios?search=${encoded}&limit=10` : "",
   );
-  const resources = [
-    ...(ctx.dataset?.units || []).map((row): Entity => ({
-      ...row,
-      search_kind: "unit",
-    })),
-    ...(ctx.dataset?.facilities || []).map((row): Entity => ({
-      ...row,
-      search_kind: "facility",
-    })),
-  ].filter(
-    (row) =>
-      term &&
-      `${row.name} ${entityKey(row)}`
-        .toLowerCase()
-        .includes(term.toLowerCase()),
-  );
-  useEffect(() => setResourceLimit(10), [term]);
+  // Do not index a prior selected-time state while the current request is
+  // loading or after it has failed; immutable snapshot rows remain searchable.
+  const selectedState = ctx.stateLoading || ctx.stateError ? null : ctx.state;
+  const resources = resourceSearchRows(ctx.dataset, selectedState, term);
+  useEffect(() => setResourceLimit(12), [term]);
+  const inspectEntity = (
+    ctx as PlanningContext & {
+      inspectEntity?: (kind: string, id: string) => void;
+    }
+  ).inspectEntity;
+  const inspectResource = (row: Entity) => {
+    const kind = row.search_kind as SearchKind;
+    const id = searchEntityId(kind, row);
+    if (inspectEntity && id) {
+      inspectEntity(kind, id);
+      onClose();
+      return;
+    }
+    // Kept for the brief interval before the shared navigation contract is loaded.
+    ctx.setFacility(row.facility_id || row.id || ctx.selectedFacility);
+    ctx.setPage(kind === "unit" ? "patients" : "resources");
+    onClose();
+  };
   return (
     <Modal title="Search workspace" onClose={onClose}>
       <label className="global-search">
@@ -249,32 +273,43 @@ export default function SearchDialog({
               </button>
             ) : null}
             <p className="small-copy">
-              Facilities and units · {Math.min(resources.length, resourceLimit)}{" "}
-              of {resources.length}
+              Resources and sites · {Math.min(resources.length, resourceLimit)}{" "}
+              of {resources.length} matching the frozen dataset
+              {selectedState ? " and selected-time state" : ""}
             </p>
             {resources.slice(0, resourceLimit).map((row) => (
               <button
                 key={`${row.search_kind}:${entityKey(row)}`}
-                onClick={() => {
-                  ctx.setFacility(row.facility_id || row.id);
-                  ctx.setPage(
-                    row.search_kind === "unit" ? "patients" : "resources",
-                  );
-                  onClose();
-                }}
+                onClick={() => inspectResource(row)}
               >
                 {row.search_kind === "unit" ? (
                   <Hospital size={16} />
-                ) : (
+                ) : row.search_kind === "facility" ? (
                   <Building2 size={16} />
+                ) : row.search_kind === "staff" ? (
+                  <Stethoscope size={16} />
+                ) : row.search_kind === "equipment_pool" ? (
+                  <Package size={16} />
+                ) : row.search_kind === "vehicle" ? (
+                  <Truck size={16} />
+                ) : (
+                  <BedDouble size={16} />
                 )}
-                <span>{row.name}</span>
-                <small>{entityKey(row)}</small>
+                <span>
+                  {row.name ||
+                    row.display_label ||
+                    searchEntityId(row.search_kind as SearchKind, row)}
+                </span>
+                <small>
+                  {searchKindLabel(row.search_kind as SearchKind)} ·{" "}
+                  {searchEntityId(row.search_kind as SearchKind, row)} ·{" "}
+                  {searchProvenanceLabel(row)}
+                </small>
               </button>
             ))}
             {resources.length > resourceLimit ? (
               <button onClick={() => setResourceLimit((n) => n + 10)}>
-                Load more facility and unit matches
+                Load more resource and site matches
               </button>
             ) : null}
           </>

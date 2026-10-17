@@ -86,7 +86,10 @@
         "evidence/browser-patient-unit-details.json",
         "evidence/browser-scenario-library-lifecycle.json: complete source-patient search pagination",
         "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
-        "evidence/browser-unit-inspector-final.json: exact filters and unit evidence with independent inspector scrolling"
+        "evidence/browser-unit-inspector-final.json: exact filters and unit evidence with independent inspector scrolling",
+        "evidence/browser-combined-candidate-initial-report.json: final patient selection, frozen context and mobile card flows passed; separate Replay desktop refinement repeated",
+        "apps/web/e2e/operational-time.spec.ts: complete imported explicit-offset snapshot retains exact seconds/milliseconds through preview/save",
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
       ],
       "spec_line": 91
     },
@@ -119,13 +122,30 @@
       "status": "verified",
       "implementation": [
         "apps/web/src/pages/Scenarios.tsx",
-        "apps/web/src/pages/scenarioEditor.ts"
+        "apps/web/src/pages/scenarioEditor.ts",
+        "apps/web/src/pages/ScenarioTracks.tsx",
+        "apps/web/src/pages/scenarioPlans.ts",
+        "apps/api/surge_api/domain.py"
       ],
       "evidence": [
         "apps/web/src/pages/scenarioEditor.test.ts",
         "apps/web/e2e/context-editor.spec.ts",
         "evidence/browser-condition-editor.json",
-        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts"
+        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
+        "apps/web/src/pages/scenarioPlans.test.ts: exact shift intervals, cohort basis, compatible direct-ward weights, readiness bounds and stable same-time event ordering",
+        "tests/test_scenario_planning.py:21 cases; canonical planned validation, real incident/staff/capacity outcomes, activation end guards and direct-ward contracts",
+        "evidence/browser-scenario-editor-reviewed-report.json:6 passed,6 deliberate project skips; all families, curves/cohorts, mobile forms, bounded transfer and actual 70% export workflow",
+        "evidence/browser-scenario-families.json: all input collections frozen, 7 exact synthetic incident patients, resource outcomes and completed revision immutability",
+        "evidence/browser-scenario-exact-curves.json: arbitrary imported points preserved, multiple windows, pointer movement and undo",
+        "evidence/browser-scenario-cohort-semantics.json: reopened cohort keys retained and stream/basis selection remains compatible",
+        "evidence/browser-workflow.json: browser-created 70% step is identical in saved, frozen and completely checksum-verified exported inputs",
+        "evidence/browser-scenario-shift-final-report.json: final exact-shift family repeat passed in 12.2 seconds",
+        "evidence/browser-scenario-assumptions-report.json: unsaved visual arrival and incident inputs survive advanced-dialog save exactly (1 passed)",
+        "evidence/browser-scenario-final-equipment-timezone-report.json: 7 passed, 7 deliberate project skips; exact equipment, DST fold/gap, compact rails, saved/frozen assumptions",
+        "evidence/browser-equipment-observed-projection-report.json: 2 passed; prior observed equipment failure bounds later planned changes",
+        "tests/test_planned_equipment.py: exact quantity arithmetic, observed reports, runtime allocation guards",
+        "apps/web/src/zonedTime.test.ts: UTC/local roundtrip, DST gaps/folds and non-hour offsets",
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
       ],
       "spec_line": 93
     },
@@ -275,7 +295,10 @@
         "tests/test_api.py::test_comparison_and_alert_evidence",
         "apps/web/e2e/workflows.spec.ts",
         "evidence/browser-workflow.json",
-        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409",
+        "apps/web/src/pages/comparisonCapacity.test.ts: declared source snapshot separated from selected run, unavailable baseline withheld, aggregate median values supported",
+        "apps/web/e2e/workflows.spec.ts: actual completed aggregate capacity compared with rendered cards",
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
       ],
       "spec_line": 101
     },
@@ -298,7 +321,9 @@
         "evidence/browser-candidate-resource-response.json",
         "evidence/browser-resource-replay-final.json: candidate inventory, missing team rejection, explicit staff/equipment, saved response and actual eight supported places at custom site",
         "evidence/browser-docked-panels.json: independent inspector/timeline collapse, resize and keyboard controls",
-        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts"
+        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
+        "apps/web/e2e/map-search.spec.ts: selected-time resource/search provenance, seven layers and installed/planned dependency quantities",
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
       ],
       "spec_line": 102
     },
@@ -359,7 +384,10 @@
         "evidence/browser-workflow.json",
         "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
         "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged",
-        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409",
+        "apps/web/e2e/operational-time.spec.ts: explicit-offset observed cutoff with seconds/milliseconds preserved through actual import, reconciliation and save",
+        "tests/test_operational_input_integrity.py: scenario edits cannot forge, alter, delete or reclassify operational reports",
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
       ],
       "spec_line": 105
     },
@@ -415,7 +443,10 @@
         "apps/web/src/pages/replayAnnotations.test.ts: control-point curve domains follow engine precedence",
         "evidence/browser-replay-500-local.json: exactly 500 rendered patient markers, 55.4\u201355.7 FPS active transitions, 2.2 ms paint p95; no concurrent load, errors, mutations or source changes",
         "evidence/browser-replay-final-report.json: final desktop/mobile controls, UTC jump, reduced-motion snapped playback, exact canvas aspect ratio, complete evidence and resource inspection; 5 passed, 1 deliberate mobile control skip",
-        "evidence/backend-pytest-final.log: 184 Python tests passed; final frontend suite36 passed and production build passed"
+        "evidence/backend-pytest-final.log: 184 Python tests passed; final frontend suite36 passed and production build passed",
+        "evidence/browser-combined-candidate-initial-report.json: mobile readable panorama/zone focus, exact event/resource/transfer inspection passed; desktop dock/aspect repeat separately recorded",
+        "apps/web/e2e/shared-panels.spec.ts: independent collapsible inspectors and keyboard resizing of180\u2013260px time docks",
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
       ],
       "spec_line": 107
     },
@@ -435,7 +466,8 @@
         "evidence/compose-recovery.json",
         "evidence/browser-run-reload-cancel.json",
         "evidence/browser-read-recovery.json",
-        "tests/test_creation_idempotency.py::test_manual_retry_replay_preserves_current_generation_and_status"
+        "tests/test_creation_idempotency.py::test_manual_retry_replay_preserves_current_generation_and_status",
+        "tests/test_worker_overlap.py: pure trace/aggregation overlap, exact equality, cancellation/deadline/lease fencing and child cleanup"
       ],
       "spec_line": 108
     },
@@ -474,7 +506,8 @@
         "tests/test_review_api.py::test_export_archive_checksum_tampering_rejected",
         "tests/test_api.py::test_export_preserves_explicit_run_when_comparison_reference_is_separate",
         "evidence/browser-workflow.json",
-        "tests/test_creation_idempotency.py::test_export_regeneration_retry_reuses_completed_artifact"
+        "tests/test_creation_idempotency.py::test_export_regeneration_retry_reuses_completed_artifact",
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
       ],
       "spec_line": 110
     },
@@ -530,20 +563,28 @@
         "docs/runbook.md"
       ],
       "evidence": [
-        "evidence/oci-provisioning.json",
-        "evidence/oci-host-key-verification.json",
-        "evidence/cloud-acceptance.json: actual HTTPS authentication, OCI backend/worker SUCCEEDED run_210c7ffa966c4b22a4cb, private Object Storage artifacts and authenticated export with every checksum verified",
-        "evidence/oci-private-storage.json: instance-principal write/read/checksum and unauthenticated 404",
-        "evidence/hosted-backup-restore.json: authenticated backup download and isolated restore",
+        "docs/hosted-verification.md: deployment identity, exact image scans and preserved historical measurements",
+        "evidence/cloud-acceptance.json: actual HTTPS authentication, OCI worker, private Object Storage and checksum-verified export",
+        "evidence/oci-private-storage.json: instance-principal write/read/checksum and unauthenticated404",
+        "evidence/hosted-backup-restore.json: authenticated backup and isolated restore",
         "evidence/credential-rotation.json",
-        "docs/hosted-verification.md: final runtime scans: zero HIGH/CRITICAL and daily maintenance timers",
-        "Final hosted performance and compound browser workflow remain pending; initial 30-day/10-rep run 51.70 s and 30-day/100-rep run 150.08 s missed targets",
-        "docs/hosted-verification.md: e4c54e2 optimized 30-day/10-rep 45.237 s and 30-day/100-rep 93.523 s still exceed targets; final initializer patch measurements pending",
-        "evidence/cloud-acceptance.json: release c4ff451 authenticated smoke run run_6625cd08b9844acc932c and checksummed private export passed; 156 Python/31 frontend tests passed; final workload timings remain pending",
-        "evidence/cloud-benchmark-30d-10r.json and cloud-benchmark-30d-100r.json: c4ff451 worker35.328s/82.757s; both10s/60s targets missed. Warm bounded reads36\u2013111ms passed. Annual workload and final hosted browser workflow pending.",
-        "evidence/cloud-benchmark-365d-100r.json: c4ff451 completed100/100 in765.138s worker time, missing600s. Exact54,133-patient end state is bounded to500; warm reads47\u2013216ms passed, cold metrics7.13s/state12.05s are separate. Final optimized release and hosted browser verification pending."
+        "evidence/cloud-benchmark-30d-10r.json: e2e65eb 31.373 s worker/32.473 s HTTPS; 10 s target missed",
+        "evidence/cloud-benchmark-30d-100r.json: e2e65eb 69.150 s worker/70.260 s HTTPS; 60 s target missed",
+        "evidence/cloud-benchmark-365d-100r-e2e65eb.json:622.256 s worker/620.002 s HTTPS; 600 s target missed;100 complete outputs and exact54,133-patient bounded state",
+        "evidence/cloud-ten-viewers.json:250 requests from 10 authenticated viewers; all endpoint p95 below 500 ms and writes denied",
+        "evidence/hosted-worker-recovery.json: natural lease recovery after SIGKILL,30 unique replications, identical saved seeds/checksums and abandoned private input cleanup",
+        "evidence/browser-hosted-performance-30d.json:500 actual markers and active transition cadence pass; panel/seek budgets pass; useful navigation median 3.866 s misses3 s",
+        "evidence/browser-hosted-workflow-final.json: intermediate candidate interaction and ZIP checks passed, but exported conditions were empty; explicitly not70% surge acceptance. Fixed locally, hosted repeat pending",
+        "evidence/screens/hosted-final/index.md: durable seven-screen intermediate-candidate gallery; refresh after the reviewed release",
+        "tests/test_release_archive.py: immutable committed release packaging with private/runtime exclusions",
+        "tests/test_cloud_recovery_harness.py: guarded RUNNING/AGGREGATING recovery harness phase checks; hosted AGGREGATING proof pending"
       ],
-      "spec_line": 113
+      "spec_line": 113,
+      "remaining_checks": [
+        "Repeat full30-day70% browser-created workflow and every export checksum on the reviewed release",
+        "Re-measure hosted short/annual performance after worker overlap and useful navigation after bounded summary loading",
+        "Refresh final hosted gallery and UI timing on the reviewed release"
+      ]
     },
     {
       "id": "F27",
@@ -685,7 +726,8 @@
       "evidence": [
         "F17: tests/test_engine.py::test_transfer_reservations_transport_and_resources; tests/test_engine.py::test_imported_transport_continues_commitments; tests/test_api.py::test_eligibility_uses_patient_profile_and_comparison_does_not_replace_main_run",
         "apps/web/e2e/release-workflows.spec.ts",
-        "evidence/browser-bounded-transfer.json"
+        "evidence/browser-bounded-transfer.json",
+        "evidence/browser-scenario-editor-reviewed-report.json: latest incompatible clinic and actual bounded ward transfer passed after stale destination-response repair"
       ],
       "spec_line": 1300
     },
@@ -746,7 +788,8 @@
       "evidence": [
         "F06: apps/web/src/pages/scenarioEditor.test.ts; apps/web/e2e/context-editor.spec.ts; evidence/browser-condition-editor.json",
         "apps/web/e2e/release-workflows.spec.ts",
-        "evidence/browser-scenario-library-lifecycle.json"
+        "evidence/browser-scenario-library-lifecycle.json",
+        "evidence/browser-scenario-editor-reviewed-report.json; evidence/browser-workflow.json: actual browser-created 70% conditions verified in saved/frozen/exported inputs"
       ],
       "spec_line": 1305
     },
@@ -792,7 +835,8 @@
         "F06: apps/web/src/pages/scenarioEditor.test.ts; apps/web/e2e/context-editor.spec.ts; evidence/browser-condition-editor.json",
         "F07: apps/web/src/pages/scenarioEditor.test.ts; tests/test_engine.py::test_arrival_preflight_matches_engine_exposure; tests/test_engine.py::test_care_profile_override_targets_new_stream",
         "tests/test_engine.py::test_arrival_preflight_matches_engine_exposure",
-        "tests/test_engine.py::test_care_profile_override_targets_new_stream"
+        "tests/test_engine.py::test_care_profile_override_targets_new_stream",
+        "evidence/browser-scenario-editor-reviewed-report.json; evidence/browser-workflow.json: actual browser-created 70% conditions verified in saved/frozen/exported inputs"
       ],
       "spec_line": 1824
     },
@@ -864,7 +908,8 @@
         "F16: tests/test_engine.py::test_clinic_distinct_from_inpatient_capacity; tests/test_engine.py::test_custom_clinic_target_and_quantity; tests/test_engine.py::test_site_ready_exact_staff_and_equipment; tests/test_compute.py::test_clinic_preflight_distinguishes_missing_minimum_team_and_partial_coverage",
         "F17: tests/test_engine.py::test_transfer_reservations_transport_and_resources; tests/test_engine.py::test_imported_transport_continues_commitments; tests/test_api.py::test_eligibility_uses_patient_profile_and_comparison_does_not_replace_main_run",
         "apps/web/e2e/release-workflows.spec.ts",
-        "evidence/browser-bounded-transfer.json: ICU-to-clinic rejected; ward-to-East acquires reservation and transport, retains source until pickup, then arrives"
+        "evidence/browser-bounded-transfer.json: ICU-to-clinic rejected; ward-to-East acquires reservation and transport, retains source until pickup, then arrives",
+        "evidence/browser-scenario-editor-reviewed-report.json: latest incompatible clinic and actual bounded ward transfer passed after stale destination-response repair"
       ],
       "spec_line": 1830
     },
@@ -934,7 +979,8 @@
       "pass_condition": "Correct terminal/recovery behavior; incomplete results excluded from ranking.",
       "status": "verified",
       "evidence": [
-        "F21: tests/test_api.py::test_idempotency_and_frozen_run_inputs; evidence/compose-recovery.json; evidence/browser-run-reload-cancel.json; evidence/browser-read-recovery.json"
+        "F21: tests/test_api.py::test_idempotency_and_frozen_run_inputs; evidence/compose-recovery.json; evidence/browser-run-reload-cancel.json; evidence/browser-read-recovery.json",
+        "evidence/hosted-worker-recovery.json: actual hosted SIGKILL and natural lease recovery with exact saved replication identity"
       ],
       "spec_line": 1836
     },
@@ -950,7 +996,7 @@
         "tests/test_engine.py::test_dst_calendar",
         "tests/test_api.py::test_bounded_state_keeps_exact_counts_and_paginated_filters",
         "evidence/benchmark-365d-100r-surge70.json: 409.700s engine only, 100 replications, 365 days; hosted and fullAPI benchmark separate",
-        "evidence/api-year-read-performance.json: 365-day trace, exact 54,339-patient totals, bounded500 state, local warm state p95 0.007s"
+        "evidence/api-year-read-performance.json: 365-day trace, exact 54,339-patient totals, bounded 500 state, local warm state p95 0.007s"
       ],
       "spec_line": 1837
     },
@@ -968,5 +1014,5 @@
     }
   ],
   "last_reviewed_at": "2026-10-17",
-  "verification_scope": "Local implementation and observed tests; final release checks passed 184 Python tests and 36 frontend tests, plus production build. F20 has focused local browser and 500-marker rendering evidence. Hosted OCI deployment and performance are tracked separately under F26; no local benchmark is a cloud performance assertion."
+  "verification_scope": "Listed local functional checks and scoped hosted evidence. F06 is locally verified across canonical assumption families. Hosted F26 remains pending final reviewed-release workflow, gallery, useful navigation and execution budgets; historical failures are preserved."
 }

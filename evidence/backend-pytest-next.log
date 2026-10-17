@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.7.0
+rootdir: /Users/rsxing/Downloads/Agies
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1
+collected 219 items
+
+tests/test_aggregate_batch.py .............                              [  5%]
+tests/test_api.py ..................                                     [ 14%]
+tests/test_artifact_compression.py ..                                    [ 15%]
+tests/test_artifacts.py ...                                              [ 16%]
+tests/test_comparisons.py ..                                             [ 17%]
+tests/test_compute.py ...                                                [ 18%]
+tests/test_creation_idempotency.py ..................                    [ 26%]
+tests/test_data_workflows.py ...                                         [ 28%]
+tests/test_dataset_cards.py ...                                          [ 29%]
+tests/test_engine.py ...........................                         [ 42%]
+tests/test_engine_aggregate.py .......                                   [ 45%]
+tests/test_engine_indices.py ........                                    [ 48%]
+tests/test_orphan_retention.py ..........                                [ 53%]
+tests/test_patient_queries.py ...                                        [ 54%]
+tests/test_replay_annotations.py .....                                   [ 57%]
+tests/test_reset_reconciliation.py .                                     [ 57%]
+tests/test_retention.py ..                                               [ 58%]
+tests/test_review_api.py ............                                    [ 63%]
+tests/test_review_observability.py ...                                   [ 65%]
+tests/test_review_worker_metrics.py ..                                   [ 66%]
+tests/test_scenario_planning.py ........                                 [ 69%]
+tests/test_schedule_window.py ..............                             [ 76%]
+tests/test_series.py ...                                                 [ 77%]
+tests/test_snapshot_cache.py .....                                       [ 79%]
+tests/test_summary_context.py .............                              [ 85%]
+tests/test_worker_fencing.py ......                                      [ 88%]
+tests/test_worker_pool.py .........                                      [ 92%]
+tests/test_worker_queue_security.py .                                    [ 93%]
+tests/test_worker_retry.py ............                                  [ 98%]
+tests/test_worker_uploads.py ...                                         [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /Users/rsxing/Downloads/Agies/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 219 passed, 1 warning in 205.54s (0:03:25) ==================

@@ -1,0 +1,1542 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/operational-time.spec.ts",
+      "e2e/replay-evidence.spec.ts",
+      "e2e/replay-controls.spec.ts",
+      "e2e/replay-resources.spec.ts",
+      "e2e/frozen-context.spec.ts",
+      "e2e/map-search.spec.ts",
+      "e2e/resource-inspector.spec.ts",
+      "e2e/shared-panels.spec.ts",
+      "e2e/transfer-selection.spec.ts",
+      "e2e/stress.spec.ts",
+      "e2e/keyboard-alerts.spec.ts",
+      "--output=../../output/playwright/root-combined-final"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true,
+          "deviceScaleFactor": 1
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "frozen-context.spec.ts",
+      "file": "frozen-context.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "historical results retain frozen dates and assumptions beside an edited draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6715,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:16:44.780Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "frozen-result-draft-context",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/frozen-context-historical--b2e15-ions-beside-an-edited-draft-desktop/attachments/frozen-result-draft-context-41ad85fea80775017a50cbd503080864ebedf163.png"
+                    },
+                    {
+                      "name": "frozen-result-draft-context-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/frozen-context-historical--b2e15-ions-beside-an-edited-draft-desktop/attachments/frozen-result-draft-context-middle-6302db337e59bcea8731cd5de9dc76ff9bf8337c.png"
+                    },
+                    {
+                      "name": "frozen-result-draft-context-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/frozen-context-historical--b2e15-ions-beside-an-edited-draft-desktop/attachments/frozen-result-draft-context-lower-539a9334c3789d162e4dce9c12ee2b5701027624.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "adae402349c478a78b9c-7febcd490048801a7bac",
+          "file": "frozen-context.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "completed comparisons and source search preserve distinct frozen and rebased datasets",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7025,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:16:51.847Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "adae402349c478a78b9c-351e10fa6667cfa56639",
+          "file": "frozen-context.spec.ts",
+          "line": 114,
+          "column": 1
+        },
+        {
+          "title": "historical results retain frozen dates and assumptions beside an edited draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6667,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:18:55.097Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "frozen-result-draft-context",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/frozen-context-historical--b2e15-ions-beside-an-edited-draft-mobile/attachments/frozen-result-draft-context-27319af1a835f0974472789b873ab2539472b88c.png"
+                    },
+                    {
+                      "name": "frozen-result-draft-context-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/frozen-context-historical--b2e15-ions-beside-an-edited-draft-mobile/attachments/frozen-result-draft-context-middle-601acb800c437f5572c4e5239b43dd9e64a5d2d0.png"
+                    },
+                    {
+                      "name": "frozen-result-draft-context-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/frozen-context-historical--b2e15-ions-beside-an-edited-draft-mobile/attachments/frozen-result-draft-context-lower-a2f00af69141fec244250cf18da15ddf503b16d9.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "adae402349c478a78b9c-d758e2a210794d5b2c0b",
+          "file": "frozen-context.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "completed comparisons and source search preserve distinct frozen and rebased datasets",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Cross-dataset lineage is exercised once; responsive inspectors have separate coverage.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/frozen-context.spec.ts",
+                    "line": 117,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 124,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:02.060Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Cross-dataset lineage is exercised once; responsive inspectors have separate coverage.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/frozen-context.spec.ts",
+                        "line": 117,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "adae402349c478a78b9c-42a2bcbb194159618a76",
+          "file": "frozen-context.spec.ts",
+          "line": 114,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "keyboard-alerts.spec.ts",
+      "file": "keyboard-alerts.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard entry, calendar drilldown, inspection, comparison and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30797,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:16:58.888Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "keyboard-export",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/keyboard-alerts-keyboard-e-b7427-ction-comparison-and-export-desktop/attachments/keyboard-export-7127bd9741f885680ee4a49010a28fa128300cf1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-6839bcfeb3b799c36268",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "planning alert review preserves the completed result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4960,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:17:29.688Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "alert-review",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/keyboard-alerts-planning-a-e5a7d-serves-the-completed-result-desktop/attachments/alert-review-c6ec5e46aca86fb731859fb9bdfc13619d8ca398.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-274861cf9c5a12652e1d",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "keyboard entry, calendar drilldown, inspection, comparison and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Desktop keyboard workflow; mobile touch layout is covered by the screen matrix.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                    "line": 11,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 121,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:02.200Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Desktop keyboard workflow; mobile touch layout is covered by the screen matrix.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                        "line": 11,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-8380bf854925636705c5",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "planning alert review preserves the completed result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Alert mutation runs once.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                    "line": 26,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 138,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:02.327Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Alert mutation runs once.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                        "line": 26,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-6d6f9efb466b494d6d1c",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 25,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "map-search.spec.ts",
+      "file": "map-search.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "workspace search keeps completed-run context and map controls preserve their routes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8862,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:17:34.666Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11063396553d6831a315-5fee0aaec281bbb11b04",
+          "file": "map-search.spec.ts",
+          "line": 44,
+          "column": 1
+        },
+        {
+          "title": "workspace search keeps completed-run context and map controls preserve their routes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "This desktop workflow exercises the map canvas and shared inspectors once.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts",
+                    "line": 47,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 124,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:02.479Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "This desktop workflow exercises the map canvas and shared inspectors once.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts",
+                        "line": 47,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "11063396553d6831a315-3fe359bf70da58a49a99",
+          "file": "map-search.spec.ts",
+          "line": 44,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "operational-time.spec.ts",
+      "file": "operational-time.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "observed reset preserves an explicit-offset snapshot cutoff finer than one minute",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5810,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:17:43.541Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3468c252d222fd2c99df-1f811811348041a34848",
+          "file": "operational-time.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "observed reset preserves an explicit-offset snapshot cutoff finer than one minute",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Exact timestamp lineage is checked once; responsive update forms have separate coverage.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/operational-time.spec.ts",
+                    "line": 7,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 112,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:02.614Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Exact timestamp lineage is checked once; responsive update forms have separate coverage.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/operational-time.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "3468c252d222fd2c99df-47f9047cb0bc31d813da",
+          "file": "operational-time.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "replay-controls.spec.ts",
+      "file": "replay-controls.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10464,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:17:49.365Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-controls",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-bfe03a8f03f56cc55f7cac1ca0006cd1f9807547.png"
+                    },
+                    {
+                      "name": "replay-controls-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-middle-7a492e599487144b94f967adac3cb169c5dcb312.png"
+                    },
+                    {
+                      "name": "replay-controls-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-lower-4bbaf957f9220e65284cfe0191d9f9b04a3df01a.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b643cf260ddaf8d53c21-48293276ac78d0e4d746",
+          "file": "replay-controls.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Playback semantics are exercised once; responsive presentation separately.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-controls.spec.ts",
+                    "line": 7,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 113,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:02.738Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Playback semantics are exercised once; responsive presentation separately.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-controls.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "b643cf260ddaf8d53c21-4f15d94bb6224cd86778",
+          "file": "replay-controls.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "replay-evidence.spec.ts",
+      "file": "replay-evidence.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "replay exposes complete filtered events, patient history and recorded resources",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 24620,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m877\u001b[39m\nReceived:    \u001b[31m890.953125\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m877\u001b[39m\nReceived:    \u001b[31m890.953125\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts:206:8",
+                    "location": {
+                      "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts",
+                      "column": 8,
+                      "line": 206
+                    },
+                    "snippet": "  204 |           .evaluate((node) => node.getBoundingClientRect().bottom),\n  205 |       )\n> 206 |       .toBeLessThanOrEqual(877);\n      |        ^\n  207 |     const docked = await page.evaluate(() =>\n  208 |       Object.fromEntries(\n  209 |         ["
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts",
+                        "column": 8,
+                        "line": 206
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m877\u001b[39m\nReceived:    \u001b[31m890.953125\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate\n\n  204 |           .evaluate((node) => node.getBoundingClientRect().bottom),\n  205 |       )\n> 206 |       .toBeLessThanOrEqual(877);\n      |        ^\n  207 |     const docked = await page.evaluate(() =>\n  208 |       Object.fromEntries(\n  209 |         [\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts:206:8"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:17:59.845Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-evidence.spec.ts",
+                    "column": 8,
+                    "line": 206
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "63fcc6edbf8bcc3a4a60-72f22dfec2a2b45c8e9f",
+          "file": "replay-evidence.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "replay exposes complete filtered events, patient history and recorded resources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7676,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:02.872Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-mobile-readable-zones",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-mobile-readable-zones-9513a1198ae96a8211d9ce11ed4f22107b4e8615.png"
+                    },
+                    {
+                      "name": "replay-mobile-readable-zones-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-mobile-readable-zones-middle-24f00421d8340bdd10ef9d00d61536582c4d14d9.png"
+                    },
+                    {
+                      "name": "replay-mobile-readable-zones-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-mobile-readable-zones-lower-dac7d6e13d26588997d8a54e8e291c4db8de0cc1.png"
+                    },
+                    {
+                      "name": "replay-complete-evidence",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-complete-evidence-8c8521915c9d9c749934db517b83de0bdeaa337b.png"
+                    },
+                    {
+                      "name": "replay-complete-evidence-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-complete-evidence-middle-a01c90013052d33f19a1b5f56d32ac12028f2910.png"
+                    },
+                    {
+                      "name": "replay-complete-evidence-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-complete-evidence-lower-f9f48b21f1156f0ca3be450747228f2bc253da47.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "63fcc6edbf8bcc3a4a60-a22adaf98e8018f4963a",
+          "file": "replay-evidence.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "replay-resources.spec.ts",
+      "file": "replay-resources.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "replay resource inspection follows exact reservations, inventory and transport mission",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3299,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:18:24.956Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-resource-inspection",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-resources-replay-re-18a59-ntory-and-transport-mission-desktop/attachments/replay-resource-inspection-2983bc5d5ff72a5176fd382b3e4c147d41452c2c.png"
+                    },
+                    {
+                      "name": "replay-resource-inspection-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-resources-replay-re-18a59-ntory-and-transport-mission-desktop/attachments/replay-resource-inspection-middle-5f02d697fba187d3ad12e0dec1997fb8e759cc28.png"
+                    },
+                    {
+                      "name": "replay-resource-inspection-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-resources-replay-re-18a59-ntory-and-transport-mission-desktop/attachments/replay-resource-inspection-lower-19a81389bfd10dea044f018f0bf5bf51fe0313a9.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cdf56ebb699d7ca23170-d11906d5a2255c6d8564",
+          "file": "replay-resources.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "replay resource inspection follows exact reservations, inventory and transport mission",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5136,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:10.559Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-resource-inspection",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-resources-replay-re-18a59-ntory-and-transport-mission-mobile/attachments/replay-resource-inspection-0ebc89337a7345405221548fdd9ea20b21ce29cc.png"
+                    },
+                    {
+                      "name": "replay-resource-inspection-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-resources-replay-re-18a59-ntory-and-transport-mission-mobile/attachments/replay-resource-inspection-middle-6b48108fbac4e473fa1b1fb5f2e28ee5354163fe.png"
+                    },
+                    {
+                      "name": "replay-resource-inspection-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/replay-resources-replay-re-18a59-ntory-and-transport-mission-mobile/attachments/replay-resource-inspection-lower-03af1e35aceeb171147b6beb49e4db0b8990d52d.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cdf56ebb699d7ca23170-fff20b9d94688483536b",
+          "file": "replay-resources.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "resource-inspector.spec.ts",
+      "file": "resource-inspector.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "resource tables use persistent selected-time inspectors and reloadable links",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9265,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:18:28.601Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "resource-persistent-inspector",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/resource-inspector-resourc-ba079-ectors-and-reloadable-links-desktop/attachments/resource-persistent-inspector-94711fefcf34ac24e36fec14a3e0f91a2ed2301b.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9955cf692ebf8538145a-5c943f98e1396e953df9",
+          "file": "resource-inspector.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "resource tables use persistent selected-time inspectors and reloadable links",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9488,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:15.710Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "resource-persistent-inspector",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/resource-inspector-resourc-ba079-ectors-and-reloadable-links-mobile/attachments/resource-persistent-inspector-9b678466f43e4cdfdf3b3d65f6f706b8306b6982.png"
+                    },
+                    {
+                      "name": "resource-persistent-inspector-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/resource-inspector-resourc-ba079-ectors-and-reloadable-links-mobile/attachments/resource-persistent-inspector-middle-b802698ae6377a2c44f7752d5d621ff3e25515ac.png"
+                    },
+                    {
+                      "name": "resource-persistent-inspector-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/resource-inspector-resourc-ba079-ectors-and-reloadable-links-mobile/attachments/resource-persistent-inspector-lower-4b8603a774855300e6f2814ac7497bab9c0b01bb.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9955cf692ebf8538145a-8fb4c50c856fc5cbe6bf",
+          "file": "resource-inspector.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "shared-panels.spec.ts",
+      "file": "shared-panels.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "linked workspaces keep time docks visible and collapse panels without changing the run",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8985,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:18:37.878Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "shared-panels-patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/shared-panels-linked-works-84cd5-ls-without-changing-the-run-desktop/attachments/shared-panels-patients-1bb35a3750cc37cc18cc3dc5f89cb8a6effffb49.png"
+                    },
+                    {
+                      "name": "shared-panels-resources",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/shared-panels-linked-works-84cd5-ls-without-changing-the-run-desktop/attachments/shared-panels-resources-b6326ebb4bbdc7eb77c59f03068fc8cc0932ea46.png"
+                    },
+                    {
+                      "name": "shared-panels-compare",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/shared-panels-linked-works-84cd5-ls-without-changing-the-run-desktop/attachments/shared-panels-compare-40d489399a1d0513f6874a3feab0b7a0751ed1da.png"
+                    },
+                    {
+                      "name": "shared-panels-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/shared-panels-linked-works-84cd5-ls-without-changing-the-run-desktop/attachments/shared-panels-replay-6c20da34e30c936ac198e76b7a2fa0f370b20cf6.png"
+                    },
+                    {
+                      "name": "shared-panels-replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/shared-panels-linked-works-84cd5-ls-without-changing-the-run-desktop/attachments/shared-panels-replay-middle-7c7ba176a021d26f61fbc1c580bd08fe702c753a.png"
+                    },
+                    {
+                      "name": "shared-panels-replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/shared-panels-linked-works-84cd5-ls-without-changing-the-run-desktop/attachments/shared-panels-replay-lower-5960a9973ced5ea959fc87ff9443d15da7f9c0a1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ba8ce4a74e9ea047756-97966a45a5471b2415f5",
+          "file": "shared-panels.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "linked workspaces keep time docks visible and collapse panels without changing the run",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Docked desktop layout; mobile inspection has separate coverage.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/shared-panels.spec.ts",
+                    "line": 7,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 118,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:25.213Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Docked desktop layout; mobile inspection has separate coverage.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/shared-panels.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "8ba8ce4a74e9ea047756-e07b8ad92e39a8a50cf7",
+          "file": "shared-panels.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "stress.spec.ts",
+      "file": "stress.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "stress census exposes initial boarding and actual patient blockers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5444,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:18:46.879Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "stress-overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/stress-stress-census-expos-79cf9-and-actual-patient-blockers-desktop/attachments/stress-overview-47e17b74a90111ed20db05150de171e37c01c3e5.png"
+                    },
+                    {
+                      "name": "stress-patient-blockers",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-combined-final/stress-stress-census-expos-79cf9-and-actual-patient-blockers-desktop/attachments/stress-patient-blockers-934568049b7e832bacb0cad37a1fb4c88e602e66.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "496454548f4205703e07-7a6ac4ddc6b4bceb46b5",
+          "file": "stress.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "stress census exposes initial boarding and actual patient blockers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Detailed stress-context workflow runs once.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/stress.spec.ts",
+                    "line": 4,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 141,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:25.342Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Detailed stress-context workflow runs once.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/stress.spec.ts",
+                        "line": 4,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "496454548f4205703e07-ed43235dd26d4e236429",
+          "file": "stress.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "transfer-selection.spec.ts",
+      "file": "transfer-selection.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a slower destination check cannot overwrite the current transfer choice",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2399,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:18:52.337Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0c444f39557f285c7c64-3c7df4da538ab87e5b6f",
+          "file": "transfer-selection.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "a slower destination check cannot overwrite the current transfer choice",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2114,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:19:25.495Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0c444f39557f285c7c64-56c5d5ad323e2003d0a6",
+          "file": "transfer-selection.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T12:16:44.311Z",
+    "duration": 163411.409,
+    "expected": 17,
+    "skipped": 8,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

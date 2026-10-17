@@ -38,6 +38,13 @@ def uncached_record_state(sim):
         if snap != sim.last_vehicle_snapshots.get(vid):
             sim.vehicle_history[vid].append(dict(at=sim.at(sim.now), elapsed_minutes=sim.now, **snap))
             sim.last_vehicle_snapshots[vid] = snap
+    for pool_id, pool in sim.pools.items():
+        snap = sim.equipment_pool_snapshot(pool)
+        if snap != sim.last_equipment_pool_snapshots.get(pool_id):
+            sim.equipment_pool_history[pool_id].append(
+                dict(at=sim.at(sim.now), elapsed_minutes=sim.now, **snap)
+            )
+            sim.last_equipment_pool_snapshots[pool_id] = snap
 
 
 @pytest.mark.parametrize("fixture", ["planning_baseline", "stress_snapshot"])
@@ -108,6 +115,7 @@ def test_unchanged_event_does_not_rebuild_public_snapshots(monkeypatch):
 
     monkeypatch.setattr(sim, "slot_snapshot", unexpected)
     monkeypatch.setattr(sim, "unit_snapshot", unexpected)
+    monkeypatch.setattr(sim, "equipment_pool_snapshot", unexpected)
     sim.now += 1
     sim.record_state()
     sim.sample()

@@ -1,12 +1,16 @@
 {
   "config": {
     "argv": [
-      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
-      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
       "test",
-      "e2e/replay-controls.spec.ts",
       "e2e/replay-evidence.spec.ts",
-      "e2e/replay-resources.spec.ts"
+      "e2e/scenario-families.spec.ts",
+      "e2e/map-search.spec.ts",
+      "e2e/workflows.spec.ts",
+      "e2e/operational-time.spec.ts",
+      "--project=desktop",
+      "--output=../../output/playwright/root-source-final"
     ],
     "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
     "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
@@ -25,7 +29,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -41,7 +45,7 @@
         "timeout": 180000
       },
       {
-        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -61,7 +65,7 @@
       {
         "grep": {},
         "grepInvert": null,
-        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -90,42 +94,6 @@
         "dependencies": [],
         "ignoreSnapshots": false,
         "__projectId": "desktop"
-      },
-      {
-        "grep": {},
-        "grepInvert": null,
-        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
-        "repeatEach": 1,
-        "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
-        "name": "mobile",
-        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
-        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
-        "testIgnore": [],
-        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
-        "timeout": 180000,
-        "use": {
-          "baseURL": "http://127.0.0.1:5173",
-          "browserName": "chromium",
-          "channel": "chrome",
-          "trace": "retain-on-failure",
-          "screenshot": "only-on-failure",
-          "actionTimeout": 20000,
-          "navigationTimeout": 30000,
-          "serviceWorkers": "block",
-          "viewport": {
-            "width": 390,
-            "height": 844
-          },
-          "isMobile": true,
-          "hasTouch": true,
-          "deviceScaleFactor": 1
-        },
-        "dependencies": [],
-        "ignoreSnapshots": false,
-        "__projectId": "mobile"
       }
     ],
     "quiet": false,
@@ -158,22 +126,59 @@
     "updateSourceMethod": "patch",
     "version": "1.64.1",
     "workers": 1,
-    "webServer": {
-      "command": "../../.venv/bin/python ../../scripts/dev.py",
-      "url": "http://127.0.0.1:5173/api/health/ready",
-      "reuseExistingServer": true,
-      "timeout": 90000
-    }
+    "webServer": null
   },
   "suites": [
     {
-      "title": "replay-controls.spec.ts",
-      "file": "replay-controls.spec.ts",
+      "title": "map-search.spec.ts",
+      "file": "map-search.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
+          "title": "workspace search keeps completed-run context and map controls preserve their routes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10299,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:27:26.471Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11063396553d6831a315-5fee0aaec281bbb11b04",
+          "file": "map-search.spec.ts",
+          "line": 44,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "operational-time.spec.ts",
+      "file": "operational-time.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "observed reset preserves an explicit-offset snapshot cutoff finer than one minute",
           "ok": true,
           "tags": [],
           "tests": [
@@ -188,91 +193,21 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 11756,
+                  "duration": 5874,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T10:46:34.530Z",
+                  "startTime": "2026-10-17T12:27:37.110Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "replay-controls",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-bfe03a8f03f56cc55f7cac1ca0006cd1f9807547.png"
-                    },
-                    {
-                      "name": "replay-controls-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-middle-7a492e599487144b94f967adac3cb169c5dcb312.png"
-                    },
-                    {
-                      "name": "replay-controls-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-lower-4bbaf957f9220e65284cfe0191d9f9b04a3df01a.png"
-                    }
-                  ]
+                  "attachments": []
                 }
               ],
               "status": "expected"
             }
           ],
-          "id": "b643cf260ddaf8d53c21-48293276ac78d0e4d746",
-          "file": "replay-controls.spec.ts",
-          "line": 4,
-          "column": 1
-        },
-        {
-          "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [
-                {
-                  "type": "skip",
-                  "description": "Playback semantics are exercised once; responsive presentation separately.",
-                  "location": {
-                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-controls.spec.ts",
-                    "line": 7,
-                    "column": 8
-                  }
-                }
-              ],
-              "expectedStatus": "skipped",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "skipped",
-                  "duration": 205,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T10:47:05.106Z",
-                  "annotations": [
-                    {
-                      "type": "skip",
-                      "description": "Playback semantics are exercised once; responsive presentation separately.",
-                      "location": {
-                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/replay-controls.spec.ts",
-                        "line": 7,
-                        "column": 8
-                      }
-                    }
-                  ],
-                  "attachments": []
-                }
-              ],
-              "status": "skipped"
-            }
-          ],
-          "id": "b643cf260ddaf8d53c21-4f15d94bb6224cd86778",
-          "file": "replay-controls.spec.ts",
+          "id": "3468c252d222fd2c99df-1f811811348041a34848",
+          "file": "operational-time.spec.ts",
           "line": 4,
           "column": 1
         }
@@ -300,28 +235,28 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 10829,
+                  "duration": 7242,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T10:46:46.675Z",
+                  "startTime": "2026-10-17T12:27:43.004Z",
                   "annotations": [],
                   "attachments": [
                     {
                       "name": "replay-complete-evidence",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/attachments/replay-complete-evidence-29dd3153cbd8dc400b3d174e8b0fe245dcfd6467.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/attachments/replay-complete-evidence-29dd3153cbd8dc400b3d174e8b0fe245dcfd6467.png"
                     },
                     {
                       "name": "replay-complete-evidence-middle",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/attachments/replay-complete-evidence-middle-12e3610a8e24bcb91d69c0cc8b0af6821ad60ca4.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/attachments/replay-complete-evidence-middle-12e3610a8e24bcb91d69c0cc8b0af6821ad60ca4.png"
                     },
                     {
                       "name": "replay-complete-evidence-lower",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/attachments/replay-complete-evidence-lower-c9dac0707836b18940f9906307f96f5ae94a3514.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-desktop/attachments/replay-complete-evidence-lower-c9dac0707836b18940f9906307f96f5ae94a3514.png"
                     }
                   ]
                 }
@@ -331,47 +266,55 @@
           ],
           "id": "63fcc6edbf8bcc3a4a60-72f22dfec2a2b45c8e9f",
           "file": "replay-evidence.spec.ts",
-          "line": 4,
+          "line": 5,
           "column": 1
-        },
+        }
+      ]
+    },
+    {
+      "title": "scenario-families.spec.ts",
+      "file": "scenario-families.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
         {
-          "title": "replay exposes complete filtered events, patient history and recorded resources",
+          "title": "all visual scenario families save canonical inputs and compute actual effects",
           "ok": true,
           "tags": [],
           "tests": [
             {
-              "timeout": 180000,
+              "timeout": 240000,
               "annotations": [],
               "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
+              "projectId": "desktop",
+              "projectName": "desktop",
               "results": [
                 {
-                  "workerIndex": 1,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 10658,
+                  "duration": 11905,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T10:47:05.618Z",
+                  "startTime": "2026-10-17T12:27:50.267Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "replay-complete-evidence",
+                      "name": "scenario-all-families",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-complete-evidence-8c8521915c9d9c749934db517b83de0bdeaa337b.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-a5309d9ace6dccfa16299efa46556b479f204cc3.png"
                     },
                     {
-                      "name": "replay-complete-evidence-middle",
+                      "name": "scenario-all-families-middle",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-complete-evidence-middle-a01c90013052d33f19a1b5f56d32ac12028f2910.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-middle-6e3023afc979299fb3ff8b65b539ce0547ff90b5.png"
                     },
                     {
-                      "name": "replay-complete-evidence-lower",
+                      "name": "scenario-all-families-lower",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-evidence-replay-exp-503d7-tory-and-recorded-resources-mobile/attachments/replay-complete-evidence-lower-f9f48b21f1156f0ca3be450747228f2bc253da47.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-lower-ff5e471998697a314c0bec490d83189e280038d0.png"
                     }
                   ]
                 }
@@ -379,21 +322,73 @@
               "status": "expected"
             }
           ],
-          "id": "63fcc6edbf8bcc3a4a60-a22adaf98e8018f4963a",
-          "file": "replay-evidence.spec.ts",
-          "line": 4,
+          "id": "4742fad0eb8fc0f2847a-2cad9db3e046a52776e6",
+          "file": "scenario-families.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "scenario resource forms and independent inspector remain keyboard accessible on mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                    "line": 340,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 150,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T12:28:02.177Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                        "line": 340,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-4ead91729ce654e1385e",
+          "file": "scenario-families.spec.ts",
+          "line": 337,
           "column": 1
         }
       ]
     },
     {
-      "title": "replay-resources.spec.ts",
-      "file": "replay-resources.spec.ts",
+      "title": "workflows.spec.ts",
+      "file": "workflows.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "replay resource inspection follows exact reservations, inventory and transport mission",
+          "title": "configure, compute, inspect, compare, update, replay and export",
           "ok": true,
           "tags": [],
           "tests": [
@@ -408,28 +403,57 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 7316,
+                  "duration": 29821,
                   "errors": [],
-                  "stdout": [],
+                  "stdout": [
+                    {
+                      "text": "workflow: created scenario_13df470853084727986b\n"
+                    },
+                    {
+                      "text": "workflow: scenario screen loaded\n"
+                    },
+                    {
+                      "text": "workflow: fields configured\n"
+                    },
+                    {
+                      "text": "workflow: submit clicked\n"
+                    },
+                    {
+                      "text": "workflow: queued run_a003c2b5424944afa2e0\n"
+                    },
+                    {
+                      "text": "workflow: run complete\n"
+                    }
+                  ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T10:46:57.516Z",
+                  "startTime": "2026-10-17T12:28:02.347Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "replay-resource-inspection",
+                      "name": "workflow-patient",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-resources-replay-re-18a59-ntory-and-transport-mission-desktop/attachments/replay-resource-inspection-2983bc5d5ff72a5176fd382b3e4c147d41452c2c.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-291190d91ce3401a8bd656ea15497ca476ff7249.png"
                     },
                     {
-                      "name": "replay-resource-inspection-middle",
+                      "name": "workflow-comparison",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-resources-replay-re-18a59-ntory-and-transport-mission-desktop/attachments/replay-resource-inspection-middle-5f02d697fba187d3ad12e0dec1997fb8e759cc28.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-96d39cb25af203ec4c1a59628039e3ee8f0eafe1.png"
                     },
                     {
-                      "name": "replay-resource-inspection-lower",
+                      "name": "workflow-replay",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-resources-replay-re-18a59-ntory-and-transport-mission-desktop/attachments/replay-resource-inspection-lower-19a81389bfd10dea044f018f0bf5bf51fe0313a9.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-2fa5aafe4b0256a125d493914754a374dbff722f.png"
+                    },
+                    {
+                      "name": "workflow-replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-middle-9a95af10a9670c3b26f0862e87feb747631b059f.png"
+                    },
+                    {
+                      "name": "workflow-replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/root-source-final/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-lower-71e9bbf9ca99579776e320dd520a161fae9fa296.png"
                     }
                   ]
                 }
@@ -437,59 +461,9 @@
               "status": "expected"
             }
           ],
-          "id": "cdf56ebb699d7ca23170-d11906d5a2255c6d8564",
-          "file": "replay-resources.spec.ts",
-          "line": 4,
-          "column": 1
-        },
-        {
-          "title": "replay resource inspection follows exact reservations, inventory and transport mission",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 7297,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T10:47:16.288Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "replay-resource-inspection",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-resources-replay-re-18a59-ntory-and-transport-mission-mobile/attachments/replay-resource-inspection-0ebc89337a7345405221548fdd9ea20b21ce29cc.png"
-                    },
-                    {
-                      "name": "replay-resource-inspection-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-resources-replay-re-18a59-ntory-and-transport-mission-mobile/attachments/replay-resource-inspection-middle-6b48108fbac4e473fa1b1fb5f2e28ee5354163fe.png"
-                    },
-                    {
-                      "name": "replay-resource-inspection-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-resources-replay-re-18a59-ntory-and-transport-mission-mobile/attachments/replay-resource-inspection-lower-03af1e35aceeb171147b6beb49e4db0b8990d52d.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "cdf56ebb699d7ca23170-fff20b9d94688483536b",
-          "file": "replay-resources.spec.ts",
-          "line": 4,
+          "id": "26aa48cee8983222f549-582cfc57ecd6a6d378f0",
+          "file": "workflows.spec.ts",
+          "line": 14,
           "column": 1
         }
       ]
@@ -497,8 +471,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-17T10:46:34.113Z",
-    "duration": 49550.259,
+    "startTime": "2026-10-17T12:27:26.171Z",
+    "duration": 66141.84099999999,
     "expected": 5,
     "skipped": 1,
     "unexpected": 0,

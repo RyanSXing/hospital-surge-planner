@@ -7,9 +7,18 @@ import {
   inputDifferences,
   mixError,
   horizonDays,
+  planningEnd,
 } from "./scenarioEditor";
 import type { HorizonUnit, MixMode } from "./scenarioEditor";
 import "./scenarios.css";
+import ScenarioTracks, { planFamilies } from "./ScenarioTracks";
+import { ZonedDateTimeInput } from "../components/ZonedDateTimeInput";
+import { utcMinute } from "../zonedTime";
+import type { PlanEditorRequest } from "./ScenarioTracks";
+import {
+  PlanningPanelControls,
+  usePlanningPanels,
+} from "../components/PlanningPanels";
 import {
   Activity,
   ArrowDownToLine,
@@ -63,6 +72,19 @@ const presets = [
   ],
 ];
 export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
+  const panels = usePlanningPanels();
+  const [windowStartAt, setWindowStartAt] = useState<string | undefined>();
+  const [windowEndAt, setWindowEndAt] = useState<string | undefined>();
+  const [customPoints, setCustomPoints] = useState<
+    { at: string; multiplier: number }[]
+  >([]);
+  const [planRequest, setPlanRequest] = useState<PlanEditorRequest | null>(
+    null,
+  );
+  const [draftInterventions, setDraftInterventions] = useState<Entity[]>([]);
+  const [draftUpdates, setDraftUpdates] = useState<Entity[]>([]);
+  const [arrivalEdited, setArrivalEdited] = useState(false);
+  const [legacyStaffEdited, setLegacyStaffEdited] = useState(false);
   const [advanced, setAdvanced] = useState(false),
     [startAt, setStartAt] = useState("2026-10-16T05:00:00Z"),
     [seed, setSeed] = useState(20261016),
@@ -107,6 +129,9 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     [estimateError, setEstimateError] = useState(""),
     [draftConditions, setDraftConditions] = useState<Entity[]>([]);
   const libraryRequest = useRef(0);
+  const exclusiveEnd = planningEnd(ctx.scenario, startAt, days);
+  const timeZone =
+    ctx.scenario?.timezone || ctx.dataset?.timezone || "America/Chicago";
   function loadCondition(c: Entity | undefined, s = ctx.scenario) {
     if (!s) return;
     setStream(c?.entry_stream_id || "ED_MAIN");
@@ -114,28 +139,44 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     const window = conditionWindow(s, c);
     setStartDay(window.startDay);
     setEndDay(window.endDay);
+    setWindowStartAt(c?.control_points?.[0]?.at || c?.start_at);
+    setWindowEndAt(c?.control_points?.at(-1)?.at || c?.end_at);
     const points = c?.control_points || [];
+    setCustomPoints(
+      points.map((p: Entity) => ({ at: p.at, multiplier: p.multiplier })),
+    );
     const maxPoint = points.length
       ? points.reduce((a: Entity, p: Entity) =>
           p.multiplier > a.multiplier ? p : a,
         )
       : null;
+    const focusPoint =
+      points.length === 2
+        ? points[1]
+        : points.length === 3 &&
+            points[0].multiplier === 1 &&
+            points[2].multiplier === 1
+          ? points[1]
+          : maxPoint;
     setPercent(
-      c?.surge_percent ??
-        (maxPoint ? Math.round((maxPoint.multiplier - 1) * 100) : 0),
+      c?.surge_percent ?? (focusPoint ? (focusPoint.multiplier - 1) * 100 : 0),
     );
     setShape(
       c?.shape === "piecewise_linear"
-        ? points.length === 2
+        ? points.length === 2 && points[0].multiplier === 1
           ? "ramp"
-          : "wave"
+          : points.length === 3 &&
+              points[0].multiplier === 1 &&
+              points[2].multiplier === 1
+            ? "wave"
+            : "custom"
         : c?.shape === "step"
           ? "sustained"
           : c?.shape || "baseline",
     );
     setPeakDay(
-      points.length > 2 && maxPoint
-        ? localDayIndex(s.start_at, maxPoint.at, s.timezone)
+      points.length > 2 && focusPoint
+        ? localDayIndex(s.start_at, focusPoint.at, s.timezone)
         : 10,
     );
     const override = c?.care_mix_override;
@@ -157,6 +198,10 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setSeed(s.base_seed);
     setConditionsJson(JSON.stringify(s.conditions || [], null, 2));
     setDraftConditions(s.conditions || []);
+    setDraftInterventions(s.interventions || []);
+    setDraftUpdates(s.updates || []);
+    setArrivalEdited(false);
+    setLegacyStaffEdited(false);
     setName(s.name);
     setDays(s.horizon_calendar_days);
     setHorizonUnit("days");
@@ -186,6 +231,18 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setRedo([]);
   }, [ctx.scenario?.id, ctx.scenario?.revision]);
   const snapshot = () => ({
+    windowStartAt,
+    windowEndAt,
+    customPoints,
+    name,
+    startAt,
+    seed,
+    replications,
+    staffConditionId,
+    arrivalEdited,
+    legacyStaffEdited,
+    draftInterventions,
+    draftUpdates,
     percent,
     days,
     horizonUnit,
@@ -206,7 +263,23 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setRedo([]);
     setDirty(true);
   }
+  function rememberArrival() {
+    remember();
+    setArrivalEdited(true);
+  }
   function restore(v: Entity) {
+    setCustomPoints(v.customPoints);
+    setWindowStartAt(v.windowStartAt);
+    setWindowEndAt(v.windowEndAt);
+    setName(v.name);
+    setStartAt(v.startAt);
+    setSeed(v.seed);
+    setReplications(v.replications);
+    setStaffConditionId(v.staffConditionId);
+    setArrivalEdited(v.arrivalEdited);
+    setLegacyStaffEdited(v.legacyStaffEdited);
+    setDraftInterventions(v.draftInterventions);
+    setDraftUpdates(v.draftUpdates);
     setPercent(v.percent);
     setDays(v.days);
     setHorizonUnit(v.horizonUnit || "days");
@@ -224,9 +297,14 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setDirty(true);
   }
   function makePatch() {
-    return buildScenarioPatch(
+    const patch = buildScenarioPatch(
       ctx.scenario ? { ...ctx.scenario, conditions: draftConditions } : null,
       {
+        customPoints,
+        windowStartAt,
+        windowEndAt,
+        editArrival: arrivalEdited,
+        editLegacyStaff: legacyStaffEdited,
         name,
         startAt,
         seed,
@@ -245,6 +323,11 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
         mix,
       },
     );
+    return {
+      ...patch,
+      interventions: draftInterventions,
+      updates: draftUpdates,
+    };
   }
   function switchStream(next: string) {
     try {
@@ -257,6 +340,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           (c.entry_stream_id || "ED_MAIN") === next,
       );
       loadCondition(existing);
+      setArrivalEdited(false);
       setStream(next);
       if (next === "DIRECT_WARD_MAIN" && !existing?.care_mix_override) {
         setMix({ ward: 1 });
@@ -313,6 +397,13 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     mixMode,
     mix,
     draftConditions,
+    draftInterventions,
+    draftUpdates,
+    arrivalEdited,
+    legacyStaffEdited,
+    customPoints,
+    windowStartAt,
+    windowEndAt,
   ]);
   async function openDifferences() {
     await ctx.action("Loading saved input versions", async () => {
@@ -409,9 +500,26 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setStartDay((a) => Math.min(a, total - 1));
     setEndDay(total);
   }
+  const validCustomPoints = customPoints.filter(
+    (p) => Number.isFinite(Date.parse(p.at)) && Number.isFinite(p.multiplier),
+  );
   const multiplier = Math.max(0, 1 + percent / 100),
-    minimum = Math.min(1, multiplier) * 0.9,
-    maximum = Math.max(1, multiplier) * 1.12;
+    minimum =
+      Math.min(
+        1,
+        multiplier,
+        ...(shape === "custom"
+          ? validCustomPoints.map((p) => p.multiplier)
+          : []),
+      ) * 0.9,
+    maximum =
+      Math.max(
+        1,
+        multiplier,
+        ...(shape === "custom"
+          ? validCustomPoints.map((p) => p.multiplier)
+          : []),
+      ) * 1.12;
   const y = (v: number) => 135 - ((v - minimum) / (maximum - minimum)) * 120;
   const x = (d: number) => Math.max(0, Math.min(600, (d / days) * 600));
   const a = x(startDay),
@@ -420,13 +528,20 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     baseY = y(1),
     peakY = y(multiplier);
   const path =
-    shape === "baseline" || percent === 0
-      ? `M0,${baseY} L600,${baseY}`
-      : shape === "wave"
-        ? `M0,${baseY} L${a},${baseY} L${peak},${peakY} L${b},${baseY} L600,${baseY}`
-        : shape === "ramp"
-          ? `M0,${baseY} L${a},${baseY} L${b},${peakY} L${b},${baseY} L600,${baseY}`
-          : `M0,${baseY} L${a},${baseY} L${a},${peakY} L${b},${peakY} L${b},${baseY} L600,${baseY}`;
+    shape === "custom" && validCustomPoints.length
+      ? validCustomPoints
+          .map(
+            (p, i) =>
+              `${i ? "L" : "M"}${x(((Date.parse(p.at) - Date.parse(startAt)) / (Date.parse(exclusiveEnd) - Date.parse(startAt))) * days)},${y(p.multiplier)}`,
+          )
+          .join(" ")
+      : shape === "baseline" || percent === 0
+        ? `M0,${baseY} L600,${baseY}`
+        : shape === "wave"
+          ? `M0,${baseY} L${a},${baseY} L${peak},${peakY} L${b},${baseY} L600,${baseY}`
+          : shape === "ramp"
+            ? `M0,${baseY} L${a},${baseY} L${b},${peakY} L${b},${baseY} L600,${baseY}`
+            : `M0,${baseY} L${a},${baseY} L${a},${peakY} L${b},${peakY} L${b},${baseY} L600,${baseY}`;
   const markerX = shape === "wave" ? peak : b,
     markerY = percent === 0 ? baseY : peakY;
   const initialCtx = {
@@ -468,7 +583,24 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           <p>Shape demand, available resources, and your response over time.</p>
         </div>
         <div className="heading-actions">
-          <Button onClick={() => setAdvanced(true)}>
+          <PlanningPanelControls
+            panels={panels}
+            name="scenario"
+            timeline={false}
+          />
+          <Button
+            onClick={() => {
+              try {
+                setConditionsJson(
+                  JSON.stringify(makePatch().conditions, null, 2),
+                );
+                setEditorError("");
+                setAdvanced(true);
+              } catch (error) {
+                setEditorError((error as Error).message);
+              }
+            }}
+          >
             <SlidersHorizontal size={15} />
             Assumptions
           </Button>
@@ -509,15 +641,16 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           aria-label="Scenario name"
           value={name}
           onChange={(e) => {
+            remember();
             setName(e.target.value);
-            setDirty(true);
           }}
         />
         <Badge tone={dirty ? "warning" : "success"}>
           {dirty ? "Unsaved changes" : "Saved draft"}
         </Badge>
         <span className="muted">
-          Dataset {ctx.dataset?.fixture?.replaceAll("_", " ")} · America/Chicago
+          Dataset {ctx.dataset?.fixture?.replaceAll("_", " ")} ·{" "}
+          {ctx.scenario?.timezone || ctx.dataset?.timezone}
         </span>
         <div className="undo-actions">
           <button
@@ -536,6 +669,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             onClick={() => {
               const v = redo[redo.length - 1];
               setRedo((a) => a.slice(0, -1));
+              setUndo((a) => [...a, snapshot()]);
               restore(v);
             }}
           >
@@ -543,14 +677,19 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           </button>
         </div>
       </div>
-      <div className="builder-grid">
+      <div
+        className={`builder-grid ${panels.inspectorHidden ? "scenario-inspector-hidden" : ""}`}
+      >
         <aside className="condition-palette">
           <span className="eyebrow">CONDITIONS</span>
           <h3>Shape your scenario</h3>
           <p>Add conditions to the planning timeline.</p>
           <button
             className="condition-tile selected"
-            onClick={() => document.getElementById("surge-input")?.focus()}
+            onClick={() => {
+              panels.setInspectorHidden(false);
+              document.getElementById("surge-input")?.focus();
+            }}
             draggable
             onDragStart={(e) => e.dataTransfer.setData("condition", "arrivals")}
           >
@@ -561,33 +700,20 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               <Plus size={14} />
             </span>
           </button>
-          <button
-            className="condition-tile"
-            onClick={() => {
-              remember();
-              setAbsence(absence ? 0 : 20);
-            }}
-            draggable
-            onDragStart={(e) => e.dataTransfer.setData("condition", "staff")}
-          >
-            <Users size={21} />
-            <strong>Staff absence</strong>
-            <small>Adjust available nursing coverage.</small>
-            <span className="tile-add">
-              <Plus size={14} />
-            </span>
-          </button>
-          <button
-            className="condition-tile"
-            onClick={() => ctx.setPage("compare")}
-          >
-            <HospitalIcon />
-            <strong>Overflow capacity</strong>
-            <small>Schedule staffed inpatient spaces.</small>
-            <span className="tile-add">
-              <Plus size={14} />
-            </span>
-          </button>
+          {planFamilies.map(([family, title, description]) => (
+            <button
+              key={family}
+              className="condition-tile"
+              disabled={ctx.canWrite === false}
+              onClick={() => setPlanRequest({ family, nonce: Date.now() })}
+              draggable
+              onDragStart={(e) => e.dataTransfer.setData("condition", family)}
+            >
+              <Plus size={18} />
+              <strong>{title}</strong>
+              <small>{description}</small>
+            </button>
+          ))}
           <div className="palette-note">
             <FileText size={16} />
             <p>
@@ -601,10 +727,14 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
-            if (e.dataTransfer.getData("condition") === "staff") {
-              remember();
-              setAbsence(20);
-            } else document.getElementById("surge-input")?.focus();
+            const family = planFamilies.find(
+              ([f]) => f === e.dataTransfer.getData("condition"),
+            )?.[0];
+            if (family) setPlanRequest({ family, nonce: Date.now() });
+            else {
+              panels.setInspectorHidden(false);
+              document.getElementById("surge-input")?.focus();
+            }
           }}
         >
           <PanelTitle
@@ -612,12 +742,9 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             eyebrow={`${days} LOCAL CALENDAR DAYS`}
             actions={
               <div className="date-chip">
-                {localDate(ctx.scenario?.start_at || "")} —{" "}
+                {localDate(startAt)} —{" "}
                 {localDate(
-                  atDay(
-                    ctx.scenario?.start_at || "2026-10-16T05:00:00Z",
-                    days - 1,
-                  ),
+                  new Date(Date.parse(exclusiveEnd) - 1).toISOString(),
                 )}
               </div>
             }
@@ -666,7 +793,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 className="wave-peak"
                 style={{
                   left: `${10 + (markerX / 600) * 75}%`,
-                  top: `${markerY + 8}px`,
+                  top: `${markerY * (85 / 135) + 8}px`,
                 }}
               >
                 <strong>
@@ -681,14 +808,31 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               <input
                 type="range"
                 aria-label="Adjust arrival surge"
+                disabled={shape === "custom"}
                 min="-100"
                 max="300"
                 step="5"
                 value={percent}
-                onPointerDown={remember}
+                onPointerDown={rememberArrival}
+                onKeyDown={(e) => {
+                  if (
+                    [
+                      "ArrowLeft",
+                      "ArrowRight",
+                      "ArrowUp",
+                      "ArrowDown",
+                      "Home",
+                      "End",
+                    ].includes(e.key)
+                  )
+                    rememberArrival();
+                }}
                 onChange={(e) => {
                   setPercent(+e.target.value);
+                  if (+e.target.value !== 0 && shape === "baseline")
+                    setShape("sustained");
                   setDirty(true);
+                  setArrivalEdited(true);
                 }}
               />
             </div>
@@ -696,12 +840,15 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               start={startDay}
               end={endDay}
               days={days}
-              onBegin={remember}
+              onBegin={rememberArrival}
               onChange={(a, b) => {
                 const value = clampWindow(a, b, days);
+                setWindowStartAt(undefined);
+                setWindowEndAt(undefined);
                 setStartDay(value.startDay);
                 setEndDay(value.endDay);
                 setDirty(true);
+                setArrivalEdited(true);
               }}
             />
             <div className="window-handles">
@@ -713,10 +860,25 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   min="0"
                   max={Math.max(0, days - 1)}
                   value={startDay}
-                  onPointerDown={remember}
+                  onPointerDown={rememberArrival}
+                  onKeyDown={(e) => {
+                    if (
+                      [
+                        "ArrowLeft",
+                        "ArrowRight",
+                        "ArrowUp",
+                        "ArrowDown",
+                        "Home",
+                        "End",
+                      ].includes(e.key)
+                    )
+                      rememberArrival();
+                  }}
                   onChange={(e) => {
+                    setWindowStartAt(undefined);
                     setStartDay(Math.min(+e.target.value, endDay - 1));
                     setDirty(true);
+                    setArrivalEdited(true);
                   }}
                 />
               </label>
@@ -728,69 +890,67 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   min="1"
                   max={days}
                   value={endDay}
-                  onPointerDown={remember}
+                  onPointerDown={rememberArrival}
+                  onKeyDown={(e) => {
+                    if (
+                      [
+                        "ArrowLeft",
+                        "ArrowRight",
+                        "ArrowUp",
+                        "ArrowDown",
+                        "Home",
+                        "End",
+                      ].includes(e.key)
+                    )
+                      rememberArrival();
+                  }}
                   onChange={(e) => {
+                    setWindowEndAt(undefined);
                     setEndDay(Math.max(startDay + 1, +e.target.value));
                     setDirty(true);
+                    setArrivalEdited(true);
                   }}
                 />
               </label>
             </div>
             <div className="track-dates">
-              {Array.from({ length: 6 }, (_, i) => (
+              {Array.from({ length: Math.min(6, days) }, (_, i) => (
                 <span key={i}>
                   {localDate(
                     atDay(
-                      ctx.scenario?.start_at || "2026-10-16T05:00:00Z",
-                      Math.floor((i * (days - 1)) / 5),
+                      startAt,
+                      Math.floor(
+                        (i * (days - 1)) / Math.max(1, Math.min(6, days) - 1),
+                      ),
+                      0,
+                      ctx.scenario?.timezone,
                     ),
                   )}
                 </span>
               ))}
             </div>
           </div>
-          <div className="track staffing-track">
-            <div className="track-label">
-              <Users size={15} />
-              <strong>Staff availability</strong>
-              <span>Qualified nursing staff</span>
-            </div>
-            <div className={`staff-block ${absence ? "reduced" : ""}`}>
-              <span />
-              <strong>
-                {absence
-                  ? `${100 - absence}% ward A nursing availability`
-                  : "Baseline staffing"}
-              </strong>
-              <small>
-                {absence
-                  ? "Explicit staffing-loss assumption"
-                  : "No changes to existing assignments"}
-              </small>
-              <button
-                onClick={() => {
-                  remember();
-                  setAbsence(absence ? 0 : 20);
-                }}
-              >
-                {absence ? "Remove" : "Edit"}
-              </button>
-            </div>
-          </div>
-          <div className="track">
-            <div className="track-label">
-              <HospitalIcon />
-              <strong>Overflow capacity</strong>
-              <span>Additional inpatient spaces</span>
-            </div>
-            <button
-              className="empty-track"
-              onClick={() => ctx.setPage("compare")}
-            >
-              <Plus size={16} /> Add response intervention{" "}
-              <span>Space + staff + equipment</span>
-            </button>
-          </div>
+          {ctx.dataset && (
+            <ScenarioTracks
+              dataset={ctx.dataset}
+              draft={{
+                conditions: draftConditions,
+                interventions: draftInterventions,
+                updates: draftUpdates,
+              }}
+              start={startAt}
+              end={exclusiveEnd}
+              timeZone={timeZone}
+              canWrite={ctx.canWrite !== false}
+              request={planRequest}
+              onChange={(next) => {
+                remember();
+                setDraftConditions(next.conditions);
+                setDraftInterventions(next.interventions);
+                setDraftUpdates(next.updates);
+              }}
+            />
+          )}
           <div className="timeline-ruler">
             <span>DAY 1</span>
             <span>DAY {Math.max(2, Math.round(days / 2))}</span>
@@ -799,12 +959,22 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           <div className="scenario-summary">
             <Check size={16} />
             <span>
-              {percent ? 1 : 0} arrival condition ·{" "}
-              {absence ? "Modified" : "Baseline"} staffing · {days}-day horizon
+              {draftConditions.length +
+                draftInterventions.length +
+                draftUpdates.length}{" "}
+              saved/staged assumptions ·{" "}
+              {arrivalEdited
+                ? "arrival edits pending"
+                : "arrival input preserved"}{" "}
+              · {days}-day horizon
             </span>
           </div>
         </section>
-        <aside className="scenario-inspector">
+        <aside
+          className="scenario-inspector"
+          id="scenario-inspector-dock"
+          hidden={panels.inspectorHidden}
+        >
           <PanelTitle
             eyebrow="SELECTED CONDITION"
             title="Arrival surge"
@@ -812,20 +982,72 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           />
           <div className="form-stack">
             <label>
+              Arrival interval
+              <select
+                value={conditionId}
+                onChange={(e) => {
+                  const staged = makePatch().conditions;
+                  remember();
+                  setDraftConditions(staged);
+                  loadCondition(staged.find((c) => c.id === e.target.value));
+                  setArrivalEdited(false);
+                }}
+              >
+                <option value="">New/default arrival interval</option>
+                {conditionId &&
+                !draftConditions.some((c) => c.id === conditionId) ? (
+                  <option value={conditionId}>
+                    New unsaved arrival interval
+                  </option>
+                ) : null}
+                {draftConditions
+                  .filter((c) => c.kind === "arrival_multiplier")
+                  .map((c, i) => (
+                    <option key={c.id || i} value={c.id}>
+                      {c.name || c.entry_stream_id || "Arrival"} ·{" "}
+                      {c.id || i + 1}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <Button
+              small
+              onClick={() => {
+                const staged = makePatch().conditions;
+                remember();
+                setDraftConditions(staged);
+                loadCondition(undefined);
+                setConditionId(crypto.randomUUID());
+                setArrivalEdited(false);
+              }}
+            >
+              Add another arrival interval
+            </Button>
+            <label>
               Scenario preset
               <select
                 value={shape}
                 onChange={(e) => {
-                  remember();
+                  rememberArrival();
                   setShape(e.target.value);
+                  if (e.target.value === "custom" && customPoints.length < 2)
+                    setCustomPoints([
+                      { at: startAt, multiplier: 1 },
+                      {
+                        at: exclusiveEnd,
+                        multiplier: 1 + percent / 100,
+                      },
+                    ]);
                   if (e.target.value === "baseline") setPercent(0);
                   if (e.target.value === "staff_loss") {
                     setPercent(0);
-                    setAbsence(20);
+                    setShape("baseline");
+                    setPlanRequest({ family: "staff", nonce: Date.now() });
                   }
                   if (e.target.value === "combined") {
                     setPercent(70);
-                    setAbsence(20);
+                    setShape("sustained");
+                    setPlanRequest({ family: "staff", nonce: Date.now() });
                   }
                   if (e.target.value === "pulse") setEndDay(Math.min(3, days));
                 }}
@@ -836,21 +1058,109 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   </option>
                 ))}
                 <option value="ramp">Linear ramp</option>
+                <option value="custom">Exact custom control points</option>
               </select>
             </label>
+            {shape === "custom" && (
+              <fieldset className="care-mix-fields">
+                <legend>Exact arrival control points</legend>
+                {customPoints.map((p, i) => (
+                  <div className="custom-arrival-point" key={i}>
+                    <ZonedDateTimeInput
+                      label={`Point ${i + 1} time`}
+                      timeZone={timeZone}
+                      value={utcMinute(p.at)}
+                      onChange={(value) => {
+                        rememberArrival();
+                        setCustomPoints((rows) =>
+                          rows.map((row, j) =>
+                            j === i
+                              ? {
+                                  ...row,
+                                  at: value
+                                    ? new Date(value + "Z").toISOString()
+                                    : "",
+                                }
+                              : row,
+                          ),
+                        );
+                      }}
+                    />
+                    <label>
+                      Point {i + 1} multiplier
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={p.multiplier}
+                        onChange={(e) => {
+                          rememberArrival();
+                          setCustomPoints((rows) =>
+                            rows.map((row, j) =>
+                              j === i
+                                ? { ...row, multiplier: +e.target.value }
+                                : row,
+                            ),
+                          );
+                        }}
+                      />
+                    </label>
+                    <button
+                      aria-label={`Remove control point ${i + 1}`}
+                      disabled={customPoints.length <= 2}
+                      onClick={() => {
+                        rememberArrival();
+                        setCustomPoints((rows) =>
+                          rows.filter((_, j) => j !== i),
+                        );
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <Button
+                  small
+                  onClick={() => {
+                    rememberArrival();
+                    const last = customPoints.at(-1)!;
+                    setCustomPoints((rows) => [
+                      ...rows.slice(0, -1),
+                      {
+                        at: new Date(
+                          (Date.parse(rows.at(-2)!.at) + Date.parse(last.at)) /
+                            2,
+                        ).toISOString(),
+                        multiplier: last.multiplier,
+                      },
+                      last,
+                    ]);
+                  }}
+                >
+                  Add control point
+                </Button>
+                <small>
+                  The first and last point define the modeled interval.
+                  Intermediate points are linearly interpolated.
+                </small>
+              </fieldset>
+            )}
             <label>
               Increase in{" "}
               {stream === "ED_MAIN" ? "ED arrivals" : "direct ward admissions"}
               <div className="input-with-unit">
                 <input
                   id="surge-input"
+                  disabled={shape === "custom"}
                   type="number"
                   min="-100"
                   max="10000"
                   value={percent}
                   onChange={(e) => {
-                    remember();
+                    rememberArrival();
                     setPercent(+e.target.value);
+                    if (+e.target.value !== 0 && shape === "baseline")
+                      setShape("sustained");
                   }}
                 />
                 <span>%</span>
@@ -865,7 +1175,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   max={days}
                   value={startDay + 1}
                   onChange={(e) => {
-                    remember();
+                    rememberArrival();
+                    setWindowStartAt(undefined);
                     setStartDay(
                       Math.max(0, Math.min(+e.target.value - 1, endDay - 1)),
                     );
@@ -880,7 +1191,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   max={days}
                   value={endDay}
                   onChange={(e) => {
-                    remember();
+                    rememberArrival();
+                    setWindowEndAt(undefined);
                     setEndDay(
                       Math.min(days, Math.max(startDay + 1, +e.target.value)),
                     );
@@ -888,6 +1200,42 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 />
               </label>
             </div>
+            {shape !== "custom" && (
+              <div className="two-fields">
+                <ZonedDateTimeInput
+                  label="Arrival starts"
+                  timeZone={timeZone}
+                  value={utcMinute(
+                    windowStartAt ?? atDay(startAt, startDay, 0, timeZone),
+                  )}
+                  onChange={(value) => {
+                    rememberArrival();
+                    setWindowStartAt(
+                      value ? new Date(value + "Z").toISOString() : "",
+                    );
+                  }}
+                />
+                <ZonedDateTimeInput
+                  label="Arrival ends"
+                  timeZone={timeZone}
+                  value={utcMinute(
+                    windowEndAt ??
+                      new Date(
+                        Math.min(
+                          Date.parse(atDay(startAt, endDay, 0, timeZone)),
+                          Date.parse(exclusiveEnd),
+                        ),
+                      ).toISOString(),
+                  )}
+                  onChange={(value) => {
+                    rememberArrival();
+                    setWindowEndAt(
+                      value ? new Date(value + "Z").toISOString() : "",
+                    );
+                  }}
+                />
+              </div>
+            )}
             {shape === "wave" ? (
               <label>
                 Peak on day
@@ -897,7 +1245,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   max={endDay - 1}
                   value={peakDay + 1}
                   onChange={(e) => {
-                    remember();
+                    rememberArrival();
                     setPeakDay(+e.target.value - 1);
                   }}
                 />
@@ -909,8 +1257,14 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 value={stream}
                 onChange={(e) => switchStream(e.target.value)}
               >
-                <option value="ED_MAIN">Emergency department</option>
-                <option value="DIRECT_WARD_MAIN">Direct ward admissions</option>
+                {ctx.dataset?.entry_streams?.map((item: Entity) => (
+                  <option
+                    key={item.entry_stream_id}
+                    value={item.entry_stream_id}
+                  >
+                    {item.entry_stream_id} · {item.entry_type}
+                  </option>
+                ))}
               </select>
             </label>
             <fieldset className="care-mix-fields">
@@ -920,7 +1274,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 <select
                   value={mixMode}
                   onChange={(e) => {
-                    remember();
+                    rememberArrival();
                     setMixMode(e.target.value as MixMode);
                     if (e.target.value === "percentages")
                       setMix(
@@ -958,7 +1312,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                         step={1}
                         value={Math.round((mix[key] || 0) * 10000) / 100}
                         onChange={(e) => {
-                          remember();
+                          rememberArrival();
                           setMix((v) => ({
                             ...v,
                             [key]: Number(e.target.value) / 100,
@@ -987,6 +1341,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 <input
                   type="number"
                   min="1"
+                  disabled={Boolean(ctx.scenario?.end_at)}
                   max={
                     horizonUnit === "days"
                       ? 365
@@ -1012,6 +1367,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               Horizon unit
               <select
                 value={horizonUnit}
+                disabled={Boolean(ctx.scenario?.end_at)}
                 onChange={(e) => {
                   const unit = e.target.value as HorizonUnit;
                   changeHorizon(
@@ -1038,7 +1394,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 day: "numeric",
               })}{" "}
               through{" "}
-              {localDate(atDay(startAt, days, 0, ctx.scenario?.timezone), {
+              {localDate(exclusiveEnd, {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
@@ -1046,13 +1402,20 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               (exclusive end). Calendar months retain the day of month, clamped
               at month end. Maximum 365 days.
             </p>
+            {ctx.scenario?.end_at && (
+              <p className="small-copy">
+                This branch retains its original exclusive endpoint:{" "}
+                {exclusiveEnd}. Its remaining calendar exposure is fixed; edit
+                assumptions within that interval.
+              </p>
+            )}
             <label>
               Simulation runs
               <select
                 value={replications}
                 onChange={(e) => {
+                  remember();
                   setReplications(+e.target.value);
-                  setDirty(true);
                 }}
               >
                 <option value="10">10 · Quick preview</option>
@@ -1060,24 +1423,6 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 <option value="500">500 · Extended</option>
               </select>
             </label>
-            {absence ? (
-              <label>
-                Ward A nursing absence
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={absence}
-                    onChange={(e) => {
-                      remember();
-                      setAbsence(+e.target.value);
-                    }}
-                  />
-                  <span>%</span>
-                </div>
-              </label>
-            ) : null}
             <div className="info-note">
               Changes the selected arrival stream. Existing patients and their
               remaining stays are preserved.
@@ -1175,18 +1520,13 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
         >
           <div className="form-stack">
             <div className="two-fields">
-              <label>
-                Snapshot timestamp (UTC)
-                <input
-                  readOnly
-                  type="datetime-local"
-                  value={startAt.slice(0, 16)}
-                  onChange={(e) => {
-                    setStartAt(new Date(`${e.target.value}:00Z`).toISOString());
-                    setDirty(true);
-                  }}
-                />
-              </label>
+              <ZonedDateTimeInput
+                label="Snapshot timestamp"
+                timeZone={timeZone}
+                value={utcMinute(startAt)}
+                disabled
+                onChange={() => {}}
+              />
               <label>
                 Base random seed
                 <input
@@ -1194,8 +1534,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   min="0"
                   value={seed}
                   onChange={(e) => {
+                    remember();
                     setSeed(+e.target.value);
-                    setDirty(true);
                   }}
                 />
               </label>
@@ -1224,6 +1564,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   if (!Array.isArray(conditions))
                     throw new Error("Conditions must be an array.");
                   const saved = await ctx.saveScenario({
+                    ...makePatch(),
                     conditions,
                     start_at: startAt,
                     base_seed: seed,

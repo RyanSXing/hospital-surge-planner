@@ -25,4 +25,5 @@ evidence/*-private.json
 apps/web/test-results/
 apps/web/playwright-report/
 output/playwright/
+output/*.zip
 .DS_Store

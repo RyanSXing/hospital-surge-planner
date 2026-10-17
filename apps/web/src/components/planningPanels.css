@@ -1,0 +1,209 @@
+.planning-panel-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.planning-panel-controls .icon-button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #315265;
+}
+.planning-panels [hidden],
+.planning-panel-page [hidden] {
+  display: none !important;
+}
+.planning-timeline-dock {
+  flex: 0 0 auto;
+  min-height: 0;
+  border-top: 1px solid #315265;
+  background: #0b202e;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.planning-timeline-resizer {
+  height: 9px;
+  min-height: 9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: ns-resize;
+  touch-action: none;
+}
+.planning-timeline-resizer span {
+  width: 42px;
+  height: 3px;
+  border-radius: 3px;
+  background: #6b94ac;
+}
+.planning-timeline-resizer:focus-visible {
+  outline: 2px solid #65d3e5;
+  outline-offset: -2px;
+}
+.planning-timeline-content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.planning-timeline-content > .timeline-panel {
+  min-height: 0;
+  border-top: 0;
+}
+@media (min-width: 1024px) {
+  .patients-page.planning-panel-page > .page-heading,
+  .resources-page.planning-panel-page > .page-heading {
+    height: 88px;
+    min-height: 88px;
+    padding: 14px 24px;
+  }
+  .patients-page.planning-panel-page > .page-heading .eyebrow,
+  .resources-page.planning-panel-page > .page-heading .eyebrow {
+    display: none;
+  }
+  .patients-page.planning-panel-page > .page-heading h1,
+  .resources-page.planning-panel-page > .page-heading h1 {
+    font-size: 24px;
+  }
+  .resources-page.planning-panel-page .resource-map {
+    overflow: hidden;
+  }
+  .resources-page.planning-panel-page .resource-map > .campus-map {
+    min-height: 0;
+    height: 100%;
+    flex: 1;
+  }
+  .resources-page.planning-panel-page .dependency-overlay {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    padding: 6px;
+  }
+  .resources-page.planning-panel-page .dependency-overlay > .eyebrow,
+  .resources-page.planning-panel-page .dependency-overlay > p {
+    display: none;
+  }
+  .resources-page.planning-panel-page .dependency-nodes {
+    margin-top: 0;
+    gap: 5px;
+  }
+  .resources-page.planning-panel-page .dependency-nodes button {
+    padding: 5px;
+    gap: 3px;
+    border-radius: 3px;
+    min-width: 0;
+  }
+  .resources-page.planning-panel-page .dependency-nodes button svg {
+    width: 14px;
+    height: 14px;
+  }
+  .resources-page.planning-panel-page .dependency-nodes button strong {
+    font-size: 11px;
+  }
+  .patients-page.planning-panel-page,
+  .resources-page.planning-panel-page,
+  .compare-page.planning-panel-page {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .patients-page.planning-panel-page .patient-workspace,
+  .resources-page.planning-panel-page .resources-workspace,
+  .compare-page.planning-panel-page .comparison-body {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .patients-page.planning-panel-page .patient-main,
+  .resources-page.planning-panel-page .resource-map,
+  .compare-page.planning-panel-page .comparison-main {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: auto;
+  }
+  .patients-page.planning-panel-page .patient-inspector,
+  .resources-page.planning-panel-page .site-inspector {
+    align-self: stretch;
+    position: static;
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+  }
+  .planning-panel-page {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .planning-panel-page > .page-heading,
+  .planning-panel-page > .resource-tabs,
+  .planning-panel-page > .resource-filters {
+    flex: 0 0 auto;
+  }
+  .planning-panel-page > .patient-workspace,
+  .planning-panel-page > .resources-workspace,
+  .planning-panel-page > .comparison-content {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .planning-panel-page .patient-main,
+  .planning-panel-page .resource-map-area,
+  .planning-panel-page .comparison-main {
+    min-height: 0;
+    overflow: auto;
+  }
+  .planning-panel-page .patient-inspector,
+  .planning-panel-page .site-inspector,
+  .planning-panel-page .comparison-explainer {
+    min-height: 0;
+    max-height: 100%;
+    overflow: auto;
+  }
+  .planning-panel-page > .resource-table-page {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+  .compare-page.planning-panel-page .comparison-explainer {
+    width: 340px;
+    min-width: 320px;
+    padding: 20px;
+  }
+  .replay-page .planning-timeline-content .replay-annotations {
+    padding: 7px 16px;
+  }
+  .replay-page .planning-timeline-content .replay-annotation-row {
+    margin-top: 2px;
+  }
+  .replay-page
+    .planning-timeline-content
+    .replay-annotations
+    > .small-copy:last-of-type {
+    margin-top: 4px;
+  }
+  .planning-panel-page .site-list {
+    min-height: 0;
+    overflow: auto;
+  }
+  .replay-page .planning-timeline-content .replay-annotations {
+    border-bottom: 0;
+  }
+}
+@media (max-width: 1023px) {
+  .planning-panel-page .heading-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .planning-timeline-dock {
+    height: auto !important;
+    max-height: 360px;
+    min-height: 180px;
+  }
+  .planning-timeline-content {
+    overflow: auto;
+  }
+  .planning-timeline-resizer {
+    display: none;
+  }
+}

@@ -25,11 +25,32 @@ def stats(values):
     }
 
 
-def aggregate_results(replications, scenario=None):
+def representative_replication(replications):
+    """Select the actual trajectory nearest median waiting, breaking ties by index."""
     if not replications:
         raise ValueError("At least one completed replication is required")
     if any(r.get("status", "SUCCEEDED") != "SUCCEEDED" for r in replications):
         raise ValueError("Incomplete replications cannot be presented as a completed forecast")
+    waits = [r["scalar_metrics"]["inpatient_waiting_patient_hours"] for r in replications]
+    median = float(np.median(waits))
+    return min(
+        replications,
+        key=lambda r: (
+            abs(r["scalar_metrics"]["inpatient_waiting_patient_hours"] - median),
+            r["replication_index"],
+        ),
+    )
+
+
+def aggregate_results(replications, scenario=None, *, cancel_check=None):
+    def check():
+        if cancel_check and cancel_check():
+            from .simulation import SimulationCancelled
+
+            raise SimulationCancelled("Aggregation cancelled")
+
+    check()
+    selected = representative_replication(replications)
     scenario = scenario or {}
     keys = set().union(*(r["scalar_metrics"].keys() for r in replications))
     scalar = {
@@ -41,25 +62,18 @@ def aggregate_results(replications, scenario=None):
             for r in replications
         )
     }
-    waits = [r["scalar_metrics"]["inpatient_waiting_patient_hours"] for r in replications]
-    median = float(np.median(waits))
-    selected = min(
-        replications,
-        key=lambda r: (
-            abs(r["scalar_metrics"]["inpatient_waiting_patient_hours"] - median),
-            r["replication_index"],
-        ),
-    )
 
     def aggregate_rows(table, identity):
         indexed = {}
         for r in replications:
+            check()
             for row in r.get(table, []):
                 indexed.setdefault(row[identity], []).append(row)
         ordered = sorted(indexed.items())
         output = []
         # Keep source dictionaries hot while processing multiple fields.
         for offset in range(0, len(ordered), 64):
+            check()
             numeric_fields = {}
             for key, rows in ordered[offset : offset + 64]:
                 row = {identity: key}
@@ -79,6 +93,7 @@ def aggregate_results(replications, scenario=None):
             # retaining the same value order and scalar arithmetic as stats().
             # Imported/missing/bool/nonfinite values keep the original scalar path.
             for field, entries in numeric_fields.items():
+                check()
                 regular_rows = []
                 regular_values = []
                 for row, rows in entries:
@@ -117,6 +132,7 @@ def aggregate_results(replications, scenario=None):
                     }
 
         for row, (_, rows) in zip(output, ordered):
+            check()
             if table == "daily":
                 reasons = set().union(*(r.get("blocker_patient_hours", {}).keys() for r in rows))
                 row["blocker_patient_hours"] = {
@@ -131,8 +147,10 @@ def aggregate_results(replications, scenario=None):
 
     unit_series = {}
     for uid, unit in selected.get("unit_series", {}).items():
+        check()
         fields = {}
         for field in unit["fields"]:
+            check()
             values = np.asarray([r["unit_series"][uid]["fields"][field] for r in replications], dtype=float)
             p10, p50, p90 = np.percentile(values, [10, 50, 90], axis=0)
             fields[field] = {

@@ -1,0 +1,10 @@
+{
+  "project": "mobile",
+  "run_id": "run_d3e4adc1ffd7408aa538",
+  "frozen_days": 1,
+  "draft_days": 3,
+  "frozen_timezone": "America/Chicago",
+  "draft_timezone": "America/New_York",
+  "reloaded_frozen_dates": true,
+  "immutable_inputs": true
+}

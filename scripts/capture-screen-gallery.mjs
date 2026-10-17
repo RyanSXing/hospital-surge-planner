@@ -104,6 +104,22 @@ try {
         .waitFor({ state: "hidden" });
       if (view === "patients")
         await page.locator(".patient-table tbody tr").first().waitFor();
+      if (view === "replay") {
+        await page.waitForFunction(() =>
+          Boolean(
+            document
+              .querySelector(".replay-canvas")
+              ?.getAttribute("data-recorded-at"),
+          ),
+        );
+        for (const message of [
+          "Loading recorded events…",
+          "Loading immutable run context…",
+        ])
+          await page
+            .getByText(message, { exact: true })
+            .waitFor({ state: "hidden" });
+      }
       if (view === "compare") {
         await page.locator(".comparison-chart").waitFor();
         await page.waitForFunction(() =>
@@ -216,6 +232,45 @@ try {
         });
         row.additional_files.push(lower);
       }
+      if (mode === "desktop" && view === "resources") {
+        await main.evaluate((element) => {
+          element.scrollTop = 0;
+        });
+        const candidate = page
+          .locator(".site-item")
+          .filter({ hasText: "Clinic North" });
+        if (await candidate.count()) {
+          await candidate.click();
+          await page.locator(".candidate-dependency-overlay").waitFor();
+          const detail = `${mode}-${view}-candidate.png`;
+          await page.screenshot({
+            path: resolve(directory, detail),
+            fullPage: true,
+            animations: "disabled",
+          });
+          row.additional_files.push(detail);
+        }
+      }
+      if (mode === "mobile" && view === "replay") {
+        await page.getByLabel("Focus care zone").selectOption("ward");
+        await page.waitForFunction(
+          () =>
+            document.querySelector(".replay-canvas-viewport").scrollLeft > 400,
+        );
+        await main.evaluate((element) => {
+          const viewport = element.querySelector(".replay-canvas-viewport");
+          element.scrollTop +=
+            viewport.getBoundingClientRect().top -
+            element.getBoundingClientRect().top;
+        });
+        const detail = `${mode}-${view}-zone.png`;
+        await page.screenshot({
+          path: resolve(directory, detail),
+          fullPage: true,
+          animations: "disabled",
+        });
+        row.additional_files.push(detail);
+      }
       result.screens.push(row);
     }
     await context.close();
@@ -230,7 +285,7 @@ try {
 const rows = result.screens
   .map(
     (x) =>
-      `| ${x.mode} | ${x.title.join(" / ")} | [Screenshot](${x.file})${x.additional_files.map((f) => ` · [Lower panel](${f})`).join("")} | ${x.reference ? `[Reference](../../../docs/reference/gotham-inspired-mockups/${x.reference})` : "No supplied mockup"} |`,
+      `| ${x.mode} | ${x.title.join(" / ")} | [Screenshot](${x.file})${x.additional_files.map((f) => ` · [${f.includes("-candidate") || f.includes("-zone") ? "Detail view" : "Lower panel"}](${f})`).join("")} | ${x.reference ? `[Reference](../../../docs/reference/gotham-inspired-mockups/${x.reference})` : "No supplied mockup"} |`,
   )
   .join("\n");
 writeFileSync(

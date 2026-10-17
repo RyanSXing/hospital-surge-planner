@@ -65,7 +65,9 @@ def test_stress_queue_and_reproducibility(stress):
     source = {p["patient_id"]: p for p in d["patients"]}
     for patient in first["patients"]:
         if patient["state"] == "ed_boarding":
-            assert patient["admission_requested_at"] == source[patient["patient_id"]]["admission_requested_at"]
+            assert (
+                patient["admission_requested_at"] == source[patient["patient_id"]]["admission_requested_at"]
+            )
             assert patient["queue_entered_at"] == patient["admission_requested_at"]
     staff = {person["staff_id"]: person for person in d["staff"]}
     for unit in first["units"]:
@@ -477,6 +479,81 @@ def test_site_ready_exact_staff_and_equipment(planning):
     update["payload"]["equipment_allocations"][0]["quantity"] = 3
     with pytest.raises(ValueError, match="kit"):
         run_replication(d, {"horizon_calendar_days": 1, "updates": [update]})
+
+
+def test_selected_time_equipment_pool_history_tracks_relocated_inventory(planning):
+    from datetime import timedelta
+
+    d = zero(planning)
+    active = [
+        assignment["staff_id"]
+        for assignment in d["assignments"]
+        if assignment.get("reserve_pool_id")
+        and dt(assignment["start_at"]) <= dt(d["snapshot_at"]) < dt(assignment["end_at"])
+    ]
+    staff = {person["staff_id"]: person for person in d["staff"]}
+    assigned = [
+        next(staff_id for staff_id in active if staff[staff_id]["role"] == role)
+        for role in ("rn", "provider", "support")
+    ]
+    source = next(
+        pool for pool in d["equipment_pools"] if pool["capability_code"] == "CLINIC_KIT" and pool["portable"]
+    )
+    target = "UNIT-CLINIC-NORTH"
+    split_id = f"{source['equipment_pool_id']}-{target}"
+    start = dt(d["snapshot_at"])
+    update = {
+        "update_id": "READY-HISTORY",
+        "type": "site_ready",
+        "effective_at": (start + timedelta(minutes=60)).isoformat(),
+        "payload": {
+            "facility_id": "FAC-CLINIC-NORTH",
+            "enabled_slots": 4,
+            "assigned_staff_ids": assigned,
+            "equipment_allocations": [{"equipment_pool_id": source["equipment_pool_id"], "quantity": 4}],
+        },
+    }
+    trace = run_replication(d, {"horizon_calendar_days": 1, "updates": [update]})
+    assert state_at(trace, 30)["equipment_pool_state_available"] is True
+    legacy = {key: value for key, value in trace.items() if key != "equipment_pool_history"}
+    assert state_at(legacy, 30)["equipment_pool_state_available"] is False
+    assert state_at(legacy, 30)["equipment_pools"] == []
+    before = {pool["equipment_pool_id"]: pool for pool in state_at(trace, 30)["equipment_pools"]}
+    after = {pool["equipment_pool_id"]: pool for pool in state_at(trace, 90)["equipment_pools"]}
+
+    assert split_id not in before
+    assert before[source["equipment_pool_id"]]["quantity"] == source["quantity"]
+    source_after = after[source["equipment_pool_id"]]
+    assert source_after["quantity"] == source["quantity"] - 4
+    assert source_after["available"] == before[source["equipment_pool_id"]]["available"] - 4
+    for field in (
+        "source_equipment_pool_id",
+        "created_in_trajectory",
+        "facility_id",
+        "unit_id",
+        "capability_code",
+        "in_use",
+        "reserved",
+        "failed",
+        "pending_decommission",
+    ):
+        assert source_after[field] == before[source["equipment_pool_id"]][field]
+    assert {key: value for key, value in after[split_id].items() if key not in {"at", "elapsed_minutes"}} == {
+        "equipment_pool_id": split_id,
+        "source_equipment_pool_id": source["equipment_pool_id"],
+        "created_in_trajectory": True,
+        "facility_id": "FAC-CLINIC-NORTH",
+        "unit_id": target,
+        "capability_code": "CLINIC_KIT",
+        "portable": True,
+        "quantity": 4,
+        "in_use": 0,
+        "reserved": 0,
+        "failed": 0,
+        "unserviceable_quantity": 0,
+        "pending_decommission": 0,
+        "available": 4,
+    }
 
 
 def test_temporary_route_changes_expire_without_overwriting_newer(planning):

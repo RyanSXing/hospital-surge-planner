@@ -20,6 +20,7 @@ import simpy
 from scipy.stats import gamma as gamma_distribution
 
 from .common import *
+from .equipment_planning import apply_planned_equipment
 
 
 class SimulationCancelled(Exception):
@@ -141,6 +142,8 @@ class HospitalSimulation:
         self.pools = {
             p["equipment_pool_id"]: dict(
                 copy.deepcopy(p),
+                source_equipment_pool_id=p["equipment_pool_id"],
+                created_in_trajectory=False,
                 in_use={},
                 reserved={},
                 pending_decommission=0,
@@ -151,6 +154,8 @@ class HospitalSimulation:
         for p in dataset.get("partner_equipment", []):
             self.pools[p["advertisement_id"]] = {
                 "equipment_pool_id": p["advertisement_id"],
+                "source_equipment_pool_id": p["advertisement_id"],
+                "created_in_trajectory": False,
                 "unit_id": p["unit_id"],
                 "facility_id": p["facility_id"],
                 "capability_code": p["capability_code"],
@@ -181,6 +186,7 @@ class HospitalSimulation:
         self.unit_history = defaultdict(list)
         self.vehicle_history = defaultdict(list)
         self.slot_history = defaultdict(list)
+        self.equipment_pool_history = defaultdict(list)
         self.unit_series = {
             uid: {
                 "unit_id": uid,
@@ -220,9 +226,11 @@ class HospitalSimulation:
         self.last_unit_snapshots = {}
         self.last_vehicle_snapshots = {}
         self.last_slot_snapshots = {}
+        self.last_equipment_pool_snapshots = {}
         self._unit_snapshot_inputs = {}
         self._slot_snapshot_inputs = {}
         self._vehicle_snapshot_inputs = {}
+        self._equipment_pool_snapshot_inputs = {}
         # All spaces are declared before a run. Capacity updates enable/install
         # these same records; references let unchanged groups compare in C.
         self._unit_slot_records = {
@@ -288,6 +296,21 @@ class HospitalSimulation:
         seen = []
         for c in self.conditions:
             kind = c.get("kind", c.get("type"))
+            if kind in {"staff_absence", "staff_unavailability"}:
+                c["kind"] = "staff_unavailability"
+                if "absence_percent" in c and "count" not in c and not c.get("staff_ids"):
+                    percent = c["absence_percent"]
+                    if (
+                        isinstance(percent, bool)
+                        or not isinstance(percent, (int, float))
+                        or not math.isfinite(percent)
+                        or not 0 <= percent <= 100
+                    ):
+                        raise ValueError("Staff absence percent must be between zero and 100")
+                    unit = self.units.get(c.get("unit_id"))
+                    if unit is None:
+                        raise ValueError("Staff absence requires a declared unit")
+                    c["count"] = math.ceil(unit.get("baseline_staff", {}).get("rn", 0) * percent / 100)
             if kind == "arrival_multiplier":
                 stream = c.get("entry_stream_id", "ED_MAIN")
                 points = c.get("control_points")
@@ -390,7 +413,10 @@ class HospitalSimulation:
         stream = stream or {}
         weights = stream.get("disposition_weights", {"discharge": 0.8, "ward": 0.16, "icu": 0.04})
         override = None
-        if p.get("source_type") != "initial_census":
+        if (
+            p.get("source_type") not in {"initial_census", "reported_batch", "synthetic_incident"}
+            and p.get("arrival_origin") != "synthetic_incident"
+        ):
             for condition in self.conditions:
                 if condition.get("entry_stream_id", "ED_MAIN") != stream.get("entry_stream_id", "ED_MAIN"):
                     continue
@@ -406,10 +432,12 @@ class HospitalSimulation:
                     else self.minute(condition.get("end_at", self.at(self.horizon)))
                 )
                 if lower <= self.now < upper:
-                    override = condition.get(
+                    candidate = condition.get(
                         "care_mix_override",
                         condition.get("weights") if condition.get("kind") == "care_mix_override" else None,
                     )
+                    if candidate is not None:
+                        override = candidate
         if override is not None:
             weights = override
         weights = {"discharge" if k == "ambulatory" else k: v for k, v in weights.items()}
@@ -641,7 +669,9 @@ class HospitalSimulation:
                 self.schedule(max(0, self.minute(c["start_at"])), "absence_start", c, 0)
                 self.schedule(self.minute(c["end_at"]), "absence_end", c, 0)
             elif c.get("kind") == "arrival_batch":
-                self.schedule_batch(c.get("id", "BATCH-CONDITION"), c.get("at", self.at(0)), c)
+                self.schedule_batch(
+                    c.get("id", "BATCH-CONDITION"), c.get("at", self.at(0)), c, source="synthetic_incident"
+                )
         for i, intervention in enumerate(self.scenario.get("interventions", [])):
             if intervention.get("enabled", True):
                 self.schedule_intervention(intervention, i)
@@ -762,13 +792,20 @@ class HospitalSimulation:
             if plan.get("end_at")
             else min(self.horizon, start + float(plan.get("duration_minutes", self.horizon)))
         )
+        if plan["_start"] >= plan["_end"]:
+            raise ValueError("Intervention readiness must occur before the plan ends")
         self.schedule(plan["_start"], "plan_start", plan, 0)
         if plan["_end"] < self.horizon:
             self.schedule(plan["_end"], "plan_end", plan, 0)
 
     def schedule_updates(self):
         updates = copy.deepcopy(self.scenario.get("updates", []))
-        by_id = {u.get("update_id", u.get("id", str(i))): u for i, u in enumerate(updates)}
+        by_id = {
+            key: u
+            for i, u in enumerate(updates)
+            for key in (u.get("idempotency_key"), u.get("update_id"), u.get("id"), str(i))
+            if key
+        }
         for u in updates:
             if u.get("type") == "retract_or_correct" and u.get("status", "active") == "active":
                 payload = u.get("payload", {})
@@ -782,18 +819,23 @@ class HospitalSimulation:
                 u["status"] = "superseded"
         seen = set()
         for i, u in enumerate(updates):
-            key = u.get("idempotency_key", u.get("update_id", str(i)))
+            key = u.get("idempotency_key") or u.get("update_id") or u.get("id") or str(i)
             if key in seen or u.get("status", "active") != "active":
                 continue
             seen.add(key)
             kind = u.get("type")
             payload = u.get("payload", {})
             if kind == "arrival_batch":
-                self.schedule_batch(u.get("update_id", str(i)), u["effective_at"], payload)
+                self.schedule_batch(
+                    key,
+                    u["effective_at"],
+                    payload,
+                    "synthetic_incident" if u.get("input_kind") == "planned_assumption" else "reported_batch",
+                )
             else:
                 self.schedule(max(0, self.minute(u["effective_at"])), "update", u, 0)
 
-    def schedule_batch(self, key, at, payload):
+    def schedule_batch(self, key, at, payload, source="reported_batch"):
         count = int(payload.get("count", 0))
         spread = float(payload.get("spread_minutes", 0))
         time = self.minute(at)
@@ -816,7 +858,16 @@ class HospitalSimulation:
             self.schedule(
                 t,
                 "arrival",
-                {"patient_id": f"PAT-REPORT-{key}-{i:06}", "stream": stream, "source": "reported_batch"},
+                {
+                    "patient_id": f"PAT-REPORT-{key}-{i:06}",
+                    "stream": stream,
+                    "source": "surge_arrival" if source == "synthetic_incident" else source,
+                    **(
+                        {"arrival_origin": "synthetic_incident", "input_kind": "planned_assumption"}
+                        if source == "synthetic_incident"
+                        else {}
+                    ),
+                },
                 2,
             )
 
@@ -1342,13 +1393,24 @@ class HospitalSimulation:
             "_allocations": [],
             "state_intervals": [],
         }
+        for field in ("arrival_origin", "input_kind"):
+            if field in payload:
+                p[field] = payload[field]
         p["_random_index"] = payload.get("random_index", self.stream_index(self.now))
         self.patients[pid] = p
         self.choose_path(p, s)
         self.metrics["arrivals"] += int(self.now >= self.measure_start)
         if self.current_day:
             self.daily[self.current_day]["arrivals"] += int(self.now >= self.measure_start)
-        self.emit("arrival", p, payload={"entry_type": entry, "source_type": payload["source"]})
+        self.emit(
+            "arrival",
+            p,
+            payload={
+                "entry_type": entry,
+                "source_type": payload["source"],
+                **{key: p[key] for key in ("arrival_origin", "input_kind") if key in p},
+            },
+        )
         if entry == "ed":
             clinics = [
                 self.units[x["_target_unit"]]
@@ -1943,6 +2005,8 @@ class HospitalSimulation:
             self.pools[newid] = dict(
                 copy.deepcopy(pool),
                 equipment_pool_id=newid,
+                source_equipment_pool_id=pool.get("source_equipment_pool_id", poolid),
+                created_in_trajectory=True,
                 facility_id=self.units[target]["facility_id"],
                 unit_id=target,
                 quantity=amount,
@@ -1978,7 +2042,10 @@ class HospitalSimulation:
             n = int(p["enabled_capacity"])
             if not 0 <= n <= self.physical(unit):
                 raise ValueError("Enabled capacity exceeds installed capacity")
-            for i, sid in enumerate(sorted(unit["slots"])):
+            installed = sorted(
+                sid for sid in unit["slots"] if self.slots[sid].get("installation_status") == "installed"
+            )
+            for i, sid in enumerate(installed):
                 self.slots[sid]["enabled"] = i < n
             self.refresh_slots(unit)
         elif kind == "advertised_capacity_change":
@@ -1991,7 +2058,12 @@ class HospitalSimulation:
             pool = self.pools[p.get("equipment_pool_id", p.get("pool_id"))]
             op = p.get("operation", "add" if p.get("quantity_delta", 0) >= 0 else "decommission")
             quantity = abs(int(p.get("quantity", p.get("quantity_delta", 0))))
-            if op == "add":
+            if u.get("input_kind") == "planned_assumption":
+                exact = p.get("quantity", abs(p.get("quantity_delta", 0)))
+                if not isinstance(exact, int) or isinstance(exact, bool) or exact < 0:
+                    raise ValueError("Planned equipment quantity must be a nonnegative integer")
+                apply_planned_equipment(pool, op, exact)
+            elif op == "add":
                 pool["quantity"] += quantity
             elif op == "fail":
                 pool["failed"] = min(pool["quantity"], pool["failed"] + quantity)
@@ -2242,6 +2314,55 @@ class HospitalSimulation:
                 self.vehicle_history[vid].append(dict(at=self.at(self.now), elapsed_minutes=self.now, **snap))
                 self.last_vehicle_snapshots[vid] = snap
             self._vehicle_snapshot_inputs[vid] = inputs
+
+        # Equipment pools may be split by an activating site and their available
+        # quantities also change with reservations, use, failures, and deferred
+        # decommissioning. Preserve every current pool ID in a compact interval
+        # ledger so selected-time consumers never infer inventory from a source
+        # snapshot or from unit-level totals.
+        for poolid, pool in sorted(self.pools.items()):
+            inputs = (
+                pool.get("source_equipment_pool_id", poolid),
+                pool.get("created_in_trajectory", False),
+                pool.get("facility_id"),
+                pool.get("unit_id"),
+                pool.get("capability_code"),
+                bool(pool.get("portable", False)),
+                pool["quantity"],
+                tuple(sorted(pool["in_use"].items())),
+                tuple(sorted(pool["reserved"].items())),
+                pool["failed"],
+                pool["pending_decommission"],
+            )
+            if inputs == self._equipment_pool_snapshot_inputs.get(poolid):
+                continue
+            snap = self.equipment_pool_snapshot(pool)
+            if snap != self.last_equipment_pool_snapshots.get(poolid):
+                self.equipment_pool_history[poolid].append(
+                    dict(at=self.at(self.now), elapsed_minutes=self.now, **snap)
+                )
+                self.last_equipment_pool_snapshots[poolid] = snap
+            self._equipment_pool_snapshot_inputs[poolid] = inputs
+
+    def equipment_pool_snapshot(self, pool):
+        in_use = sum(pool["in_use"].values())
+        reserved = sum(pool["reserved"].values())
+        return {
+            "equipment_pool_id": pool["equipment_pool_id"],
+            "source_equipment_pool_id": pool.get("source_equipment_pool_id", pool["equipment_pool_id"]),
+            "created_in_trajectory": bool(pool.get("created_in_trajectory", False)),
+            "facility_id": pool.get("facility_id"),
+            "unit_id": pool.get("unit_id"),
+            "capability_code": pool.get("capability_code"),
+            "portable": bool(pool.get("portable", False)),
+            "quantity": pool["quantity"],
+            "in_use": in_use,
+            "reserved": reserved,
+            "failed": pool["failed"],
+            "unserviceable_quantity": pool["failed"],
+            "pending_decommission": pool["pending_decommission"],
+            "available": self.equipment_available(pool),
+        }
 
     def slot_snapshot(self, s):
         u = self.units[s["unit_id"]]
@@ -2505,6 +2626,7 @@ class HospitalSimulation:
             "unit_history": dict(self.unit_history),
             "vehicle_history": dict(self.vehicle_history),
             "slot_history": dict(self.slot_history),
+            "equipment_pool_history": dict(self.equipment_pool_history),
             "blocker_history": dict(self.blocker_history),
             "blocker_patient_hours": dict(self.blocker_patient_hours),
             "unit_series": self.unit_series,
@@ -2561,6 +2683,7 @@ def state_at(trace, at):
                 patient_id=p["patient_id"],
                 entry_type=p.get("entry_type"),
                 source_type=p.get("source_type"),
+                **{key: p[key] for key in ("arrival_origin", "input_kind") if key in p},
                 arrival_at=p.get("arrival_at"),
                 acuity_rank=p.get("acuity_rank"),
                 cohort_template_id=p.get("cohort_template_id"),
@@ -2598,6 +2721,12 @@ def state_at(trace, at):
         index = bisect.bisect_right([x["elapsed_minutes"] for x in history], minute) - 1
         if index >= 0:
             vehicles.append(copy.deepcopy(history[index]))
+    equipment_pools = []
+    for history in trace.get("equipment_pool_history", {}).values():
+        index = bisect.bisect_right([x["elapsed_minutes"] for x in history], minute) - 1
+        if index >= 0:
+            equipment_pools.append(copy.deepcopy(history[index]))
+    equipment_pools.sort(key=lambda pool: pool["equipment_pool_id"])
     return {
         "at": iso(dt(trace["start_at"]) + timedelta(minutes=minute)),
         "elapsed_minutes": minute,
@@ -2606,6 +2735,8 @@ def state_at(trace, at):
         "units": units,
         "vehicles": vehicles,
         "slots": slots,
+        "equipment_pools": equipment_pools,
+        "equipment_pool_state_available": "equipment_pool_history" in trace,
         "inpatient_queue": sum(p.get("admission_pending", False) for p in patients),
         "ed_queue": sum(p["state"] == "ed_waiting" for p in patients),
         "source": "selected_replication",

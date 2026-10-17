@@ -1,0 +1,224 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/map-search.spec.ts",
+      "--project=desktop"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "../../.venv/bin/python ../../scripts/dev.py",
+      "url": "http://127.0.0.1:5173/api/health/ready",
+      "reuseExistingServer": true,
+      "timeout": 90000
+    }
+  },
+  "suites": [
+    {
+      "title": "map-search.spec.ts",
+      "file": "map-search.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "workspace search keeps completed-run context and map controls preserve their routes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6727,
+                  "error": {
+                    "message": "ReferenceError: provenance is not defined",
+                    "stack": "ReferenceError: provenance is not defined\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts:99:41",
+                    "location": {
+                      "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts",
+                      "column": 41,
+                      "line": 99
+                    },
+                    "snippet": "   97 |     [\"slot\", slot.slot_id, \"Recorded selected time\"],\n   98 |   ] as const) {\n>  99 |     await inspectSearchResult(page, id, provenance);\n      |                                         ^\n  100 |     await expect(page).toHaveURL(/view=resources/);\n  101 |     expect(urlValue(page, \"resource\")).toBe(id);\n  102 |     expect(urlValue(page, \"resource_type\")).toBe(kind.replace(\" \", \"_\"));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts",
+                        "column": 41,
+                        "line": 99
+                      },
+                      "message": "ReferenceError: provenance is not defined\n\n   97 |     [\"slot\", slot.slot_id, \"Recorded selected time\"],\n   98 |   ] as const) {\n>  99 |     await inspectSearchResult(page, id, provenance);\n      |                                         ^\n  100 |     await expect(page).toHaveURL(/view=resources/);\n  101 |     expect(urlValue(page, \"resource\")).toBe(id);\n  102 |     expect(urlValue(page, \"resource_type\")).toBe(kind.replace(\" \", \"_\"));\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts:99:41"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:18:05.739Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/map-search-workspace-searc-510b5-trols-preserve-their-routes-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/map-search-workspace-searc-510b5-trols-preserve-their-routes-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/map-search-workspace-searc-510b5-trols-preserve-their-routes-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts",
+                    "column": 41,
+                    "line": 99
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "11063396553d6831a315-5fee0aaec281bbb11b04",
+          "file": "map-search.spec.ts",
+          "line": 44,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T11:18:05.410Z",
+    "duration": 7533.134,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

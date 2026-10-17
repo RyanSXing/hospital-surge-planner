@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { conditionReplayInterval } from "./replayAnnotations";
+import {
+  conditionReplayInterval,
+  updateReplayInterval,
+} from "./replayAnnotations";
 
 describe("recorded condition bands", () => {
   const start = "2026-10-16T05:00:00Z";
@@ -76,5 +79,35 @@ describe("recorded condition bands", () => {
         end,
       ),
     ).toMatchObject({ start_at: start, end_at: end });
+  });
+});
+
+it("distinguishes synthetic planned intervals from reported update inputs", () => {
+  const effective_at = "2026-10-17T05:00:00Z",
+    until = "2026-10-18T05:00:00Z";
+  expect(
+    updateReplayInterval({
+      type: "equipment_change",
+      effective_at,
+      input_kind: "planned_assumption",
+      payload: { until },
+    }),
+  ).toMatchObject({
+    start_at: effective_at,
+    end_at: until,
+    label: "equipment change · synthetic planned assumption",
+    planned: true,
+  });
+  expect(
+    updateReplayInterval({
+      type: "capacity_change",
+      effective_at,
+      state_origin: "simulation_branch",
+      payload: { until },
+    }),
+  ).toMatchObject({
+    start_at: effective_at,
+    end_at: effective_at,
+    label: "capacity change · reported update / simulation branch",
   });
 });

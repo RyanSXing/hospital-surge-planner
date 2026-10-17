@@ -26,7 +26,7 @@ import time
 import zipfile
 from collections import defaultdict
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -374,6 +374,13 @@ def _replication_task(index):
     return timed_replication(_pool_dataset, _pool_scenario, index, cancel_check=_pool_stop.is_set)
 
 
+def _selected_trace_task(index):
+    # Pure computation only: artifacts and fenced DB publication stay in parent.
+    return timed_replication(
+        _pool_dataset, _pool_scenario, index, keep_trace=True, cancel_check=_pool_stop.is_set
+    )
+
+
 def _replication_file_initializer(input_path, stop):
     # This path is produced only by private_replication_pool, never by an API
     # payload. Refuse symlinks, other owners, and group/world-readable files.
@@ -635,6 +642,7 @@ def execute_job(identity, database_url=None):
 
 def run_job(identity, Session, token, uploads):
     from surge_engine import aggregate_results
+    from surge_engine.aggregate import representative_replication
 
     store = uploads.store
     with Session() as session:
@@ -724,18 +732,23 @@ def run_job(identity, Session, token, uploads):
 
     pending_indices = [i for i in range(scenario["replications"]) if i not in results_by_index]
     workers = max(1, min(8, int(os.getenv("SIMULATION_WORKERS", str(min(4, os.cpu_count() or 1))))))
-    if workers == 1 or len(pending_indices) < 5:
-        for index in pending_indices:
-            if cancel_check():
-                raise Cancelled()
-            try:
-                result = timed_replication(dataset, scenario, index, cancel_check=cancel_check)
-            except Exception as exc:
-                persist_failure(index, exc)
-                raise
-            persist_result(index, result)
-    else:
-        with private_replication_pool(dataset, scenario, workers, token) as pool:
+    pool_context = (
+        private_replication_pool(dataset, scenario, workers, token)
+        if workers > 1 and scenario["replications"] >= 5
+        else nullcontext(None)
+    )
+    with pool_context as pool:
+        if pool is None or len(pending_indices) < 5:
+            for index in pending_indices:
+                if cancel_check():
+                    raise Cancelled()
+                try:
+                    result = timed_replication(dataset, scenario, index, cancel_check=cancel_check)
+                except Exception as exc:
+                    persist_failure(index, exc)
+                    raise
+                persist_result(index, result)
+        else:
             pending = {}
             indices = iter(pending_indices)
 
@@ -759,84 +772,115 @@ def run_job(identity, Session, token, uploads):
                         raise
                     persist_result(index, result)
                     submit_next()
-    results = [results_by_index[i] for i in range(scenario["replications"])]
-    with Session.begin() as session:
-        job = lock_attempt(session, identity, token)
-        job.status = "AGGREGATING"
-    aggregate = aggregate_results(results, scenario=scenario)
-    selected = aggregate.get("selected_replication_index", 0)
-    selected_id = f"{identity}_rep_{selected:04d}"
-    if cancel_check():
-        raise Cancelled()
-    trace = timed_replication(dataset, scenario, selected, keep_trace=True, cancel_check=cancel_check)
-    trace.update(
-        replication_id=selected_id,
-        replication_index=selected,
-        run_group_id=identity,
-        start_at=scenario["start_at"],
-    )
-    for event in trace.get("events", []):
-        event.update(run_group_id=identity, replication_id=selected_id, replication_index=selected)
-    trace_artifact = store.put_json(workspace, identity, "selected-trace", trace)
-    from .comparisons import compact_summary
+        results = [results_by_index[i] for i in range(scenario["replications"])]
+        with Session.begin() as session:
+            job = lock_attempt(session, identity, token)
+            job.status = "AGGREGATING"
+        selected = representative_replication(results)["replication_index"]
+        selected_id = f"{identity}_rep_{selected:04d}"
+        if cancel_check():
+            raise Cancelled()
+        # All ordinary futures have completed. Reuse one warm pure child while the
+        # parent summarizes and serializes; no additional process pool is created.
+        trace_future = pool.submit(_selected_trace_task, selected) if pool is not None else None
 
-    aggregate["comparison_summary"] = compact_summary(results)
-    aggregate["periods"] = {grain: period_aggregation(results, grain) for grain in ("week", "month")}
-    aggregate_artifact = store.put_json(workspace, identity, "aggregate", aggregate)
-    replications_artifact = store.put_json(workspace, identity, "replications", results)
-    inputs_artifact = store.put_json(
-        workspace, identity, "inputs", {"dataset": dataset, "scenario": scenario}
-    )
-    manifest = {
-        "schema_version": "1.0",
-        "run_group_id": identity,
-        "workspace_id": workspace,
-        "dataset_version_id": payload["dataset_version_id"],
-        "scenario_revision_id": payload["scenario_revision_id"],
-        "model_version": trace.get("model_version", payload["model_version"]),
-        "code_commit": os.getenv("CODE_COMMIT", "local-working-tree"),
-        "input_sha256": payload["input_sha256"],
-        "generator_version": dataset.get("manifest", {}).get("generator_version", "synthetic-demo-1.0.0"),
-        "timezone": scenario["timezone"],
-        "start_at": scenario["start_at"],
-        "end_at": trace["end_at"],
-        "created_at": created_at,
-        "replications_requested": scenario["replications"],
-        "replications_completed": len(results),
-        "seed_policy": "keyed-streams-v1",
-        "base_seed": scenario["base_seed"],
-        "selected_replication_id": selected_id,
-        "selected_replication_index": selected,
-        "status": "SUCCEEDED",
-        "data_origin": "synthetic" if dataset.get("synthetic", True) else "user-supplied",
-        "artifacts": [aggregate_artifact, replications_artifact, trace_artifact, inputs_artifact],
-        "completed_at": now(),
-        "warnings": aggregate.get("warnings", []),
-    }
-    with Session.begin() as session:
-        job = lock_attempt(session, identity, token)
-        rep = session.get(Document, selected_id)
-        rep.data = {
-            **rep.data,
-            "trace_artifact": trace_artifact,
-            "selected": True,
-            "trace_execution_metrics": trace.get("execution_metrics", {}),
-        }
-        job.result = result_with_generation(
-            job,
-            {
-                "aggregate_artifact": aggregate_artifact,
-                "replications_artifact": replications_artifact,
-                "inputs_artifact": inputs_artifact,
-                "selected_replication_id": selected_id,
-                "manifest": manifest,
-                "warnings": aggregate.get("warnings", []),
-            },
+        def check_finalization():
+            if cancel_check():
+                raise Cancelled()
+            if trace_future is not None and trace_future.done():
+                trace_future.result()  # Propagate child failure before more uploads.
+            return False
+
+        aggregate = aggregate_results(results, scenario=scenario, cancel_check=check_finalization)
+        if aggregate["selected_replication_index"] != selected:
+            raise ValueError("Representative trajectory selection changed during aggregation")
+        trace = (
+            None
+            if trace_future is not None
+            else timed_replication(dataset, scenario, selected, keep_trace=True, cancel_check=cancel_check)
         )
-        job.status = "SUCCEEDED"
-        job.completed_at = now()
-        job.lease_until = 0
-    uploads.retain(trace_artifact, aggregate_artifact, replications_artifact, inputs_artifact)
+        from .comparisons import compact_summary
+
+        check_finalization()
+        aggregate["comparison_summary"] = compact_summary(results)
+        aggregate["periods"] = {
+            grain: period_aggregation(results, grain, cancel_check=check_finalization)
+            for grain in ("week", "month")
+        }
+        check_finalization()
+        aggregate_artifact = store.put_json(workspace, identity, "aggregate", aggregate)
+        check_finalization()
+        replications_artifact = store.put_json(workspace, identity, "replications", results)
+        check_finalization()
+        inputs_artifact = store.put_json(
+            workspace, identity, "inputs", {"dataset": dataset, "scenario": scenario}
+        )
+        if trace_future is not None:
+            while not trace_future.done():
+                check_finalization()
+                wait((trace_future,), timeout=0.1)
+            trace = trace_future.result()
+        check_finalization()
+        trace.update(
+            replication_id=selected_id,
+            replication_index=selected,
+            run_group_id=identity,
+            start_at=scenario["start_at"],
+        )
+        for event in trace.get("events", []):
+            event.update(run_group_id=identity, replication_id=selected_id, replication_index=selected)
+        trace_artifact = store.put_json(workspace, identity, "selected-trace", trace)
+        check_finalization()
+        manifest = {
+            "schema_version": "1.0",
+            "run_group_id": identity,
+            "workspace_id": workspace,
+            "dataset_version_id": payload["dataset_version_id"],
+            "scenario_revision_id": payload["scenario_revision_id"],
+            "model_version": trace.get("model_version", payload["model_version"]),
+            "code_commit": os.getenv("CODE_COMMIT", "local-working-tree"),
+            "input_sha256": payload["input_sha256"],
+            "generator_version": dataset.get("manifest", {}).get("generator_version", "synthetic-demo-1.0.0"),
+            "timezone": scenario["timezone"],
+            "start_at": scenario["start_at"],
+            "end_at": trace["end_at"],
+            "created_at": created_at,
+            "replications_requested": scenario["replications"],
+            "replications_completed": len(results),
+            "seed_policy": "keyed-streams-v1",
+            "base_seed": scenario["base_seed"],
+            "selected_replication_id": selected_id,
+            "selected_replication_index": selected,
+            "status": "SUCCEEDED",
+            "data_origin": "synthetic" if dataset.get("synthetic", True) else "user-supplied",
+            "artifacts": [aggregate_artifact, replications_artifact, trace_artifact, inputs_artifact],
+            "completed_at": now(),
+            "warnings": aggregate.get("warnings", []),
+        }
+        with Session.begin() as session:
+            job = lock_attempt(session, identity, token)
+            rep = session.get(Document, selected_id)
+            rep.data = {
+                **rep.data,
+                "trace_artifact": trace_artifact,
+                "selected": True,
+                "trace_execution_metrics": trace.get("execution_metrics", {}),
+            }
+            job.result = result_with_generation(
+                job,
+                {
+                    "aggregate_artifact": aggregate_artifact,
+                    "replications_artifact": replications_artifact,
+                    "inputs_artifact": inputs_artifact,
+                    "selected_replication_id": selected_id,
+                    "manifest": manifest,
+                    "warnings": aggregate.get("warnings", []),
+                },
+            )
+            job.status = "SUCCEEDED"
+            job.completed_at = now()
+            job.lease_until = 0
+        uploads.retain(trace_artifact, aggregate_artifact, replications_artifact, inputs_artifact)
 
 
 def csv_bytes(rows):
@@ -1050,13 +1094,15 @@ def export_job(identity, Session, token, uploads):
     uploads.retain(artifact)
 
 
-def period_aggregation(replications, grain):
+def period_aggregation(replications, grain, *, cancel_check=None):
     """Aggregate each trajectory first; only then calculate ensemble percentiles."""
     import numpy as np
 
     per_rep = []
     metadata = {}
     for replication in replications:
+        if cancel_check and cancel_check():
+            raise Cancelled()
         groups = defaultdict(list)
         for row in replication.get("daily", []):
             day = datetime.fromisoformat(row["local_date"]).date()
@@ -1068,6 +1114,8 @@ def period_aggregation(replications, grain):
             groups[key].append(row)
         result = {}
         for key, rows in groups.items():
+            if cancel_check and cancel_check():
+                raise Cancelled()
             numeric = {
                 k
                 for row in rows
@@ -1121,6 +1169,8 @@ def period_aggregation(replications, grain):
         per_rep.append(result)
     output = []
     for key, meta in sorted(metadata.items()):
+        if cancel_check and cancel_check():
+            raise Cancelled()
         keys = set().union(*(rep.get(key, {}) for rep in per_rep))
         item = {**meta}
         for metric in keys:

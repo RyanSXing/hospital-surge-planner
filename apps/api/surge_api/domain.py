@@ -78,15 +78,27 @@ def normalize_conditions(data, dataset):
     for condition in conditions:
         if not isinstance(condition, dict):
             continue
-        if condition.get("kind") == "staff_absence":
+        if (
+            condition.get("kind") in {"staff_absence", "staff_unavailability"}
+            and "absence_percent" in condition
+        ):
             condition["kind"] = "staff_unavailability"
             unit = next(
                 (u for u in dataset.get("units", []) if u.get("unit_id") == condition.get("unit_id")), None
             )
             baseline = (unit or {}).get("baseline_staff", {}).get("rn", 0)
             percent = condition.get("absence_percent", 0)
-            if isinstance(percent, (int, float)) and math.isfinite(percent) and 0 <= percent <= 100:
+            if (
+                "count" not in condition
+                and not condition.get("staff_ids")
+                and isinstance(percent, (int, float))
+                and not isinstance(percent, bool)
+                and math.isfinite(percent)
+                and 0 <= percent <= 100
+            ):
                 condition["count"] = math.ceil(baseline * percent / 100)
+        elif condition.get("kind") == "staff_absence":
+            condition["kind"] = "staff_unavailability"
     return value
 
 
@@ -229,9 +241,35 @@ def validate_scenario(data, dataset=None):
                 or not 0 <= condition["count"] <= 10000
             ):
                 error(key + ".count", "Batch count must be an integer from0to10000")
-            timestamp(condition.get("at", data.get("start_at")), key + ".at")
+            at = timestamp(condition.get("at", data.get("start_at")), key + ".at")
+            if at and start and end and not start <= at < end:
+                error(key + ".at", "Incident time must lie within the scenario horizon")
             if not finite(condition.get("spread_minutes", 0)):
                 error(key + ".spread_minutes", "Spread must be finite and nonnegative")
+            elif at and end and at + timedelta(minutes=condition.get("spread_minutes", 0)) > end:
+                error(key + ".spread_minutes", "All incident arrivals must fit within the horizon")
+            stream_id = condition.get("entry_stream_id", "ED_MAIN")
+            stream_record = next(
+                (s for s in (dataset or {}).get("entry_streams", []) if s["entry_stream_id"] == stream_id), {}
+            )
+            if streams and stream_id not in streams:
+                error(key + ".entry_stream_id", "Choose a declared exogenous entry stream")
+            mix = condition.get("care_mix")
+            if (
+                not isinstance(mix, dict)
+                or not mix
+                or set(mix) - {"discharge", "ward", "icu"}
+                or any(not finite(v) for v in mix.values())
+                or not math.isclose(sum(mix.values()), 1, abs_tol=1e-8)
+            ):
+                error(
+                    key + ".care_mix",
+                    "Explicit discharge, ward and ICU fractions must be nonnegative and sum to one",
+                )
+            elif stream_record.get("entry_type") == "direct_ward" and any(
+                weight > 0 and care != "ward" for care, weight in mix.items()
+            ):
+                error(key + ".care_mix", "Direct ward incidents must request ward care only")
             continue
         if kind == "stage_duration_multiplier":
             interval(condition, key, True)
@@ -259,6 +297,24 @@ def validate_scenario(data, dataset=None):
             or not math.isclose(sum(override.values()), 1, abs_tol=1e-8)
         ):
             error(key + ".care_mix_override", "Use known care/cohort/profile weights summing to one")
+        elif override is not None and any(
+            s.get("entry_stream_id") == stream and s.get("entry_type") == "direct_ward"
+            for s in (dataset or {}).get("entry_streams", [])
+        ):
+            resolved_care = {
+                p["resource_profile_id"]: p.get("stage_kind")
+                for p in (dataset or {}).get("resource_profiles", [])
+            }
+            resolved_care.update(
+                {c["cohort_id"]: c.get("care_level") for c in (dataset or {}).get("cohorts", [])}
+            )
+            if any(
+                weight > 0 and resolved_care.get(outcome, outcome) != "ward"
+                for outcome, weight in override.items()
+            ):
+                error(
+                    key + ".care_mix_override", "Direct ward arrival weights must resolve to ward care only"
+                )
         if kind == "care_mix_override":
             interval(condition, key, True)
             continue
@@ -334,6 +390,24 @@ def validate_scenario(data, dataset=None):
         for field in ("activation_minutes", "duration_minutes", "reservation_expiry_minutes"):
             if field in intervention and not finite(intervention[field]):
                 error(key + "." + field, "Use finite nonnegative minutes")
+        kind = intervention.get("kind", intervention.get("template_kind"))
+        delay = intervention.get(
+            "activation_minutes",
+            {
+                "clinic": 360,
+                "activate_clinic": 360,
+                "staffed_overflow": 720,
+                "activate_overflow": 720,
+                "physical_overflow": 720,
+            }.get(kind, 0),
+        )
+        effective_end = hi or end
+        duration = intervention.get("duration_minutes")
+        if not hi and lo and finite(duration):
+            duration_end = lo + timedelta(minutes=duration)
+            effective_end = min(effective_end, duration_end) if effective_end else duration_end
+        if lo and effective_end and finite(delay) and lo + timedelta(minutes=delay) >= effective_end:
+            error(key + ".activation_minutes", "Readiness must occur before the plan ends")
         for field in ("unit_id", "destination_unit_id"):
             if intervention.get(field) and intervention[field] not in units:
                 error(key + "." + field, "Unknown unit")
@@ -346,9 +420,56 @@ def validate_scenario(data, dataset=None):
             error(key + ".assigned_staff_ids", "Choose declared staff IDs")
     for index, update in records("updates"):
         key = f"updates.{index}"
-        timestamp(update.get("effective_at"), key + ".effective_at")
+        at = timestamp(update.get("effective_at"), key + ".effective_at")
+        update_types = {
+            "arrival_batch",
+            "patient_departure",
+            "staff_unavailable",
+            "staff_available",
+            "site_ready",
+            "capacity_change",
+            "advertised_capacity_change",
+            "census_replacement",
+            "equipment_change",
+            "route_change",
+            "retract_or_correct",
+        }
+        if update.get("type") not in update_types:
+            error(key + ".type", "Unsupported scenario event type")
+        planned = update.get("input_kind") == "planned_assumption"
+        if planned:
+            if update.get("type") not in {
+                "staff_unavailable",
+                "staff_available",
+                "capacity_change",
+                "advertised_capacity_change",
+                "equipment_change",
+                "route_change",
+            }:
+                error(key + ".type", "Use a condition or intervention for this synthetic planning assumption")
+            if at and start and end and not start <= at < end:
+                error(key + ".effective_at", "Planned event time must lie within the scenario horizon")
+            if update.get("state_origin"):
+                error(
+                    key + ".state_origin",
+                    "Synthetic planned events are scenario inputs, not observed resets or simulation-branch reports",
+                )
         if not isinstance(update.get("payload", {}), dict):
             error(key + ".payload", "Supply an update payload object")
+        elif dataset:
+            from .updates import payload_errors
+
+            for issue in payload_errors(update, dataset):
+                error(key + "." + issue["field"], issue["message"])
+            until = update.get("payload", {}).get("until")
+            if planned and until:
+                until_at = timestamp(until, key + ".payload.until")
+                if until_at and end and until_at > end:
+                    error(key + ".payload.until", "Planned event end must lie within the scenario horizon")
+    if dataset:
+        from surge_engine.equipment_planning import planned_equipment_errors
+
+        errors.extend(planned_equipment_errors(dataset, data.get("updates", [])))
     if dataset and not dataset.get("synthetic", True):
         warnings.append("This application is validated only against synthetic engineering fixtures")
     return {

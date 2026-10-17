@@ -15,11 +15,17 @@ import {
   Users,
 } from "lucide-react";
 import type { Entity, Metrics, PlanningContext } from "../types";
-import { api, fmt, items, num, post } from "../api";
+import { api, atDay, fmt, items, localDayIndex, num, post } from "../api";
 import { Badge, Button, Modal } from "../components/ui";
 import { ForecastChart, Timeline } from "../components/Charts";
-import { statsFor } from "../model";
+import { comparisonWardInventory } from "./comparisonCapacity";
 import ComparisonDetails from "../components/ComparisonDetails";
+import {
+  PlanningPanelControls,
+  PlanningTimelineDock,
+  usePlanningPanels,
+} from "../components/PlanningPanels";
+import "./compare.css";
 const choices = [
   {
     kind: "physical_overflow",
@@ -59,6 +65,7 @@ const choices = [
 ];
 const palette = ["#ff6c79", "#efbd60", "#57d8eb", "#55d9bf"];
 export default function Compare({ ctx }: { ctx: PlanningContext }) {
+  const panels = usePlanningPanels(180);
   const [selected, setSelected] = useState([
       "physical_overflow",
       "staff_existing",
@@ -269,15 +276,14 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
       ignore = true;
     };
   }, [comparison?.id, comparison?.status, ctx.grain]);
-  const baseWard = statsFor(ctx, "ward", "FAC-MAIN"),
-    plans: Entity[] = comparison?.plans || [
-      { id: "reference", name: "Current plan", kind: "reference" },
-      ...selected.map((kind) => ({
-        id: kind,
-        name: choices.find((o) => o.kind === kind)?.name,
-        kind,
-      })),
-    ];
+  const plans: Entity[] = comparison?.plans || [
+    { id: "reference", name: "Current plan", kind: "reference" },
+    ...selected.map((kind) => ({
+      id: kind,
+      name: choices.find((o) => o.kind === kind)?.name,
+      kind,
+    })),
+  ];
   const maxWait = Math.max(
       1,
       ...plans.map((p) =>
@@ -314,9 +320,33 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
       ]),
     ]),
   );
+  const calendarScenario = comparison?.source_scenario_snapshot || ctx.scenario;
   const calendarPlan = plans.find((p) => p.id === chosen) || plans[0],
     calendarCtx: PlanningContext = {
       ...ctx,
+      scenario: calendarScenario,
+      resultScenario: calendarScenario,
+      selectedDay: calendarScenario
+        ? Math.max(
+            0,
+            localDayIndex(
+              calendarScenario.start_at,
+              ctx.selectedTime,
+              calendarScenario.timezone,
+            ),
+          )
+        : ctx.selectedDay,
+      setDay: (day) =>
+        calendarScenario
+          ? ctx.setTime(
+              atDay(
+                calendarScenario.start_at,
+                day,
+                0,
+                calendarScenario.timezone,
+              ),
+            )
+          : ctx.setDay(day),
       activeReplicationId: "",
       metrics: periodMetrics[calendarPlan?.id] || calendarPlan?.metrics || null,
       run: calendarPlan?.metrics
@@ -349,7 +379,7 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
     });
   }
   return (
-    <div className="compare-page page-scroll">
+    <div className="compare-page page-scroll planning-panel-page">
       <div className="page-heading">
         <div>
           <div className="eyebrow">DECISION WORKSPACE</div>
@@ -359,6 +389,7 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
           </p>
         </div>
         <div className="heading-actions">
+          <PlanningPanelControls panels={panels} name="compare" />
           <Button
             onClick={() =>
               ctx.action("Loading saved comparisons", async () => {
@@ -406,8 +437,8 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
       </div>
       <div className="comparison-context">
         <GitCompareArrows size={16} />
-        <strong>{ctx.scenario?.name}</strong>
-        <span>{ctx.scenario?.horizon_calendar_days} days</span>
+        <strong>{calendarScenario?.name}</strong>
+        <span>{calendarScenario?.horizon_calendar_days} days</span>
         <span>Paired random inputs</span>
         <Badge
           tone={comparison?.status === "SUCCEEDED" ? "success" : "neutral"}
@@ -518,12 +549,15 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
               const kind =
                   p.kind || p.interventions?.at(-1)?.kind || selected[i - 1],
                 last = p.metrics?.series?.at(-1),
-                physical = last
-                  ? Math.round(num(last.ward_physical))
-                  : baseWard.physical,
-                staffed = last
-                  ? Math.round(num(last.ward_staffed))
-                  : baseWard.staffed,
+                fullHorizonWait =
+                  p.metrics?.scalar_metrics?.inpatient_waiting_patient_hours,
+                inventory = comparisonWardInventory(
+                  ctx.dataset,
+                  comparison?.source_scenario_snapshot?.dataset_version_id,
+                  last,
+                ),
+                physical = inventory?.physical ?? 0,
+                staffed = inventory?.staffed ?? 0,
                 tileSize = Math.max(1, Math.ceil(physical / 120));
               return (
                 <div
@@ -543,14 +577,17 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
                   </div>
                   <div className="plan-grid">
                     <span className="micro-label">
-                      {last
-                        ? "WARD INVENTORY · HORIZON END"
-                        : "WARD INVENTORY · SOURCE SNAPSHOT"}
+                      MODELED WARD INVENTORY ·{" "}
+                      {inventory?.basis || "SAVED BASELINE PENDING"}
                     </span>
                     <div
                       className="capacity-diagram"
                       role="img"
-                      aria-label={`${physical} physical ward places; ${staffed} staffing-supported; capacity diagram without patient assignments`}
+                      aria-label={
+                        inventory
+                          ? `${physical} physical ward places; ${staffed} staffing-supported; capacity diagram without patient assignments`
+                          : "Capacity pending for the saved baseline"
+                      }
                     >
                       {Array.from(
                         { length: Math.ceil(physical / tileSize) },
@@ -590,8 +627,8 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
                     ) : null}
                     <div className="plan-capacity">
                       <strong>
-                        {staffed}
-                        <small> / {physical}</small>
+                        {inventory ? staffed : "—"}
+                        <small> / {inventory ? physical : "—"}</small>
                       </strong>
                       <span>
                         staffing-supported
@@ -599,6 +636,30 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
                         physical places
                       </span>
                     </div>
+                    {fullHorizonWait !== undefined ? (
+                      <div className="plan-inline-outcome">
+                        <span>Full-horizon waiting</span>
+                        <strong>
+                          {fmt(num(fullHorizonWait))}
+                          <small>patient-hours</small>
+                        </strong>
+                        {comparison?.status === "SUCCEEDED" && i > 0 ? (
+                          <Button
+                            disabled={
+                              ctx.canWrite === false ||
+                              p.feasibility?.feasible === false
+                            }
+                            primary={chosen === p.id}
+                            onClick={() => setChosen(p.id)}
+                          >
+                            {chosen === p.id ? <Check size={13} /> : null}
+                            {chosen === p.id
+                              ? "Selected response"
+                              : "Select response"}
+                          </Button>
+                        ) : null}
+                      </div>
+                    ) : null}
                   </div>
                   <div
                     className={`plan-status ${kind === "physical_overflow" ? "amber" : ""}`}
@@ -691,7 +752,7 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
               colors={plottedPlans.map((p) => p.chartColor)}
               lineDashes={plottedPlans.map((p) => p.chartDash)}
               bandKey={bandPlan}
-              height={145}
+              height={80}
               showBand={bandPlan !== "none"}
               selected={chartRows.reduce(
                 (best: number, row: Entity, index: number) =>
@@ -827,9 +888,13 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
               );
             })}
           </div>
-          <ComparisonDetails plans={plans} ctx={ctx} />
+          <ComparisonDetails plans={plans} ctx={calendarCtx} />
         </div>
-        <aside className="comparison-explainer">
+        <aside
+          className="comparison-explainer"
+          id="compare-inspector-dock"
+          hidden={panels.inspectorHidden}
+        >
           <span className="eyebrow">WHY STAFFING MATTERS</span>
           <h2>Space becomes capacity when resources align.</h2>
           <div className="equation">
@@ -907,11 +972,13 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
           </small>
         </aside>
       </div>
-      <Timeline
-        ctx={calendarCtx}
-        heatmapOnly
-        title={`Calendar · ${calendarPlan?.name || "Reference"}`}
-      />
+      <PlanningTimelineDock panels={panels} name="compare">
+        <Timeline
+          ctx={calendarCtx}
+          heatmapOnly
+          title={`Calendar · ${calendarPlan?.name || "Reference"}`}
+        />
+      </PlanningTimelineDock>
       {assumptions ? (
         <Modal
           title="Comparison assumptions"
@@ -927,30 +994,44 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
           <dl className="detail-list">
             <div>
               <dt>Scenario</dt>
-              <dd>{ctx.scenario?.name}</dd>
+              <dd>{calendarScenario?.name}</dd>
             </div>
             <div>
               <dt>Dataset</dt>
-              <dd>{ctx.dataset?.fixture}</dd>
+              <dd>
+                {calendarScenario?.dataset_version_id === ctx.dataset?.id
+                  ? ctx.dataset?.fixture || ctx.dataset?.name
+                  : calendarScenario?.dataset_version_id}
+              </dd>
             </div>
             <div>
               <dt>Horizon</dt>
-              <dd>{ctx.scenario?.horizon_calendar_days} local days</dd>
+              <dd>{calendarScenario?.horizon_calendar_days} local days</dd>
             </div>
             <div>
               <dt>Base seed</dt>
-              <dd>{ctx.scenario?.base_seed}</dd>
+              <dd>{calendarScenario?.base_seed}</dd>
             </div>
           </dl>
-          {selected.map((kind) => {
-            const option = choices.find((o) => o.kind === kind);
-            return (
-              <div key={kind} className="assumption-row">
-                <strong>{option?.name || kind}</strong>
-                <span>{option?.description}</span>
-              </div>
-            );
-          })}
+          {(comparison?.plans || selected.map((kind) => ({ kind }))).map(
+            (plan: Entity, index: number) => {
+              const kind = plan.kind;
+              const option = choices.find((o) => o.kind === kind);
+              return (
+                <div key={plan.id || kind || index} className="assumption-row">
+                  <strong>{plan.name || option?.name || kind}</strong>
+                  <span>
+                    {comparison
+                      ? (plan.interventions || [])
+                          .map((value: Entity) => value.name || value.kind)
+                          .join(" · ") ||
+                        "Reference scenario resource assumptions"
+                      : option?.description}
+                  </span>
+                </div>
+              );
+            },
+          )}
           <p className="muted small-copy">
             Financial cost is unavailable unless costs are supplied. Percentile
             changes are calculated from paired runs.

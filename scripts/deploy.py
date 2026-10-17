@@ -5,13 +5,13 @@ import os
 import re
 import shlex
 import subprocess
-import tarfile
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
 from code_version import code_version
 from dotenv import dotenv_values, load_dotenv
+from release_archive import build_release_archive
 
 ROOT = Path(__file__).resolve().parents[1]
 revision = code_version()
@@ -51,39 +51,6 @@ for name in ("OCI_NAMESPACE", "OCI_ARTIFACT_BUCKET"):
         problems.append(f"{name} is required")
 if problems:
     raise SystemExit("Hosted configuration incomplete: " + "; ".join(problems))
-excluded = {
-    ".git",
-    ".venv",
-    ".cache",
-    ".agents",
-    ".codex",
-    ".playwright-cli",
-    "node_modules",
-    "data",
-    "artifacts",
-    "backups",
-    "logs",
-    "evidence",
-    "output",
-    "test-results",
-    "playwright-report",
-    "__pycache__",
-    ".pytest_cache",
-    "dist",
-}
-
-
-def include(info):
-    parts = Path(info.name).parts
-    if (
-        any(part in excluded for part in parts)
-        or Path(info.name).name.startswith(".env")
-        or info.name.endswith((".pem", ".key", ".pyc"))
-    ):
-        return None
-    return info
-
-
 ssh = [
     "ssh",
     "-o",
@@ -126,9 +93,7 @@ def upload(source, name):
 remote("mkdir -p " + shlex.quote(directory))
 with tempfile.TemporaryDirectory(prefix="surge-release-") as temporary:
     archive = Path(temporary) / "release.tar.gz"
-    with tarfile.open(archive, "w:gz") as bundle:
-        for path in ROOT.iterdir():
-            bundle.add(path, arcname=path.name, filter=include)
+    archive_metadata = build_release_archive(ROOT, revision, archive)
     upload(archive, "release.tar.gz")
     release_env = Path(temporary) / "release.env"
     release_env.write_text(
@@ -142,9 +107,22 @@ with tempfile.TemporaryDirectory(prefix="surge-release-") as temporary:
     release_env.chmod(0o600)
     upload(release_env, ".env")
 compose = "CODE_COMMIT=" + shlex.quote(revision) + " docker compose --env-file .env -f infra/compose.yaml"
+# Build from a new directory so files deleted in this revision cannot survive
+# from an earlier operational checkout and enter the otherwise exact image.
+fresh_build = (
+    "build_dir=$(mktemp -d "
+    + shlex.quote(directory + "/.build-XXXXXX")
+    + ") || exit 1; "
+    + "trap 'rm -rf -- \"$build_dir\"' EXIT; "
+    + 'tar -xzf release.tar.gz -C "$build_dir" && '
+    + 'install -m 600 .env "$build_dir/.env" && '
+    + "CODE_COMMIT="
+    + shlex.quote(revision)
+    + ' docker compose --env-file "$build_dir/.env" -f "$build_dir/infra/compose.yaml" --profile tls build'
+)
 steps = [
+    "(" + fresh_build + ")",
     "tar -xzf release.tar.gz",
-    compose + " --profile tls build",
     compose + " up -d postgres redis",
     compose + " run --rm api .venv/bin/alembic -c infra/alembic.ini upgrade head",
     compose + " up -d api worker web",
@@ -156,6 +134,7 @@ evidence = {
     "deployed_at": datetime.now(UTC).isoformat(),
     "code_commit": revision,
     "image_tag": revision,
+    "archive": archive_metadata,
     "host": host,
     "directory": directory,
     "steps": steps,

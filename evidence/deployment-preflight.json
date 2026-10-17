@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-10-17T12:15:17.775819+00:00",
+  "scope": "Local preflight only; no hosted operations",
+  "dirty_tree_refused_before_host_access": true,
+  "fresh_build_shell_syntax_passed": true,
+  "commit_archive_regression": {
+    "passed": 1,
+    "seconds": 0.57
+  },
+  "ruff": "passed",
+  "independent_packaging_review": "No correctness/security finding; regression included in 38 passing focused backend tests",
+  "credential_handoff_mode": "0o600",
+  "archive_source": "immutable Git revision",
+  "fresh_docker_build_context": true,
+  "verified_ssh_host_check": true,
+  "private_environment_transfer": "separate verified SSH stdin, mode0600",
+  "pending": [
+    "reviewed clean commit",
+    "hosted deployment/readiness",
+    "exact-release image scan and smoke",
+    "short and annual compute gates",
+    "AGGREGATING recovery",
+    "hosted browser correctness and navigation timing"
+  ]
+}

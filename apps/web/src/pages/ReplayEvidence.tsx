@@ -6,7 +6,10 @@ import type { Entity, PlanningContext } from "../types";
 import { Badge, BedGrid, BedLegend, Button, ErrorBox } from "../components/ui";
 import { unitsOf, stateUnavailable } from "../model";
 import { plannedReplayInterval } from "./patientProjection";
-import { conditionReplayInterval } from "./replayAnnotations";
+import {
+  conditionReplayInterval,
+  updateReplayInterval,
+} from "./replayAnnotations";
 
 const stamp = (at: string) =>
   localDate(at, {
@@ -572,7 +575,7 @@ export function ReplayAnnotations({
         )
         .map((value: Entity) => ({
           ...conditionReplayInterval(value, start, end),
-          label: value.name || eventName(value.kind),
+          label: `${value.name || eventName(value.kind)}${value.kind === "arrival_batch" ? " · synthetic planned batch" : ""}`,
           planned: true,
         })),
     },
@@ -590,7 +593,7 @@ export function ReplayAnnotations({
         })),
     },
     {
-      label: "Interventions / reports",
+      label: "Plans / reported updates",
       kind: "intervention",
       intervals: [
         ...(query.data?.planned_interventions || [])
@@ -605,13 +608,7 @@ export function ReplayAnnotations({
           end_at: value.ready_at || value.at,
           label: `${eventName(value.kind)} · ${value.status || "recorded"}`,
         })),
-        ...(query.data?.updates || []).map((value: Entity) => ({
-          ...value,
-          start_at: value.effective_at,
-          end_at: value.effective_at,
-          label: `${eventName(value.type)} · ${value.status || "frozen report"}`,
-          planned: true,
-        })),
+        ...(query.data?.updates || []).map(updateReplayInterval),
       ],
     },
     {
@@ -688,8 +685,9 @@ export function ReplayAnnotations({
         ))
       )}
       <p className="small-copy muted">
-        Dashed bands show frozen conditions, plans and reports. Solid bands and
-        markers show recorded outcomes. Select a band to inspect its start.
+        Dashed bands distinguish frozen planned assumptions from reported
+        updates. Solid bands and markers show recorded outcomes. Select a band
+        to inspect its start.
       </p>
       {(query.data?.intervention_results || [])
         .filter((value: Entity) => value.status === "infeasible")

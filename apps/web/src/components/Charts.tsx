@@ -376,7 +376,8 @@ export function Timeline({
   const daily = ctx.metrics?.daily || [];
   const rows =
     ctx.grain === "day" ? ctx.metrics?.series || [] : ctx.metrics?.data || [];
-  const n = ctx.scenario?.horizon_calendar_days || 30;
+  const displayedScenario = ctx.resultScenario || ctx.scenario;
+  const n = displayedScenario?.horizon_calendar_days || 30;
   const selectedIndex = rows.length
     ? rows.reduce(
         (best: number, row: Entity, index: number) =>
@@ -627,7 +628,9 @@ export function Timeline({
         <div className="timeline-note">
           <Info size={11} /> Forecast across runs · P10–P90 simulation range
           under selected assumptions ·{" "}
-          {ctx.scenario?.timezone || ctx.dataset?.timezone || "America/Chicago"}
+          {displayedScenario?.timezone ||
+            ctx.dataset?.timezone ||
+            "America/Chicago"}
         </div>
       ) : null}
       {detailOpen ? (

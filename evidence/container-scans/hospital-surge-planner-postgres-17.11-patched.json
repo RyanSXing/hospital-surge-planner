@@ -3,9 +3,9 @@
   "Trivy": {
     "Version": "0.76.0"
   },
-  "ReportID": "01a14952-8a51-7196-a001-9a860b3222e1",
-  "CreatedAt": "2026-10-17T10:05:08.561106914Z",
-  "ArtifactID": "sha256:e903963efbdec279dc0967e9e76ed7ff54369d16f82a3a86d03419b02f2b7bc8",
+  "ReportID": "01a1497c-d134-7ad1-aa36-5db0c55ae00d",
+  "CreatedAt": "2026-10-17T10:51:19.220712406Z",
+  "ArtifactID": "sha256:56de48c450384c007c3d6da54a7aaa511470249be42a7c069b20dbcd33138646",
   "ArtifactName": "hospital-surge-planner-postgres:17.11-patched",
   "ArtifactType": "container_image",
   "Metadata": {
@@ -14,7 +14,7 @@
       "Family": "alpine",
       "Name": "3.24.2"
     },
-    "ImageID": "sha256:a6c8cb2aeb1ec40bbbcc607a8d630cee9bba4e593a2705786e7c13c3396bf640",
+    "ImageID": "sha256:5a43b94801013f24fe28206a805b63282921fe9b230d976cc1345fdbd735ac04",
     "DiffIDs": [
       "sha256:1b349a3334531b575b01d409540dd8aca14ef29abddacd50f36643d7c949db4b",
       "sha256:6105053010d7234e5da3c998271cd6a06c966bf02609780cd462ffbb8ccd4af2",
@@ -34,7 +34,7 @@
       "hospital-surge-planner-postgres:17.11-patched"
     ],
     "RepoDigests": [
-      "hospital-surge-planner-postgres@sha256:a6c8cb2aeb1ec40bbbcc607a8d630cee9bba4e593a2705786e7c13c3396bf640"
+      "hospital-surge-planner-postgres@sha256:5a43b94801013f24fe28206a805b63282921fe9b230d976cc1345fdbd735ac04"
     ],
     "Reference": "hospital-surge-planner-postgres:17.11-patched",
     "ImageConfig": {

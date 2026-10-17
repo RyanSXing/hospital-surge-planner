@@ -1,7 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./patients.css";
 import { usePatientPage } from "./usePatientPage";
 import UnitEvidence from "../components/UnitEvidence";
+import { ZonedDateTimeInput } from "../components/ZonedDateTimeInput";
+import {
+  PlanningPanelControls,
+  PlanningTimelineDock,
+  usePlanningPanels,
+} from "../components/PlanningPanels";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -15,14 +21,7 @@ import {
 } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { api, fmt, localDate, patientId, unitId } from "../api";
-import {
-  Badge,
-  BedGrid,
-  BedLegend,
-  Button,
-  EmptyState,
-  ErrorBox,
-} from "../components/ui";
+import { Badge, BedGrid, BedLegend, Button, ErrorBox } from "../components/ui";
 import {
   nameOf,
   patientsOf,
@@ -161,10 +160,17 @@ export default function Patients({
   ctx: PlanningContext;
   onUpdate: () => void;
 }) {
+  const panels = usePlanningPanels(180);
+  const placementRequest = useRef(0);
+  const inspectorRef = useRef<HTMLElement>(null);
+  const [schematicExpanded, setSchematicExpanded] = useState(
+    () => window.innerWidth >= 768,
+  );
+  const unit = ctx.selectedUnit,
+    setUnit = ctx.setUnit;
   const [tab, setTab] = useState("patients"),
     [filter, setFilter] = useState("all"),
     [search, setSearch] = useState(""),
-    [unit, setUnit] = useState(""),
     [care, setCare] = useState(""),
     [reason, setReason] = useState(""),
     [arrivedFrom, setArrivedFrom] = useState(""),
@@ -189,6 +195,10 @@ export default function Patients({
       : ctx.dataset?.snapshot_at || ctx.selectedTime,
     q = queueStats(ctx),
     unavailable = stateUnavailable(ctx);
+  const timeZone =
+    (ctx.resultScenario || ctx.scenario)?.timezone ||
+    ctx.dataset?.timezone ||
+    "America/Chicago";
   const filtered = useMemo(
     () =>
       patients.filter(
@@ -232,11 +242,15 @@ export default function Patients({
       patients.length,
   );
   useEffect(() => {
-    setUnit("");
     setSelectedSlot(null);
   }, [ctx.selectedFacility]);
   useEffect(() => {
+    if (ctx.selectedUnit || ctx.selectedPatient?.patient_id)
+      panels.setInspectorHidden(false);
+  }, [ctx.selectedUnit, ctx.selectedPatient?.patient_id]);
+  useEffect(() => {
     let ignore = false;
+    placementRequest.current++;
     setDetail(null);
     setEligibility([]);
     setDetailError("");
@@ -257,6 +271,9 @@ export default function Patients({
   function select(p: Entity) {
     ctx.setPatient(p);
     setSelectedSlot(null);
+    panels.setInspectorHidden(false);
+    if (window.innerWidth < 1024)
+      requestAnimationFrame(() => inspectorRef.current?.focus());
   }
   function inspectSlot(slot: Entity) {
     setSelectedSlot(slot);
@@ -318,7 +335,7 @@ export default function Patients({
             "Discharge",
           ];
   return (
-    <div className="patients-page">
+    <div className="patients-page planning-panel-page">
       <div className="page-heading">
         <div>
           <div className="eyebrow">PATIENTS & UNITS</div>
@@ -326,6 +343,7 @@ export default function Patients({
           <p>Follow each patient. Understand every placement constraint.</p>
         </div>
         <div className="heading-actions">
+          <PlanningPanelControls panels={panels} name="patients" />
           <Badge>
             {ctx.state ? "Selected simulation trajectory" : "Source snapshot"}
           </Badge>
@@ -361,187 +379,206 @@ export default function Patients({
                 {facilityTotal} active at this facility · {q.total} awaiting
                 inpatient placement at this facility
               </span>
+              <button
+                className="schematic-toggle"
+                aria-expanded={schematicExpanded}
+                aria-controls="patients-unit-schematic"
+                onClick={() => setSchematicExpanded((value) => !value)}
+              >
+                {schematicExpanded ? "Hide layout" : "Show layout"}
+                <ChevronRight size={14} />
+              </button>
             </div>
-            <div className="unit-layout">
-              {units
-                .filter((u) => u.kind === "ed")
-                .map((u) => {
-                  const id = unitId(u);
-                  const boardersHere = ctx.state?.patient_groups
-                    ? ctx.state.patient_groups
-                        .filter(
-                          (g: Entity) =>
-                            g.unit_id === id && g.state === "ed_boarding",
-                        )
-                        .reduce((n: number, g: Entity) => n + g.count, 0)
-                    : patients.filter(
-                        (p) => p.unit_id === id && p.state === "ed_boarding",
-                      ).length;
-                  return (
-                    <div
-                      key={id}
-                      className={`ed-zone schematic-zone ${unit === id ? "selected" : ""}`}
-                    >
-                      <button
-                        className="spread unit-label"
-                        onClick={() => setUnit(unit === id ? "" : id)}
+            <div
+              id="patients-unit-schematic"
+              className="schematic-body"
+              hidden={!schematicExpanded}
+            >
+              <div className="unit-layout">
+                {units
+                  .filter((u) => u.kind === "ed")
+                  .map((u) => {
+                    const id = unitId(u);
+                    const boardersHere = ctx.state?.patient_groups
+                      ? ctx.state.patient_groups
+                          .filter(
+                            (g: Entity) =>
+                              g.unit_id === id && g.state === "ed_boarding",
+                          )
+                          .reduce((n: number, g: Entity) => n + g.count, 0)
+                      : patients.filter(
+                          (p) => p.unit_id === id && p.state === "ed_boarding",
+                        ).length;
+                    return (
+                      <div
+                        key={id}
+                        className={`ed-zone schematic-zone ${unit === id ? "selected" : ""}`}
                       >
-                        <strong>{nameOf(u)}</strong>
-                        <Badge tone="warning">
-                          {u.occupied ??
-                            patients.filter((p) => p.unit_id === id).length}
-                          /{u.staffed ?? u.staffed_capacity}
-                        </Badge>
-                      </button>
-                      <span className="zone-subtitle">
-                        Assessment & inpatient boarding
-                      </span>
-                      <div className="queue-dot-grid">
-                        {patients
-                          .filter((p) => p.unit_id === id)
-                          .map((p) => (
-                            <button
-                              key={patientId(p)}
-                              className={`patient-token ${p.state === "ed_boarding" ? "waiting" : ""} ${patientId(selected || {}) === patientId(p) ? "selected" : ""}`}
-                              title={`${patientId(p)}: ${stateLabel(p)}`}
-                              aria-label={`Inspect ${patientId(p)}: ${stateLabel(p)}`}
-                              onClick={() => select(p)}
-                            />
-                          ))}
+                        <button
+                          className="spread unit-label"
+                          onClick={() => setUnit(unit === id ? "" : id)}
+                        >
+                          <strong>{nameOf(u)}</strong>
+                          <Badge tone="warning">
+                            {u.occupied ??
+                              patients.filter((p) => p.unit_id === id).length}
+                            /{u.staffed ?? u.staffed_capacity}
+                          </Badge>
+                        </button>
+                        <span className="zone-subtitle">
+                          Assessment & inpatient boarding
+                        </span>
+                        <div className="queue-dot-grid">
+                          {patients
+                            .filter((p) => p.unit_id === id)
+                            .map((p) => (
+                              <button
+                                key={patientId(p)}
+                                className={`patient-token ${p.state === "ed_boarding" ? "waiting" : ""} ${patientId(selected || {}) === patientId(p) ? "selected" : ""}`}
+                                title={`${patientId(p)}: ${stateLabel(p)}`}
+                                aria-label={`Inspect ${patientId(p)}: ${stateLabel(p)}`}
+                                onClick={() => select(p)}
+                              />
+                            ))}
+                        </div>
+                        <div className="zone-bottom">
+                          <strong className="amber">
+                            {boardersHere} boarding in ED
+                          </strong>
+                          <small>ED boarders retain treatment places</small>
+                        </div>
                       </div>
-                      <div className="zone-bottom">
-                        <strong className="amber">
-                          {boardersHere} boarding in ED
-                        </strong>
-                        <small>ED boarders retain treatment places</small>
-                      </div>
-                    </div>
-                  );
-                })}
-              <div className="schematic-corridor">
-                <span>CARE PATHWAY</span>
-                <ArrowRight size={17} />
-              </div>
-              <div className="ward-zones">
-                <div className="spread">
-                  <h3>Ward units</h3>
-                  <span className="muted">
-                    {statsFor(ctx, "ward").physical} physical beds
-                  </span>
+                    );
+                  })}
+                <div className="schematic-corridor">
+                  <span>CARE PATHWAY</span>
+                  <ArrowRight size={17} />
                 </div>
-                {wards.map((u) => {
-                  const id = unitId(u),
-                    slots = slotRows(ctx, id);
-                  const n = Number(
-                      u.occupied ??
-                        patients.filter((p) => p.unit_id === id).length,
-                    ),
-                    physical = Number(u.physical ?? u.physical_capacity),
-                    staffed = Number(u.staffed ?? u.staffed_capacity);
-                  return (
-                    <div
-                      className={`ward-unit ${unit === id ? "selected" : ""}`}
-                      key={id}
-                    >
+                <div className="ward-zones">
+                  <div className="spread">
+                    <h3>Ward units</h3>
+                    <span className="muted">
+                      {statsFor(ctx, "ward").physical} physical beds
+                    </span>
+                  </div>
+                  {wards.map((u) => {
+                    const id = unitId(u),
+                      slots = slotRows(ctx, id);
+                    const n = Number(
+                        u.occupied ??
+                          patients.filter((p) => p.unit_id === id).length,
+                      ),
+                      physical = Number(u.physical ?? u.physical_capacity),
+                      staffed = Number(u.staffed ?? u.staffed_capacity);
+                    return (
+                      <div
+                        className={`ward-unit ${unit === id ? "selected" : ""}`}
+                        key={id}
+                      >
+                        <button
+                          className="spread unit-label"
+                          onClick={() => {
+                            setUnit(unit === id ? "" : id);
+                            ctx.setPatient(null);
+                          }}
+                        >
+                          <strong>{nameOf(u)}</strong>
+                          <span>
+                            {n}/{staffed} staffed
+                          </span>
+                        </button>
+                        <BedGrid
+                          physical={physical}
+                          staffed={staffed}
+                          occupied={n}
+                          slots={slots}
+                          selectedSlot={
+                            selected?.slot_id || selectedSlot?.slot_id
+                          }
+                          onSelectSlot={inspectSlot}
+                        />
+                        <small className="muted">
+                          {u.reserved ?? 0} reserved · {u.cleaning ?? 0}{" "}
+                          turnover · {u.available ?? Math.max(0, staffed - n)}{" "}
+                          usable before profile checks
+                        </small>
+                      </div>
+                    );
+                  })}
+                </div>
+                {units
+                  .filter((u) => u.kind === "icu")
+                  .map((u) => (
+                    <div key={unitId(u)} className="icu-zone schematic-zone">
                       <button
                         className="spread unit-label"
                         onClick={() => {
-                          setUnit(unit === id ? "" : id);
+                          setUnit(unitId(u));
                           ctx.setPatient(null);
                         }}
                       >
                         <strong>{nameOf(u)}</strong>
-                        <span>
-                          {n}/{staffed} staffed
-                        </span>
+                        <Badge
+                          tone={
+                            icu.occupied >= icu.staffed ? "danger" : "neutral"
+                          }
+                        >
+                          {icu.occupied}/{icu.staffed}
+                        </Badge>
                       </button>
+                      <span className="zone-subtitle">ICU-capable care</span>
                       <BedGrid
-                        physical={physical}
-                        staffed={staffed}
-                        occupied={n}
-                        slots={slots}
+                        physical={Number(u.physical ?? u.physical_capacity)}
+                        staffed={Number(u.staffed ?? u.staffed_capacity)}
+                        occupied={Number(
+                          u.occupied ??
+                            patients.filter((p) => p.unit_id === unitId(u))
+                              .length,
+                        )}
+                        slots={slotRows(ctx, unitId(u))}
                         selectedSlot={
                           selected?.slot_id || selectedSlot?.slot_id
                         }
                         onSelectSlot={inspectSlot}
                       />
-                      <small className="muted">
-                        {u.reserved ?? 0} reserved · {u.cleaning ?? 0} turnover
-                        · {u.available ?? Math.max(0, staffed - n)} usable
-                        before profile checks
-                      </small>
+                      <div className="zone-bottom">
+                        <strong>
+                          {u.available ?? icu.available} available
+                        </strong>
+                        <small>Monitor and equipment checks apply</small>
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
-              {units
-                .filter((u) => u.kind === "icu")
-                .map((u) => (
-                  <div key={unitId(u)} className="icu-zone schematic-zone">
-                    <button
-                      className="spread unit-label"
-                      onClick={() => {
-                        setUnit(unitId(u));
-                        ctx.setPatient(null);
-                      }}
-                    >
-                      <strong>{nameOf(u)}</strong>
-                      <Badge
-                        tone={
-                          icu.occupied >= icu.staffed ? "danger" : "neutral"
-                        }
+                  ))}
+                {units
+                  .filter((u) => ["clinic", "shelter"].includes(u.kind))
+                  .map((u) => (
+                    <div className="schematic-zone" key={unitId(u)}>
+                      <button
+                        className="unit-label"
+                        onClick={() => {
+                          setUnit(unitId(u));
+                          ctx.setPatient(null);
+                        }}
                       >
-                        {icu.occupied}/{icu.staffed}
-                      </Badge>
-                    </button>
-                    <span className="zone-subtitle">ICU-capable care</span>
-                    <BedGrid
-                      physical={Number(u.physical ?? u.physical_capacity)}
-                      staffed={Number(u.staffed ?? u.staffed_capacity)}
-                      occupied={Number(
-                        u.occupied ??
-                          patients.filter((p) => p.unit_id === unitId(u))
-                            .length,
-                      )}
-                      slots={slotRows(ctx, unitId(u))}
-                      selectedSlot={selected?.slot_id || selectedSlot?.slot_id}
-                      onSelectSlot={inspectSlot}
-                    />
-                    <div className="zone-bottom">
-                      <strong>{u.available ?? icu.available} available</strong>
-                      <small>Monitor and equipment checks apply</small>
+                        <strong>{nameOf(u)}</strong>
+                      </button>
+                      <p className="small-copy muted">
+                        {u.kind === "clinic"
+                          ? "Ambulatory treatment spaces; no inpatient capacity"
+                          : "Nonclinical shelter; no hospital care"}
+                      </p>
+                      <BedGrid
+                        physical={Number(u.physical ?? u.physical_capacity)}
+                        staffed={Number(u.staffed ?? u.staffed_capacity)}
+                        occupied={Number(u.occupied ?? 0)}
+                        slots={slotRows(ctx, unitId(u))}
+                        onSelectSlot={inspectSlot}
+                      />
                     </div>
-                  </div>
-                ))}
-              {units
-                .filter((u) => ["clinic", "shelter"].includes(u.kind))
-                .map((u) => (
-                  <div className="schematic-zone" key={unitId(u)}>
-                    <button
-                      className="unit-label"
-                      onClick={() => {
-                        setUnit(unitId(u));
-                        ctx.setPatient(null);
-                      }}
-                    >
-                      <strong>{nameOf(u)}</strong>
-                    </button>
-                    <p className="small-copy muted">
-                      {u.kind === "clinic"
-                        ? "Ambulatory treatment spaces; no inpatient capacity"
-                        : "Nonclinical shelter; no hospital care"}
-                    </p>
-                    <BedGrid
-                      physical={Number(u.physical ?? u.physical_capacity)}
-                      staffed={Number(u.staffed ?? u.staffed_capacity)}
-                      occupied={Number(u.occupied ?? 0)}
-                      slots={slotRows(ctx, unitId(u))}
-                      onSelectSlot={inspectSlot}
-                    />
-                  </div>
-                ))}
+                  ))}
+              </div>
+              <BedLegend />
             </div>
-            <BedLegend />
           </section>
           <section className="patient-census">
             <div className="census-toolbar">
@@ -660,22 +697,18 @@ export default function Patients({
                       <option value="false">Declared ineligible</option>
                     </select>
                   </label>
-                  <label>
-                    Arrived from (UTC)
-                    <input
-                      type="datetime-local"
-                      value={arrivedFrom}
-                      onChange={(e) => setArrivedFrom(e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Arrived before (UTC)
-                    <input
-                      type="datetime-local"
-                      value={arrivedUntil}
-                      onChange={(e) => setArrivedUntil(e.target.value)}
-                    />
-                  </label>
+                  <ZonedDateTimeInput
+                    label="Arrived from"
+                    timeZone={timeZone}
+                    value={arrivedFrom}
+                    onChange={setArrivedFrom}
+                  />
+                  <ZonedDateTimeInput
+                    label="Arrived before"
+                    timeZone={timeZone}
+                    value={arrivedUntil}
+                    onChange={setArrivedUntil}
+                  />
                   <label>
                     Minimum remaining hours
                     <input
@@ -760,33 +793,35 @@ export default function Patients({
                             : ""
                         }
                       >
-                        <td>
-                          <span
-                            className={`table-dot ${p.admission_pending || p.state === "ed_waiting" ? "amber-dot" : "cyan-dot"}`}
-                          />
-                          <button
-                            className="link-button"
-                            onClick={() => select(p)}
-                          >
-                            {patientId(p)}
-                          </button>
+                        <td className="patient-identity-cell">
+                          <span className="patient-identity">
+                            <span
+                              className={`table-dot ${p.admission_pending || p.state === "ed_waiting" ? "amber-dot" : "cyan-dot"}`}
+                            />
+                            <button
+                              className="link-button"
+                              onClick={() => select(p)}
+                            >
+                              {patientId(p)}
+                            </button>
+                          </span>
                         </td>
-                        <td>
+                        <td data-label="Location">
                           {nameOf(
                             allUnits.find((u) => unitId(u) === p.unit_id) || {},
                           ) ||
                             p.state?.replaceAll("_", " ") ||
                             "—"}
                         </td>
-                        <td>
+                        <td data-label="Required care">
                           {p.target_unit_kind || p.care_level || "ambulatory"}
                         </td>
-                        <td className="numeric">
+                        <td className="numeric" data-label="Elapsed stage">
                           {elapsed(p, censusAt) === null
                             ? "—"
                             : `${fmt(elapsed(p, censusAt), 1)} h`}
                         </td>
-                        <td>
+                        <td data-label="Remaining stage">
                           {p.remaining_summary?.hours == null ? (
                             <span className="muted">
                               {p.remaining_summary?.label || "Unavailable"}
@@ -802,12 +837,12 @@ export default function Patients({
                             </>
                           )}
                         </td>
-                        <td>
+                        <td data-label="Time waiting">
                           {p.waiting_hours == null
                             ? "Unknown"
                             : `${fmt(p.waiting_hours, 1)} h`}
                         </td>
-                        <td>
+                        <td data-label="Resources">
                           {(p.placement_resource_requirements || []).length
                             ? p.placement_resource_requirements
                                 .map((r: Entity | string) =>
@@ -818,16 +853,17 @@ export default function Patients({
                                 .join(", ")
                             : "Standard care bundle"}
                         </td>
-                        <td>
+                        <td className="patient-status-cell" data-label="Status">
                           <span
                             className={p.admission_pending ? "amber" : "muted"}
                           >
                             {stateLabel(p)}
                           </span>
                         </td>
-                        <td>
+                        <td className="patient-inspect-cell">
                           <button
                             aria-label={`Inspect ${patientId(p)}`}
+                            aria-controls="patients-inspector-dock"
                             onClick={() => select(p)}
                           >
                             <ChevronRight size={14} />
@@ -909,7 +945,14 @@ export default function Patients({
             </div>
           </section>
         </div>
-        <aside className="inspector patient-inspector">
+        <aside
+          className="inspector patient-inspector"
+          ref={inspectorRef}
+          tabIndex={-1}
+          aria-label="Patient and unit inspector"
+          id="patients-inspector-dock"
+          hidden={panels.inspectorHidden}
+        >
           {detailError ? <ErrorBox error={detailError} /> : null}
           {current ? (
             <>
@@ -956,10 +999,13 @@ export default function Patients({
                   <div>
                     <dt>Source</dt>
                     <dd>
-                      {(current.source_type || "initial_census").replaceAll(
-                        "_",
-                        " ",
-                      )}
+                      {current.arrival_origin === "synthetic_incident" ||
+                      current.source_type === "synthetic_incident"
+                        ? "Synthetic planned incident"
+                        : (current.source_type || "initial_census").replaceAll(
+                            "_",
+                            " ",
+                          )}
                     </dd>
                   </div>
                   <div>
@@ -1082,16 +1128,18 @@ export default function Patients({
                   disabled={!ctx.scenario}
                   onClick={() =>
                     ctx.action("Checking placement options", async () => {
+                      const request = ++placementRequest.current;
                       const results = await Promise.all(
                         (ctx.dataset?.facilities || [])
                           .filter((f) => f.facility_id !== current.facility_id)
                           .map((f) =>
                             api(
-                              `/sites/${f.facility_id}/eligibility?scenario_id=${ctx.scenario?.id}&patient_id=${patientId(current)}&care_level=${current.target_unit_kind || current.care_level}&replication_id=${rep || ""}&at=${encodeURIComponent(ctx.selectedTime)}`,
+                              `/sites/${f.facility_id}/eligibility?${rep && ctx.run?.scenario_revision_id ? `scenario_revision_id=${ctx.run.scenario_revision_id}` : `scenario_id=${ctx.scenario?.id}`}&patient_id=${patientId(current)}&care_level=${current.target_unit_kind || current.care_level}&replication_id=${rep || ""}&at=${encodeURIComponent(ctx.selectedTime)}`,
                             ),
                           ),
                       );
-                      setEligibility(results);
+                      if (request === placementRequest.current)
+                        setEligibility(results);
                     })
                   }
                 >
@@ -1151,14 +1199,58 @@ export default function Patients({
               </div>
             </>
           ) : (
-            <EmptyState
-              icon={UserRound}
-              title="Inspect a patient or place"
-              description="Choose an actual occupied slot, patient record, or unit to inspect its current resource ledger."
-            />
+            <div className="patient-inspector-summary">
+              <div className="inspector-header">
+                <Hospital size={20} />
+                <div>
+                  <span className="eyebrow">SELECTED FACILITY</span>
+                  <h2>Patient & unit census</h2>
+                </div>
+              </div>
+              <div className="inspector-section">
+                <div className="patient-summary-counts">
+                  <div>
+                    <strong>{facilityTotal}</strong>
+                    <span>active patients</span>
+                  </div>
+                  <div>
+                    <strong className={q.total ? "amber" : ""}>
+                      {q.total}
+                    </strong>
+                    <span>awaiting placement</span>
+                  </div>
+                </div>
+                <p className="small-copy muted">
+                  Select a patient or physical place to see its current care,
+                  remaining service and placement requirements.
+                </p>
+              </div>
+              <div className="inspector-section">
+                <h3>Explore units</h3>
+                <div className="patient-unit-shortcuts">
+                  {units.map((u) => (
+                    <button key={unitId(u)} onClick={() => setUnit(unitId(u))}>
+                      <span>
+                        <strong>{nameOf(u)}</strong>
+                        <small>{u.kind?.toUpperCase()}</small>
+                      </span>
+                      <span>
+                        {u.occupied ??
+                          patients.filter((p) => p.unit_id === unitId(u))
+                            .length}{" "}
+                        / {u.staffed ?? u.staffed_capacity}
+                        <small>occupied / staffed</small>
+                      </span>
+                      <ChevronRight size={14} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           )}
         </aside>
       </div>
+      <PlanningTimelineDock panels={panels} name="patients" ctx={ctx} />
     </div>
   );
 }

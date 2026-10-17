@@ -12,6 +12,8 @@ import type { Entity, PlanningContext } from "../types";
 import { api, fmt } from "../api";
 import { patientsOf } from "../model";
 import { Badge, Button, Modal } from "./ui";
+import { ZonedDateTimeInput } from "./ZonedDateTimeInput";
+import { utcMinute } from "../zonedTime";
 export default function TransferPlanner({
   ctx,
   onClose,
@@ -24,7 +26,7 @@ export default function TransferPlanner({
       ctx.selectedFacility !== "FAC-MAIN" ? ctx.selectedFacility : "FAC-EAST",
     ),
     [limit, setLimit] = useState(4),
-    [when, setWhen] = useState(ctx.selectedTime.slice(0, 16)),
+    [when, setWhen] = useState(utcMinute(ctx.selectedTime)),
     [expiry, setExpiry] = useState(120),
     [includeInpatients, setIncludeInpatients] = useState(false),
     [eligibility, setEligibility] = useState<Entity | null>(null),
@@ -55,14 +57,33 @@ export default function TransferPlanner({
   const replicationId =
     ctx.activeReplicationId || ctx.run?.selected_replication_id;
   useEffect(() => {
+    let ignore = false;
     setEligibility(null);
     setError("");
+    if (!when) {
+      setError("Choose a valid local request time.");
+      return;
+    }
     api(
-      `/sites/${destination}/eligibility?scenario_id=${ctx.scenario?.id}&care_level=${care}&at=${encodeURIComponent(`${when}:00Z`)}${replicationId ? `&replication_id=${encodeURIComponent(replicationId)}` : ""}`,
+      `/sites/${destination}/eligibility?${replicationId && ctx.run?.scenario_revision_id ? `scenario_revision_id=${ctx.run.scenario_revision_id}` : `scenario_id=${ctx.scenario?.id}`}&care_level=${care}&at=${encodeURIComponent(`${when}:00Z`)}${replicationId ? `&replication_id=${encodeURIComponent(replicationId)}` : ""}`,
     )
-      .then(setEligibility)
-      .catch((e) => setError(e.message));
-  }, [care, destination, when, replicationId, ctx.scenario?.id]);
+      .then((value) => {
+        if (!ignore) setEligibility(value);
+      })
+      .catch((e) => {
+        if (!ignore) setError(e.message);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [
+    care,
+    destination,
+    when,
+    replicationId,
+    ctx.scenario?.id,
+    ctx.run?.scenario_revision_id,
+  ]);
   return (
     <Modal title="Plan a bounded partner transfer" wide onClose={onClose}>
       <div className="transfer-layout">
@@ -126,14 +147,16 @@ export default function TransferPlanner({
               />
             </label>
           </div>
-          <label>
-            Earliest request time (UTC)
-            <input
-              type="datetime-local"
-              value={when}
-              onChange={(e) => setWhen(e.target.value)}
-            />
-          </label>
+          <ZonedDateTimeInput
+            label="Earliest request time"
+            value={when}
+            onChange={setWhen}
+            timeZone={
+              (ctx.resultScenario || ctx.scenario)?.timezone ||
+              "America/Chicago"
+            }
+            required
+          />
         </div>
         <div className="transfer-preview">
           <span className="eyebrow">DECLARED CAPABILITY CHECK</span>
@@ -203,6 +226,7 @@ export default function TransferPlanner({
           disabled={
             ctx.canWrite === false ||
             !!ctx.busy ||
+            !when ||
             !route ||
             !units.length ||
             !eligibility?.eligible

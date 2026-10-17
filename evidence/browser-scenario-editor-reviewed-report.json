@@ -1,0 +1,835 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "scenario-families.spec.ts",
+      "scenario-curves.spec.ts",
+      "release-workflows.spec.ts",
+      "workflows.spec.ts",
+      "--grep",
+      "all visual|scenario resource forms|custom imported|cohort edit|configure, compute, inspect|ICU transfer",
+      "--output=../../output/playwright/scenario-final-reviewed"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true,
+          "deviceScaleFactor": 1
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "../../.venv/bin/python ../../scripts/dev.py",
+      "url": "http://127.0.0.1:5173/api/health/ready",
+      "reuseExistingServer": true,
+      "timeout": 90000
+    }
+  },
+  "suites": [
+    {
+      "title": "release-workflows.spec.ts",
+      "file": "release-workflows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "ICU transfer to a clinic is rejected and ward transfer reserves and travels",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11295,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:45:02.600Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "icu-clinic-rejected",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/release-workflows-ICU-tran-d2d76-ansfer-reserves-and-travels-desktop/attachments/icu-clinic-rejected-eff49485e2851fc13f2dff97db59f892113f8777.png"
+                    },
+                    {
+                      "name": "bounded-transfer-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/release-workflows-ICU-tran-d2d76-ansfer-reserves-and-travels-desktop/attachments/bounded-transfer-replay-ad715136d2a46b3cc3ce6d029c981f9bf801dd52.png"
+                    },
+                    {
+                      "name": "bounded-transfer-replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/release-workflows-ICU-tran-d2d76-ansfer-reserves-and-travels-desktop/attachments/bounded-transfer-replay-middle-eefdfae678780a001321b26d5eefcb71b864d628.png"
+                    },
+                    {
+                      "name": "bounded-transfer-replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/release-workflows-ICU-tran-d2d76-ansfer-reserves-and-travels-desktop/attachments/bounded-transfer-replay-lower-94116b49d0f564fd9437725ea2e12bcdc17e6e39.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5b2659e0555fb56cf346-6819570487f7dc672aa7",
+          "file": "release-workflows.spec.ts",
+          "line": 143,
+          "column": 1
+        },
+        {
+          "title": "ICU transfer to a clinic is rejected and ward transfer reserves and travels",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Detailed transfer semantics run once.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/release-workflows.spec.ts",
+                    "line": 146,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 223,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:46:00.639Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Detailed transfer semantics run once.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/release-workflows.spec.ts",
+                        "line": 146,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "5b2659e0555fb56cf346-9789809bc413be82c5c0",
+          "file": "release-workflows.spec.ts",
+          "line": 143,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "scenario-curves.spec.ts",
+      "file": "scenario-curves.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "cohort edit and stream changes retain compatible visible mix semantics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1891,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:45:14.221Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-3fd00fe26a1ea40c86d2",
+          "file": "scenario-curves.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "custom imported curves, multiple windows and timeline moves retain exact inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2329,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:45:16.118Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-d88782f0775bab6f386e",
+          "file": "scenario-curves.spec.ts",
+          "line": 82,
+          "column": 1
+        },
+        {
+          "title": "cohort edit and stream changes retain compatible visible mix semantics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts",
+                    "line": 7,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 115,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:46:01.128Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-6d6e0acf526bb4a862db",
+          "file": "scenario-curves.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "custom imported curves, multiple windows and timeline moves retain exact inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts",
+                    "line": 85,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 118,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:46:01.250Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts",
+                        "line": 85,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-03a74e7050832fd5c075",
+          "file": "scenario-curves.spec.ts",
+          "line": 82,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "scenario-families.spec.ts",
+      "file": "scenario-families.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "all visual scenario families save canonical inputs and compute actual effects",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11973,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:45:18.463Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "scenario-all-families",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-a5309d9ace6dccfa16299efa46556b479f204cc3.png"
+                    },
+                    {
+                      "name": "scenario-all-families-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-middle-6e3023afc979299fb3ff8b65b539ce0547ff90b5.png"
+                    },
+                    {
+                      "name": "scenario-all-families-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-lower-ff5e471998697a314c0bec490d83189e280038d0.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-2cad9db3e046a52776e6",
+          "file": "scenario-families.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "scenario resource forms and independent inspector remain keyboard accessible on mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                    "line": 301,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 180,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:45:30.440Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                        "line": 301,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-4ead91729ce654e1385e",
+          "file": "scenario-families.spec.ts",
+          "line": 298,
+          "column": 1
+        },
+        {
+          "title": "all visual scenario families save canonical inputs and compute actual effects",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Desktop computes the complete scenario; mobile form access is checked separately.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                    "line": 16,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 114,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:46:01.382Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Desktop computes the complete scenario; mobile form access is checked separately.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
+                        "line": 16,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-768564f739d0a01320df",
+          "file": "scenario-families.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "scenario resource forms and independent inspector remain keyboard accessible on mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1609,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:46:01.503Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "scenario-mobile-resource-form",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/scenario-families-scenario-23fda-yboard-accessible-on-mobile-mobile/attachments/scenario-mobile-resource-form-07feca31094017957a92e1dcc72f845e6ffeaf41.png"
+                    },
+                    {
+                      "name": "scenario-mobile-resource-form-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/scenario-families-scenario-23fda-yboard-accessible-on-mobile-mobile/attachments/scenario-mobile-resource-form-middle-3561852cb3274eda6b7bb4051dc57aba6619e795.png"
+                    },
+                    {
+                      "name": "scenario-mobile-resource-form-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/scenario-families-scenario-23fda-yboard-accessible-on-mobile-mobile/attachments/scenario-mobile-resource-form-lower-244ffa9d3b3063cf8acde88f43ab3bd7b71620f6.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-2c36f40e3fc60e197e4b",
+          "file": "scenario-families.spec.ts",
+          "line": 298,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "workflows.spec.ts",
+      "file": "workflows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "configure, compute, inspect, compare, update, replay and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29584,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "workflow: created scenario_884319e5ebbb40919fbd\n"
+                    },
+                    {
+                      "text": "workflow: scenario screen loaded\n"
+                    },
+                    {
+                      "text": "workflow: fields configured\n"
+                    },
+                    {
+                      "text": "workflow: submit clicked\n"
+                    },
+                    {
+                      "text": "workflow: queued run_3f083f39b6f542d29cd5\n"
+                    },
+                    {
+                      "text": "workflow: run complete\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:45:30.635Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workflow-patient",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-291190d91ce3401a8bd656ea15497ca476ff7249.png"
+                    },
+                    {
+                      "name": "workflow-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-96d39cb25af203ec4c1a59628039e3ee8f0eafe1.png"
+                    },
+                    {
+                      "name": "workflow-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-2fa5aafe4b0256a125d493914754a374dbff722f.png"
+                    },
+                    {
+                      "name": "workflow-replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-middle-9a95af10a9670c3b26f0862e87feb747631b059f.png"
+                    },
+                    {
+                      "name": "workflow-replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/scenario-final-reviewed/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-lower-71e9bbf9ca99579776e320dd520a161fae9fa296.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "26aa48cee8983222f549-582cfc57ecd6a6d378f0",
+          "file": "workflows.spec.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "title": "configure, compute, inspect, compare, update, replay and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Full computational workflow runs on desktop; every screen is audited on mobile separately.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/workflows.spec.ts",
+                    "line": 18,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 136,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T11:46:03.125Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Full computational workflow runs on desktop; every screen is audited on mobile separately.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/workflows.spec.ts",
+                        "line": 18,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "26aa48cee8983222f549-da5f08b83b9cff868160",
+          "file": "workflows.spec.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T11:45:02.314Z",
+    "duration": 61010.144,
+    "expected": 6,
+    "skipped": 6,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -260,7 +260,7 @@ def context(job=None, **values):
     return {**base, **values}
 
 
-def job_view(job):
+def job_view(job, *, include_scenario=False):
     scenario = job.payload.get("scenario", {})
     end = scenario.get("end_at")
     if not end and scenario.get("start_at"):
@@ -303,6 +303,37 @@ def job_view(job):
         "error": job.error,
         "failure_message": job.error,
         "compute_estimate": job.payload.get("compute_estimate"),
+        **(
+            {
+                "scenario_context": {
+                    **{
+                        key: copy.deepcopy(scenario[key])
+                        for key in (
+                            "id",
+                            "name",
+                            "dataset_version_id",
+                            "start_at",
+                            "end_at",
+                            "timezone",
+                            "horizon_calendar_days",
+                            "base_seed",
+                            "replications",
+                            "conditions",
+                            "interventions",
+                            "updates",
+                            "measurement_start_at",
+                            "state_origin",
+                            "branch_at",
+                        )
+                        if key in scenario
+                    },
+                    "scenario_revision_id": job.payload.get("scenario_revision_id"),
+                    "revision": job.payload.get("source_draft_revision"),
+                }
+            }
+            if include_scenario
+            else {}
+        ),
         "warnings": job.result.get("warnings", []),
         "manifest": job.result.get("manifest"),
         "context": context(job),
@@ -453,6 +484,27 @@ def freeze(session, user, scenario):
     identity = uid("revision")
     value.update(id=identity, scenario_id=value["id"], input_sha256=digest(value), frozen_at=now())
     return add_document(session, user["workspace_id"], "scenario_revision", value)
+
+
+def preserve_operational_updates(payload, existing=None):
+    """Draft edits may change plans; reports enter only through the append-only update workflow."""
+    if "updates" not in payload:
+        return
+    incoming = payload["updates"]
+    if not isinstance(incoming, list):
+        fail(422, "Supply an array of planned updates", "validation_failed")
+    observed = lambda values: [value for value in values if value.get("input_kind") != "planned_assumption"]
+    inherited = observed((existing or {}).get("updates", []))
+    if observed(incoming) != inherited:
+        fail(
+            422,
+            "Operational reports are immutable. Record or correct reports through Updates; scenario edits may change only planned assumptions.",
+            "operational_update_immutable",
+        )
+    identities = [value.get("update_id") or value.get("id") for value in incoming]
+    identities = [value for value in identities if value]
+    if len(identities) != len(set(identities)):
+        fail(422, "Scenario update identifiers must be unique", "validation_failed")
 
 
 def enforce_job_quota(session, user):
@@ -918,9 +970,28 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         return serialize(row)
 
     @router.get("/workspaces/{workspace_id}/summary")
-    def summary(workspace_id: str, user=Depends(current_user), session=Depends(db)):
+    def summary(
+        workspace_id: str,
+        scenario_id: str | None = Query(default=None, min_length=1, max_length=96),
+        run_group_id: str | None = Query(default=None, min_length=1, max_length=96),
+        user=Depends(current_user),
+        session=Depends(db),
+    ):
         if workspace_id != user["workspace_id"]:
             fail(404, "Workspace not found")
+        # Resolve URL context before loading a dataset. A selected historical run
+        # retains its frozen dataset even after its scenario draft is edited.
+        requested_run = owned_job(session, run_group_id, user, "run") if run_group_id else None
+        requested_scenario_id = scenario_id or (
+            requested_run.payload.get("scenario_id") if requested_run else None
+        )
+        requested_scenario = (
+            owned(session, requested_scenario_id, "scenario", user) if requested_scenario_id else None
+        )
+        if requested_run and (
+            requested_scenario is None or requested_run.payload.get("scenario_id") != requested_scenario.id
+        ):
+            fail(422, "The requested run does not belong to this scenario", "context_mismatch")
         datasets = dataset_cards(session, workspace_id, limit=200)
         scenarios = [x for x in documents(session, user, "scenario") if not x.data.get("archived")]
         runs = list(
@@ -931,22 +1002,14 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                 .limit(20)
             )
         )
-        scenario = scenarios[0] if scenarios else None
-        dataset_id = (
-            scenario.data.get("dataset_version_id")
-            if scenario
-            else datasets["items"][0]["id"]
-            if datasets["items"]
-            else None
-        )
-        dataset = cached_dataset_snapshot(session, dataset_id, user) if dataset_id else None
+        scenario = requested_scenario or (scenarios[0] if scenarios else None)
         comparison_runs = {
             p["run_group_id"]
             for comparison in documents(session, user, "comparison")
             for p in comparison.data.get("plans", [])
             if p.get("run_group_id")
         }
-        run = (
+        run = requested_run or (
             session.scalar(
                 select(Job)
                 .where(
@@ -962,6 +1025,20 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             if scenario
             else None
         )
+        dataset_id = (
+            (run.payload.get("dataset_version_id") if run else None)
+            or (scenario.data.get("dataset_version_id") if scenario else None)
+            or (datasets["items"][0]["id"] if datasets["items"] else None)
+        )
+        if requested_run and not requested_run.payload.get("dataset_version_id"):
+            fail(422, "The requested run has no frozen dataset", "context_mismatch")
+        dataset = cached_dataset_snapshot(session, dataset_id, user) if dataset_id else None
+        draft_dataset_id = scenario.data.get("dataset_version_id") if scenario else None
+        draft_dataset = (
+            cached_dataset_snapshot(session, draft_dataset_id, user)
+            if draft_dataset_id and draft_dataset_id != dataset_id
+            else None
+        )
         inventory = (
             {key: dataset["collection_counts"].get(key, len(dataset.get(key, []))) for key in COLLECTIONS}
             if dataset
@@ -975,9 +1052,10 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "scenarios": [serialize(x) for x in scenarios],
             "runs": [job_view(x) for x in runs],
             "dataset": dataset,
+            "draft_dataset": draft_dataset,
             "scenario": serialize(scenario) if scenario else None,
-            "run": job_view(run) if run else None,
-            "run_group": job_view(run) if run else None,
+            "run": job_view(run, include_scenario=True) if run else None,
+            "run_group": job_view(run, include_scenario=True) if run else None,
             "inventory": inventory,
             "context": context(),
         }
@@ -1067,7 +1145,15 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
 
     @router.get("/datasets/{identity}/units/{unit_id}/schedule")
     def dataset_unit_schedule(
-        identity: str, unit_id: str, at: str | None = None, user=Depends(current_user), session=Depends(db)
+        identity: str,
+        unit_id: str,
+        at: str | None = None,
+        end_at: str | None = None,
+        role: str | None = Query(default=None, min_length=1, max_length=128),
+        limit: int = Query(default=100, ge=1, le=500),
+        cursor: str | None = None,
+        user=Depends(current_user),
+        session=Depends(db),
     ):
         dataset = owned(session, identity, "dataset", user).data
         unit = next((u for u in dataset.get("units", []) if u["unit_id"] == unit_id), None)
@@ -1075,16 +1161,33 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             fail(404, "Unit does not belong to this dataset")
         try:
             instant = date(at or dataset["snapshot_at"])
+            end = date(end_at) if end_at is not None else None
         except (ValueError, TypeError):
-            fail(422, "Schedule time requires an explicit UTC offset")
+            fail(422, "Schedule times require explicit UTC offsets")
+        if end is not None and end <= instant:
+            fail(422, "Schedule end_at must be after at")
+        try:
+            offset = int(cursor) if cursor is not None else 0
+        except ValueError:
+            fail(422, "Invalid cursor")
+        if offset < 0:
+            fail(422, "Invalid cursor")
         roster = {s["staff_id"]: s for s in dataset.get("staff", [])}
         assignments = sorted(
             (
                 a
                 for a in dataset.get("assignments", [])
-                if a.get("unit_id") == unit_id and date(a["end_at"]) > instant
+                if a.get("unit_id") == unit_id
+                and date(a["end_at"]) > instant
+                and (end is None or date(a["start_at"]) < end)
+                and (role is None or roster.get(a["staff_id"], {}).get("role") == role)
             ),
-            key=lambda a: (a["start_at"], a["staff_id"]),
+            key=lambda a: (
+                date(a["start_at"]),
+                a["staff_id"],
+                date(a["end_at"]),
+                a.get("assignment_id") or "",
+            ),
         )
         return {
             "unit": unit,
@@ -1094,11 +1197,14 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                     "role": roster.get(a["staff_id"], {}).get("role"),
                     "capabilities": roster.get(a["staff_id"], {}).get("capabilities", []),
                 }
-                for a in assignments[:100]
+                for a in assignments[offset : offset + limit]
             ],
             "total": len(assignments),
+            "next_cursor": str(offset + limit) if offset + limit < len(assignments) else None,
             "source": "declared_dataset_schedule",
             "at": instant.isoformat(),
+            "end_at": end.isoformat() if end is not None else None,
+            "role": role,
             "policy": next(
                 (
                     p
@@ -1611,6 +1717,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         previous = idempotent(session, user, "scenarios", key, payload)
         if previous:
             return serialize(owned(session, previous, "scenario", user))
+        preserve_operational_updates(payload)
         dataset = owned(session, payload.get("dataset_version_id"), "dataset", user)
         value = normalize_conditions(scenario_defaults(payload, dataset.data), dataset.data)
         value["id"] = uid("scenario")
@@ -1709,6 +1816,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                 "validation_failed",
                 [{"field": key, "message": "Not editable"} for key in set(payload) - allowed],
             )
+        preserve_operational_updates(payload, row.data)
         value = {**row.data, **payload}
         dataset = owned(session, value["dataset_version_id"], "dataset", user)
         value = normalize_conditions(value, dataset.data)
@@ -1828,6 +1936,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         if payload.get("scenario_id"):
             scenario = owned(session, payload["scenario_id"], "scenario", user)
         elif payload.get("scenario"):
+            preserve_operational_updates(payload["scenario"])
             dataset = owned(session, payload["scenario"].get("dataset_version_id"), "dataset", user)
             value = scenario_defaults(payload["scenario"], dataset.data)
             value["id"] = uid("scenario")
@@ -1841,7 +1950,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
 
     @router.get("/run-groups/{identity}", response_model=JobView)
     def get_run_group(identity: str, user=Depends(current_user), session=Depends(db)):
-        return job_view(owned_job(session, identity, user, "run"))
+        return job_view(owned_job(session, identity, user, "run"), include_scenario=True)
 
     @router.post("/run-groups/{identity}/cancel")
     def cancel_run(identity: str, user=Depends(writer), session=Depends(db)):

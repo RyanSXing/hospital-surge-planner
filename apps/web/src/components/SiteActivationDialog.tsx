@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Boxes, Building2, Clock3, Users } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import type { Intervention } from "../api-contracts";
-import { api, atDay, fmt, post } from "../api";
+import { api, atDay, fmt, localDate, post } from "../api";
 import { Badge, Busy, Button, ErrorBox, Modal } from "./ui";
+import { ZonedDateTimeInput } from "./ZonedDateTimeInput";
+import { utcMinute } from "../zonedTime";
 
 const fid = (row: Entity) => String(row.facility_id || row.id);
 const uid = (row: Entity) => String(row.unit_id || row.id);
@@ -24,6 +26,16 @@ export default function SiteActivationDialog({
     [loading, setLoading] = useState(true),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
+  const displayTime = (instant: number | string) =>
+    localDate(new Date(instant).toISOString(), {
+      timeZone: ctx.scenario?.timezone || "America/Chicago",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZoneName: "short",
+    });
   const units = (ctx.dataset?.units || []).filter(
     (u) =>
       u.facility_id === fid(facility) &&
@@ -52,7 +64,7 @@ export default function SiteActivationDialog({
       s.unit_id === unitId &&
       ["installed", "planned"].includes(s.installation_status),
   ).length;
-  const [when, setWhen] = useState(ctx.selectedTime.slice(0, 16)),
+  const [when, setWhen] = useState(utcMinute(ctx.selectedTime)),
     [delay, setDelay] = useState(
       existing ? 0 : Number(facility.activation_minutes || 0) / 60,
     ),
@@ -403,14 +415,13 @@ export default function SiteActivationDialog({
             </label>
           ) : null}
           <div className="two-fields">
-            <label>
-              Setup begins (UTC)
-              <input
-                type="datetime-local"
-                value={when}
-                onChange={(e) => setWhen(e.target.value)}
-              />
-            </label>
+            <ZonedDateTimeInput
+              label="Setup begins"
+              value={when}
+              onChange={setWhen}
+              timeZone={ctx.scenario?.timezone || "America/Chicago"}
+              required
+            />
             <label>
               Total duration (hours)
               <input
@@ -695,25 +706,19 @@ export default function SiteActivationDialog({
             <dl className="detail-list">
               <div>
                 <dt>Ready after setup</dt>
-                <dd>
-                  {Number.isFinite(ready)
-                    ? new Date(ready).toLocaleString()
-                    : "—"}
-                </dd>
+                <dd>{Number.isFinite(ready) ? displayTime(ready) : "—"}</dd>
               </div>
               <div>
                 <dt>Earliest declared reserve shift</dt>
                 <dd>
                   {firstRoster
-                    ? new Date(firstRoster).toLocaleString()
+                    ? displayTime(firstRoster)
                     : "No qualifying roster"}
                 </dd>
               </div>
               <div>
                 <dt>Closes / begins draining</dt>
-                <dd>
-                  {Number.isFinite(end) ? new Date(end).toLocaleString() : "—"}
-                </dd>
+                <dd>{Number.isFinite(end) ? displayTime(end) : "—"}</dd>
               </div>
               <div>
                 <dt>Required transport</dt>

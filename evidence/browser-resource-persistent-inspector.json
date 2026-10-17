@@ -1,0 +1,24 @@
+{
+  "project": "mobile",
+  "run_id": "run_a7fff8cb81314fc8993f",
+  "selections": [
+    {
+      "kind": "staff",
+      "id": "STAFF-T1-WARD-A-RN-01",
+      "selected_time": "2026-10-16T05:00:00Z",
+      "reload_preserved": true
+    },
+    {
+      "kind": "equipment_pool",
+      "id": "EQ-ICU-MONITOR",
+      "selected_time": "2026-10-16T05:00:00Z",
+      "reload_preserved": true
+    },
+    {
+      "kind": "vehicle",
+      "id": "VEH-BASIC-1",
+      "selected_time": "2026-10-16T05:00:00Z",
+      "reload_preserved": true
+    }
+  ]
+}

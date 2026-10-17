@@ -1,0 +1,183 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "e2e/replay-clinical-capacity.spec.ts",
+      "--project=desktop",
+      "--output=../../output/playwright/clinical-capacity-final",
+      "--reporter=json"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/clinical-capacity-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/clinical-capacity-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/clinical-capacity-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "replay-clinical-capacity.spec.ts",
+      "file": "replay-clinical-capacity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "replay clinical capacity excludes nonclinical shelter inventory",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5429,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T14:40:39.659Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-clinical-capacity",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/clinical-capacity-final/replay-clinical-capacity-r-2610c-nclinical-shelter-inventory-desktop/attachments/replay-clinical-capacity-148831ec05a24cce9fd5a6027bde29ebd07490ee.png"
+                    },
+                    {
+                      "name": "replay-clinical-capacity-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/clinical-capacity-final/replay-clinical-capacity-r-2610c-nclinical-shelter-inventory-desktop/attachments/replay-clinical-capacity-middle-9b1694b99287fd03be7ba23aeb76040c2e2d608c.png"
+                    },
+                    {
+                      "name": "replay-clinical-capacity-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/clinical-capacity-final/replay-clinical-capacity-r-2610c-nclinical-shelter-inventory-desktop/attachments/replay-clinical-capacity-lower-73279b539fb95cff82182a78914dd4a9a1829529.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ea0ea2874c73aa059c10-605dc4577672271f6cc9",
+          "file": "replay-clinical-capacity.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T14:40:39.437Z",
+    "duration": 5991.229,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

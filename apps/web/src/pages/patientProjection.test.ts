@@ -4,9 +4,108 @@ import {
   replayZone,
   replayPresence,
   plannedReplayInterval,
+  replayClinicalInventory,
 } from "./patientProjection";
 import { patientPageQuery } from "./usePatientPage";
 describe("bounded census presentation", () => {
+  it("excludes nonclinical shelter places from the canonical ward inventory", () => {
+    const values = replayClinicalInventory(
+      [
+        {
+          kind: "ward",
+          facility_id: "main",
+          occupied: 64,
+          staffed: 80,
+          physical: 100,
+          staff_by_role: { RN: 20 },
+        },
+        {
+          kind: "ward",
+          facility_id: "east",
+          occupied: 20,
+          staffed: 24,
+          physical: 32,
+          background_occupied: 20,
+          staff_by_role: { RN: 6 },
+        },
+        {
+          kind: "ward",
+          facility_id: "west",
+          occupied: 24,
+          staffed: 28,
+          physical: 36,
+          background_occupied: 24,
+          staff_by_role: { RN: 7 },
+        },
+        {
+          kind: "shelter",
+          facility_id: "shelter",
+          occupied: 0,
+          staffed: 24,
+          physical: 24,
+          staff_by_role: { SUPPORT: 2 },
+        },
+        {
+          kind: "unknown",
+          facility_id: "main",
+          occupied: 5,
+          staffed: 10,
+          physical: 12,
+          background_occupied: 5,
+        },
+      ],
+      {},
+    );
+    expect(values).toEqual({
+      ward: {
+        occupied: 108,
+        staffed: 132,
+        physical: 168,
+        assigned: 33,
+        background: 44,
+      },
+    });
+  });
+  it("maps ICU by clinical kind before an overflow facility and keeps ward overflow separate", () => {
+    const values = replayClinicalInventory(
+      [
+        {
+          kind: "icu",
+          facility_id: "overflow",
+          occupied: 2,
+          staffed: 4,
+          physical: 4,
+        },
+        {
+          kind: "ward",
+          facility_id: "overflow",
+          occupied: 3,
+          staffed: 8,
+          physical: 12,
+        },
+        {
+          kind: "clinic",
+          facility_id: "clinic",
+          occupied: 1,
+          staffed: 8,
+          physical: 12,
+        },
+        {
+          kind: "ed",
+          facility_id: "main",
+          occupied: 12,
+          staffed: 24,
+          physical: 30,
+        },
+      ],
+      { overflow: "ward_overflow" },
+    );
+    expect(values.icu).toMatchObject({ occupied: 2, staffed: 4 });
+    expect(values.overflow).toMatchObject({ occupied: 3, staffed: 8 });
+    expect(values.clinic).toMatchObject({ occupied: 1, staffed: 8 });
+    expect(values.ed).toMatchObject({ occupied: 12, staffed: 24 });
+    expect(values.ward).toBeUndefined();
+  });
   it("places planned availability after its setup delay, with distinct identities and engine defaults", () => {
     const start = "2026-10-16T05:00:00Z",
       end = "2026-10-18T05:00:00Z";

@@ -56,5 +56,11 @@
   "page_errors": [],
   "horizontal_overflows": 0,
   "independent_review": "data_model_audit visual review and focused closure recheck; next_release_review ledger/path integrity review",
-  "remaining_concrete_visual_findings": []
+  "remaining_concrete_visual_findings": [],
+  "later_numeric_crosscheck": {
+    "finding": "Replaywardheaderincluded24nonclinicalShelterplaces:156instead132",
+    "resolved_by": "evidence/browser-replay-clinical-capacity.json",
+    "status": "fixedandindependentlyverifiedafterthishistoricalgallery",
+    "final_hosted_gallery": "pendingfinalfrontenddeployment"
+  }
 }

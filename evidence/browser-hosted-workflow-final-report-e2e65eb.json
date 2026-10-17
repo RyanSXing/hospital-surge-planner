@@ -1,0 +1,244 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=desktop",
+      "e2e/workflows.spec.ts"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "https://hospital-surge.131.186.0.156.sslip.io",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "workflows.spec.ts",
+      "file": "workflows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "configure, compute, inspect, compare, update, replay and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 140587,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "workflow: created scenario_10a00701b97d41dc9a8d\n"
+                    },
+                    {
+                      "text": "workflow: scenario screen loaded\n"
+                    },
+                    {
+                      "text": "workflow: fields configured\n"
+                    },
+                    {
+                      "text": "workflow: submit clicked\n"
+                    },
+                    {
+                      "text": "workflow: queued run_66e36400680445258e44\n"
+                    },
+                    {
+                      "text": "workflow: run complete\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T10:55:51.709Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workflow-patient",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-291190d91ce3401a8bd656ea15497ca476ff7249.png"
+                    },
+                    {
+                      "name": "workflow-patient-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-middle-7d4b25861d3bac29849fd3035c45a5070cfdb395.png"
+                    },
+                    {
+                      "name": "workflow-patient-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-lower-a8e496a3447d9b26146dcc1c405c7352d524124c.png"
+                    },
+                    {
+                      "name": "workflow-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-96d39cb25af203ec4c1a59628039e3ee8f0eafe1.png"
+                    },
+                    {
+                      "name": "workflow-comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-middle-a1cc304714fe6f7fcb4a24869f61a04719742f13.png"
+                    },
+                    {
+                      "name": "workflow-comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-lower-6041d17487642e74ca24284268d9d956377d4e4d.png"
+                    },
+                    {
+                      "name": "workflow-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-2fa5aafe4b0256a125d493914754a374dbff722f.png"
+                    },
+                    {
+                      "name": "workflow-replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-middle-9a95af10a9670c3b26f0862e87feb747631b059f.png"
+                    },
+                    {
+                      "name": "workflow-replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-lower-71e9bbf9ca99579776e320dd520a161fae9fa296.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "26aa48cee8983222f549-582cfc57ecd6a6d378f0",
+          "file": "workflows.spec.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T10:55:51.470Z",
+    "duration": 141309.921,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

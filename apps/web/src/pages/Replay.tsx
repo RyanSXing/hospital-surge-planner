@@ -17,6 +17,7 @@ import {
   replayZone as zoneFor,
   replayCounts,
   replayPresence,
+  replayClinicalInventory,
 } from "./patientProjection";
 import {
   BedDouble,
@@ -269,46 +270,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       ),
     [ctx.state?.patient_groups, patients, visiblePatients, facilityTypes],
   );
-  const zoneInventory = useMemo(() => {
-    const values: Record<
-      string,
-      {
-        occupied: number;
-        staffed: number;
-        physical: number;
-        assigned: number;
-        background: number;
-      }
-    > = {};
-    for (const unit of unitsOf(ctx)) {
-      const zone =
-        unit.kind === "ed"
-          ? "ed"
-          : unit.kind === "clinic"
-            ? "clinic"
-            : facilityTypes[unit.facility_id] === "ward_overflow"
-              ? "overflow"
-              : unit.kind === "icu"
-                ? "icu"
-                : "ward";
-      const value = (values[zone] ||= {
-        occupied: 0,
-        staffed: 0,
-        physical: 0,
-        assigned: 0,
-        background: 0,
-      });
-      value.occupied += Number(unit.occupied || 0);
-      value.staffed += Number(unit.staffed || 0);
-      value.physical += Number(unit.physical || 0);
-      value.background += Number(unit.background_occupied || 0);
-      value.assigned += Object.values(unit.staff_by_role || {}).reduce<number>(
-        (total, count) => total + Number(count),
-        0,
-      );
-    }
-    return values;
-  }, [ctx.state, ctx.dataset, unavailable, facilityTypes]);
+  const zoneInventory = useMemo(
+    () => replayClinicalInventory(unitsOf(ctx), facilityTypes),
+    [ctx.state, ctx.dataset, unavailable, facilityTypes],
+  );
   const backgroundOccupants = Object.values(zoneInventory).reduce(
     (total, inventory) => total + inventory.background,
     0,

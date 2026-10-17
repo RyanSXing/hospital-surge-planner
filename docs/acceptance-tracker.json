@@ -496,10 +496,14 @@
         "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
         "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
         "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
-        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs",
+        "apps/web/src/pages/patientProjection.test.ts:canonical132-place clinical ward inventory and44 background occupants; shelter/unknown excluded, ICU precedes overflow location",
+        "evidence/frontend-tests-replay-clinical-capacity.log:87frontendtests; evidence/frontend-build-replay-clinical-capacity.log:productionbuild",
+        "evidence/browser-replay-clinical-capacity.json:actualAPI108occupied/132staffed,rendered108/132,shelter24excluded",
+        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean"
       ],
       "spec_line": 107,
-      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
+      "current_reaudit": "Closed final Replay inventory gate:explicit clinical unit-kind mapping excludes24 nonclinical shelter places;87frontendtests/build,actual132-place browserproofandindependentreviewpass.Backendunchangedfrom594-testsource."
     },
     {
       "id": "F21",
@@ -827,10 +831,14 @@
         "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
         "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
         "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
-        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs",
+        "apps/web/src/pages/patientProjection.test.ts:canonical132-place clinical ward inventory and44 background occupants; shelter/unknown excluded, ICU precedes overflow location",
+        "evidence/frontend-tests-replay-clinical-capacity.log:87frontendtests; evidence/frontend-build-replay-clinical-capacity.log:productionbuild",
+        "evidence/browser-replay-clinical-capacity.json:actualAPI108occupied/132staffed,rendered108/132,shelter24excluded",
+        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean"
       ],
       "spec_line": 1302,
-      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
+      "current_reaudit": "Closed final Replay inventory gate:explicit clinical unit-kind mapping excludes24 nonclinical shelter places;87frontendtests/build,actual132-place browserproofandindependentreviewpass.Backendunchangedfrom594-testsource."
     },
     {
       "id": "W11",
@@ -1021,10 +1029,14 @@
         "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
         "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
         "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
-        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs",
+        "apps/web/src/pages/patientProjection.test.ts:canonical132-place clinical ward inventory and44 background occupants; shelter/unknown excluded, ICU precedes overflow location",
+        "evidence/frontend-tests-replay-clinical-capacity.log:87frontendtests; evidence/frontend-build-replay-clinical-capacity.log:productionbuild",
+        "evidence/browser-replay-clinical-capacity.json:actualAPI108occupied/132staffed,rendered108/132,shelter24excluded",
+        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean"
       ],
       "spec_line": 1832,
-      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
+      "current_reaudit": "Closed final Replay inventory gate:explicit clinical unit-kind mapping excludes24 nonclinical shelter places;87frontendtests/build,actual132-place browserproofandindependentreviewpass.Backendunchangedfrom594-testsource."
     },
     {
       "id": "E11",
@@ -1100,5 +1112,5 @@
     }
   ],
   "last_reviewed_at": "2026-10-17",
-  "verification_scope": "Final observed-clock source passes594 full backend tests,73 focused continuation/snapshot/reset checks, independent review and3 post-patch desktop browser cases/3 deliberate mobile skips. Frontend85 tests/build and prior17-case desktop/mobile matrix remain scoped to unchanged frontend source. All P0/P1 functional findings are closed locally. F26 remains pending the next immutable hosted release and final recovery/annual/browser/backup gates; measured target misses are preserved, P2 deferred."
+  "verification_scope": "All P0/P1 local functional gates closed. Backend remains byte-identical to reviewed7a2 source with594fulltests and73focusedchecks;frontendpasses87tests/build andactualReplay132-placebrowserproof.The preceding17-case desktop/mobile matrix and3precise-reset/Replay/full30-day post-clock cases retain scoped evidence. Final immutable hosted deployment/recovery/annual/browser/backup gates remain underF26; measured target misses retained, P2deferred."
 }

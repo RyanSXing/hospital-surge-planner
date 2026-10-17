@@ -2,6 +2,10 @@
 
 Reviewed on 2026-10-17 against the complete P0/P1 specification. The initial implementation findings have been repaired and are retained in [the historical audit](audits/initial-integration-findings.md). They must not be read as current defects. The [acceptance ledger](acceptance-tracker.json) records the evidence and any acceptance-specific checks still outstanding. P2 remains deferred; P0/P1 scope has not been reduced.
 
+## Closed Replay clinical-inventory display gate
+
+A final numeric cross-check found Replay's fallback included24 nonclinical shelter places in ward capacity. The explicit clinical inventory helper now aggregates ward/ICU/ED/clinic by declared kind, maps only ward overflow and excludes shelter/unknown from every clinical total. Actual browser evidence matches state108occupied/132staffed/44background and excludes the invalid108/156 label.87frontendtests and the production build pass; independent review is clean. Overview and Compare were already correct. Backend bytes remain identical to the594-test7a2source; F20/W10/E10 are verified again. The final hosted gallery and gates use the next immutable frontend release.
+
 ## Closed observed-clock gate
 
 The post6feb bounded audit reproduced stale/missing active-stage residuals in actual exported states. The frozen repair derives an exact expected-end residual for active ED, inpatient, clinic and ordinary reserved-source stages without changing transit or unstarted future service. Reserved patients completing before or at pickup cancel first and release slot/equipment/vehicle commitments; optional stage_status remains supported. All26 new cases,73 focused checks, independent review and the **594-test complete backend suite** pass. Three post-patch desktop browser cases pass (three deliberate mobile skips), including exact-offset reset and the complete30-day workflow. Complete raw traced outputs match6feb on both canonical generated inputs (`evidence/observed-clock-model-oracle.json`). F08/F19/F20, W09/W10 and E09/E10 are locally verified again; next-release hosted gates remain separate.

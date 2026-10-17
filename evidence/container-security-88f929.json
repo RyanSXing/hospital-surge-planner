@@ -34,7 +34,7 @@
       "high": 0,
       "critical": 0,
       "fixed_available": 0,
-      "report": "evidence/container-scans/hospital-surge-planner-postgres-17.11-patched.json"
+      "report": "evidence/container-scans/hospital-surge-planner-postgres-17.11-patched-88f929.json"
     },
     {
       "image": "hospital-surge-planner-redis:7.4.11-patched",
@@ -45,7 +45,7 @@
       "high": 0,
       "critical": 0,
       "fixed_available": 0,
-      "report": "evidence/container-scans/hospital-surge-planner-redis-7.4.11-patched.json"
+      "report": "evidence/container-scans/hospital-surge-planner-redis-7.4.11-patched-88f929.json"
     },
     {
       "image": "hospital-surge-planner-caddy:2.11.7-patched",
@@ -56,7 +56,7 @@
       "high": 0,
       "critical": 0,
       "fixed_available": 0,
-      "report": "evidence/container-scans/hospital-surge-planner-caddy-2.11.7-patched.json"
+      "report": "evidence/container-scans/hospital-surge-planner-caddy-2.11.7-patched-88f929.json"
     }
   ]
 }

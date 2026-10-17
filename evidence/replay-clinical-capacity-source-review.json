@@ -1,0 +1,17 @@
+{
+  "recorded_at": "2026-10-17T14:42:17.152350+00:00",
+  "scope": "Frontend-only Replay clinical inventory repair; complete backend source is byte-identical to reviewed7a2 deployment.",
+  "backend_unchanged_from_commit": "7a2dda15bc2ecd9c5ce1e0bbab2cb33ed5751d9b",
+  "backend_files": 33,
+  "backend_component_sha256": "be7c45b8efd8a977aa7d99cabd2c9ae3485a59a258f298e04956f6e064dc03c6",
+  "backend_git_diff_empty": true,
+  "backend_evidence": "evidence/backend-pytest-observed-clock-frozen.log:594passed",
+  "frontend_evidence": [
+    "evidence/frontend-tests-replay-clinical-capacity.log:87passed",
+    "evidence/frontend-build-replay-clinical-capacity.log:productionbuildpassed",
+    "evidence/browser-replay-clinical-capacity-report.json:1passed"
+  ],
+  "new_rendered_ward_capacity": "108/132",
+  "excluded_nonclinical_shelter_places": 24,
+  "independent_review": "next_release_review:helper,relatedOverview/Comparefilters,units,buildandactualbrowserproofclean"
+}

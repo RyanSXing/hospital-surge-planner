@@ -1,4 +1,48 @@
 import type { Entity } from "../types";
+
+export function replayClinicalInventory(
+  units: Entity[],
+  facilityTypes: Record<string, string>,
+) {
+  const values: Record<
+    string,
+    {
+      occupied: number;
+      staffed: number;
+      physical: number;
+      assigned: number;
+      background: number;
+    }
+  > = {};
+  for (const unit of units) {
+    const zone =
+      unit.kind === "ed" || unit.kind === "clinic" || unit.kind === "icu"
+        ? unit.kind
+        : unit.kind === "ward"
+          ? facilityTypes[unit.facility_id] === "ward_overflow"
+            ? "overflow"
+            : "ward"
+          : null;
+    if (!zone) continue;
+    const value = (values[zone] ||= {
+      occupied: 0,
+      staffed: 0,
+      physical: 0,
+      assigned: 0,
+      background: 0,
+    });
+    value.occupied += Number(unit.occupied || 0);
+    value.staffed += Number(unit.staffed || 0);
+    value.physical += Number(unit.physical || 0);
+    value.background += Number(unit.background_occupied || 0);
+    value.assigned += Object.values(unit.staff_by_role || {}).reduce<number>(
+      (total, count) => total + Number(count),
+      0,
+    );
+  }
+  return values;
+}
+
 export function plannedReplayInterval(
   plan: Entity,
   index: number,

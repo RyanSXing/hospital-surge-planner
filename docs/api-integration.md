@@ -57,3 +57,21 @@ Dataset library cards select only metadata JSON fields in SQL and paginate befor
 ## Synthetic incident provenance
 
 Patient `source_type` retains the canonical enum: `initial_census`, `baseline_arrival`, `surge_arrival`, or `reported_batch`. One-time synthetic incident conditions use `source_type: "surge_arrival"` and optional runtime metadata `arrival_origin: "synthetic_incident"`, `input_kind: "planned_assumption"`. This metadata is retained in patient trajectories, reconstructed state, arrival events, API patient details and exports. The explicit incident care mix is independent of the exogenous arrival-stream override. Actual reported batches retain `source_type: "reported_batch"`. Older traces containing the former `synthetic_incident` source value remain readable; new traces use the canonical enum.
+
+### Reported arrival resource profiles
+
+An `arrival_batch` operational payload may include `resource_profile_mix` as conditional, normalized maps:
+
+```json
+{"discharge":{"RP-ED-BASIC":1},"ward":{"RP-WARD-BASIC":0.75,"RP-WARD-OXYGEN":0.25},"icu":{"RP-ICU-MONITORED":0.6666666666666666,"RP-ICU-VENTILATED":0.3333333333333333}}
+```
+
+Each supplied care map must be nonempty, contain finite nonnegative fractions totaling one, and reference declared profiles whose stage is respectively `ed`, `ward`, or `icu`. The care group is sampled from `care_mix`; its resource profile is then sampled independently from this conditional map. Ward and ICU maps describe the inpatient stage, while the discharge map describes ED assessment. Omitting the field, or an individual care map, retains the dataset's declared selection rules. The report form resolves and saves explicit editable maps for every positive-weight care group. The original report and any correction preserve their own immutable payloads.
+
+`facility_id` must match the selected `entry_stream_id` destination (`ED_MAIN` is the legacy default when the stream is omitted). A batch cannot silently reroute to another facility. Unknown profiles, incompatible stages, invalid fractions, and facility/stream mismatches return field-level validation errors before a report or job is created.
+
+### Editable demand and derived summaries
+
+Dataset drafts edit `entry_streams` and `cohorts` as the authoritative demand inputs. `arrival_profiles` (or its `baseline` alias), `hour_of_day_baseline`, and `weekday_baseline` are read-only derived collections. Stream rates sum across enabled streams; ED admission and ICU fractions use their corresponding rate-weighted disposition denominators. Hourly and weekday summaries are daily-rate-weighted averages, without changing any stream's independent profile. At zero demand, display profiles use the mean enabled-stream profile, then all declared streams; with no streams, an existing valid profile or uniform default is retained. Zero disposition denominators produce zero probabilities. Cohort-mixture arrays mirror each care group's `selection_weight` in stable dataset order; explicit per-stream pathway overrides remain independent.
+
+Draft upserts preserve existing stream/cohort order and synchronize these summaries. Invalid intermediate edits remain reviewable with structured validation errors and cannot commit; no weights are normalized silently. Imports are never repaired: their supplied summaries must already match the authoritative inputs.

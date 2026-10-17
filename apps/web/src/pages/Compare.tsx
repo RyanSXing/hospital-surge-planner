@@ -752,7 +752,7 @@ export default function Compare({ ctx }: { ctx: PlanningContext }) {
               colors={plottedPlans.map((p) => p.chartColor)}
               lineDashes={plottedPlans.map((p) => p.chartDash)}
               bandKey={bandPlan}
-              height={80}
+              height={128}
               showBand={bandPlan !== "none"}
               selected={chartRows.reduce(
                 (best: number, row: Entity, index: number) =>

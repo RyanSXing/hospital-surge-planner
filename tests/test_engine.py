@@ -2,6 +2,7 @@ import copy
 from itertools import pairwise
 
 import pytest
+from surge_api.demand_summary import synchronize_demand_summary
 from surge_engine import *
 from surge_engine.common import dt
 
@@ -20,6 +21,9 @@ def zero(d):
     data = copy.deepcopy(d)
     data["arrival_profiles"]["ed_arrivals_per_local_day"] = 0
     data["arrival_profiles"]["direct_ward_arrivals_per_local_day"] = 0
+    for stream in data["entry_streams"]:
+        stream["expected_arrivals_per_local_day"] = 0
+    synchronize_demand_summary(data)
     return data
 
 
@@ -284,6 +288,7 @@ def test_custom_clinic_target_and_quantity(planning):
     d = copy.deepcopy(planning)
     facility = next(f for f in d["facilities"] if f["facility_id"] == "FAC-CLINIC-NORTH")
     facility["facility_id"] = "FAC-CUSTOM-CLINIC"
+    d["clinic_policies"][0]["site_id"] = "FAC-CUSTOM-CLINIC"
     unit = next(u for u in d["units"] if u["unit_id"] == "UNIT-CLINIC-NORTH")
     unit["unit_id"] = "UNIT-CUSTOM-CLINIC"
     unit["facility_id"] = "FAC-CUSTOM-CLINIC"

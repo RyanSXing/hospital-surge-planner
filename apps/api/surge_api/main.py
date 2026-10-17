@@ -84,6 +84,67 @@ def fail(status, message, code="invalid_request", fields=None):
     raise HTTPException(status, {"code": code, "message": message, "fields": fields or []})
 
 
+def require_recomputable_run(run, session=None, user=None):
+    from .model_versions import ModelVersionMismatch, require_current_model
+
+    try:
+        require_current_model(run.payload)
+    except ModelVersionMismatch as error:
+        fail(
+            409,
+            str(error),
+            error.code,
+            [
+                {
+                    "field": "model_version",
+                    "frozen_model_version": error.frozen,
+                    "current_model_version": error.current,
+                    "run_group_id": run.id,
+                    "action": "clone_scenario_and_run_current_model",
+                }
+            ],
+        )
+    if session is not None and user is not None:
+        branch_parent = scenario_branch_parent(session, user, run.payload.get("scenario", {}))
+        if branch_parent:
+            require_recomputable_run(branch_parent)
+
+
+def scenario_branch_parent(session, user, scenario):
+    if scenario.get("state_origin") == "observed_reset":
+        from .model_versions import InvalidResetProvenance, require_complete_reset
+
+        try:
+            require_complete_reset(scenario, session, user["workspace_id"])
+        except InvalidResetProvenance as error:
+            fail(
+                422,
+                str(error),
+                "INCOMPLETE_RESET_SNAPSHOT",
+                [{"field": "reconciliation", "message": str(error)}],
+            )
+        return None
+    parent_id = scenario.get("parent_run_group_id")
+    if not parent_id and scenario.get("parent_replication_id"):
+        parent_id = owned(session, scenario["parent_replication_id"], "replication", user).data.get(
+            "run_group_id"
+        )
+    return owned_job(session, parent_id, user, "run") if parent_id else None
+
+
+def reject_client_provenance(payload):
+    from .model_versions import SCENARIO_PROVENANCE_FIELDS
+
+    fields = sorted(set(payload) & SCENARIO_PROVENANCE_FIELDS)
+    if fields:
+        fail(
+            422,
+            "Scenario provenance is created by the update/reset or clone workflow",
+            "SERVER_OWNED_PROVENANCE",
+            [{"field": field, "message": "Server-owned provenance is not editable"} for field in fields],
+        )
+
+
 def db(request: Request):
     with request.app.state.Session() as session:
         yield session
@@ -543,6 +604,9 @@ def enqueue_run(session, user, scenario, replications=None):
         scenario.revision if isinstance(scenario, Document) else scenario.get("_source_draft_revision")
     )
     value = copy.deepcopy(scenario.data if isinstance(scenario, Document) else scenario)
+    branch_parent = scenario_branch_parent(session, user, value)
+    if branch_parent:
+        require_recomputable_run(branch_parent)
     if replications is not None:
         value["replications"] = replications
     dataset = owned(session, value["dataset_version_id"], "dataset", user)
@@ -1271,9 +1335,23 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         value = copy.deepcopy(row.data)
         if len(payload.get("operations", [])) > 500:
             fail(422, "At most 500 entity operations are allowed per request")
+        derived_demand = {"arrival_profiles", "baseline", "hour_of_day_baseline", "weekday_baseline"}
         for operation in payload.get("operations", []):
             collection = operation.get("collection")
             action = operation.get("action", operation.get("operation", "upsert"))
+            if collection in derived_demand:
+                fail(
+                    422,
+                    "Demand summaries are read-only; edit entry_streams instead",
+                    fields=[
+                        {
+                            "file": collection,
+                            "row": 0,
+                            "field": "collection",
+                            "message": "Derived from entry_streams; edit the authoritative entry stream",
+                        }
+                    ],
+                )
             if collection not in COLLECTIONS or action not in {"upsert", "delete"}:
                 fail(422, "Invalid entity operation")
             entity = operation.get("entity", operation.get("value", {}))
@@ -1353,14 +1431,44 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             )
             if entity_id is None:
                 fail(422, "Each entity needs a stable identifier")
-            items = [p for p in value.get(collection, []) if p.get(id_field, p.get("id")) != entity_id]
-            if action == "upsert":
-                items.append(entity)
+            previous_items = value.get(collection, [])
+            if action == "upsert" and collection in {"entry_streams", "cohorts"}:
+                exists = any(p.get(id_field, p.get("id")) == entity_id for p in previous_items)
+                items = [entity if p.get(id_field, p.get("id")) == entity_id else p for p in previous_items]
+                if not exists:
+                    items.append(entity)
+            else:
+                items = [p for p in previous_items if p.get(id_field, p.get("id")) != entity_id]
+                if action == "upsert":
+                    items.append(entity)
             value[collection] = items
             value["dirty_fields"] = sorted(set(value.get("dirty_fields", []) + [collection]))
+        demand_error = None
+        if any(
+            operation.get("collection") in {"entry_streams", "cohorts"}
+            for operation in payload.get("operations", [])
+        ):
+            from .demand_summary import synchronize_demand_summary
+
+            try:
+                synchronize_demand_summary(value)
+            except ValueError as exc:
+                demand_error = {
+                    "file": "cohorts" if str(exc).startswith("cohorts") else "entry_streams",
+                    "row": 0,
+                    "field": "demand",
+                    "message": str(exc),
+                }
+            else:
+                value["dirty_fields"] = sorted(
+                    set(value.get("dirty_fields", [])) | {name for name in derived_demand if name in value}
+                )
         from surge_engine import validate_dataset
 
         report = validate_dataset(value)
+        if demand_error:
+            report["valid"] = False
+            report["errors"].append(demand_error)
         value["validation"] = report
         mutate(session, row, value, match)
         audit(session, user, "dataset.draft_edited", row.id)
@@ -1714,6 +1822,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         session=Depends(db),
     ):
         payload = command_dict(payload)
+        reject_client_provenance(payload)
         previous = idempotent(session, user, "scenarios", key, payload)
         if previous:
             return serialize(owned(session, previous, "scenario", user))
@@ -1795,6 +1904,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         session=Depends(db),
     ):
         payload = command_dict(payload)
+        reject_client_provenance(payload)
         row = owned(session, identity, "scenario", user)
         allowed = {
             "name",
@@ -1820,6 +1930,8 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         value = {**row.data, **payload}
         dataset = owned(session, value["dataset_version_id"], "dataset", user)
         value = normalize_conditions(value, dataset.data)
+        if value.get("state_origin") == "observed_reset":
+            scenario_branch_parent(session, user, value)
         report = validate_scenario(value, dataset.data)
         if not report["valid"]:
             fail(422, "Invalid scenario", "validation_failed", report["errors"])
@@ -1907,6 +2019,35 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "archived": False,
             "created_by": user["id"],
         }
+        branch_parent = scenario_branch_parent(session, user, parent.data)
+        if branch_parent:
+            from .model_versions import ModelVersionMismatch, require_current_model
+
+            try:
+                require_current_model(branch_parent.payload)
+            except ModelVersionMismatch as mismatch:
+                cleared = {}
+                for field in (
+                    "parent_run_group_id",
+                    "parent_scenario_revision_id",
+                    "parent_replication_id",
+                    "branch_strategy",
+                    "branch_at",
+                    "branch_replication_index",
+                    "measurement_start_at",
+                    "conditional_label",
+                    "state_origin",
+                ):
+                    if field in value:
+                        cleared[field] = value.pop(field)
+                value["model_migration"] = {
+                    "source_scenario_id": parent.id,
+                    "source_parent_run_group_id": branch_parent.id,
+                    "source_model_version": mismatch.frozen,
+                    "target_model_version": mismatch.current,
+                    "note": "Fresh current-model forecast; the historical branch prefix is not reused or claimed to be preserved.",
+                    "historical_branch_context": cleared,
+                }
         row = add_document(session, user["workspace_id"], "scenario", value)
         remember(session, user, "scenario-clones", key, request_payload, row.id)
         audit(session, user, "scenario.cloned", row.id, {"parent": identity})
@@ -1936,6 +2077,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         if payload.get("scenario_id"):
             scenario = owned(session, payload["scenario_id"], "scenario", user)
         elif payload.get("scenario"):
+            reject_client_provenance(payload["scenario"])
             preserve_operational_updates(payload["scenario"])
             dataset = owned(session, payload["scenario"].get("dataset_version_id"), "dataset", user)
             value = scenario_defaults(payload["scenario"], dataset.data)
@@ -1970,6 +2112,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         session=Depends(db),
     ):
         row = owned_job(session, identity, user, "run")
+        require_recomputable_run(row, session, user)
         request_payload = {"run_group_id": identity}
         previous = idempotent(session, user, "run-retries", key, request_payload)
         if previous:
@@ -2393,6 +2536,9 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         replication = owned(session, identity, "replication", user)
         if replication.data.get("trace_artifact"):
             return {"replication_id": identity, "status": "SUCCEEDED", "ready": True}
+        require_recomputable_run(
+            owned_job(session, replication.data["run_group_id"], user, "run"), session, user
+        )
         prior = next(
             (
                 j
@@ -2788,6 +2934,29 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
 
     def check_update(payload, session, user):
         scenario = owned(session, payload.get("scenario_id"), "scenario", user)
+        basis = scenario.data
+        dataset_id = basis["dataset_version_id"]
+        if payload.get("state_origin") == "simulation_branch":
+            parent_id = payload.get("parent_run_group_id")
+            if payload.get("replication_id"):
+                replication = owned(session, payload["replication_id"], "replication", user)
+                replication_parent = replication.data.get("run_group_id")
+                if not replication_parent:
+                    fail(422, "Selected replication has no parent run", "INVALID_BRANCH_SOURCE")
+                if parent_id and parent_id != replication_parent:
+                    fail(422, "Selected replication does not belong to parent run", "INVALID_BRANCH_SOURCE")
+                parent_id = replication_parent
+            if parent_id:
+                parent = owned_job(session, parent_id, user, "run")
+                if parent.status != "SUCCEEDED" or parent.payload.get("scenario_id") != scenario.id:
+                    fail(
+                        422, "Update source must be a completed run of its scenario", "INVALID_BRANCH_SOURCE"
+                    )
+                require_recomputable_run(parent, session, user)
+                basis = parent.payload.get("scenario")
+                dataset_id = parent.payload.get("dataset_version_id")
+                if not isinstance(basis, dict) or not basis.get("start_at") or not dataset_id:
+                    fail(422, "Parent run has no complete frozen input context", "INVALID_BRANCH_SOURCE")
         errors = []
         if payload.get("type") not in UPDATE_TYPES:
             errors.append({"field": "type", "message": "Unsupported update type"})
@@ -2795,7 +2964,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             errors.append({"field": "state_origin", "message": "Choose simulation_branch or observed_reset"})
         try:
             effective = date(payload["effective_at"])
-            if effective < date(scenario.data.get("branch_at", scenario.data["start_at"])):
+            if effective < date(basis.get("branch_at", basis["start_at"])):
                 errors.append(
                     {
                         "field": "effective_at",
@@ -2806,9 +2975,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             errors.append({"field": "effective_at", "message": "Timestamp with offset required"})
         from .updates import payload_errors
 
-        errors.extend(
-            payload_errors(payload, owned(session, scenario.data["dataset_version_id"], "dataset", user).data)
-        )
+        errors.extend(payload_errors(payload, owned(session, dataset_id, "dataset", user).data))
         if errors:
             fail(422, "Update validation failed", "validation_failed", errors)
         detail = payload.get("payload", {})
@@ -2832,8 +2999,6 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                         "message": "Snapshot time must equal the update effective time",
                     }
                 )
-        if payload.get("state_origin") == "simulation_branch" and payload.get("replication_id"):
-            owned(session, payload["replication_id"], "replication", user)
         if errors:
             fail(422, "Update validation failed", "validation_failed", errors)
         return scenario
@@ -3234,10 +3399,26 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                 horizon_calendar_days=max(1, math.ceil(remaining)),
                 updates=retained,
             )
+            for field in (
+                "parent_run_group_id",
+                "parent_replication_id",
+                "source_replication_id",
+                "branch_strategy",
+                "branch_replication_index",
+                "conditional_label",
+            ):
+                value.pop(field, None)
             value["reconciliation"] = reconciliation
         else:
             replication_id = branch_source.get("source_replication_id", event.data.get("replication_id"))
-            parent_run_id = branch_source.get("parent_run_group_id")
+            recorded_parent = event.data.get("parent_run_group_id")
+            if not recorded_parent and event.data.get("replication_id"):
+                recorded_parent = owned(session, event.data["replication_id"], "replication", user).data[
+                    "run_group_id"
+                ]
+            parent_run_id = branch_source.get("parent_run_group_id", recorded_parent)
+            if recorded_parent and parent_run_id != recorded_parent:
+                fail(422, "Recorded update and requested parent run do not match", "INVALID_BRANCH_SOURCE")
             if not parent_run_id and replication_id:
                 parent_run_id = owned(session, replication_id, "replication", user).data["run_group_id"]
             if enqueue and not parent_run_id:
@@ -3262,6 +3443,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                         "Branch source must be a completed run of the parent scenario",
                         "INVALID_BRANCH_SOURCE",
                     )
+                require_recomputable_run(parent_run, session, user)
                 if parent_revision and parent_revision.id != parent_run.payload["scenario_revision_id"]:
                     fail(422, "Parent run/revision do not match", "INVALID_BRANCH_SOURCE")
                 original = parent_run.payload["scenario"]
@@ -3510,6 +3692,17 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         session.commit()
         return serialize(row)
 
+    def require_export_recomputation_supported(payload, session, user):
+        if not payload.get("run_group_id") or not payload.get("include_events", True):
+            return
+        run = owned_job(session, payload["run_group_id"], user, "run")
+        selected = payload.get("replication_id") or run.result.get("selected_replication_id")
+        replication = owned(session, selected, "replication", user) if selected else None
+        if replication and replication.data.get("run_group_id") != run.id:
+            fail(422, "Export replication must belong to the selected run")
+        if not replication or not replication.data.get("trace_artifact"):
+            require_recomputable_run(run, session, user)
+
     @router.post("/exports", status_code=202)
     def create_export(
         payload: ExportCreate = Body(...),
@@ -3613,6 +3806,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             replication = owned(session, value["replication_id"], "replication", user)
             if replication.data.get("run_group_id") != value.get("run_group_id"):
                 fail(422, "Export replication must belong to the selected run")
+        require_export_recomputation_supported(value, session, user)
         enforce_job_quota(session, user)
         row = Job(
             id=uid("export"),
@@ -3677,6 +3871,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         if previous:
             return export_view(owned_job(session, previous, user, "export"))
         original = owned_job(session, identity, user, "export")
+        require_export_recomputation_supported(original.payload, session, user)
         enforce_job_quota(session, user)
         row = Job(
             id=uid("export"),

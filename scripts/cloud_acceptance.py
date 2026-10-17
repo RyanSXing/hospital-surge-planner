@@ -1,12 +1,13 @@
 """Measure authenticated hosted execution, bounded reads, replay and verified ZIP export."""
+
 import argparse
-from datetime import datetime, timedelta, timezone
 import hashlib
 import io
 import json
-from pathlib import Path
 import time
 import zipfile
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import httpx
@@ -47,7 +48,9 @@ def main():
                 raise TimeoutError(f"Job {job['id']} exceeded verification timeout")
             if job.get("completed", 0) != reported:
                 reported = job.get("completed", 0)
-                print(json.dumps({"job": job["id"], "status": job["status"], "completed": reported}), flush=True)
+                print(
+                    json.dumps({"job": job["id"], "status": job["status"], "completed": reported}), flush=True
+                )
             time.sleep(1)
             job = call("GET", path + "/" + job["id"])
         if job["status"] != "SUCCEEDED":
@@ -64,34 +67,63 @@ def main():
             dataset = call("GET", "/datasets/" + args.dataset_id)
     if args.run_id:
         run = call("GET", "/run-groups/" + args.run_id)
-        scenario = call("GET", "/scenarios/" + run["scenario_id"])
+        scenario = run["scenario_context"]
     else:
-        start = datetime.fromisoformat(dataset["snapshot_at"].replace("Z", "+00:00"))
+        start = datetime.fromisoformat(dataset["snapshot_at"])
         end = start.astimezone(ZoneInfo(dataset["timezone"])) + timedelta(days=args.days)
-        scenario = call("POST", "/scenarios", json={
-            "name": args.name or f"OCI acceptance {args.days} days × {args.replications} replications",
-            "dataset_version_id": dataset["id"], "start_at": dataset["snapshot_at"],
-            "timezone": dataset["timezone"], "horizon_calendar_days": args.days,
-            "replications": args.replications, "base_seed": 20261016,
-            "conditions": [{"kind": "arrival_multiplier", "entry_stream_id": "ED_MAIN", "shape": "step",
-                            "surge_percent": args.surge_percent, "multiplier": 1 + args.surge_percent / 100,
-                            "start_at": dataset["snapshot_at"], "end_at": end.astimezone(timezone.utc).isoformat()}],
-            "interventions": [],
-        })
+        scenario = call(
+            "POST",
+            "/scenarios",
+            json={
+                "name": args.name or f"OCI acceptance {args.days} days × {args.replications} replications",
+                "dataset_version_id": dataset["id"],
+                "start_at": dataset["snapshot_at"],
+                "timezone": dataset["timezone"],
+                "horizon_calendar_days": args.days,
+                "replications": args.replications,
+                "base_seed": 20261016,
+                "conditions": [
+                    {
+                        "kind": "arrival_multiplier",
+                        "entry_stream_id": "ED_MAIN",
+                        "shape": "step",
+                        "surge_percent": args.surge_percent,
+                        "multiplier": 1 + args.surge_percent / 100,
+                        "start_at": dataset["snapshot_at"],
+                        "end_at": end.astimezone(UTC).isoformat(),
+                    }
+                ],
+                "interventions": [],
+            },
+        )
         run = call("POST", "/run-groups", json={"scenario_id": scenario["id"]})
     started = time.perf_counter()
     report = {
-        "recorded_at": datetime.now(timezone.utc).isoformat(), "base_url": base,
+        "recorded_at": datetime.now(UTC).isoformat(),
+        "base_url": base,
         "scope": "Actual public HTTPS, OCI A2 ARM8 physical cores/16GiB, PostgreSQL, Redis worker and private ObjectStorage",
-        "scenario_id": scenario["id"], "run_group_id": run["id"],
-        "horizon_days": scenario["horizon_calendar_days"], "replications": run.get("total", args.replications),
-        "health": health, "status": "RUNNING",
+        "scenario_id": run["scenario_id"],
+        "run_group_id": run["id"],
+        "dataset_version_id": run["dataset_version_id"],
+        "input_sha256": run["input_sha256"],
+        "scenario_revision_id": run["scenario_revision_id"],
+        "start_at": run["start_at"],
+        "end_at": run["end_at"],
+        "horizon_days": scenario["horizon_calendar_days"],
+        "replications": run.get("total", args.replications),
+        "health": health,
+        "status": "RUNNING",
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     run = wait("/run-groups", run)
-    report.update(status=run["status"], completed=run["completed"], pipeline_seconds=time.perf_counter() - started,
-                  pipeline_timing_is_resumed=args.run_id is not None, manifest=run.get("manifest"))
+    report.update(
+        status=run["status"],
+        completed=run["completed"],
+        pipeline_seconds=time.perf_counter() - started,
+        pipeline_timing_is_resumed=args.run_id is not None,
+        manifest=run.get("manifest"),
+    )
     assert all(a["backend"] == "oci" for a in run["manifest"]["artifacts"])
     if args.expected_commit:
         assert run["manifest"]["code_commit"] == args.expected_commit, run["manifest"]
@@ -109,7 +141,11 @@ def main():
             began = time.perf_counter()
             value = call("GET", path, params=params)
             samples.append(time.perf_counter() - began)
-        measurement = {"cold_seconds": samples[0], "warm_seconds": samples[1:], "warm_p95_seconds": max(samples[1:])}
+        measurement = {
+            "cold_seconds": samples[0],
+            "warm_seconds": samples[1:],
+            "warm_p95_seconds": max(samples[1:]),
+        }
         if label == "end_state":
             measurement.update(patient_total=value["patient_total"], returned_patients=len(value["patients"]))
             assert len(value["patients"]) <= 500
@@ -130,8 +166,13 @@ def main():
             manifest = json.loads(bundle.read("model-manifest.json"))
             if args.expected_commit:
                 assert manifest["code_commit"] == args.expected_commit
-            report["export"] = {"id": export["id"], "bytes": len(response.content), "all_checksums_verified": True,
-                                "files": bundle.namelist(), "sha256": hashlib.sha256(response.content).hexdigest()}
+            report["export"] = {
+                "id": export["id"],
+                "bytes": len(response.content),
+                "all_checksums_verified": True,
+                "files": bundle.namelist(),
+                "sha256": hashlib.sha256(response.content).hexdigest(),
+            }
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2), flush=True)
 

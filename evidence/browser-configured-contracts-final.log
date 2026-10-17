@@ -1,0 +1,40 @@
+
+Running 20 tests using 1 worker
+
+(node:5805) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5805) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/arrival-resource-mix.spec.ts:4:1 › reported arrival resource mixtures are editable, validated and retained after reload (3.4s)
+  ✓   2 [desktop] › e2e/inspector-updates.spec.ts:4:1 › cancelled runs explain their state and retry the same frozen input snapshot (2.0s)
+  ✓   3 [desktop] › e2e/inspector-updates.spec.ts:68:1 › inspector updates retain selected entities, exact time and frozen parent provenance (12.1s)
+  ✓   4 [desktop] › e2e/map-search.spec.ts:44:1 › workspace search keeps completed-run context and map controls preserve their routes (10.2s)
+  ✓   5 [desktop] › e2e/pulse-preset.spec.ts:4:1 › short arrival pulse is editable, undoable and frozen as one additive batch (8.3s)
+  ✓   6 [desktop] › e2e/pulse-preset.spec.ts:124:1 › short arrival pulse rejects a horizon ending before day-two noon (1.3s)
+  ✓   7 [desktop] › e2e/replay-controls.spec.ts:4:1 › playback speed, pause, seek and exact event stepping preserve frozen results (10.7s)
+  ✓   8 [desktop] › e2e/scenario-families.spec.ts:12:1 › all visual scenario families save canonical inputs and compute actual effects (9.6s)
+  -   9 [desktop] › e2e/scenario-families.spec.ts:337:1 › scenario resource forms and independent inspector remain keyboard accessible on mobile
+workflow: created scenario_bcd5ebea29d44ff48574
+workflow: scenario screen loaded
+workflow: fields configured
+workflow: submit clicked
+workflow: queued run_78077f418a704973ba37
+workflow: run complete
+  ✓  10 [desktop] › e2e/workflows.spec.ts:14:1 › configure, compute, inspect, compare, update, replay and export (30.3s)
+(node:6121) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6121) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [mobile] › e2e/arrival-resource-mix.spec.ts:4:1 › reported arrival resource mixtures are editable, validated and retained after reload (3.1s)
+  ✓  12 [mobile] › e2e/inspector-updates.spec.ts:4:1 › cancelled runs explain their state and retry the same frozen input snapshot (2.0s)
+  ✓  13 [mobile] › e2e/inspector-updates.spec.ts:68:1 › inspector updates retain selected entities, exact time and frozen parent provenance (11.1s)
+  -  14 [mobile] › e2e/map-search.spec.ts:44:1 › workspace search keeps completed-run context and map controls preserve their routes
+  ✓  15 [mobile] › e2e/pulse-preset.spec.ts:4:1 › short arrival pulse is editable, undoable and frozen as one additive batch (6.2s)
+  ✓  16 [mobile] › e2e/pulse-preset.spec.ts:124:1 › short arrival pulse rejects a horizon ending before day-two noon (1.2s)
+  -  17 [mobile] › e2e/replay-controls.spec.ts:4:1 › playback speed, pause, seek and exact event stepping preserve frozen results
+  -  18 [mobile] › e2e/scenario-families.spec.ts:12:1 › all visual scenario families save canonical inputs and compute actual effects
+  ✓  19 [mobile] › e2e/scenario-families.spec.ts:337:1 › scenario resource forms and independent inspector remain keyboard accessible on mobile (1.7s)
+  -  20 [mobile] › e2e/workflows.spec.ts:14:1 › configure, compute, inspect, compare, update, replay and export
+
+  5 skipped
+  15 passed (1.9m)

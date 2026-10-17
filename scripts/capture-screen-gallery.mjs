@@ -5,6 +5,9 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const baseURL = process.env.E2E_BASE_URL || "http://127.0.0.1:5173";
 const local = ["localhost", "127.0.0.1"].includes(new URL(baseURL).hostname);
+const selectedAt = process.env.GALLERY_AT;
+if (selectedAt && !Number.isFinite(Date.parse(selectedAt)))
+  throw Error("GALLERY_AT must be an explicit timestamp");
 const source = JSON.parse(
   readFileSync(
     resolve(
@@ -33,6 +36,7 @@ const result = {
   scenario_id: source.scenario_id,
   run_id: source.run_id,
   comparison_id: source.comparison_id,
+  selected_at: selectedAt || null,
   screens: [],
   page_errors: [],
 };
@@ -74,6 +78,19 @@ try {
       data: credentials,
     });
     if (!login.ok()) throw Error("Gallery login failed");
+    if (selectedAt) {
+      const response = await context.request.get(
+        `/api/run-groups/${source.run_id}`,
+      );
+      if (!response.ok()) throw Error("Gallery run context is unavailable");
+      const run = await response.json();
+      if (
+        run.status !== "SUCCEEDED" ||
+        Date.parse(selectedAt) < Date.parse(run.start_at) ||
+        Date.parse(selectedAt) > Date.parse(run.end_at)
+      )
+        throw Error("GALLERY_AT must lie within the completed run");
+    }
     const page = await context.newPage();
     page.on("pageerror", (e) => result.page_errors.push(e.message));
     const views =
@@ -89,9 +106,22 @@ try {
           ]
         : ["overview", "patients", "compare", "replay"];
     for (const view of views) {
+      const selectedStateResponse = selectedAt
+        ? page.waitForResponse((response) => {
+            const url = new URL(response.url());
+            return (
+              /\/api\/runs\/[^/]+\/state$/.test(url.pathname) &&
+              response.ok() &&
+              Date.parse(url.searchParams.get("at")) === Date.parse(selectedAt)
+            );
+          })
+        : null;
       await page.goto(
-        `/?scenario=${source.scenario_id}&run=${source.run_id}&view=${view}${source.comparison_id && view === "compare" ? "&comparison=" + source.comparison_id : ""}`,
+        `/?scenario=${source.scenario_id}&run=${source.run_id}&view=${view}${source.comparison_id && view === "compare" ? "&comparison=" + source.comparison_id : ""}${selectedAt ? "&at=" + encodeURIComponent(selectedAt) : ""}`,
       );
+      const selectedState = selectedStateResponse
+        ? await (await selectedStateResponse).json()
+        : null;
       await page.locator(".app-shell").waitFor();
       await page
         .getByText("Loading planning workspace", { exact: true })
@@ -119,7 +149,17 @@ try {
           await page
             .getByText(message, { exact: true })
             .waitFor({ state: "hidden" });
+        await page
+          .getByText("Loading this census page…", { exact: true })
+          .waitFor({ state: "hidden" });
       }
+      if (view === "data")
+        await page.waitForFunction(() => {
+          const button = [...document.querySelectorAll("button")].find(
+            (element) => element.textContent.includes("Validate data"),
+          );
+          return button && !button.disabled;
+        });
       if (view === "compare") {
         await page.locator(".comparison-chart").waitFor();
         await page.waitForFunction(() =>
@@ -212,6 +252,8 @@ try {
           () => document.documentElement.scrollWidth > innerWidth + 1,
         ),
         reference: references[view] || null,
+        selected_state_at: selectedState?.at || null,
+        selected_state_patient_total: selectedState?.patient_total ?? null,
         map,
         additional_files: [],
       };

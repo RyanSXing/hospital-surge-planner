@@ -1,0 +1,238 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    "Synthetic engineering fixtures; these parameters are not clinically validated.",
+    "Historical episodes and current census are separately constructed."
+  ],
+  "counts": {
+    "facilities": 6,
+    "units": 12,
+    "slots": 274,
+    "patients": 116,
+    "staff": 236,
+    "equipment_pools": 9,
+    "cohorts": 6,
+    "los_templates": 12
+  },
+  "snapshot_at": "2026-10-16T05:00:00Z",
+  "synthetic": true,
+  "capacity_reconciliation": [
+    {
+      "unit_id": "UNIT-WARD-A",
+      "physical": 40,
+      "enabled": 40,
+      "occupied": 32,
+      "modeled_occupied": 32,
+      "background_occupied": 0,
+      "reserved": 0,
+      "staffed": 32,
+      "qualified_staff_by_role": {
+        "rn": 8.0,
+        "provider": 1.0,
+        "support": 4.0
+      },
+      "admission_gate": true,
+      "available": 0,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-WARD-B",
+      "physical": 40,
+      "enabled": 40,
+      "occupied": 32,
+      "modeled_occupied": 32,
+      "background_occupied": 0,
+      "reserved": 0,
+      "staffed": 32,
+      "qualified_staff_by_role": {
+        "rn": 8.0,
+        "provider": 1.0,
+        "support": 4.0
+      },
+      "admission_gate": true,
+      "available": 0,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-WARD-C",
+      "physical": 20,
+      "enabled": 20,
+      "occupied": 16,
+      "modeled_occupied": 16,
+      "background_occupied": 0,
+      "reserved": 0,
+      "staffed": 16,
+      "qualified_staff_by_role": {
+        "rn": 4.0,
+        "provider": 1.0,
+        "support": 2.0
+      },
+      "admission_gate": true,
+      "available": 0,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-ICU",
+      "physical": 12,
+      "enabled": 12,
+      "occupied": 12,
+      "modeled_occupied": 12,
+      "background_occupied": 0,
+      "reserved": 0,
+      "staffed": 12,
+      "qualified_staff_by_role": {
+        "rn": 6.0,
+        "provider": 1.0,
+        "support": 2.0
+      },
+      "admission_gate": true,
+      "available": 0,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-ED",
+      "physical": 30,
+      "enabled": 30,
+      "occupied": 24,
+      "modeled_occupied": 24,
+      "background_occupied": 0,
+      "reserved": 0,
+      "staffed": 24,
+      "qualified_staff_by_role": {
+        "rn": 6.0,
+        "provider": 2.0,
+        "support": 2.0
+      },
+      "admission_gate": true,
+      "available": 0,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-EAST-WARD",
+      "physical": 32,
+      "enabled": 32,
+      "occupied": 20,
+      "modeled_occupied": 0,
+      "background_occupied": 20,
+      "reserved": 0,
+      "staffed": 24,
+      "qualified_staff_by_role": {
+        "rn": 0,
+        "provider": 0,
+        "support": 0
+      },
+      "admission_gate": true,
+      "available": 4,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-EAST-ICU",
+      "physical": 4,
+      "enabled": 4,
+      "occupied": 3,
+      "modeled_occupied": 0,
+      "background_occupied": 3,
+      "reserved": 0,
+      "staffed": 4,
+      "qualified_staff_by_role": {
+        "rn": 0,
+        "provider": 0,
+        "support": 0
+      },
+      "admission_gate": true,
+      "available": 1,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-WEST-WARD",
+      "physical": 36,
+      "enabled": 36,
+      "occupied": 24,
+      "modeled_occupied": 0,
+      "background_occupied": 24,
+      "reserved": 0,
+      "staffed": 28,
+      "qualified_staff_by_role": {
+        "rn": 0,
+        "provider": 0,
+        "support": 0
+      },
+      "admission_gate": true,
+      "available": 4,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-WEST-ICU",
+      "physical": 4,
+      "enabled": 4,
+      "occupied": 4,
+      "modeled_occupied": 0,
+      "background_occupied": 4,
+      "reserved": 0,
+      "staffed": 4,
+      "qualified_staff_by_role": {
+        "rn": 0,
+        "provider": 0,
+        "support": 0
+      },
+      "admission_gate": true,
+      "available": 0,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-CLINIC-NORTH",
+      "physical": 12,
+      "enabled": 0,
+      "occupied": 0,
+      "modeled_occupied": 0,
+      "background_occupied": 0,
+      "reserved": 0,
+      "staffed": 0,
+      "qualified_staff_by_role": {
+        "rn": 0,
+        "provider": 0,
+        "support": 0
+      },
+      "admission_gate": false,
+      "available": 0,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-OVERFLOW-SOUTH",
+      "physical": 0,
+      "enabled": 0,
+      "occupied": 0,
+      "modeled_occupied": 0,
+      "background_occupied": 0,
+      "reserved": 0,
+      "staffed": 0,
+      "qualified_staff_by_role": {
+        "rn": 0,
+        "provider": 0,
+        "support": 0
+      },
+      "admission_gate": false,
+      "available": 0,
+      "capacity_deficit": 0
+    },
+    {
+      "unit_id": "UNIT-SHELTER-WEST",
+      "physical": 24,
+      "enabled": 24,
+      "occupied": 0,
+      "modeled_occupied": 0,
+      "background_occupied": 0,
+      "reserved": 0,
+      "staffed": 24,
+      "qualified_staff_by_role": {
+        "rn": 0,
+        "provider": 0,
+        "support": 0
+      },
+      "admission_gate": true,
+      "available": 24,
+      "capacity_deficit": 0
+    }
+  ]
+}

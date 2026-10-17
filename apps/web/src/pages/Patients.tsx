@@ -19,7 +19,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import type { Entity, PlanningContext } from "../types";
+import type { Entity, PlanningContext, UpdateTarget } from "../types";
 import { api, fmt, localDate, patientId, unitId } from "../api";
 import { Badge, BedGrid, BedLegend, Button, ErrorBox } from "../components/ui";
 import {
@@ -158,7 +158,7 @@ export default function Patients({
   onUpdate,
 }: {
   ctx: PlanningContext;
-  onUpdate: () => void;
+  onUpdate: (target?: UpdateTarget) => void;
 }) {
   const panels = usePlanningPanels(180);
   const placementRequest = useRef(0);
@@ -1167,8 +1167,18 @@ export default function Patients({
                 </div>
               ) : null}
               <div className="inspector-section">
-                <Button className="full-width" onClick={onUpdate}>
-                  Record planning update
+                <Button
+                  className="full-width"
+                  disabled={
+                    ctx.canWrite === false ||
+                    !!ctx.stateLoading ||
+                    !!ctx.stateError
+                  }
+                  onClick={() =>
+                    onUpdate({ kind: "patient", id: patientId(current) })
+                  }
+                >
+                  Record change
                 </Button>
               </div>
             </>
@@ -1196,6 +1206,22 @@ export default function Patients({
               <div className="inspector-section">
                 <UnitDetails unit={chosenUnit} />
                 <UnitEvidence ctx={ctx} unit={chosenUnit} />
+                <Button
+                  className="full-width"
+                  disabled={
+                    ctx.canWrite === false ||
+                    !!ctx.stateLoading ||
+                    !!ctx.stateError
+                  }
+                  onClick={() =>
+                    onUpdate({
+                      kind: selectedSlot ? "slot" : "unit",
+                      id: selectedSlot?.slot_id || unitId(chosenUnit),
+                    })
+                  }
+                >
+                  Record change
+                </Button>
               </div>
             </>
           ) : (

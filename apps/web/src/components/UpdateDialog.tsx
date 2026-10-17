@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, History, Save } from "lucide-react";
-import type { Dataset, Entity, PlanningContext } from "../types";
+import type { Dataset, Entity, PlanningContext, UpdateTarget } from "../types";
 import type {
   BranchSource,
   ResetReconciliation,
@@ -11,6 +11,13 @@ import { api, ApiError, fmt, items, localDate, patientId, post } from "../api";
 import { Badge, Button, Busy, ErrorBox, Modal } from "./ui";
 import { ZonedDateTimeInput } from "./ZonedDateTimeInput";
 import { utcMinute } from "../zonedTime";
+import { updateDefaults } from "./updateContext";
+import { ArrivalResourceMixEditor } from "./ArrivalResourceMixEditor";
+import {
+  activeArrivalResourceMix,
+  arrivalResourceMixError,
+  defaultArrivalResourceMix,
+} from "./arrivalProfileWeights";
 
 type SourceMode = "selected_replication" | "paired_ensemble" | "observed_reset";
 const updateKinds = [
@@ -40,37 +47,65 @@ function isoMinute(value: string) {
 export default function UpdateDialog({
   ctx,
   onClose,
+  target,
 }: {
   ctx: PlanningContext;
   onClose: () => void;
+  target?: UpdateTarget | null;
 }) {
+  const [initial] = useState(() => updateDefaults(ctx, target));
   const [tab, setTab] = useState<"record" | "history">("record"),
-    [type, setType] = useState<UpdateCreate["type"]>("arrival_batch"),
-    [sourceMode, setSourceMode] = useState<SourceMode>("selected_replication"),
-    [when, setWhen] = useState(
-      utcMinute(ctx.selectedTime || ctx.scenario?.start_at || ""),
-    );
-  const [count, setCount] = useState(20),
+    [type, setType] = useState<UpdateCreate["type"]>(initial.type),
+    [sourceMode, setSourceMode] = useState<SourceMode>(
+      initial.observedReset ? "observed_reset" : "selected_replication",
+    ),
+    [when, setWhen] = useState(utcMinute(initial.effectiveAt)),
+    [timeEdited, setTimeEdited] = useState(false);
+  const [count, setCount] = useState(initial.count),
     [spread, setSpread] = useState(60),
     [hours, setHours] = useState(12),
     [wardPercent, setWardPercent] = useState(16),
     [icuPercent, setIcuPercent] = useState(4),
-    [entry, setEntry] = useState("ED_MAIN"),
+    [entry, setEntry] = useState(
+      () =>
+        (ctx.dataset?.entry_streams || []).find(
+          (s: Entity) =>
+            s.enabled &&
+            s.destination_facility_id === initial.facility &&
+            s.entry_type === "ed",
+        )?.entry_stream_id ||
+        (ctx.dataset?.entry_streams || []).find(
+          (s: Entity) => s.destination_facility_id === initial.facility,
+        )?.entry_stream_id ||
+        "",
+    ),
     [note, setNote] = useState(""),
     [enqueue, setEnqueue] = useState(true),
     [replications, setReplications] = useState(
-      ctx.scenario?.replications || 100,
+      ctx.resultScenario?.replications || ctx.scenario?.replications || 100,
     );
-  const [facility, setFacility] = useState(ctx.selectedFacility || "FAC-MAIN"),
-    [unit, setUnit] = useState("UNIT-WARD-A"),
-    [equipment, setEquipment] = useState(
-      ctx.dataset?.equipment_pools?.[0]?.equipment_pool_id || "",
-    ),
+  const [resourceMix, setResourceMix] = useState(() =>
+    defaultArrivalResourceMix(ctx.dataset, entry),
+  );
+  const entryStream = (ctx.dataset?.entry_streams || []).find(
+    (s: Entity) => s.entry_stream_id === entry,
+  );
+  const careMix: Record<string, number> =
+    entryStream?.entry_type === "direct_ward"
+      ? { ward: 1 }
+      : {
+          discharge: Math.max(0, 100 - wardPercent - icuPercent) / 100,
+          ward: wardPercent / 100,
+          icu: icuPercent / 100,
+        };
+  const [facility, setFacility] = useState(initial.facility),
+    [unit, setUnit] = useState(initial.unit),
+    [equipment, setEquipment] = useState(initial.equipment),
     [operation, setOperation] = useState("add"),
-    [route, setRoute] = useState(ctx.dataset?.routes?.[0]?.route_id || ""),
+    [route, setRoute] = useState(initial.route),
     [routeUnavailable, setRouteUnavailable] = useState(false),
-    [person, setPerson] = useState(patientId(ctx.selectedPatient || {})),
-    [staffIds, setStaffIds] = useState<string[]>([]),
+    [person, setPerson] = useState(initial.person),
+    [staffIds, setStaffIds] = useState<string[]>(initial.staffIds),
     [allocations, setAllocations] = useState("[]");
   const [replicas, setReplicas] = useState<Entity[]>([]),
     [selectedReplica, setSelectedReplica] = useState(
@@ -96,7 +131,14 @@ export default function UpdateDialog({
     units = ctx.dataset?.units || [],
     sites = ctx.dataset?.facilities || [],
     staff = ctx.dataset?.staff || [],
-    patients = ctx.state?.patients || ctx.dataset?.patients || [];
+    patients = [
+      ...(ctx.selectedPatient ? [ctx.selectedPatient] : []),
+      ...(ctx.state?.patients || ctx.dataset?.patients || []),
+    ].filter(
+      (patient, index, rows) =>
+        rows.findIndex((row) => patientId(row) === patientId(patient)) ===
+        index,
+    );
   useEffect(() => {
     let ignore = false;
     async function allPages(path: string) {
@@ -159,9 +201,11 @@ export default function UpdateDialog({
   const effective =
     sourceMode === "observed_reset" && observed
       ? observed.snapshot_at
-      : when
-        ? `${when}:00Z`
-        : "";
+      : !timeEdited && initial.effectiveAt
+        ? initial.effectiveAt
+        : when
+          ? `${when}:00Z`
+          : "";
   let payload: Entity = {};
   let payloadError = "";
   try {
@@ -173,22 +217,20 @@ export default function UpdateDialog({
         observed_dataset_version_id: observedId,
         effective_at: effective,
       };
-    else if (type === "arrival_batch")
+    else if (type === "arrival_batch") {
       payload = {
         facility_id: facility,
         entry_stream_id: entry,
         count,
         spread_minutes: spread,
-        care_mix:
-          entry === "DIRECT_WARD_MAIN"
-            ? { ward: 1 }
-            : {
-                discharge: Math.max(0, 100 - wardPercent - icuPercent) / 100,
-                ward: wardPercent / 100,
-                icu: icuPercent / 100,
-              },
+        care_mix: careMix,
+        resource_profile_mix: activeArrivalResourceMix(resourceMix, careMix),
       };
-    else if (type === "staff_unavailable")
+      payloadError =
+        !entryStream || entryStream.destination_facility_id !== facility
+          ? "This facility has no selected matching arrival stream. Choose its declared entry pathway or another facility."
+          : arrivalResourceMixError(ctx.dataset, resourceMix, careMix);
+    } else if (type === "staff_unavailable")
       payload = {
         unit_id: unit,
         count,
@@ -261,12 +303,16 @@ export default function UpdateDialog({
     }
   }
   async function save() {
-    if (!ctx.scenario) return;
+    if (!ctx.scenario || !canWrite) return;
     setSaving(true);
     setError("");
     try {
       if (payloadError && !savedEvent) throw new Error(payloadError);
-      if (type === "arrival_batch" && wardPercent + icuPercent > 100)
+      if (
+        type === "arrival_batch" &&
+        entryStream?.entry_type === "ed" &&
+        wardPercent + icuPercent > 100
+      )
         throw new Error(
           "Ward and ICU percentages cannot add up to more than 100%.",
         );
@@ -285,7 +331,9 @@ export default function UpdateDialog({
           savedEvent?.effective_at ||
           (sourceMode === "observed_reset" && observed
             ? observed.snapshot_at
-            : isoMinute(when)),
+            : !timeEdited && initial.effectiveAt
+              ? initial.effectiveAt
+              : isoMinute(when)),
         origin =
           sourceMode === "observed_reset"
             ? "observed_reset"
@@ -298,10 +346,16 @@ export default function UpdateDialog({
           effective_at: time,
           state_origin: origin,
           payload,
-          source: "user_planning_input",
+          source: initial.target
+            ? `inspector:${initial.target.kind}:${initial.target.id}`
+            : "user_planning_input",
           note,
           replication_id:
             sourceMode === "selected_replication" ? selectedReplica : undefined,
+          parent_run_group_id:
+            sourceMode !== "observed_reset" && complete
+              ? ctx.run?.id
+              : undefined,
         }));
       setSavedEvent(record);
       if (!enqueue) {
@@ -585,6 +639,43 @@ export default function UpdateDialog({
           </>
         ) : (
           <>
+            {initial.target ? (
+              <div className="info-note" data-testid="update-source-context">
+                <strong>
+                  Selected {initial.target.kind.replaceAll("_", " ")}:{" "}
+                  {initial.target.id}
+                </strong>
+                <p>
+                  Dataset {ctx.dataset?.id} ·{" "}
+                  {complete
+                    ? `saved revision ${ctx.run?.scenario_revision_id} · replication ${initial.observedReset ? ctx.activeReplicationId || ctx.run?.selected_replication_id : selectedReplica}`
+                    : "source snapshot"}
+                  .
+                </p>
+                <p>
+                  Selected instant:{" "}
+                  {localDate(initial.effectiveAt, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    fractionalSecondDigits: 3,
+                    timeZoneName: "short",
+                  })}
+                  . This records a new input; the selected result remains
+                  preserved.
+                </p>
+                {initial.observedReset ? (
+                  <p>
+                    This resource needs a complete observed snapshot to replace
+                    its state. Import that snapshot in Data & setup, then choose
+                    it below.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
             <div className="info-note">
               Choose the history being inherited, then describe a measured
               observation or hypothetical operational change. New arrival
@@ -618,6 +709,7 @@ export default function UpdateDialog({
                 <label>
                   Parent simulation
                   <select
+                    aria-label="Parent simulation"
                     value={selectedReplica}
                     onChange={(e) => setSelectedReplica(e.target.value)}
                     disabled={!!savedEvent}
@@ -678,6 +770,7 @@ export default function UpdateDialog({
                 }
                 onChange={(value) => {
                   setWhen(value);
+                  setTimeEdited(true);
                   setConfirmed(false);
                   setReconciliation(null);
                 }}
@@ -791,8 +884,19 @@ export default function UpdateDialog({
                       onChange={(e) => {
                         setType(e.target.value as UpdateCreate["type"]);
                         setSavedEvent(null);
-                        if (e.target.value === "advertised_capacity_change")
-                          setUnit("UNIT-EAST-WARD");
+                        if (
+                          e.target.value === "advertised_capacity_change" &&
+                          !units.some(
+                            (u) =>
+                              u.unit_id === unit &&
+                              u.capacity_mode === "advertised_aggregate",
+                          )
+                        )
+                          setUnit(
+                            units.find(
+                              (u) => u.capacity_mode === "advertised_aggregate",
+                            )?.unit_id || "",
+                          );
                       }}
                       disabled={!!savedEvent}
                     >
@@ -808,7 +912,23 @@ export default function UpdateDialog({
                       Facility
                       <select
                         value={facility}
-                        onChange={(e) => setFacility(e.target.value)}
+                        onChange={(e) => {
+                          const id = e.target.value;
+                          setFacility(id);
+                          if (type === "arrival_batch") {
+                            const stream = (
+                              ctx.dataset?.entry_streams || []
+                            ).find(
+                              (item: Entity) =>
+                                item.destination_facility_id === id,
+                            );
+                            const selected = stream?.entry_stream_id || "";
+                            setEntry(selected);
+                            setResourceMix(
+                              defaultArrivalResourceMix(ctx.dataset, selected),
+                            );
+                          }
+                        }}
                       >
                         {sites.map((f) => (
                           <option key={f.facility_id} value={f.facility_id}>
@@ -849,14 +969,37 @@ export default function UpdateDialog({
                         Entry pathway
                         <select
                           value={entry}
-                          onChange={(e) => setEntry(e.target.value)}
+                          onChange={(e) => {
+                            const id = e.target.value;
+                            setEntry(id);
+                            setResourceMix(
+                              defaultArrivalResourceMix(ctx.dataset, id),
+                            );
+                            const stream = (
+                              ctx.dataset?.entry_streams || []
+                            ).find(
+                              (item: Entity) => item.entry_stream_id === id,
+                            );
+                            if (stream?.destination_facility_id)
+                              setFacility(stream.destination_facility_id);
+                          }}
                         >
-                          <option value="ED_MAIN">
-                            Emergency department assessment
+                          <option value="">
+                            Choose a declared entry pathway
                           </option>
-                          <option value="DIRECT_WARD_MAIN">
-                            Direct ward admission
-                          </option>
+                          {(ctx.dataset?.entry_streams || []).map(
+                            (stream: Entity) => (
+                              <option
+                                key={stream.entry_stream_id}
+                                value={stream.entry_stream_id}
+                              >
+                                {stream.entry_stream_id} ·{" "}
+                                {stream.entry_type === "direct_ward"
+                                  ? "Direct ward admission"
+                                  : "Emergency department assessment"}
+                              </option>
+                            ),
+                          )}
                         </select>
                       </label>
                       <div
@@ -886,7 +1029,7 @@ export default function UpdateDialog({
                             onChange={(e) => setSpread(+e.target.value)}
                           />
                         </label>
-                        {entry === "ED_MAIN" ? (
+                        {entryStream?.entry_type === "ed" ? (
                           <>
                             <label>
                               Ward disposition (%)
@@ -914,12 +1057,28 @@ export default function UpdateDialog({
                         ) : null}
                       </div>
                       <small className="muted">
-                        {entry === "ED_MAIN"
+                        {entryStream?.entry_type === "ed"
                           ? `${Math.max(0, 100 - wardPercent - icuPercent)}% discharge after assessment.`
                           : "All patients request ward placement."}{" "}
                         This batch is additional to the forecast arrival
                         process.
                       </small>
+                      <ArrivalResourceMixEditor
+                        dataset={ctx.dataset}
+                        mix={resourceMix}
+                        careMix={careMix}
+                        onChange={(care, profileId, weight) =>
+                          setResourceMix((previous) => ({
+                            ...previous,
+                            [care]: { ...previous[care], [profileId]: weight },
+                          }))
+                        }
+                      />
+                      {payloadError ? (
+                        <p role="alert" className="muted">
+                          {payloadError}
+                        </p>
+                      ) : null}
                     </>
                   ) : type === "patient_departure" ? (
                     <label>
@@ -1044,6 +1203,11 @@ export default function UpdateDialog({
                         : "Specific staff (optional; otherwise use unit/count)"}
                       <select
                         multiple
+                        aria-label={
+                          type === "site_ready"
+                            ? "Assigned qualified staff"
+                            : "Specific staff (optional; otherwise use unit/count)"
+                        }
                         size={5}
                         value={staffIds}
                         onChange={(e) =>
@@ -1162,7 +1326,15 @@ export default function UpdateDialog({
             ) : null}
             <Button
               primary
-              disabled={saving || !canWrite || previewBusy}
+              disabled={
+                saving ||
+                !canWrite ||
+                previewBusy ||
+                (type === "arrival_batch" &&
+                  sourceMode !== "observed_reset" &&
+                  !!payloadError &&
+                  !savedEvent)
+              }
               onClick={save}
             >
               {saving ? (

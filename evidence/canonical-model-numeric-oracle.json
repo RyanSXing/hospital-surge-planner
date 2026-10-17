@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-10-17T13:17:43.726138+00:00",
+  "reference_commit": "88f929051d9cc5491cdd43f00b832951402314ef",
+  "candidate_model": "1.1.0",
+  "scope": "Exact numeric scalar/daily comparison with committed preceding engine on canonical 70%-surge inputs and clinic/staff/transfer interventions; trace metadata intentionally expanded. Configured nondefault fixes have separate tests.",
+  "cases": [
+    {
+      "fixture": "planning_baseline",
+      "horizon_days": 3,
+      "baseline_scalar_equal": true,
+      "baseline_daily_equal": true,
+      "different_scalar_metrics": [],
+      "conservation": true
+    },
+    {
+      "fixture": "stress_snapshot",
+      "horizon_days": 3,
+      "baseline_scalar_equal": true,
+      "baseline_daily_equal": true,
+      "different_scalar_metrics": [],
+      "conservation": true
+    }
+  ]
+}

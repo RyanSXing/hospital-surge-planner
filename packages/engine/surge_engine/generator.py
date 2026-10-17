@@ -46,6 +46,10 @@ TEMPLATES = [
 ]
 
 
+def fixture_identity(fixture, seed=41021, days=365):
+    return f"demo-v{GENERATOR_VERSION.replace('.', '-')}-{fixture}-{seed}-{days}"
+
+
 def generate_dataset(fixture="planning_baseline", seed=41021, days=365):
     if fixture not in ("planning_baseline", "stress_snapshot"):
         raise ValueError("Unknown fixture")
@@ -54,7 +58,7 @@ def generate_dataset(fixture="planning_baseline", seed=41021, days=365):
     t0 = dt(T0)
     z = ZoneInfo(ZONE)
     local0 = t0.astimezone(z)
-    version = f"demo-v1-{fixture}-{seed}-{days}"
+    version = fixture_identity(fixture, seed, days)
     data = {
         "id": version,
         "dataset_version_id": version,

@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { ApiError, api, patch, post } from "../api";
 import { Button, ErrorBox, Modal } from "./ui";
+import { planningEnd } from "../pages/scenarioEditor";
 export default function AddSiteDialog({
   ctx,
   onClose,
@@ -213,6 +214,11 @@ export default function AddSiteDialog({
             hospital_fallback: true,
             transport_required: false,
             admission_start_at: ctx.dataset?.snapshot_at,
+            admission_end_at: planningEnd(
+              ctx.scenario,
+              ctx.scenario?.start_at || ctx.dataset?.snapshot_at || "",
+              ctx.scenario?.horizon_calendar_days || 30,
+            ),
             drain_after_close: true,
           },
         });

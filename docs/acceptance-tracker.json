@@ -25,7 +25,10 @@
         "evidence/browser-desktop-screens.json",
         "evidence/browser-mobile-screens.json",
         "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
-        "evidence/browser-overview-outlook.json: desktop/mobile actual operational counts, full-horizon queue bands and conditional first-unmet timing"
+        "evidence/browser-overview-outlook.json: desktop/mobile actual operational counts, full-horizon queue bands and conditional first-unmet timing",
+        "tests/test_seed_upgrade.py: deterministic generator 1.1 lineage, exact immutable checksum, current defaults, idempotent upgrades and retained historical bytes",
+        "evidence/generator-release-candidate.json: valid current 365-day planning and stress fixtures",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
       "spec_line": 88
     },
@@ -44,9 +47,13 @@
         "tests/test_review_api.py::test_dataset_zip_round_trip_manifest",
         "evidence/browser-data-workflow.json",
         "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409",
-        "tests/test_creation_idempotency.py: concurrent same-key upload writes one object; distinct uploads preserve both entries and enforce combined quota under a parent-row lock"
+        "tests/test_creation_idempotency.py: concurrent same-key upload writes one object; distinct uploads preserve both entries and enforce combined quota under a parent-row lock",
+        "tests/test_dataset_contract_validation.py: typed canonical containers, fields, foreign keys, stages and optional modules",
+        "tests/test_demand_import_consistency.py: both aliases and zero-denominator contradictions rejected without rewriting imported inputs",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 89
+      "spec_line": 89,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F03",
@@ -62,9 +69,14 @@
         "tests/test_data_workflows.py::test_draft_typed_values_validate_and_commit_preserves_source",
         "apps/web/e2e/data-roles.spec.ts",
         "evidence/browser-matrix-final.json",
-        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409",
+        "tests/test_demand_draft_api.py; tests/test_demand_summary.py: authoritative stream/cohort edits derive read-only summaries atomically, preserve row order and retain invalid reviewable drafts",
+        "evidence/browser-demand-source.json: desktop/mobile typed edits, immutable commit and retained original source",
+        "tests/test_declared_pathways.py: placement preview derives actual roster/policy/equipment capacity",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 90
+      "spec_line": 90,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F04",
@@ -162,9 +174,13 @@
       "evidence": [
         "apps/web/src/pages/scenarioEditor.test.ts",
         "tests/test_engine.py::test_arrival_preflight_matches_engine_exposure",
-        "tests/test_engine.py::test_care_profile_override_targets_new_stream"
+        "tests/test_engine.py::test_care_profile_override_targets_new_stream",
+        "evidence/browser-pulse-preset.json: exact additive day-two noon 20-patient pulse, undo/redo, horizon rejection and frozen execution",
+        "evidence/browser-arrival-resource-mix.json: conditional profile maps and reported queue destinations retain actual configured execution",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 94
+      "spec_line": 94,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F08",
@@ -179,9 +195,13 @@
       "evidence": [
         "tests/test_engine.py: 27 deterministic tests passed; conservation, bundles, turnover, staffing, transfer, clinic, update, reconstruction and DST fixtures",
         "tests/test_snapshot_cache.py: exact cached versus uncached event ledger, resource mutations and blocker states",
-        "evidence/engine-snapshot-cache-optimization.json: exact committed-reference output hashes before/after snapshot caching"
+        "evidence/engine-snapshot-cache-optimization.json: exact committed-reference output hashes before/after snapshot caching",
+        "tests/test_declared_pathways.py; tests/test_clinic_policy.py; tests/test_stepdown_snapshot.py: configured identifiers, mixtures, assessment/pathways, policy resources/allowed care, optional stepdown and committed observed continuations",
+        "evidence/canonical-model-numeric-oracle.json: unchanged canonical scalar/daily outcomes on planning/stress fixtures across model repair",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 95
+      "spec_line": 95,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F09",
@@ -344,9 +364,12 @@
         "tests/test_compute.py::test_clinic_preflight_distinguishes_missing_minimum_team_and_partial_coverage",
         "apps/web/e2e/resources.spec.ts",
         "evidence/browser-candidate-resource-response.json",
-        "evidence/browser-resource-replay-final.json: candidate inventory, missing team rejection, explicit staff/equipment, saved response and actual eight supported places at custom site"
+        "evidence/browser-resource-replay-final.json: candidate inventory, missing team rejection, explicit staff/equipment, saved response and actual eight supported places at custom site",
+        "tests/test_clinic_policy.py; tests/test_clinic_preflight.py; tests/test_clinic_snapshot_validation.py: exact policy operating/service/transport/fallback/draining behavior and observed reservations/transit",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 103
+      "spec_line": 103,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F17",
@@ -363,9 +386,12 @@
         "tests/test_engine.py::test_transfer_reservations_transport_and_resources",
         "tests/test_engine.py::test_imported_transport_continues_commitments",
         "tests/test_api.py::test_eligibility_uses_patient_profile_and_comparison_does_not_replace_main_run",
-        "evidence/browser-bounded-transfer.json"
+        "evidence/browser-bounded-transfer.json",
+        "tests/test_declared_pathways.py; tests/test_stepdown_snapshot.py: actual profile/remaining-stage filters, transport capability, held/reserved/transit stepdown commitments and exact source resource retention",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 104
+      "spec_line": 104,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F18",
@@ -387,9 +413,13 @@
         "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409",
         "apps/web/e2e/operational-time.spec.ts: explicit-offset observed cutoff with seconds/milliseconds preserved through actual import, reconciliation and save",
         "tests/test_operational_input_integrity.py: scenario edits cannot forge, alter, delete or reclassify operational reports",
-        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance",
+        "tests/test_update_frozen_context.py; tests/test_arrival_resource_mix.py: selected entity/time/frozen parent, reported facility/stream validation, actual profile mixtures and virtual queue identity",
+        "evidence/browser-inspector-update-context.json: desktop/mobile inspector context defaults and frozen parent provenance",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 105
+      "spec_line": 105,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F19",
@@ -409,9 +439,13 @@
         "tests/test_engine.py::test_observed_reset_partial_day_uses_partial_arrival_exposure",
         "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
         "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged",
-        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409",
+        "tests/test_model_version_guards.py: current model guards, legacy branch migration, server-owned authentic complete reset provenance and guarded worker regeneration",
+        "tests/test_stepdown_snapshot.py; tests/test_clinic_policy.py: actual observed snapshots resume known commitments and draw only unstarted future stages",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 106
+      "spec_line": 106,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F20",
@@ -467,9 +501,13 @@
         "evidence/browser-run-reload-cancel.json",
         "evidence/browser-read-recovery.json",
         "tests/test_creation_idempotency.py::test_manual_retry_replay_preserves_current_generation_and_status",
-        "tests/test_worker_overlap.py: pure trace/aggregation overlap, exact equality, cancellation/deadline/lease fencing and child cleanup"
+        "tests/test_worker_overlap.py: pure trace/aggregation overlap, exact equality, cancellation/deadline/lease fencing and child cleanup",
+        "tests/test_model_version_guards.py: unsupported historical recomputation rejected before API/worker mutation; retained results remain readable",
+        "evidence/browser-cancelled-run-retry.json: explicit cancellation state and retry of identical frozen inputs",
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
       ],
-      "spec_line": 108
+      "spec_line": 108,
+      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
     },
     {
       "id": "F22",
@@ -645,7 +683,8 @@
       "status": "verified",
       "evidence": [
         "F01: tests/test_api.py::test_boot_seeded_sessions_and_census; evidence/browser-desktop-screens.json; evidence/browser-mobile-screens.json",
-        "F05: tests/test_api.py::test_immutable_revision_and_optimistic_conflict; tests/test_review_api.py::test_scenario_cannot_shift_snapshot_without_new_observation; evidence/browser-workflow.json"
+        "F05: tests/test_api.py::test_immutable_revision_and_optimistic_conflict; tests/test_review_api.py::test_scenario_cannot_shift_snapshot_without_new_observation; evidence/browser-workflow.json",
+        "F01: tests/test_seed_upgrade.py; evidence/generator-release-candidate.json"
       ],
       "spec_line": 1293
     },
@@ -656,7 +695,8 @@
       "status": "verified",
       "evidence": [
         "F02: tests/test_data_workflows.py; tests/test_review_api.py::test_dataset_zip_round_trip_manifest; evidence/browser-data-workflow.json",
-        "F03: tests/test_data_workflows.py::test_draft_typed_values_validate_and_commit_preserves_source; apps/web/e2e/data-roles.spec.ts; evidence/browser-matrix-final.json"
+        "F03: tests/test_data_workflows.py::test_draft_typed_values_validate_and_commit_preserves_source; apps/web/e2e/data-roles.spec.ts; evidence/browser-matrix-final.json",
+        "F02/F03: tests/test_dataset_contract_validation.py; tests/test_demand_import_consistency.py; tests/test_demand_draft_api.py; evidence/browser-demand-source.json"
       ],
       "spec_line": 1294
     },
@@ -668,7 +708,8 @@
       "evidence": [
         "F05: tests/test_api.py::test_immutable_revision_and_optimistic_conflict; tests/test_review_api.py::test_scenario_cannot_shift_snapshot_without_new_observation; evidence/browser-workflow.json",
         "F06: apps/web/src/pages/scenarioEditor.test.ts; apps/web/e2e/context-editor.spec.ts; evidence/browser-condition-editor.json",
-        "F07: apps/web/src/pages/scenarioEditor.test.ts; tests/test_engine.py::test_arrival_preflight_matches_engine_exposure; tests/test_engine.py::test_care_profile_override_targets_new_stream"
+        "F07: apps/web/src/pages/scenarioEditor.test.ts; tests/test_engine.py::test_arrival_preflight_matches_engine_exposure; tests/test_engine.py::test_care_profile_override_targets_new_stream",
+        "F07/F08: tests/test_declared_pathways.py; evidence/browser-pulse-preset.json; evidence/browser-arrival-resource-mix.json; evidence/browser-release-candidate-report.json"
       ],
       "spec_line": 1295
     },
@@ -714,7 +755,8 @@
         "F16: tests/test_engine.py::test_clinic_distinct_from_inpatient_capacity; tests/test_engine.py::test_custom_clinic_target_and_quantity; tests/test_engine.py::test_site_ready_exact_staff_and_equipment; tests/test_compute.py::test_clinic_preflight_distinguishes_missing_minimum_team_and_partial_coverage",
         "apps/web/e2e/resources.spec.ts",
         "evidence/browser-candidate-resource-response.json",
-        "evidence/browser-resource-replay-final.json: candidate inventory, missing team rejection, explicit staff/equipment, saved response and actual eight supported places at custom site"
+        "evidence/browser-resource-replay-final.json: candidate inventory, missing team rejection, explicit staff/equipment, saved response and actual eight supported places at custom site",
+        "F16: tests/test_clinic_policy.py; tests/test_clinic_preflight.py; tests/test_clinic_snapshot_validation.py"
       ],
       "spec_line": 1299
     },
@@ -727,7 +769,8 @@
         "F17: tests/test_engine.py::test_transfer_reservations_transport_and_resources; tests/test_engine.py::test_imported_transport_continues_commitments; tests/test_api.py::test_eligibility_uses_patient_profile_and_comparison_does_not_replace_main_run",
         "apps/web/e2e/release-workflows.spec.ts",
         "evidence/browser-bounded-transfer.json",
-        "evidence/browser-scenario-editor-reviewed-report.json: latest incompatible clinic and actual bounded ward transfer passed after stale destination-response repair"
+        "evidence/browser-scenario-editor-reviewed-report.json: latest incompatible clinic and actual bounded ward transfer passed after stale destination-response repair",
+        "F17: tests/test_declared_pathways.py; tests/test_stepdown_snapshot.py; tests/test_clinic_policy.py"
       ],
       "spec_line": 1300
     },
@@ -740,7 +783,8 @@
         "F18: tests/test_api.py::test_update_idempotency_and_branch_preservation; tests/test_engine.py::test_update_idempotency_and_branch_preservation; evidence/browser-workflow.json",
         "F19: tests/test_api.py::test_selected_branch_preserves_history_and_varies_future; tests/test_review_api.py::test_branch_uses_frozen_run_when_draft_was_edited; tests/test_engine.py::test_selected_replication_branch_preserves_history_and_splits_future; tests/test_engine.py::test_observed_reset_preserves_explicit_end; tests/test_engine.py::test_observed_reset_partial_day_uses_partial_arrival_exposure",
         "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
-        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged"
+        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged",
+        "F18/F19: tests/test_update_frozen_context.py; tests/test_model_version_guards.py; tests/test_stepdown_snapshot.py; evidence/browser-inspector-update-context.json; evidence/browser-workflow.json"
       ],
       "spec_line": 1301
     },
@@ -799,7 +843,8 @@
       "pass_condition": "Clear run status; no partial output misrepresented as complete",
       "status": "verified",
       "evidence": [
-        "F21: tests/test_api.py::test_idempotency_and_frozen_run_inputs; evidence/compose-recovery.json; evidence/browser-run-reload-cancel.json; evidence/browser-read-recovery.json"
+        "F21: tests/test_api.py::test_idempotency_and_frozen_run_inputs; evidence/compose-recovery.json; evidence/browser-run-reload-cancel.json; evidence/browser-read-recovery.json",
+        "F21: tests/test_model_version_guards.py; evidence/browser-cancelled-run-retry.json"
       ],
       "spec_line": 1306
     },
@@ -1014,5 +1059,5 @@
     }
   ],
   "last_reviewed_at": "2026-10-17",
-  "verification_scope": "Listed local functional checks and scoped hosted evidence. F06 is locally verified across canonical assumption families. Hosted F26 remains pending final reviewed-release workflow, gallery, useful navigation and execution budgets; historical failures are preserved."
+  "verification_scope": "All P0/P1 functional repairs are locally verified by final 568 backend tests, 85 frontend tests/build, independent focused review, 17 browser passes/5 deliberate project skips and the Day12 eleven-view reference gallery. F26 remains pending the next immutable hosted deployment, scans, workflow, performance, fault recovery and navigation checks. Historical failed timings remain preserved; P2 is deferred."
 }

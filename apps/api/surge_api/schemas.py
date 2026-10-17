@@ -4,7 +4,7 @@ Domain identifiers, conservation and timeline relationships are checked against
 the immutable dataset after these structural/type checks.
 """
 
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -108,7 +108,14 @@ class OperationalPayload(Command):
     unit_id: str | None = None
     patient_id: str | None = None
     count: int | None = Field(default=None, ge=0, le=10000)
-    care_mix: dict[str, float] | None = None
+    care_mix: dict[str, Annotated[float, Field(strict=True, ge=0, allow_inf_nan=False)]] | None = None
+    resource_profile_mix: (
+        dict[
+            Literal["discharge", "ward", "icu"],
+            dict[str, Annotated[float, Field(strict=True, ge=0, allow_inf_nan=False)]],
+        ]
+        | None
+    ) = None
     staff_ids: list[str] | None = None
     assigned_staff_ids: list[str] | None = None
     equipment_allocations: list[dict[str, Any]] | None = None
@@ -151,6 +158,7 @@ class UpdateCreate(Command):
     payload: OperationalPayload
     source: str = "user_planning_input"
     replication_id: str | None = None
+    parent_run_group_id: str | None = None
     idempotency_key: str | None = Field(default=None, max_length=256)
 
 

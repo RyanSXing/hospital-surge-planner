@@ -102,6 +102,86 @@ def normalize_conditions(data, dataset):
     return value
 
 
+def clinic_intervention_errors(plan, dataset, key):
+    """Resolve clinic prerequisites using the same declared IDs as the engine."""
+    errors = []
+
+    def error(field, message):
+        errors.append({"field": key + "." + field, "message": message})
+
+    units = {unit["unit_id"]: unit for unit in dataset.get("units", [])}
+    facilities = {site["facility_id"]: site for site in dataset.get("facilities", [])}
+    target_field = "destination_unit_id" if plan.get("destination_unit_id") else "unit_id"
+    target = plan.get(target_field)
+    if not target and plan.get("facility_id"):
+        target_field = "facility_id"
+        target = next(
+            (
+                unit["unit_id"]
+                for unit in units.values()
+                if unit["facility_id"] == plan["facility_id"] and unit["kind"] == "clinic"
+            ),
+            None,
+        )
+        if not target:
+            error(target_field, "Choose a declared clinic facility containing a clinic unit")
+            return errors
+    if not target:
+        target = "UNIT-CLINIC-NORTH"
+    unit = units.get(target)
+    if not unit or unit.get("kind") != "clinic":
+        error(target_field, "Clinic activation requires a declared clinic unit")
+        return errors
+    site_id = unit["facility_id"]
+    if plan.get("facility_id") and plan["facility_id"] != site_id:
+        error("facility_id", "Clinic facility must match the destination unit's facility")
+    if facilities.get(site_id, {}).get("kind") != "clinic":
+        error(target_field, "Clinic activation requires a unit at a declared clinic site")
+
+    policies = dataset.get("clinic_policies", [])
+    policy_id = plan.get("clinic_policy_id")
+    if policy_id:
+        policy = next((policy for policy in policies if policy["clinic_policy_id"] == policy_id), None)
+        if not policy:
+            error("clinic_policy_id", "Choose a declared clinic policy")
+        elif policy.get("site_id") != site_id:
+            error("clinic_policy_id", "Clinic policy must belong to the destination site")
+    else:
+        policies = [policy for policy in policies if policy.get("site_id") == site_id]
+        if len(policies) > 1:
+            ed_streams = {
+                stream["entry_stream_id"]
+                for stream in dataset.get("entry_streams", [])
+                if stream.get("entry_type") == "ed"
+            }
+            preferred = {
+                path.get("clinic_policy_id")
+                for path in dataset.get("pathway_profiles", [])
+                if path["entry_stream_id"] in ed_streams
+            }
+            selected = [policy for policy in policies if policy["clinic_policy_id"] in preferred]
+            if len(selected) == 1:
+                policies = selected
+        if len(policies) != 1:
+            error(
+                "clinic_policy_id",
+                "Choose one clinic policy for this destination; ED pathways do not resolve a unique policy",
+            )
+
+    clinic_profiles = [
+        profile for profile in dataset.get("resource_profiles", []) if profile.get("stage_kind") == "clinic"
+    ]
+    if (
+        not any(profile["resource_profile_id"] == "RP-CLINIC-BASIC" for profile in clinic_profiles)
+        and len(clinic_profiles) != 1
+    ):
+        error(
+            "clinic_profile",
+            "Clinic activation requires RP-CLINIC-BASIC or one unambiguous declared clinic-stage profile",
+        )
+    return errors
+
+
 def validate_scenario(data, dataset=None):
     """Validate all nested scenario inputs before they can become worker jobs."""
     from datetime import timedelta
@@ -413,6 +493,8 @@ def validate_scenario(data, dataset=None):
                 error(key + "." + field, "Unknown unit")
         if intervention.get("facility_id") and intervention["facility_id"] not in sites:
             error(key + ".facility_id", "Unknown facility")
+        if dataset and kind in {"clinic", "activate_clinic"} and intervention.get("enabled", True):
+            errors.extend(clinic_intervention_errors(intervention, dataset, key))
         if "assigned_staff_ids" in intervention and (
             not isinstance(intervention["assigned_staff_ids"], list)
             or any(not isinstance(sid, str) or sid not in staff for sid in intervention["assigned_staff_ids"])
@@ -528,22 +610,45 @@ def add_document(session, workspace, kind, data, identity=None):
 def seed_database(factory):
     from sqlalchemy import select
     from surge_engine import generate_dataset, validate_dataset
+    from surge_engine.common import GENERATOR_VERSION
+    from surge_engine.generator import fixture_identity
 
     with factory.begin() as session:
-        if session.scalar(
-            select(Document).where(Document.kind == "dataset", Document.workspace_id == "workspace-main")
-        ):
-            return
         for fixture in ["planning_baseline", "stress_snapshot"]:
-            dataset = normalize_dataset(generate_dataset(fixture=fixture, seed=41021, days=365))
-            validation = validate_dataset(dataset)
-            if not validation.get("valid"):
-                raise ValueError(f"Generated dataset invalid: {validation.get('errors')}")
-            dataset["validation"] = validation
-            add_document(session, "workspace-main", "dataset", dataset)
+            identity = fixture_identity(fixture, seed=41021, days=365)
+            provenance = {
+                "identity": identity,
+                "generator_version": GENERATOR_VERSION,
+                "fixture": fixture,
+                "seed": 41021,
+                "coverage_days": 365,
+            }
+            exists = session.scalar(select(Document.id).where(Document.id == identity))
+            if not exists:
+                dataset = generate_dataset(fixture=fixture, seed=41021, days=365)
+                validation = validate_dataset(dataset)
+                if not validation.get("valid"):
+                    raise ValueError(f"Generated dataset invalid: {validation.get('errors')}")
+                dataset.update(committed_at=now(), seed_provenance=provenance)
+                dataset["input_sha256"] = digest(
+                    {
+                        key: value
+                        for key, value in dataset.items()
+                        if key not in {"input_sha256", "committed_at"}
+                    }
+                )
+                dataset["validation"] = validation
+                add_document(session, "workspace-main", "dataset", dataset)
             if fixture == "planning_baseline":
+                scenario_id = "scenario-" + identity
+                if session.scalar(select(Document.id).where(Document.id == scenario_id)):
+                    continue
+                dataset = session.get(Document, identity).data
                 scenario = scenario_defaults(
                     {
+                        "id": scenario_id,
+                        "created_by": "synthetic_demo_seed",
+                        "seed_provenance": provenance,
                         "name": "Sustained 70% surge",
                         "conditions": [
                             {

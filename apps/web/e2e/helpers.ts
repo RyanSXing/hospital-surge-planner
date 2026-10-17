@@ -44,14 +44,18 @@ export async function scenario(
   fixture = "planning_baseline",
 ) {
   await login(page);
+  const generatorVersion = readFileSync(
+    resolve(process.cwd(), "../../packages/engine/surge_engine/common.py"),
+    "utf8",
+  ).match(/^GENERATOR_VERSION = "([^"]+)"$/m)?.[1];
+  expect(generatorVersion).toBeTruthy();
+  const fixtureId = `demo-v${generatorVersion!.replaceAll(".", "-")}-${fixture}-41021-365`;
   const list = await api(page.request, "/datasets?limit=200"),
-    dataset = (list.items || list)
-      .filter(
-        (d: Entity) => d.fixture === fixture && !d.source_dataset_version_id,
-      )
-      .sort((a: Entity, b: Entity) =>
-        String(a.created_at).localeCompare(String(b.created_at)),
-      )[0];
+    dataset = (list.items || list).find(
+      (d: Entity) =>
+        d.id === fixtureId &&
+        d.manifest?.generator_version === generatorVersion,
+    );
   expect(dataset).toBeTruthy();
   const chosen = await api(page.request, "/scenarios", "POST", {
     name: `E2E ${name} ${Date.now()}`,

@@ -8,6 +8,7 @@ import {
   horizonDays,
   mixError,
   planningEnd,
+  applyShortArrivalPulse,
 } from "./scenarioEditor";
 import type { EditorValues } from "./scenarioEditor";
 const source = () =>
@@ -235,5 +236,167 @@ describe("calendar horizon units", () => {
     expect(horizonDays("2026-11-01T05:00:00Z", 1, "weeks")).toBe(7);
     expect(horizonDays("2026-03-08T06:00:00Z", 2, "weeks")).toBe(14);
     expect(() => horizonDays("2026-01-01T06:00:00Z", 1.5, "months")).toThrow();
+  });
+});
+
+describe("short arrival pulse preset", () => {
+  it("replaces only the selected multiplier with the exact additive PRESET-PULSE inputs", () => {
+    const scenario = source();
+    scenario.conditions.push(
+      {
+        id: "other-ed-window",
+        kind: "arrival_multiplier",
+        entry_stream_id: "ED_MAIN",
+        surge_percent: 10,
+      },
+      {
+        id: "unrelated-batch",
+        kind: "arrival_batch",
+        count: 7,
+        at: "2026-11-01T08:00:00Z",
+      },
+    );
+    const before = JSON.stringify(scenario);
+    const conditions = applyShortArrivalPulse(
+      scenario,
+      scenario.start_at,
+      3,
+      "pulse",
+      "ed",
+    );
+    expect(conditions[0]).toEqual({
+      id: "pulse",
+      name: "Short arrival pulse",
+      preset_id: "PRESET-PULSE",
+      kind: "arrival_batch",
+      entry_stream_id: "ED_MAIN",
+      at: "2026-11-02T18:00:00.000Z",
+      count: 20,
+      spread_minutes: 60,
+      care_mix: { discharge: 0.8, ward: 0.16, icu: 0.04 },
+      source: "synthetic_preset",
+      description: "Hypothetical additive arrival batch at local day 2, noon.",
+    });
+    expect(conditions.slice(1)).toEqual(scenario.conditions.slice(1));
+    expect(JSON.stringify(scenario)).toBe(before);
+    const saved = buildScenarioPatch(
+      { ...scenario, conditions },
+      {
+        ...values(),
+        editArrival: false,
+        editLegacyStaff: false,
+      },
+    );
+    expect(saved.conditions).toEqual(conditions);
+  });
+
+  it("uses noon on the second local date rather than adding 36 hours to a fractional snapshot", () => {
+    const scenario = { ...source(), start_at: "2026-10-31T19:37:42.123Z" };
+    const [pulse] = applyShortArrivalPulse(
+      scenario,
+      scenario.start_at,
+      3,
+      "pulse",
+      "ed",
+    );
+    expect(pulse.at).toBe("2026-11-01T18:00:00.000Z");
+    const nepal = {
+      ...scenario,
+      timezone: "Asia/Kathmandu",
+      start_at: "2026-10-16T23:45:30+05:45",
+    };
+    const [localPulse] = applyShortArrivalPulse(
+      nepal,
+      nepal.start_at,
+      3,
+      "pulse",
+      "ed",
+    );
+    expect(localPulse.at).toBe("2026-10-17T06:15:00.000Z");
+  });
+
+  it("preserves direct-ward and other inputs when adding an ED pulse from another stream", () => {
+    const scenario = source();
+    const conditions = applyShortArrivalPulse(
+      scenario,
+      scenario.start_at,
+      3,
+      "pulse",
+    );
+    expect(conditions.slice(0, -1)).toEqual(scenario.conditions);
+    expect(conditions.at(-1)).toMatchObject({
+      kind: "arrival_batch",
+      entry_stream_id: "ED_MAIN",
+    });
+  });
+
+  it("does not duplicate the pulse when the preset is applied again", () => {
+    const scenario = source();
+    const first = applyShortArrivalPulse(
+      scenario,
+      scenario.start_at,
+      3,
+      "pulse",
+      "ed",
+    );
+    const second = applyShortArrivalPulse(
+      { ...scenario, conditions: first },
+      scenario.start_at,
+      3,
+      "new-id",
+    );
+    expect(second).toEqual(first);
+  });
+
+  it("preserves unrelated ED multipliers when the UI has no selected arrival", () => {
+    const scenario = source();
+    const first = applyShortArrivalPulse(
+      scenario,
+      scenario.start_at,
+      3,
+      "pulse",
+      "ed",
+    );
+    const later = {
+      ...scenario.conditions[0],
+      id: "later-ed",
+      kind: "arrival_multiplier",
+      entry_stream_id: "ED_MAIN",
+    };
+    const conditions = [...first, later];
+    expect(
+      applyShortArrivalPulse(
+        { ...scenario, conditions },
+        scenario.start_at,
+        3,
+        "new",
+        "",
+      ),
+    ).toEqual(conditions);
+  });
+
+  it("requires the full one-hour pulse to fit the exact scenario horizon", () => {
+    const scenario = source();
+    expect(() =>
+      applyShortArrivalPulse(scenario, scenario.start_at, 1, "pulse", "ed"),
+    ).toThrow("local day 2 from 12:00 to 13:00");
+    expect(() =>
+      applyShortArrivalPulse(
+        { ...scenario, end_at: "2026-11-02T18:30:00Z" },
+        scenario.start_at,
+        2,
+        "pulse",
+        "ed",
+      ),
+    ).toThrow("Extend the horizon");
+    expect(
+      applyShortArrivalPulse(
+        { ...scenario, end_at: "2026-11-02T19:00:00Z" },
+        scenario.start_at,
+        2,
+        "pulse",
+        "ed",
+      )[0].at,
+    ).toBe("2026-11-02T18:00:00.000Z");
   });
 });

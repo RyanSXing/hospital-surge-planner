@@ -37,6 +37,7 @@ from sqlalchemy.exc import DBAPIError
 from .artifacts import ArtifactStore
 from .db import Document, Job, canonical, digest, make_database, now
 from .domain import date
+from .model_versions import require_current_run_context
 
 
 def execution_started():
@@ -644,17 +645,18 @@ def run_job(identity, Session, token, uploads):
     from surge_engine import aggregate_results
     from surge_engine.aggregate import representative_replication
 
-    store = uploads.store
     with Session() as session:
         job = session.get(Job, identity)
         check_attempt(job, token)
         payload = copy.deepcopy(job.payload)
+        require_current_run_context(payload, session, job.workspace_id)
         workspace = job.workspace_id
         created_at = job.created_at
         dataset = copy.deepcopy(session.get(Document, payload["dataset_version_id"]).data)
         scenario = payload["scenario"]
         if digest({"dataset": dataset, "scenario": scenario}) != payload["input_sha256"]:
             raise ValueError("Frozen input checksum mismatch")
+    store = uploads.store
     cancel_check = job_control(Session, identity, token)
 
     results_by_index = {}
@@ -903,7 +905,6 @@ def csv_bytes(rows):
 
 
 def trace_job(identity, Session, token, uploads):
-    store = uploads.store
     with Session() as session:
         job = session.get(Job, identity)
         check_attempt(job, token)
@@ -911,12 +912,16 @@ def trace_job(identity, Session, token, uploads):
         run = session.get(Job, job.payload["run_group_id"])
         if not replication or not run or run.workspace_id != job.workspace_id or run.status != "SUCCEEDED":
             raise ValueError("Trace requires a completed owned replication")
+        if replication.workspace_id != job.workspace_id or replication.data.get("run_group_id") != run.id:
+            raise ValueError("Trace replication does not belong to this run")
+        require_current_run_context(run.payload, session, job.workspace_id)
         dataset = copy.deepcopy(session.get(Document, run.payload["dataset_version_id"]).data)
         scenario = copy.deepcopy(run.payload["scenario"])
         index = replication.data["replication_index"]
         replication_id = replication.id
         workspace = job.workspace_id
         run_id = run.id
+    store = uploads.store
     check = job_control(Session, identity, token)
     check()
     trace = timed_replication(dataset, scenario, index, keep_trace=True, cancel_check=check)
@@ -986,6 +991,7 @@ def export_job(identity, Session, token, uploads):
                 else:
                     from surge_engine import run_replication
 
+                    require_current_run_context(run.payload, session, workspace)
                     trace = run_replication(
                         inputs["dataset"],
                         inputs["scenario"],

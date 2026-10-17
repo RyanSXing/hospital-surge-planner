@@ -1,10 +1,10 @@
 # Hosted verification record
 
-The application is available at [Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io). The deployed release is **`e2e65eb81c023ae8b4385742756662be524c29fb`**. The next candidate is under local verification and has not been deployed. The private login handoff is `data/deployment/access.md` (ignored, mode 0600); it contains only the application URL and admin credentials.
+The application is available at [Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io). The deployed release is **`88f929051d9cc5491cdd43f00b832951402314ef`**. Its authenticated one-day/two-replication smoke and checksum-verified private export passed, as did the exact five-image scan. A subsequent full-contract audit reopened configured input behavior; those repairs are under local verification and have not been deployed. Long hosted acceptance runs remain held until that source is reviewed. The private login handoff is `data/deployment/access.md` (ignored, mode 0600); it contains only the application URL and admin credentials.
 
-## Current deployed gates
+## Historical e2e65eb workload gates
 
-These results describe the named deployed release, not the pending candidate. The hosted compute workloads use the same frozen `planning_baseline` dataset, base seed and 70% ED arrival increase. Correct completion and speed acceptance are separate gates.
+These workload results describe `e2e65eb81c023ae8b4385742756662be524c29fb`, not live88f929 or the pending model1.1.0 repair candidate. Current small-smoke evidence is `evidence/cloud-acceptance.json` and `evidence/hosted-readiness.json`; current image evidence is `evidence/container-security.json`. Historical small-smoke/image records are preserved with an `-e2e65eb` suffix. The hosted compute workloads use the same frozen `planning_baseline` dataset, base seed and 70% ED arrival increase. Correct completion and speed acceptance are separate gates.
 
 | Gate | Current evidence | Status |
 |---|---|---|
@@ -24,7 +24,7 @@ The usable saved benchmark scenario is [Winter surge — 70% additional ED deman
 
 ## Next release handoff
 
-The pending candidate removes duplicate boot downloads, separates historical result context from the mutable draft, completes scenario/resource/map interactions, and overlaps pure selected-trace computation with parent aggregation. The overlap has 46 passing targeted regressions, including exact full-trace equality, cancellation/deadline/lease fencing, and real parent-SIGKILL cleanup. These checks do not establish a hosted speed improvement.
+The pending model1.1.0 candidate also repairs typed/cross-entity canonical validation, declared profiles/pathways/assessment, capacity policy resources, clinic operations and transport, additive pulse semantics, inspector update context, cancellation recovery, and historical-model recomputation guards. Combined verification is pending. The preceding release removes duplicate boot downloads, separates historical result context from the mutable draft, completes scenario/resource/map interactions, and overlaps pure selected-trace computation with parent aggregation. The overlap has 46 passing targeted regressions, including exact full-trace equality, cancellation/deadline/lease fencing, and real parent-SIGKILL cleanup. These checks do not establish a hosted speed improvement.
 
 The same local candidate now gives the Patients screen a compact desktop schematic with five complete census rows at 1600×1000 and a 180 px timeline dock. Mobile retains one accessible census DOM styled as labeled cards, a collapsible schematic, all filters and patient selection; no horizontal page overflow was observed at 390 px. Arrival filters use the selected scenario/result timezone. The production frontend build and nine focused patient/timezone unit tests passed after these changes. Final combined browser regressions and gallery are being run separately by the release owner, including the precise observed-cutoff regression already recorded in `evidence/browser-observed-cutoff-precision-report.json`.
 

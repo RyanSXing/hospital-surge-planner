@@ -1,5 +1,6 @@
 import type { Entity, Scenario } from "../types";
 import { atDay, localDayIndex } from "../api";
+import { utcToWall, wallTimeCandidates } from "../zonedTime";
 export type MixMode = "default" | "percentages" | "preserve";
 export interface EditorValues {
   name: string;
@@ -62,6 +63,68 @@ export function planningEnd(
     scenario?.end_at ||
     atDay(startAt, days, 0, scenario?.timezone || "America/Chicago")
   );
+}
+export function applyShortArrivalPulse(
+  scenario: Scenario,
+  startAt: string,
+  days: number,
+  pulseId: string,
+  selectedArrivalId?: string,
+) {
+  const zone = scenario.timezone || "America/Chicago";
+  const startDate = utcToWall(startAt, zone).slice(0, 10);
+  const nextDate = new Date(Date.parse(`${startDate}T00:00:00Z`) + 86400000)
+    .toISOString()
+    .slice(0, 10);
+  const candidates = wallTimeCandidates(`${nextDate}T12:00`, zone);
+  if (candidates.length !== 1)
+    throw new Error(
+      "Day-two noon must be a valid, unambiguous local time for the short arrival pulse.",
+    );
+  const at = `${candidates[0]}:00.000Z`;
+  const end = planningEnd(scenario, startAt, days);
+  if (
+    Date.parse(at) < Date.parse(startAt) ||
+    Date.parse(at) + 60 * 60000 > Date.parse(end)
+  )
+    throw new Error(
+      "Short arrival pulse requires local day 2 from 12:00 to 13:00 within the scenario horizon. Extend the horizon before adding it.",
+    );
+  const conditions = scenario.conditions || [];
+  const previous = conditions.find(
+    (c) => c.kind === "arrival_batch" && c.preset_id === "PRESET-PULSE",
+  );
+  const selected = !selectedArrivalId
+    ? undefined
+    : conditions.find(
+        (c) =>
+          c.kind === "arrival_multiplier" &&
+          (c.entry_stream_id || "ED_MAIN") === "ED_MAIN" &&
+          c.id === selectedArrivalId,
+      );
+  const pulse: Entity = {
+    id: previous?.id || pulseId,
+    name: "Short arrival pulse",
+    preset_id: "PRESET-PULSE",
+    kind: "arrival_batch",
+    entry_stream_id: "ED_MAIN",
+    at,
+    count: 20,
+    spread_minutes: 60,
+    care_mix: { discharge: 0.8, ward: 0.16, icu: 0.04 },
+    source: "synthetic_preset",
+    description: "Hypothetical additive arrival batch at local day 2, noon.",
+  };
+  const replacement = previous || selected;
+  return conditions
+    .flatMap((condition) =>
+      condition === replacement
+        ? [pulse]
+        : condition === selected
+          ? []
+          : [condition],
+    )
+    .concat(replacement ? [] : [pulse]);
 }
 export function buildScenarioPatch(
   scenario: Scenario | null,

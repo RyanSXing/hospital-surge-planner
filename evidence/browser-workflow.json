@@ -1,12 +1,12 @@
 {
-  "scenario_id": "scenario_13df470853084727986b",
-  "horizon_calendar_days": 3,
-  "run_id": "run_a003c2b5424944afa2e0",
-  "comparison_id": "comparison_6a8feb3804454294aaf8",
+  "scenario_id": "scenario_58aea71cee3c4fc3bc30",
+  "horizon_calendar_days": 30,
+  "run_id": "run_b0aae7c9fdb04a58829c",
+  "comparison_id": "comparison_a483d62893d843f2bcf5",
   "saved_arrival_condition": {
     "kind": "arrival_multiplier",
     "start_at": "2026-10-16T05:00:00.000Z",
-    "end_at": "2026-10-19T05:00:00.000Z",
+    "end_at": "2026-11-15T06:00:00.000Z",
     "entry_stream_id": "ED_MAIN",
     "surge_percent": 70,
     "control_points": [
@@ -15,7 +15,7 @@
         "multiplier": 1.7
       },
       {
-        "at": "2026-10-19T05:00:00.000Z",
+        "at": "2026-11-15T06:00:00.000Z",
         "multiplier": 1.7
       }
     ],
@@ -23,9 +23,9 @@
     "shape": "step",
     "source": "user_assumption"
   },
-  "frozen_scenario_revision_id": "revision_623efa22d5ad424d9086",
+  "frozen_scenario_revision_id": "revision_e0cd147c146642cda6b1",
   "saved_and_frozen_conditions_equal": true,
-  "branch_run_id": "run_e200c9af48664cc58ec4",
+  "branch_run_id": "run_bc732b082fe3454c997c",
   "export_filename": "hospital-surge-planner.zip",
   "export_checksums": {
     "exported_arrival_condition": {
@@ -35,11 +35,11 @@
           "multiplier": 1.7
         },
         {
-          "at": "2026-10-19T05:00:00.000Z",
+          "at": "2026-11-15T06:00:00.000Z",
           "multiplier": 1.7
         }
       ],
-      "end_at": "2026-10-19T05:00:00.000Z",
+      "end_at": "2026-11-15T06:00:00.000Z",
       "entry_stream_id": "ED_MAIN",
       "id": "condition-arrivals-ED_MAIN",
       "kind": "arrival_multiplier",
@@ -74,8 +74,8 @@
       "README.md",
       "checksums.json"
     ],
-    "archive_sha256": "4a63c0ce43bf5285a44d68d65aaed17e04669dedc357c7366f8bd7000c10e5a4",
-    "archive_bytes": 1334926
+    "archive_sha256": "b897edb05ef2df675a1e8d36ece4116f1f11078547196ce22b68cab8b87cf90e",
+    "archive_bytes": 2247617
   },
   "page_errors": []
 }

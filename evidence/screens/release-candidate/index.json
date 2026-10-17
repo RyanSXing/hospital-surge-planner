@@ -1,0 +1,311 @@
+{
+  "recorded_at": "2026-10-17T13:53:05.797Z",
+  "base_url": "http://127.0.0.1:5173",
+  "scope": "Existing completed workflow; navigation and screenshots only; no simulation or data mutations",
+  "deployed_commit": null,
+  "scenario_id": "scenario_58aea71cee3c4fc3bc30",
+  "run_id": "run_b0aae7c9fdb04a58829c",
+  "comparison_id": "comparison_a483d62893d843f2bcf5",
+  "screens": [
+    {
+      "mode": "desktop",
+      "view": "overview",
+      "file": "desktop-overview.png",
+      "title": [
+        "Command overview"
+      ],
+      "horizontal_overflow": false,
+      "reference": "01-command-overview.png",
+      "map": {
+        "marker_count": 6,
+        "stable_animation_frames": 30,
+        "projected_spread_px": 296,
+        "markers": [
+          {
+            "label": "Select Demo Central Hospital: active · ED 12/24 · ICU 8/12 · WARD 64/80",
+            "x": 757,
+            "y": 466,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Partner East: active · ICU 3/4 · WARD 20/24",
+            "x": 862,
+            "y": 424,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Partner West: active · ICU 4/4 · WARD 24/28",
+            "x": 611,
+            "y": 484,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Clinic North: candidate · CLINIC 0/0",
+            "x": 763,
+            "y": 350,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Overflow South: candidate · WARD 0/0",
+            "x": 736,
+            "y": 604,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Shelter West: active · SHELTER 0/24 · Nonclinical",
+            "x": 566,
+            "y": 456,
+            "width": 30,
+            "height": 30
+          }
+        ],
+        "scale": "500 m",
+        "canvas": true
+      },
+      "additional_files": []
+    },
+    {
+      "mode": "desktop",
+      "view": "scenarios",
+      "file": "desktop-scenarios.png",
+      "title": [
+        "Build a surge scenario"
+      ],
+      "horizontal_overflow": false,
+      "reference": "02-visual-scenario-builder-v2.png",
+      "map": null,
+      "additional_files": [
+        "desktop-scenarios-lower.png"
+      ]
+    },
+    {
+      "mode": "desktop",
+      "view": "patients",
+      "file": "desktop-patients.png",
+      "title": [
+        "Hospital capacity"
+      ],
+      "horizontal_overflow": false,
+      "reference": "03-patient-unit-explorer.png",
+      "map": null,
+      "additional_files": []
+    },
+    {
+      "mode": "desktop",
+      "view": "resources",
+      "file": "desktop-resources.png",
+      "title": [
+        "Resource planning"
+      ],
+      "horizontal_overflow": false,
+      "reference": "04-resources-and-updates.png",
+      "map": {
+        "marker_count": 6,
+        "stable_animation_frames": 30,
+        "projected_spread_px": 370,
+        "markers": [
+          {
+            "label": "Select Demo Central Hospital: active · ED 12/24 · ICU 8/12 · WARD 64/80",
+            "x": 878,
+            "y": 517.5,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Partner East: active · ICU 3/4 · WARD 20/24",
+            "x": 1009,
+            "y": 465.5,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Partner West: active · ICU 4/4 · WARD 24/28",
+            "x": 696,
+            "y": 540.5,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Clinic North: candidate · CLINIC 0/0",
+            "x": 886,
+            "y": 372.5,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Overflow South: candidate · WARD 0/0",
+            "x": 851,
+            "y": 690.5,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "label": "Select Demo Shelter West: active · SHELTER 0/24 · Nonclinical",
+            "x": 639,
+            "y": 505.5,
+            "width": 30,
+            "height": 30
+          }
+        ],
+        "scale": "300 m",
+        "canvas": true
+      },
+      "additional_files": [
+        "desktop-resources-candidate.png"
+      ]
+    },
+    {
+      "mode": "desktop",
+      "view": "compare",
+      "file": "desktop-compare.png",
+      "title": [
+        "Compare responses"
+      ],
+      "horizontal_overflow": false,
+      "reference": "05-visual-plan-comparison-v2.png",
+      "map": null,
+      "additional_files": []
+    },
+    {
+      "mode": "desktop",
+      "view": "replay",
+      "file": "desktop-replay.png",
+      "title": [
+        "Patient flow replay"
+      ],
+      "horizontal_overflow": false,
+      "reference": "06-visual-patient-flow-replay.png",
+      "map": null,
+      "additional_files": [
+        "desktop-replay-lower.png"
+      ]
+    },
+    {
+      "mode": "desktop",
+      "view": "data",
+      "file": "desktop-data.png",
+      "title": [
+        "A clear foundation for every forecast."
+      ],
+      "horizontal_overflow": false,
+      "reference": null,
+      "map": null,
+      "additional_files": [
+        "desktop-data-lower.png"
+      ]
+    },
+    {
+      "mode": "mobile",
+      "view": "overview",
+      "file": "mobile-overview.png",
+      "title": [
+        "Command overview"
+      ],
+      "horizontal_overflow": false,
+      "reference": "01-command-overview.png",
+      "map": {
+        "marker_count": 6,
+        "stable_animation_frames": 30,
+        "projected_spread_px": 210,
+        "markers": [
+          {
+            "label": "Select Demo Central Hospital: active · ED 12/24 · ICU 8/12 · WARD 64/80",
+            "x": 203,
+            "y": 619.4,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Select Demo Partner East: active · ICU 3/4 · WARD 20/24",
+            "x": 278,
+            "y": 589.4,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Select Demo Partner West: active · ICU 4/4 · WARD 24/28",
+            "x": 100,
+            "y": 631.4,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Select Demo Clinic North: candidate · CLINIC 0/0",
+            "x": 208,
+            "y": 536.4,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Select Demo Overflow South: candidate · WARD 0/0",
+            "x": 188,
+            "y": 717.4,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Select Demo Shelter West: active · SHELTER 0/24 · Nonclinical",
+            "x": 68,
+            "y": 612.4,
+            "width": 44,
+            "height": 44
+          }
+        ],
+        "scale": "500 m",
+        "canvas": true
+      },
+      "additional_files": [
+        "mobile-overview-lower.png"
+      ]
+    },
+    {
+      "mode": "mobile",
+      "view": "patients",
+      "file": "mobile-patients.png",
+      "title": [
+        "Hospital capacity"
+      ],
+      "horizontal_overflow": false,
+      "reference": "03-patient-unit-explorer.png",
+      "map": null,
+      "additional_files": [
+        "mobile-patients-lower.png"
+      ]
+    },
+    {
+      "mode": "mobile",
+      "view": "compare",
+      "file": "mobile-compare.png",
+      "title": [
+        "Compare responses"
+      ],
+      "horizontal_overflow": false,
+      "reference": "05-visual-plan-comparison-v2.png",
+      "map": null,
+      "additional_files": [
+        "mobile-compare-lower.png"
+      ]
+    },
+    {
+      "mode": "mobile",
+      "view": "replay",
+      "file": "mobile-replay.png",
+      "title": [
+        "Patient flow replay"
+      ],
+      "horizontal_overflow": false,
+      "reference": "06-visual-patient-flow-replay.png",
+      "map": null,
+      "additional_files": [
+        "mobile-replay-lower.png",
+        "mobile-replay-zone.png"
+      ]
+    }
+  ],
+  "page_errors": []
+}

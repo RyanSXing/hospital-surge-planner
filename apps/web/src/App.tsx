@@ -48,6 +48,7 @@ import type {
   PlanningContext,
   RunGroup,
   Scenario,
+  UpdateTarget,
 } from "./types";
 import {
   ApiError,
@@ -116,6 +117,7 @@ export default function App() {
     [searchOpen, setSearchOpen] = useState(false),
     [exportOpen, setExportOpen] = useState(false),
     [updateOpen, setUpdateOpen] = useState(false),
+    [updateTarget, setUpdateTarget] = useState<UpdateTarget | null>(null),
     [alertsOpen, setAlertsOpen] = useState(false),
     [helpOpen, setHelpOpen] = useState(false),
     [accountOpen, setAccountOpen] = useState(false),
@@ -142,6 +144,10 @@ export default function App() {
     setSelectedResource(null);
   }, []);
   const clearResource = useCallback(() => setSelectedResource(null), []);
+  const openUpdate = (target?: UpdateTarget) => {
+    setUpdateTarget(target || null);
+    setUpdateOpen(true);
+  };
   const summary = useQuery({
     queryKey: ["summary"],
     queryFn: async () => {
@@ -890,9 +896,11 @@ export default function App() {
           <div className="run-banner" role="status">
             <LoaderCircle size={15} className="spin" />
             <strong>
-              {run.status === "AGGREGATING"
-                ? "Aggregating computed outcomes"
-                : "Simulating patient flow"}
+              {run.status === "CANCEL_REQUESTED"
+                ? "Cancelling simulation"
+                : run.status === "AGGREGATING"
+                  ? "Aggregating computed outcomes"
+                  : "Simulating patient flow"}
             </strong>
             <span>
               {completed} of {total} runs complete
@@ -903,14 +911,20 @@ export default function App() {
               />
             </div>
             <button
-              disabled={user?.role === "viewer"}
+              disabled={
+                user?.role === "viewer" ||
+                run.status === "CANCEL_REQUESTED" ||
+                !!busy
+              }
               onClick={() =>
                 action("Cancelling run", async () => {
                   setRun(await post<RunGroup>(`/run-groups/${run.id}/cancel`));
                 })
               }
             >
-              Cancel
+              {run.status === "CANCEL_REQUESTED"
+                ? "Cancellation requested"
+                : "Cancel"}
             </button>
           </div>
         ) : null}
@@ -945,14 +959,23 @@ export default function App() {
             …
           </div>
         ) : null}
-        {run?.status === "FAILED" ? (
+        {run?.status === "FAILED" || run?.status === "CANCELLED" ? (
           <div className="global-error">
-            <ErrorBox
-              error={`Simulation failed: ${run.error?.message || run.error || run.failure_message || run.failure_code || "See diagnostic details."}`}
-            />
+            {run.status === "CANCELLED" ? (
+              <div className="info-note" role="status">
+                <strong>Simulation cancelled.</strong> {completed} of {total}{" "}
+                replications were saved. No completed forecast is available.
+                Retry uses the same frozen inputs and seeds.
+                <small className="mono"> Run {run.id}</small>
+              </div>
+            ) : (
+              <ErrorBox
+                error={`Simulation failed: ${run.error?.message || run.error || run.failure_message || run.failure_code || "See diagnostic details."} · Run ${run.id}`}
+              />
+            )}
             <Button
               small
-              disabled={user?.role === "viewer"}
+              disabled={user?.role === "viewer" || !!busy}
               onClick={() =>
                 action("Retrying run", async () =>
                   setRun(await post<RunGroup>(`/run-groups/${run.id}/retry`)),
@@ -974,13 +997,13 @@ export default function App() {
           ) : dataset ? (
             <Suspense fallback={<Busy label="Opening workspace view" />}>
               {page === "overview" ? (
-                <Overview ctx={ctx} onUpdate={() => setUpdateOpen(true)} />
+                <Overview ctx={ctx} onUpdate={() => openUpdate()} />
               ) : page === "scenarios" ? (
                 <Scenarios ctx={ctx} />
               ) : page === "patients" ? (
-                <Patients ctx={ctx} onUpdate={() => setUpdateOpen(true)} />
+                <Patients ctx={ctx} onUpdate={openUpdate} />
               ) : page === "resources" ? (
-                <Resources ctx={ctx} onUpdate={() => setUpdateOpen(true)} />
+                <Resources ctx={ctx} onUpdate={openUpdate} />
               ) : page === "compare" ? (
                 <Compare ctx={ctx} />
               ) : page === "replay" ? (
@@ -1053,7 +1076,14 @@ export default function App() {
         <ExportDialog ctx={ctx} onClose={() => setExportOpen(false)} />
       ) : null}
       {updateOpen ? (
-        <UpdateDialog ctx={ctx} onClose={() => setUpdateOpen(false)} />
+        <UpdateDialog
+          ctx={ctx}
+          target={updateTarget}
+          onClose={() => {
+            setUpdateOpen(false);
+            setUpdateTarget(null);
+          }}
+        />
       ) : null}
       {alertsOpen ? (
         <AlertsDialog ctx={ctx} onClose={() => setAlertsOpen(false)} />

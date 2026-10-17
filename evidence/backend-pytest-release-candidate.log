@@ -4,46 +4,99 @@ rootdir: /Users/rsxing/Downloads/Agies
 configfile: pyproject.toml
 testpaths: tests
 plugins: cov-7.1.0, anyio-4.15.1
-collected 247 items
+collected 568 items
 
-tests/test_aggregate_batch.py .............                              [  5%]
-tests/test_api.py ...................                                    [ 12%]
-tests/test_artifact_compression.py ..                                    [ 13%]
-tests/test_artifacts.py ...                                              [ 14%]
-tests/test_comparisons.py ..                                             [ 15%]
+tests/test_aggregate_batch.py .............                              [  2%]
+tests/test_api.py ...................                                    [  5%]
+tests/test_arrival_resource_mix.py .................                     [  8%]
+tests/test_artifact_compression.py ..                                    [  8%]
+tests/test_artifacts.py ...                                              [  9%]
+tests/test_clinic_policy.py ..................                           [ 12%]
+tests/test_clinic_preflight.py ..............                            [ 15%]
+tests/test_clinic_snapshot_validation.py .........                       [ 16%]
+tests/test_cloud_recovery_harness.py ..                                  [ 17%]
+tests/test_comparisons.py ..                                             [ 17%]
 tests/test_compute.py ...                                                [ 17%]
-tests/test_creation_idempotency.py ..................                    [ 24%]
-tests/test_data_workflows.py ...                                         [ 25%]
-tests/test_dataset_cards.py ...                                          [ 26%]
-tests/test_engine.py ............................                        [ 38%]
-tests/test_engine_aggregate.py .......                                   [ 40%]
-tests/test_engine_indices.py ........                                    [ 44%]
-tests/test_operational_input_integrity.py ..                             [ 44%]
-tests/test_orphan_retention.py ..........                                [ 48%]
-tests/test_patient_queries.py ...                                        [ 50%]
-tests/test_release_archive.py .                                          [ 50%]
-tests/test_replay_annotations.py .....                                   [ 52%]
-tests/test_reset_reconciliation.py .                                     [ 53%]
-tests/test_retention.py ..                                               [ 53%]
-tests/test_review_api.py ............                                    [ 58%]
-tests/test_review_observability.py ...                                   [ 59%]
-tests/test_review_worker_metrics.py ..                                   [ 60%]
-tests/test_scenario_planning.py .....................                    [ 69%]
-tests/test_schedule_window.py ..............                             [ 74%]
-tests/test_series.py ...                                                 [ 76%]
-tests/test_snapshot_cache.py .....                                       [ 78%]
-tests/test_summary_context.py .............                              [ 83%]
-tests/test_worker_fencing.py ......                                      [ 85%]
-tests/test_worker_overlap.py ..........                                  [ 89%]
-tests/test_worker_pool.py .........                                      [ 93%]
-tests/test_worker_queue_security.py .                                    [ 93%]
-tests/test_worker_retry.py ............                                  [ 98%]
+tests/test_creation_idempotency.py ..................                    [ 21%]
+tests/test_data_workflows.py ...                                         [ 21%]
+tests/test_dataset_cards.py ...                                          [ 22%]
+tests/test_dataset_contract_validation.py .............................. [ 27%]
+........................................................................ [ 40%]
+..........................                                               [ 44%]
+tests/test_declared_pathways.py ...F.F.............                      [ 48%]
+tests/test_demand_draft_api.py .........                                 [ 49%]
+tests/test_demand_import_consistency.py ........................         [ 53%]
+tests/test_demand_summary.py ......................                      [ 57%]
+tests/test_engine.py ............................                        [ 62%]
+tests/test_engine_aggregate.py .......                                   [ 63%]
+tests/test_engine_indices.py ........                                    [ 65%]
+tests/test_model_version_guards.py .................                     [ 68%]
+tests/test_operational_input_integrity.py ..                             [ 68%]
+tests/test_orphan_retention.py ..........                                [ 70%]
+tests/test_patient_queries.py ...                                        [ 70%]
+tests/test_planned_equipment.py ..............                           [ 73%]
+tests/test_release_archive.py .                                          [ 73%]
+tests/test_replay_annotations.py .....                                   [ 74%]
+tests/test_reset_reconciliation.py .                                     [ 74%]
+tests/test_retention.py ..                                               [ 75%]
+tests/test_review_api.py ............                                    [ 77%]
+tests/test_review_observability.py ...                                   [ 77%]
+tests/test_review_worker_metrics.py ..                                   [ 77%]
+tests/test_scenario_planning.py .....................                    [ 81%]
+tests/test_schedule_window.py ..............                             [ 84%]
+tests/test_seed_upgrade.py ...                                           [ 84%]
+tests/test_series.py ...                                                 [ 85%]
+tests/test_snapshot_cache.py .....                                       [ 86%]
+tests/test_stepdown_snapshot.py ....                                     [ 86%]
+tests/test_stepdown_snapshot_validation.py ..........                    [ 88%]
+tests/test_summary_context.py .............                              [ 90%]
+tests/test_update_frozen_context.py ...........                          [ 92%]
+tests/test_worker_fencing.py ......                                      [ 93%]
+tests/test_worker_overlap.py ..........                                  [ 95%]
+tests/test_worker_pool.py .........                                      [ 97%]
+tests/test_worker_queue_security.py .                                    [ 97%]
+tests/test_worker_retry.py ............                                  [ 99%]
 tests/test_worker_uploads.py ...                                         [100%]
 
+=================================== FAILURES ===================================
+____________ test_direct_ward_arrival_does_not_require_an_ed_cohort ____________
+
+source = {'id': 'demo-v1-1-0-planning_baseline-41021-3', 'dataset_version_id': 'demo-v1-1-0-planning_baseline-41021-3', 'organization_id': 'ORG-DEMO', 'schema_version': '1.0', ...}
+
+    def test_direct_ward_arrival_does_not_require_an_ed_cohort(source):
+        data = copy.deepcopy(source)
+        data["history"] = []
+        data["historical_daily_summaries"] = []
+        data["cohorts"] = [c for c in data["cohorts"] if c["care_level"] != "ambulatory"]
+>       assert validate_dataset(data)["valid"]
+E       assert False
+
+tests/test_declared_pathways.py:109: AssertionError
+___ test_snapshot_placement_derives_rosters_without_optional_capacity_cache ____
+
+source = {'id': 'demo-v1-1-0-planning_baseline-41021-3', 'dataset_version_id': 'demo-v1-1-0-planning_baseline-41021-3', 'organization_id': 'ORG-DEMO', 'schema_version': '1.0', ...}
+
+    def test_snapshot_placement_derives_rosters_without_optional_capacity_cache(source):
+        from surge_api.eligibility import check_placement, snapshot_units
+
+        data = copy.deepcopy(source)
+        for unit in data["units"]:
+            unit.pop("staffed_capacity", None)
+>       assert validate_dataset(data)["valid"]
+E       assert False
+
+tests/test_declared_pathways.py:151: AssertionError
 =============================== warnings summary ===============================
 .venv/lib/python3.12/site-packages/fastapi/testclient.py:1
   /Users/rsxing/Downloads/Agies/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
     from starlette.testclient import TestClient as TestClient  # noqa
 
+tests/test_creation_idempotency.py::test_concurrent_upload_key_is_acquired_before_external_write
+  /Users/rsxing/Downloads/Agies/.venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py:2346: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'identity' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+    warnings.warn(
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-================== 247 passed, 1 warning in 240.69s (0:04:00) ==================
+=========================== short test summary info ============================
+FAILED tests/test_declared_pathways.py::test_direct_ward_arrival_does_not_require_an_ed_cohort
+FAILED tests/test_declared_pathways.py::test_snapshot_placement_derives_rosters_without_optional_capacity_cache
+============ 2 failed, 566 passed, 2 warnings in 363.97s (0:06:03) =============

@@ -8,6 +8,7 @@ import {
   mixError,
   horizonDays,
   planningEnd,
+  applyShortArrivalPulse,
 } from "./scenarioEditor";
 import type { HorizonUnit, MixMode } from "./scenarioEditor";
 import "./scenarios.css";
@@ -62,7 +63,11 @@ const presets = [
     "A constant increase throughout the interval",
   ],
   ["wave", "Surge wave", "Rises to a peak, then returns to baseline"],
-  ["pulse", "Short arrival pulse", "A sharp increase lasting three days"],
+  [
+    "pulse",
+    "Short arrival pulse",
+    "20 additional ED arrivals at day-two noon, spread over one hour",
+  ],
   ["baseline", "Baseline", "Unchanged arrival assumptions"],
   ["staff_loss", "Staffing loss", "Reduced ward nursing coverage"],
   [
@@ -1028,6 +1033,31 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               <select
                 value={shape}
                 onChange={(e) => {
+                  if (e.target.value === "pulse") {
+                    try {
+                      if (!ctx.scenario) return;
+                      const staged = makePatch().conditions;
+                      const conditions = applyShortArrivalPulse(
+                        { ...ctx.scenario, conditions: staged },
+                        startAt,
+                        days,
+                        crypto.randomUUID(),
+                        stream === "ED_MAIN" ? conditionId : undefined,
+                      );
+                      remember();
+                      setDraftConditions(conditions);
+                      if (stream === "ED_MAIN") loadCondition(undefined);
+                      setArrivalEdited(false);
+                      setLegacyStaffEdited(false);
+                      setEditorError("");
+                      ctx.notify(
+                        "Short arrival pulse added: 20 ED arrivals at local day-two noon. Edit its time, count and care mix in the One-time incident batches track.",
+                      );
+                    } catch (error) {
+                      setEditorError((error as Error).message);
+                    }
+                    return;
+                  }
                   rememberArrival();
                   setShape(e.target.value);
                   if (e.target.value === "custom" && customPoints.length < 2)
@@ -1049,7 +1079,6 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                     setShape("sustained");
                     setPlanRequest({ family: "staff", nonce: Date.now() });
                   }
-                  if (e.target.value === "pulse") setEndDay(Math.min(3, days));
                 }}
               >
                 {presets.map(([v, n]) => (

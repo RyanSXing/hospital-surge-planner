@@ -56,6 +56,12 @@ function csv(rows: Entity[]) {
   ].join("\r\n");
 }
 const label = (s: string) => s.replaceAll("_", " ");
+const derivedDemandCollections = new Set([
+  "arrival_profiles",
+  "baseline",
+  "hour_of_day_baseline",
+  "weekday_baseline",
+]);
 const enumValues: Record<string, string[]> = {
   "units.kind": ["ward", "icu", "ed", "clinic", "shelter"],
   "facilities.kind": ["hospital", "clinic", "ward_overflow", "shelter"],
@@ -318,7 +324,8 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
       (r) =>
         !query || JSON.stringify(r).toLowerCase().includes(query.toLowerCase()),
     ),
-    canEdit = ctx.canWrite !== false && !!draft;
+    derivedDemand = derivedDemandCollections.has(collection),
+    canEdit = ctx.canWrite !== false && !!draft && !derivedDemand;
   const collections = [
     ...new Set([
       ...canonicalCollections,
@@ -380,7 +387,7 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
     });
   }
   async function saveEntity() {
-    if (!draft || jsonError) return;
+    if (!draft || !canEdit || jsonError) return;
     await ctx.action("Saving entity changes", async () => {
       let entity = JSON.parse(json);
       const key = entityIds[collection] || "id";
@@ -722,14 +729,39 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
                     </Button>
                   ) : (
                     <span className="muted small-copy">
-                      {ctx.canWrite === false
-                        ? "Read-only role"
-                        : "Create a draft to edit"}
+                      {derivedDemand
+                        ? "Derived · read-only"
+                        : ctx.canWrite === false
+                          ? "Read-only role"
+                          : "Create a draft to edit"}
                     </span>
                   )}
                 </>
               }
             />
+            {derivedDemand ? (
+              <div className="info-note">
+                These demand summaries are calculated from enabled entry streams
+                and declared cohort selection weights. Rates are summed; hourly
+                and weekday profiles are weighted by each stream's daily
+                arrivals. Each stream keeps its own profile.
+                <Button small onClick={() => setCollection("entry_streams")}>
+                  View entry streams
+                </Button>
+              </div>
+            ) : collection === "entry_streams" ? (
+              <div className="info-note">
+                Entry streams are the editable demand source. Saving a stream
+                updates baseline totals and profile summaries automatically.
+              </div>
+            ) : collection === "cohorts" ? (
+              <div className="info-note">
+                Cohort selection weights determine the baseline cohort mixture.
+                Save all related weights before validating; each care group's
+                weights must total 1. Per-stream pathway overrides stay
+                separate.
+              </div>
+            ) : null}
             <div
               style={{
                 padding: "12px 18px",
@@ -897,6 +929,23 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
               Advanced JSON
             </button>
           </div>
+          {derivedDemand ? (
+            <div className="info-note">
+              Read-only demand summary. Change the corresponding entry stream or
+              cohort selection weight to update this value; imported sources
+              must already agree.
+              <Button
+                small
+                onClick={() => {
+                  setEdit(null);
+                  setNewRow(false);
+                  setCollection("entry_streams");
+                }}
+              >
+                View entry streams
+              </Button>
+            </div>
+          ) : null}
           {jsonError ? <ErrorBox error={jsonError} /> : null}
           {editorMode === "fields" && !jsonError ? (
             <div
@@ -943,6 +992,9 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
             <>
               <div className="info-note">
                 Changes stay in this draft until validation and commit.
+                {collection === "entry_streams"
+                  ? " Demand summaries update from these stream values automatically."
+                  : ""}
                 Installed and enabled capacity must reconcile with slot records;
                 capacity policies and staff assignments determine usable places.
               </div>
@@ -955,7 +1007,7 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
                 Save record
               </Button>
             </>
-          ) : !draft && ctx.canWrite !== false ? (
+          ) : !derivedDemand && !draft && ctx.canWrite !== false ? (
             <Button
               onClick={() => {
                 setEdit(null);

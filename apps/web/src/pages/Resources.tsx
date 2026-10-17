@@ -13,7 +13,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import type { Entity, PlanningContext } from "../types";
+import type { Entity, PlanningContext, UpdateTarget } from "../types";
 import { api, fmt, items, localDate } from "../api";
 import {
   Badge,
@@ -45,7 +45,7 @@ export default function Resources({
   onUpdate,
 }: {
   ctx: PlanningContext;
-  onUpdate: () => void;
+  onUpdate: (target?: UpdateTarget) => void;
 }) {
   const panels = usePlanningPanels(180);
   const [transfer, setTransfer] = useState(false),
@@ -240,7 +240,11 @@ export default function Resources({
             <Plus size={15} />
             Add candidate site
           </Button>
-          <Button primary disabled={ctx.canWrite === false} onClick={onUpdate}>
+          <Button
+            primary
+            disabled={ctx.canWrite === false}
+            onClick={() => onUpdate()}
+          >
             <Plus size={15} />
             Record update
           </Button>
@@ -478,7 +482,11 @@ export default function Resources({
               hidden={panels.inspectorHidden}
             >
               {ctx.selectedResource ? (
-                <ResourceSelection ctx={ctx} updates={updates} />
+                <ResourceSelection
+                  ctx={ctx}
+                  updates={updates}
+                  onUpdate={onUpdate}
+                />
               ) : (
                 <>
                   <div className="inspector-header">
@@ -692,9 +700,9 @@ export default function Resources({
                     <Button
                       className="full-width"
                       disabled={ctx.canWrite === false}
-                      onClick={onUpdate}
+                      onClick={() => onUpdate({ kind: "facility", id })}
                     >
-                      Record timestamped update
+                      Record change
                     </Button>
                   </div>
                 </>
@@ -815,7 +823,7 @@ export default function Resources({
                     <Button
                       primary
                       disabled={ctx.canWrite === false}
-                      onClick={onUpdate}
+                      onClick={() => onUpdate()}
                     >
                       <Plus size={14} />
                       Record update
@@ -845,7 +853,11 @@ export default function Resources({
             hidden={panels.inspectorHidden}
           >
             {ctx.selectedResource ? (
-              <ResourceSelection ctx={ctx} updates={updates} />
+              <ResourceSelection
+                ctx={ctx}
+                updates={updates}
+                onUpdate={onUpdate}
+              />
             ) : (
               <div className="inspector-section resource-inspector-empty">
                 <Users size={30} />
@@ -881,9 +893,11 @@ export default function Resources({
 function ResourceSelection({
   ctx,
   updates,
+  onUpdate,
 }: {
   ctx: PlanningContext;
   updates: Entity[];
+  onUpdate: (target?: UpdateTarget) => void;
 }) {
   const selection = ctx.selectedResource!;
   const tables: Record<string, string> = {
@@ -1000,6 +1014,17 @@ function ResourceSelection({
             state.
           </p>
         )}
+        {record && selection.kind !== "update" ? (
+          <Button
+            className="full-width"
+            disabled={
+              ctx.canWrite === false || !!ctx.stateLoading || !!ctx.stateError
+            }
+            onClick={() => onUpdate(selection as UpdateTarget)}
+          >
+            Record change
+          </Button>
+        ) : null}
       </div>
     </>
   );

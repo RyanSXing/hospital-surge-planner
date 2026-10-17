@@ -5,6 +5,11 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const baseURL = process.env.E2E_BASE_URL;
 if (!baseURL) throw Error("E2E_BASE_URL is required");
+const generatorVersion = readFileSync(
+  resolve(root, "packages/engine/surge_engine/common.py"),
+  "utf8",
+).match(/^GENERATOR_VERSION = "([^"]+)"$/m)?.[1];
+if (!generatorVersion) throw Error("Current generator version was not found");
 const config = readFileSync(
   process.env.E2E_AUTH_ENV_FILE ||
     resolve(root, "data/deployment/production.env"),
@@ -36,21 +41,52 @@ try {
     data: { username: "admin", password },
   });
   if (!login.ok()) throw Error("Authentication failed");
-  const response = await context.request.get(
-    "/api/scenarios?search=Sustained%2070%25%20surge&limit=200",
+  const all = async (path) => {
+    const items = [];
+    let cursor = null;
+    do {
+      const response = await context.request.get(path, {
+        params: { limit: 200, ...(cursor ? { cursor } : {}) },
+      });
+      if (!response.ok()) throw Error(`Seed lookup failed: ${path}`);
+      const page = await response.json();
+      items.push(...page.items);
+      cursor = page.next_cursor;
+    } while (cursor);
+    return items;
+  };
+  const [scenarios, datasets] = await Promise.all([
+    all("/api/scenarios"),
+    all("/api/datasets"),
+  ]);
+  const expectedIdentity = `demo-v${generatorVersion.replaceAll(".", "-")}-planning_baseline-41021-365`;
+  const dataset = datasets.find(
+    (value) =>
+      value.id === expectedIdentity &&
+      value.manifest?.generator_version === generatorVersion &&
+      value.manifest?.generator_seed === 41021 &&
+      value.manifest?.coverage_days === 365,
   );
-  if (!response.ok()) throw Error("Scenario lookup failed");
-  const data = await response.json();
-  const seeded = data.items
-    .filter((value) =>
-      value.conditions?.some((c) => c.id === "condition-ed-surge"),
-    )
-    .sort((a, b) =>
-      String(a.created_at).localeCompare(String(b.created_at)),
-    )[0];
-  if (!seeded) throw Error("Original seeded scenario was not found");
+  const seeded = scenarios.find(
+    (value) =>
+      value.id === `scenario-${expectedIdentity}` &&
+      value.dataset_version_id === expectedIdentity &&
+      value.seed_provenance?.identity === expectedIdentity &&
+      value.seed_provenance?.generator_version === generatorVersion &&
+      value.conditions?.some(
+        (condition) => condition.id === "condition-ed-surge",
+      ),
+  );
+  if (!seeded || !dataset)
+    throw Error(
+      `Current curated generator ${generatorVersion} starter was not found`,
+    );
   result.scenario_id = seeded.id;
   result.dataset_version_id = seeded.dataset_version_id;
+  result.generator_version = generatorVersion;
+  result.generator_seed = dataset.manifest.generator_seed;
+  result.seed_source_identity = seeded.seed_provenance.identity;
+  result.dataset_input_sha256 = dataset.input_sha256;
   const page = await context.newPage();
   page.setDefaultTimeout(60000);
   page.on("pageerror", (e) => result.errors.push(e.message));

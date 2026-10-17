@@ -9,8 +9,8 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
-MODEL_VERSION = "1.0.0"
-GENERATOR_VERSION = "1.0.0"
+MODEL_VERSION = "1.1.0"
+GENERATOR_VERSION = "1.1.0"
 T0 = "2026-10-16T05:00:00Z"
 ZONE = "America/Chicago"
 

@@ -50,6 +50,21 @@ def payload_errors(record, dataset):
     if kind == "arrival_batch":
         integer("count")
         reference("facility_id", sites)
+        stream = next(
+            (
+                s
+                for s in dataset.get("entry_streams", [])
+                if s.get("entry_stream_id") == payload.get("entry_stream_id", "ED_MAIN")
+            ),
+            None,
+        )
+        if stream is None:
+            error("entry_stream_id", "Choose a declared arrival stream for this facility")
+        elif payload.get("facility_id") != stream.get("destination_facility_id"):
+            error(
+                "facility_id",
+                "Reported facility must match the selected entry stream's destination; choose that facility's declared stream",
+            )
         mix = payload.get("care_mix")
         if (
             not isinstance(mix, dict)
@@ -68,6 +83,42 @@ def payload_errors(record, dataset):
             for s in dataset.get("entry_streams", [])
         ) and any(weight > 0 and care != "ward" for care, weight in mix.items()):
             error("care_mix", "Direct ward incidents must request ward care only")
+        profile_mix = payload.get("resource_profile_mix")
+        if profile_mix is not None:
+            profiles = {p["resource_profile_id"]: p for p in dataset.get("resource_profiles", [])}
+            if not isinstance(profile_mix, dict) or not profile_mix:
+                error("resource_profile_mix", "Supply nonempty conditional discharge/ward/ICU profile maps")
+            else:
+                stages = {"discharge": "ed", "ward": "ward", "icu": "icu"}
+                for care, values in profile_mix.items():
+                    prefix = f"resource_profile_mix.{care}"
+                    if care not in stages:
+                        error(prefix, "Use discharge, ward or icu as the conditional care group")
+                        continue
+                    if not isinstance(values, dict) or not values:
+                        error(prefix, "Supply a nonempty profile-to-fraction map")
+                        continue
+                    valid_weights = True
+                    for identity, weight in values.items():
+                        profile = profiles.get(identity)
+                        if not profile or profile.get("stage_kind") != stages[care]:
+                            error(
+                                prefix + "." + str(identity),
+                                f"Choose a declared {stages[care]} resource profile",
+                            )
+                        if (
+                            not isinstance(weight, (int, float))
+                            or isinstance(weight, bool)
+                            or not math.isfinite(weight)
+                            or weight < 0
+                        ):
+                            error(
+                                prefix + "." + str(identity),
+                                "Profile fractions must be finite nonnegative numbers",
+                            )
+                            valid_weights = False
+                    if valid_weights and not math.isclose(sum(values.values()), 1, abs_tol=1e-6):
+                        error(prefix, "Conditional resource profile fractions must sum to one")
         if "spread_minutes" in payload and (
             not isinstance(payload["spread_minutes"], (int, float))
             or not math.isfinite(payload["spread_minutes"])

@@ -3,60 +3,16 @@
 from __future__ import annotations
 
 import copy
-from collections import Counter
 
 from .domain import date
 
 
 def snapshot_units(dataset):
-    """Use only declared snapshot values; future availability requires replay."""
-    people = dataset.get("patients", [])
-    answer = []
-    for unit in dataset.get("units", []):
-        uid = unit["unit_id"]
-        occupied = [p for p in people if p.get("unit_id") == uid]
-        staffed = (
-            unit.get("advertised_staffed_capacity")
-            if unit.get("capacity_mode") == "advertised_aggregate"
-            else unit.get("staffed_capacity", 0)
-        )
-        total = len(occupied) + unit.get("background_occupied", 0)
-        pools = [
-            p
-            for p in dataset.get("equipment_pools", []) + dataset.get("partner_equipment", [])
-            if p.get("unit_id") == uid
-        ]
-        used = Counter()
-        for patient in occupied:
-            for req in patient.get("resource_requirements", []):
-                used[req["capability_code"]] += req.get("quantity", 1)
-        equipment = {}
-        for pool in pools:
-            cap = pool["capability_code"]
-            stock = equipment.setdefault(cap, {"quantity": 0, "available": 0, "in_use": used[cap]})
-            stock["quantity"] += pool.get("quantity", 0) - pool.get("unserviceable_quantity", 0)
-            stock["available"] = max(0, stock["quantity"] - used[cap])
-        active = next(
-            (
-                f.get("status") == "active"
-                for f in dataset["facilities"]
-                if f["facility_id"] == unit["facility_id"]
-            ),
-            False,
-        )
-        answer.append(
-            {
-                **unit,
-                "active": active,
-                "admission_gate": True,
-                "staffed": staffed or 0,
-                "occupied": total,
-                "reserved": 0,
-                "available": max(0, min(staffed or 0, unit.get("enabled_capacity", 0)) - total),
-                "equipment": equipment,
-            }
-        )
-    return answer
+    """Project t0 with the same roster, slot and equipment rules as execution."""
+    from surge_engine.simulation import HospitalSimulation
+
+    model = HospitalSimulation(dataset, {"horizon_calendar_days": 1}, 0, False)
+    return [{**unit, **model.unit_snapshot(model.units[unit["unit_id"]])} for unit in dataset["units"]]
 
 
 def check_placement(dataset, scenario, site, care, requirements, patient=None, state=None, at=None):
@@ -70,10 +26,39 @@ def check_placement(dataset, scenario, site, care, requirements, patient=None, s
     ]
     reasons = []
     assessments = []
+    profile = next(
+        (
+            p
+            for p in dataset.get("resource_profiles", [])
+            if p["resource_profile_id"] == (patient or {}).get("resource_profile_id")
+        ),
+        None,
+    )
     if not units:
         reasons.append(f"No compatible {care} unit at this site")
     for unit in units:
         rejected = []
+        declared_unit = next((u for u in dataset["units"] if u["unit_id"] == unit["unit_id"]), {})
+        policy = next(
+            (
+                p
+                for p in dataset.get("capacity_policies", [])
+                if p["capacity_policy_id"] == declared_unit.get("capacity_policy_id")
+            ),
+            {},
+        )
+        policy_care = {"ed": "ambulatory", "clinic": "ambulatory"}.get(care, care)
+        if (
+            "allowed_patient_care_levels" in policy
+            and policy_care not in policy["allowed_patient_care_levels"]
+        ):
+            rejected.append("The capacity policy does not admit this care level")
+        if profile and (
+            care not in profile["allowed_unit_kinds"]
+            or profile["required_site_capability"]
+            not in set(declared_unit.get("capabilities", [])) | set(site.get("capabilities", []))
+        ):
+            rejected.append("The declared resource profile requires an unsupported care capability")
         if not unit.get("active", site.get("status") == "active"):
             rejected.append("Site is not active with allocated staff and equipment")
         if not unit.get("admission_gate", True):
@@ -100,6 +85,8 @@ def check_placement(dataset, scenario, site, care, requirements, patient=None, s
             )
             if not eligible:
                 reasons.append("This patient is not eligible for inpatient transfer in the selected state")
+            if profile and not profile["transfer_allowed"]:
+                reasons.append("The declared resource profile does not allow transfer")
             if patient.get("pending_transfer") or patient.get("state") in {"transfer_reserved", "in_transit"}:
                 reasons.append("A transfer is already reserved or underway")
         routes = copy.deepcopy(dataset.get("routes", []))
@@ -128,7 +115,11 @@ def check_placement(dataset, scenario, site, care, requirements, patient=None, s
         )
         if not route:
             reasons.append("No available directed route from the source facility")
-        capability = "ADVANCED_TRANSPORT" if requirements or care == "icu" else "BASIC_TRANSPORT"
+        capability = (
+            (patient or {}).get("required_transport_capability")
+            or (profile or {}).get("required_transport_capability")
+            or ("ADVANCED_TRANSPORT" if requirements or care == "icu" else "BASIC_TRANSPORT")
+        )
         vehicle_state = {v["vehicle_id"]: v for v in state.get("vehicles", [])}
         available = []
         for vehicle in dataset.get("vehicles", []):

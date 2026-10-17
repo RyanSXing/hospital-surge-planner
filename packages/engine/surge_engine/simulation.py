@@ -21,6 +21,20 @@ from scipy.stats import gamma as gamma_distribution
 
 from .common import *
 from .equipment_planning import apply_planned_equipment
+from .pathways import (
+    apply_stage_profile,
+    begin_stepdown,
+    choose_cohort,
+    choose_profile,
+    compatible,
+    configure_path,
+    equipment,
+    pathway,
+    prepare_stepdown,
+    queue_profile,
+    queue_spec,
+    stage_profile,
+)
 
 
 class SimulationCancelled(Exception):
@@ -408,98 +422,7 @@ class HospitalSimulation:
         return max(1, round(float(value)))
 
     def choose_path(self, p, stream=None):
-        pid = p["patient_id"]
-        g = self.random(pid, "pathway")
-        stream = stream or {}
-        weights = stream.get("disposition_weights", {"discharge": 0.8, "ward": 0.16, "icu": 0.04})
-        override = None
-        if (
-            p.get("source_type") not in {"initial_census", "reported_batch", "synthetic_incident"}
-            and p.get("arrival_origin") != "synthetic_incident"
-        ):
-            for condition in self.conditions:
-                if condition.get("entry_stream_id", "ED_MAIN") != stream.get("entry_stream_id", "ED_MAIN"):
-                    continue
-                if condition.get("kind") not in ("arrival_multiplier", "care_mix_override"):
-                    continue
-                points = condition.get("_points")
-                lower = (
-                    points[0][0] if points is not None else self.minute(condition.get("start_at", self.at(0)))
-                )
-                upper = (
-                    points[-1][0]
-                    if points is not None
-                    else self.minute(condition.get("end_at", self.at(self.horizon)))
-                )
-                if lower <= self.now < upper:
-                    candidate = condition.get(
-                        "care_mix_override",
-                        condition.get("weights") if condition.get("kind") == "care_mix_override" else None,
-                    )
-                    if candidate is not None:
-                        override = candidate
-        if override is not None:
-            weights = override
-        weights = {"discharge" if k == "ambulatory" else k: v for k, v in weights.items()}
-        profile_override = None
-        cohort_override = None
-        keys = list(weights)
-        probs = np.array(list(weights.values()), dtype=float)
-        if not len(probs) or np.any(probs < 0) or abs(sum(probs) - 1) > 1e-8:
-            raise ValueError("Disposition weights must sum to one")
-        outcome = str(g.choice(keys, p=probs))
-        if outcome.startswith("RP-"):
-            profile_override = next(
-                (x for x in self.data.get("resource_profiles", []) if x["resource_profile_id"] == outcome),
-                None,
-            )
-            if profile_override is None:
-                raise ValueError("Care mix references unknown resource profile")
-            outcome = profile_override["stage_kind"]
-            if outcome in ("ed", "clinic"):
-                outcome = "discharge"
-        elif outcome.startswith("COHORT-"):
-            cohort_override = self.cohorts.get(outcome)
-            if not cohort_override:
-                raise ValueError("Care mix references unknown cohort")
-            outcome = cohort_override["care_level"]
-            if outcome == "ambulatory":
-                outcome = "discharge"
-        if outcome not in ("discharge", "ward", "icu"):
-            raise ValueError("Care mix contains unsupported care level")
-        if stream.get("entry_type") == "direct_ward" and outcome != "ward":
-            raise ValueError("Direct ward stream only supports ward profiles")
-        p["_outcome"] = outcome
-        care = outcome if outcome in ("ward", "icu") else "ambulatory"
-        if care in ("ward", "icu"):
-            cohorts = [c for c in self.cohorts.values() if c["care_level"] == care]
-            cohort = (
-                cohort_override
-                or cohorts[int(g.choice(len(cohorts), p=[c["selection_weight"] for c in cohorts]))]
-            )
-            p["_cohort"] = cohort["cohort_id"]
-            p["_inpatient_duration"] = self.duration(pid, cohort["los_template_id"], "inpatient")
-            p["_inpatient_requirements"] = [] if care == "ward" else ["ICU_MONITOR"]
-            if care == "ward" and self.random(pid, "ward-profile").random() < 0.25:
-                p["_inpatient_requirements"].append("WARD_OXYGEN")
-            if care == "icu" and self.random(pid, "icu-profile").random() < 1 / 3:
-                p["_inpatient_requirements"].append("VENTILATOR")
-        if profile_override and care in ("ward", "icu"):
-            p["_inpatient_requirements"] = [
-                r["capability_code"]
-                for r in profile_override["required_equipment"]
-                for _ in range(r.get("quantity", 1))
-            ]
-        p["_ed_requirements"] = (
-            ["ED_MONITOR"] if care == "icu" or self.random(pid, "ed-profile").random() < 0.1 else []
-        )
-        p["_assessment_duration"] = self.duration(pid, "ED-ASSESSMENT", "assessment")
-        p["eligible_for_clinic_diversion"] = bool(
-            outcome == "discharge"
-            and self.random(pid, "clinic-tag").random()
-            < stream.get("clinic_eligibility_probability_given_discharge", 0.375)
-        )
-        p["acuity_rank"] = {"icu": 1, "ward": 3, "ambulatory": 4}[care]
+        configure_path(self, p, stream)
 
     def transition(self, p, state, unit=None, slot=None):
         old_unit = p.get("unit_id")
@@ -507,6 +430,8 @@ class HospitalSimulation:
             p["state_intervals"][-1]["end_at"] = self.at(self.now)
             p["state_intervals"][-1]["end_elapsed_minutes"] = self.now
         p.update(state=state, unit_id=unit, slot_id=slot, state_entered_at=self.at(self.now))
+        if unit or state in ("in_transit", "discharged"):
+            p["queue_location_id"] = None
         if unit:
             p["facility_id"] = self.units[unit]["facility_id"]
             if unit != old_unit or not p.get("unit_entered_at"):
@@ -524,7 +449,9 @@ class HospitalSimulation:
                     "unit_entered_at": p.get("unit_entered_at"),
                     "current_stage_started_at": p.get("current_stage_started_at"),
                     "admission_requested_at": p.get("admission_requested_at"),
+                    "admitted_at": p.get("admitted_at"),
                     "queue_entered_at": p.get("queue_entered_at"),
+                    "queue_location_id": p.get("queue_location_id"),
                     "expected_stage_end_at": self.at(p["_service_end"])
                     if p.get("_service_end")
                     and (
@@ -539,6 +466,13 @@ class HospitalSimulation:
                     "slot_id": slot,
                     "facility_id": p.get("facility_id"),
                     "care_level": p.get("care_level"),
+                    "stage_status": p.get("stage_status"),
+                    "cohort_template_id": p.get("cohort_template_id"),
+                    "acuity_rank": p.get("acuity_rank"),
+                    "sampled_stage_minutes": p.get("sampled_stage_minutes"),
+                    "resource_profile_id": p.get("resource_profile_id"),
+                    "clinic_policy_id": p.get("clinic_policy_id"),
+                    "required_transport_capability": p.get("required_transport_capability"),
                     "target_unit_kind": p.get("target_unit_kind"),
                     "admission_pending": p["patient_id"] in self.admission_pending,
                     "vehicle_id": (p.get("pending_transfer") or {}).get("vehicle_id"),
@@ -547,6 +481,8 @@ class HospitalSimulation:
                     + [a[0] for a in p.get("_allocations", [])],
                     "pending_transfer": copy.deepcopy(p.get("pending_transfer")),
                     "eligible_for_transfer": p.get("eligible_for_transfer", False),
+                    "eligible_for_clinic_diversion": p.get("eligible_for_clinic_diversion", False),
+                    "needs_advanced_transport": p.get("needs_advanced_transport", False),
                     "queue_group": p["_queue_group"][0] + ":" + ",".join(p["_queue_group"][1])
                     if p.get("_queue_group")
                     else None,
@@ -565,9 +501,7 @@ class HospitalSimulation:
             if kind != "ed"
             else self.minute(p["arrival_at"])
         )
-        profile = tuple(
-            sorted(p.get("_ed_requirements", []) if kind == "ed" else p.get("_inpatient_requirements", []))
-        )
+        profile = queue_profile(self, p, kind)
         p["_queue_group"] = (kind, profile)
         self.queue_members[(kind, profile)].add(pid)
         heapq.heappush(self.qheap[(kind, profile)], (p.get("acuity_rank", 4), requested, pid))
@@ -604,7 +538,12 @@ class HospitalSimulation:
             p["_request_pending"] = p["state"] in ("ed_boarding", "direct_waiting")
             p["state_intervals"] = []
             self.patients[p["patient_id"]] = p
-            if p["state"] in ("ed_assessment", "ed_waiting"):
+            awaiting_stepdown = (
+                p.get("stage_status") == "ready_to_exit" and p.get("target_unit_kind") == "ward"
+            )
+            if awaiting_stepdown:
+                self.restore_stepdown(p)
+            elif p["state"] in ("ed_assessment", "ed_waiting"):
                 old_priority = p.get("acuity_rank", 4)
                 old_eligible = p.get("eligible_for_clinic_diversion", False)
                 self.choose_path(p)
@@ -616,24 +555,70 @@ class HospitalSimulation:
                 p["_inpatient_duration"] = self.duration(
                     p["patient_id"], self.cohorts[p["cohort_template_id"]]["los_template_id"], "inpatient"
                 )
-                g = self.random(p["patient_id"], "future-profile")
-                p["_inpatient_requirements"] = (
-                    (["WARD_OXYGEN"] if g.random() < 0.25 else [])
-                    if p["care_level"] == "ward"
-                    else ["ICU_MONITOR"] + (["VENTILATOR"] if g.random() < 1 / 3 else [])
+                profile = choose_profile(
+                    self, self.cohorts[p["_cohort"]], self.random(p["patient_id"], "future-profile")
                 )
-            if p["state"] == "inpatient":
+                p["_inpatient_profile_id"] = profile["resource_profile_id"]
+                p["_inpatient_requirements"] = equipment(profile)
+                source_stream = next(
+                    (
+                        stream
+                        for stream in self.data.get("entry_streams", [])
+                        if stream["entry_type"] == p.get("entry_type", "ed")
+                    ),
+                    {},
+                )
+                prepare_stepdown(self, p, pathway(self, source_stream.get("entry_stream_id", "ED_MAIN")))
+                if "eligible_for_transfer" in p:
+                    p["_declared_transfer_eligible"] = p["eligible_for_transfer"]
+            if p["state"] == "inpatient" and not awaiting_stepdown:
                 p["_inpatient_requirements"] = [
                     r["capability_code"]
                     for r in p.get("resource_requirements", [])
                     for _ in range(r.get("quantity", 1))
                 ]
-            if p.get("inpatient_resource_requirements") is not None:
+                declared = next(
+                    (
+                        profile
+                        for profile in self.data["resource_profiles"]
+                        if profile["resource_profile_id"] == p.get("resource_profile_id")
+                    ),
+                    None,
+                )
+                if declared is None:
+                    declared = next(
+                        (
+                            profile
+                            for profile in self.data["resource_profiles"]
+                            if profile["stage_kind"] == p["care_level"]
+                            and sorted(equipment(profile)) == sorted(p["_inpatient_requirements"])
+                        ),
+                        None,
+                    )
+                if declared:
+                    p["_inpatient_profile_id"] = declared["resource_profile_id"]
+                    apply_stage_profile(self, p, p["care_level"])
+            if p.get("inpatient_resource_requirements") is not None and not awaiting_stepdown:
                 p["_inpatient_requirements"] = [
                     r if isinstance(r, str) else r["capability_code"]
                     for r in p["inpatient_resource_requirements"]
                     for _ in range(1 if isinstance(r, str) else r.get("quantity", 1))
                 ]
+            if p["care_level"] in ("ward", "icu") and p["state"] != "inpatient" and not awaiting_stepdown:
+                declared = next(
+                    (
+                        profile
+                        for profile in self.data["resource_profiles"]
+                        if profile["resource_profile_id"] == p.get("resource_profile_id")
+                        and profile["stage_kind"] == p["care_level"]
+                    ),
+                    None,
+                )
+                if declared:
+                    p["_inpatient_profile_id"] = declared["resource_profile_id"]
+                    if p.get("inpatient_resource_requirements") is None:
+                        p["_inpatient_requirements"] = equipment(declared)
+                apply_stage_profile(self, p, p["care_level"])
             if p["slot_id"]:
                 u = self.units[p["unit_id"]]
                 u["occupants"].add(p["patient_id"])
@@ -641,9 +626,13 @@ class HospitalSimulation:
                 u["_ready"].discard(p["slot_id"])
                 self.allocate_equipment(p, p["unit_id"], p.get("resource_requirements", []), initial=True)
             prior = (p.get("pending_transfer") or {}).get("prior_state")
-            if p["state"] in ("ed_boarding", "direct_waiting") or (
-                p["state"] in ("transfer_reserved", "in_transit")
-                and prior in ("ed_boarding", "direct_waiting")
+            if (
+                awaiting_stepdown
+                or p["state"] in ("ed_boarding", "direct_waiting")
+                or (
+                    p["state"] in ("transfer_reserved", "in_transit")
+                    and prior in ("ed_boarding", "direct_waiting")
+                )
             ):
                 self.queue(p, p["care_level"])
             if p["state"] in ("transfer_reserved", "in_transit"):
@@ -653,7 +642,7 @@ class HospitalSimulation:
             self.transition(p, p["state"], p["unit_id"], p["slot_id"])
             p["unit_entered_at"] = row.get("unit_entered_at")
             p["current_stage_started_at"] = row.get("current_stage_started_at", row.get("unit_entered_at"))
-            if (
+            if not awaiting_stepdown and (
                 p["state"] in ("inpatient", "ed_assessment", "clinic_assessment")
                 or p["state"] == "transfer_reserved"
                 and prior == "inpatient"
@@ -709,9 +698,72 @@ class HospitalSimulation:
             self.schedule(float(t), "sample", None, 3)
         self.schedule(self.horizon, "end", None, 4)
 
+    def restore_stepdown(self, p):
+        """Restore a completed ICU source stage without restarting its clock."""
+        transfer = p.get("pending_transfer") or {}
+        source = self.units.get(p.get("unit_id") or transfer.get("source_unit_id"))
+        if (
+            p["care_level"] != "ward"
+            or not source
+            or source["kind"] != "icu"
+            or p["state"] not in ("inpatient", "transfer_reserved", "in_transit")
+            or (transfer and transfer.get("prior_state") != "inpatient")
+            or not p.get("admission_requested_at")
+        ):
+            raise ValueError("Observed stepdown requires a completed ICU source and an existing ward request")
+        stream = next(
+            (
+                stream
+                for stream in self.data.get("entry_streams", [])
+                if stream["entry_type"] == p.get("entry_type", "ed")
+            ),
+            {},
+        )
+        path = pathway(self, stream.get("entry_stream_id", "ED_MAIN"))
+        cohort = choose_cohort(
+            self,
+            "ward",
+            self.random(p["patient_id"], "stepdown-cohort"),
+            path.get("stepdown_ward_cohort_weights"),
+        )
+        committed_profile = next(
+            (
+                profile
+                for profile in self.data["resource_profiles"]
+                if profile["resource_profile_id"] == p.get("resource_profile_id")
+                and profile["stage_kind"] == "ward"
+            ),
+            None,
+        )
+        profile = committed_profile or choose_profile(
+            self, cohort, self.random(p["patient_id"], "stepdown-profile")
+        )
+        p["_outcome"] = "ward"
+        p["_stepdown_started"] = True
+        p["_awaiting_new_stage"] = True
+        p["_cohort"] = cohort["cohort_id"]
+        p["_inpatient_profile_id"] = profile["resource_profile_id"]
+        p["_inpatient_requirements"] = equipment(profile)
+        if p.get("inpatient_resource_requirements") is not None:
+            p["_inpatient_requirements"] = [
+                requirement if isinstance(requirement, str) else requirement["capability_code"]
+                for requirement in p["inpatient_resource_requirements"]
+                for _ in range(1 if isinstance(requirement, str) else requirement.get("quantity", 1))
+            ]
+        p["_inpatient_duration"] = self.duration(
+            p["patient_id"], cohort["los_template_id"], "stepdown-inpatient"
+        )
+        # The old stage ended when the ward request was observed. No completion
+        # event is scheduled, and no future ward time is consumed while waiting.
+        p["_service_end"] = self.minute(p["admission_requested_at"])
+        apply_stage_profile(self, p, "ward")
+
     def restore_transfer(self, p):
         """Resume explicitly observed commitments without resampling their remaining service."""
         tr = p.get("pending_transfer") or {}
+        if tr.get("prior_state") == "ed_waiting" or tr.get("clinic_policy_id"):
+            self.restore_clinic_transfer(p)
+            return
         if tr.get("prior_state") not in ("inpatient", "ed_boarding", "direct_waiting"):
             raise ValueError("Imported transfer requires explicit prior_state")
         expected = "departed" if p["state"] == "in_transit" else "reserved"
@@ -725,6 +777,8 @@ class HospitalSimulation:
         if u["kind"] != p["care_level"]:
             raise ValueError("Imported transfer destination has incompatible care level")
         arrival = self.minute(tr["planned_arrival_at"])
+        if p.get("_awaiting_new_stage"):
+            tr["remaining_stage_minutes"] = p["_inpatient_duration"]
         if (
             arrival <= 0
             or not isinstance(tr.get("remaining_stage_minutes"), (int, float))
@@ -761,6 +815,123 @@ class HospitalSimulation:
         )
         self.transition(p, p["state"], p.get("unit_id"), p.get("slot_id"))
 
+    def restore_clinic_transfer(self, p):
+        """Reconcile an unstarted clinic stage and its observed transport commitment."""
+        transfer = p["pending_transfer"]
+        expected = "departed" if p["state"] == "in_transit" else "reserved"
+        unit = self.units.get(transfer.get("destination_unit_id"))
+        slot = transfer.get("destination_slot_id")
+        vehicle = self.vehicles.get(transfer.get("vehicle_id"))
+        if (
+            transfer.get("prior_state") != "ed_waiting"
+            or transfer.get("status") != expected
+            or p["care_level"] != "ambulatory"
+            or p.get("unit_id")
+            or p.get("slot_id")
+            or p.get("resource_requirements")
+            or transfer.get("source_unit_id")
+            or not unit
+            or unit["kind"] != "clinic"
+        ):
+            raise ValueError("Imported clinic mission requires an unoccupied ambulatory ED source")
+        policy = self.clinic_policy(
+            {"destination_unit_id": unit["unit_id"], "clinic_policy_id": transfer.get("clinic_policy_id")}
+        )
+        if not transfer.get("clinic_policy_id") or not policy.get("transport_required"):
+            raise ValueError("Imported clinic mission requires its declared transport policy")
+        profile_id = transfer.get("clinic_resource_profile_id")
+        profile = next(
+            (
+                profile
+                for profile in self.data["resource_profiles"]
+                if profile["resource_profile_id"] == profile_id
+            ),
+            None,
+        )
+        capability = (profile.get("required_transport_capability") or "BASIC_TRANSPORT") if profile else None
+        if (
+            not profile
+            or profile.get("stage_kind") != "clinic"
+            or not compatible(self, profile, unit)
+            or slot not in unit["_ready"]
+            or profile["required_site_capability"] not in self.slots[slot].get("capabilities", [])
+            or not vehicle
+            or vehicle["mission"]
+            or capability not in vehicle["capabilities"]
+            or vehicle.get("patient_capacity", 1) < 1
+        ):
+            raise ValueError("Imported clinic mission must reconcile a compatible slot, profile and vehicle")
+        departure = self.minute(transfer["planned_departure_at"])
+        arrival = self.minute(transfer["planned_arrival_at"])
+        requested = self.minute(transfer["requested_at"])
+        expiry = self.minute(transfer["expiry_at"])
+        if (
+            not requested <= 0 < arrival
+            or not requested <= departure < arrival < expiry
+            or (expected == "reserved" and departure < 0)
+            or (expected == "departed" and departure > 0)
+            or requested < self.minute(policy["admission_start_at"])
+            or arrival >= self.minute(policy["admission_end_at"])
+        ):
+            raise ValueError(
+                "Imported clinic mission timestamps disagree with its state or admission interval"
+            )
+        requirements = self.unit_requirements(unit["unit_id"], profile["required_equipment"])
+        if self.equipment_bundle(unit["unit_id"], requirements) is None:
+            raise ValueError("Imported clinic mission cannot reconcile its destination equipment bundle")
+
+        # Waiting ED service is a future stage after a reset, not a partially
+        # consumed inpatient stay. Retain known source profile/priority/queue.
+        if expected == "reserved":
+            known = {
+                key: p.get(key)
+                for key in (
+                    "resource_profile_id",
+                    "cohort_template_id",
+                    "acuity_rank",
+                    "eligible_for_clinic_diversion",
+                    "queue_location_id",
+                )
+            }
+            self.choose_path(p)
+            source_profile = next(
+                (
+                    profile
+                    for profile in self.data["resource_profiles"]
+                    if profile["resource_profile_id"] == known["resource_profile_id"]
+                    and profile["stage_kind"] == "ed"
+                ),
+                None,
+            )
+            if source_profile:
+                p["_ed_profile_id"] = source_profile["resource_profile_id"]
+                p["_ed_requirements"] = equipment(source_profile)
+            if known["cohort_template_id"]:
+                p["_ed_cohort"] = known["cohort_template_id"]
+            p.update({key: value for key, value in known.items() if value is not None})
+        p["_clinic_profile_id"] = profile_id
+        p["_clinic_policy"] = policy
+        p["clinic_policy_id"] = policy["clinic_policy_id"]
+        p["target_unit_kind"] = "clinic"
+        self.allocate_equipment(p, unit["unit_id"], requirements, initial=True, reserved=True)
+        unit["_ready"].discard(slot)
+        unit["reservations"][p["patient_id"]] = slot
+        self.slots[slot]["reservation_id"] = p["patient_id"]
+        self.transfer_pending.add(p["patient_id"])
+        vehicle["mission"] = p["patient_id"]
+        vehicle["location"] = p["facility_id"]
+        vehicle["available_at"] = arrival + vehicle.get("turnaround_minutes", 10)
+        if expected == "reserved":
+            self.schedule(departure, "clinic_transfer_depart", p["patient_id"], 1)
+        self.schedule(arrival, "clinic_transfer_arrive", p["patient_id"], 1)
+        self.schedule(
+            vehicle["available_at"],
+            "vehicle_ready",
+            (vehicle["vehicle_id"], p["patient_id"], vehicle["available_at"]),
+            0,
+        )
+        self.transition(p, p["state"])
+
     def schedule_intervention(self, intervention, index):
         plan = copy.deepcopy(intervention)
         kind = plan.get("kind", plan.get("template_kind"))
@@ -794,6 +965,23 @@ class HospitalSimulation:
         )
         if plan["_start"] >= plan["_end"]:
             raise ValueError("Intervention readiness must occur before the plan ends")
+        if kind == "clinic":
+            policy = self.clinic_policy(plan)
+            plan["_clinic_policy"] = policy
+            plan["_start"] = max(plan["_start"], self.minute(policy["admission_start_at"]))
+            plan["_end"] = min(
+                plan["_end"], self.minute(policy.get("admission_end_at", self.at(self.horizon)))
+            )
+            if plan["_start"] >= plan["_end"] or plan["_start"] >= self.horizon:
+                self.intervention_results.append(
+                    {
+                        "id": plan["id"],
+                        "kind": kind,
+                        "status": "inactive",
+                        "reason": "No clinic admission interval overlaps this plan",
+                    }
+                )
+                return
         self.schedule(plan["_start"], "plan_start", plan, 0)
         if plan["_end"] < self.horizon:
             self.schedule(plan["_end"], "plan_end", plan, 0)
@@ -850,8 +1038,14 @@ class HospitalSimulation:
             None,
         )
         stream = copy.deepcopy(stream or {"entry_stream_id": "ED_MAIN", "entry_type": "ed"})
+        if payload.get("facility_id") is not None and payload["facility_id"] != stream.get(
+            "destination_facility_id", "FAC-MAIN"
+        ):
+            raise ValueError("Arrival batch facility must match its declared entry stream destination")
         if payload.get("care_mix"):
             stream["disposition_weights"] = payload["care_mix"]
+        if payload.get("resource_profile_mix") is not None:
+            stream["resource_profile_mix"] = copy.deepcopy(payload["resource_profile_mix"])
         times = self.random(key, "batch-times").uniform(0, spread, count) if spread else np.zeros(count)
         for i in range(count):
             t = time + float(times[i])
@@ -1082,14 +1276,18 @@ class HospitalSimulation:
                 if u["active"]
                 else 0
             )
-            if kind == "icu":
+            blanket = Counter()
+            for requirement in policy.get("per_slot_resources", []):
+                blanket[requirement["capability_code"]] += requirement["quantity"]
+            for capability, quantity in blanket.items():
                 u["staffed"] = min(
                     u["staffed"],
                     sum(
-                        max(0, p["quantity"] - p["failed"])
+                        max(0, p["quantity"] - p["failed"] - p["pending_decommission"])
                         for p in self.pools.values()
-                        if p.get("unit_id") == u["unit_id"] and p["capability_code"] == "ICU_MONITOR"
-                    ),
+                        if p.get("unit_id") == u["unit_id"] and p["capability_code"] == capability
+                    )
+                    // quantity,
                 )
         self._reserve_staff_count = sum(
             sum(self.staff[s]["employment_pool"] == "reserve" for s in u["active_staff"])
@@ -1151,10 +1349,25 @@ class HospitalSimulation:
             - pool["pending_decommission"],
         )
 
+    def unit_requirements(self, unit, requirements):
+        requested = Counter()
+        for requirement in requirements:
+            requested[requirement["capability_code"]] += requirement.get("quantity", 1)
+        policy = self.policies.get(self.units[unit].get("capacity_policy_id"), {})
+        blanket = Counter()
+        for requirement in policy.get("per_slot_resources", []):
+            blanket[requirement["capability_code"]] += requirement["quantity"]
+        for capability, quantity in blanket.items():
+            requested[capability] = max(requested[capability], quantity)
+        return [
+            {"capability_code": capability, "quantity": quantity}
+            for capability, quantity in requested.items()
+        ]
+
     def equipment_bundle(self, unit, requirements):
         result = []
         requested = Counter()
-        for req in requirements:
+        for req in self.unit_requirements(unit, requirements):
             requested[req["capability_code"]] += req.get("quantity", 1)
         for cap, need in requested.items():
             for pool in self.equipment_candidates(unit, cap):
@@ -1169,6 +1382,7 @@ class HospitalSimulation:
         return result
 
     def allocate_equipment(self, p, unit, requirements, initial=False, reserved=False):
+        requirements = self.unit_requirements(unit, requirements)
         bundle = self.equipment_bundle(unit, requirements)
         if bundle is None:
             if initial:
@@ -1180,6 +1394,7 @@ class HospitalSimulation:
             p["_reserved_allocations"] = bundle
         else:
             p["_allocations"] = bundle
+            p["resource_requirements"] = requirements
         return True
 
     def release_equipment(self, p, reserved=False):
@@ -1215,6 +1430,10 @@ class HospitalSimulation:
         p["unit_id"] = None
 
     def place(self, p, u, kind, reserved=False):
+        if not compatible(
+            self, self.clinic_profile(p) if kind == "clinic" else stage_profile(self, p, kind), u
+        ):
+            return False
         requirements = [
             {"capability_code": c, "quantity": 1}
             for c in (
@@ -1225,9 +1444,24 @@ class HospitalSimulation:
                 else p["_inpatient_requirements"]
             )
         ]
+        if kind == "clinic":
+            requirements = copy.deepcopy(self.clinic_profile(p)["required_equipment"])
+        requirements = self.unit_requirements(u["unit_id"], requirements)
         if self.free(u) < 1 or self.equipment_bundle(u["unit_id"], requirements) is None:
             return False
-        sid = next((s for s in sorted(u["slots"]) if self.slot_ready(s)), None)
+        sid = next(
+            (
+                s
+                for s in sorted(u["slots"])
+                if self.slot_ready(s)
+                and (
+                    kind != "clinic"
+                    or self.clinic_profile(p)["required_site_capability"]
+                    in self.slots[s].get("capabilities", [])
+                )
+            ),
+            None,
+        )
         if not sid:
             return False
         u["_ready"].discard(sid)
@@ -1248,15 +1482,13 @@ class HospitalSimulation:
         if kind == "ed":
             self.ed_pending.discard(p["patient_id"])
             p["care_level"] = "ambulatory"
-            p["cohort_template_id"] = "COHORT-ED"
+            p["cohort_template_id"] = p.get("_ed_cohort", p["cohort_template_id"])
+            apply_stage_profile(self, p, "ed")
+            p["stage_status"] = "in_service"
             self.transition(p, "ed_assessment", u["unit_id"], sid)
             self.start_service(p, p["_assessment_duration"])
         elif kind == "clinic":
-            p["care_level"] = "ambulatory"
-            p["eligible_for_clinic_diversion"] = False
-            self.transition(p, "clinic_assessment", u["unit_id"], sid)
-            self.start_service(p, self.duration(p["patient_id"], "CLINIC-SERVICE", "clinic"))
-            self.metrics["temporary_site_patients_served"] += int(self.now >= self.measure_start)
+            self.start_clinic_service(p, u, sid)
         else:
             self.admit(p, u, sid)
             self.start_service(p, p["_inpatient_duration"])
@@ -1274,7 +1506,7 @@ class HospitalSimulation:
         self.admission_pending.discard(pid)
         if p.get("_queue_group"):
             self.queue_members[p["_queue_group"]].discard(pid)
-        self.queues.get(p.get("care_level"), set()).discard(pid)
+        self.queues.get(p.get("target_unit_kind") or p.get("care_level"), set()).discard(pid)
         if p.get("_wait_started") is not None:
             self.completed_waits.append(
                 max(0, self.now - max(p["_wait_started"], self.measure_start))
@@ -1286,11 +1518,14 @@ class HospitalSimulation:
         p["cohort_template_id"] = p.get("_cohort", p["cohort_template_id"])
         p["eligible_for_clinic_diversion"] = False
         p["eligible_for_transfer"] = True
+        apply_stage_profile(self, p, u["kind"])
         p["stage_status"] = "in_service"
         p["queue_entered_at"] = None
         self.transition(p, "inpatient", u["unit_id"], sid)
 
     def start_service(self, p, duration, initial=False):
+        if not initial:
+            p.pop("_awaiting_new_stage", None)
         for c in self.conditions:
             if (
                 not initial
@@ -1331,11 +1566,14 @@ class HospitalSimulation:
                 p["admission_requested_at"] = self.at(self.now)
                 p["eligible_for_clinic_diversion"] = False
                 p["eligible_for_transfer"] = True
+                apply_stage_profile(self, p, outcome)
                 p["needs_advanced_transport"] = bool(p["_inpatient_requirements"])
                 p["stage_status"] = "not_started"
                 self.queue(p, outcome)
                 self.transition(p, "ed_boarding", p["unit_id"], p["slot_id"])
                 self.emit("admission_request", p, source=p["unit_id"], reason=outcome)
+        elif p["state"] == "inpatient" and begin_stepdown(self, p):
+            return
         else:
             self.discharge(p)
 
@@ -1361,12 +1599,278 @@ class HospitalSimulation:
                 plan.get("_draining")
                 and plan.get("_target_unit") == source
                 and not self.units[source]["occupants"]
+                and not self.units[source]["reservations"]
             ):
                 self.active_plans.pop(key)
                 self.units[source]["active"] = False
                 self.reconcile_staff()
                 self.emit("site_closed", source=source, reason="service_drained")
         self.emit("discharge", p, source=source)
+
+    def clinic_profile(self, patient):
+        ident = patient.get("_clinic_profile_id")
+        available = [p for p in self.data.get("resource_profiles", []) if p["stage_kind"] == "clinic"]
+        if not ident:
+            ident = (
+                "RP-CLINIC-BASIC"
+                if any(p["resource_profile_id"] == "RP-CLINIC-BASIC" for p in available)
+                else available[0]["resource_profile_id"]
+                if len(available) == 1
+                else None
+            )
+        profile = next(
+            (p for p in self.data.get("resource_profiles", []) if p["resource_profile_id"] == ident), None
+        )
+        if not profile or profile.get("stage_kind") != "clinic":
+            raise ValueError(f"Clinic diversion requires a declared clinic-stage profile: {ident}")
+        return profile
+
+    def clinic_policy(self, plan):
+        target = plan.get("destination_unit_id") or plan.get("unit_id")
+        site = self.units.get(target, {}).get("facility_id") or plan.get("facility_id")
+        site = site or self.units.get("UNIT-CLINIC-NORTH", {}).get("facility_id")
+        policies = [
+            p
+            for p in self.data.get("clinic_policies", [])
+            if p.get("site_id") == site
+            and (not plan.get("clinic_policy_id") or p["clinic_policy_id"] == plan["clinic_policy_id"])
+        ]
+        if len(policies) > 1 and not plan.get("clinic_policy_id"):
+            ed_streams = {
+                stream["entry_stream_id"]
+                for stream in self.data.get("entry_streams", [])
+                if stream["entry_type"] == "ed"
+            }
+            preferred = {
+                path.get("clinic_policy_id")
+                for path in self.data.get("pathway_profiles", [])
+                if path["entry_stream_id"] in ed_streams
+            }
+            selected = [policy for policy in policies if policy["clinic_policy_id"] in preferred]
+            if len(selected) == 1:
+                policies = selected
+        if len(policies) != 1:
+            raise ValueError("Clinic activation requires one declared policy for its destination site")
+        policy = policies[0]
+        if (
+            policy.get("routing_mode") != "new_arrivals_only"
+            or policy.get("eligibility_tag") != "eligible_for_clinic_diversion"
+        ):
+            raise ValueError("Clinic policy must use explicitly eligible new arrivals only")
+        if policy.get("service_template_id") not in self.templates:
+            raise ValueError("Clinic policy references an unknown service template")
+        if not policy.get("admission_start_at") or (
+            policy.get("admission_end_at")
+            and dt(policy["admission_end_at"]) <= dt(policy["admission_start_at"])
+        ):
+            raise ValueError("Clinic policy requires an increasing admission interval")
+        return policy
+
+    def start_clinic_service(self, p, unit, slot):
+        profile = self.clinic_profile(p)
+        p["care_level"] = "ambulatory"
+        p["stage_status"] = "in_service"
+        p["target_unit_kind"] = "clinic"
+        p["resource_profile_id"] = profile["resource_profile_id"]
+        p["resource_requirements"] = self.unit_requirements(unit["unit_id"], profile["required_equipment"])
+        p["required_transport_capability"] = profile.get("required_transport_capability")
+        p["eligible_for_transfer"] = profile.get("transfer_allowed", False)
+        p["acuity_rank"] = profile.get("acuity_rank", 4)
+        p["eligible_for_clinic_diversion"] = False
+        self.transition(p, "clinic_assessment", unit["unit_id"], slot)
+        self.start_service(
+            p, self.duration(p["patient_id"], p["_clinic_policy"]["service_template_id"], "clinic")
+        )
+        self.metrics["temporary_site_patients_served"] += int(self.now >= self.measure_start)
+
+    def clinic_fallback(self, p, policy, reason, unit):
+        self.emit(
+            "clinic_diversion_rejected",
+            p,
+            dest=unit["unit_id"],
+            reason=reason,
+            payload={
+                "clinic_policy_id": policy["clinic_policy_id"],
+                "hospital_fallback": policy.get("hospital_fallback", True),
+            },
+        )
+        if not policy.get("hospital_fallback", True):
+            raise ValueError(f"Clinic diversion infeasible without hospital fallback: {reason}")
+
+    def divert_to_clinic(self, p, stream):
+        # This is called exactly once, at the new arrival. Existing ED patients
+        # are never reconsidered, and failure must leave their ED bundle intact.
+        if not p.get("eligible_for_clinic_diversion") or p.get("_outcome") != "discharge":
+            return False
+        profile = None
+        candidates = sorted(
+            (
+                plan
+                for plan in self.active_plans.values()
+                if plan["kind"] == "clinic" and plan.get("_target_unit") and not plan.get("_draining")
+            ),
+            key=lambda plan: plan["_target_unit"],
+        )
+        for plan in candidates:
+            unit = self.units[plan["_target_unit"]]
+            policy = plan["_clinic_policy"]
+            if not (plan["_start"] <= self.now < plan["_end"]):
+                continue
+            profile = profile or self.clinic_profile(p)
+            facility = next(f for f in self.data["facilities"] if f["facility_id"] == unit["facility_id"])
+            required = profile["required_site_capability"]
+            filters = plan.get("patient_eligibility_filter", {})
+            if (
+                not compatible(self, profile, unit)
+                or unit["kind"] not in profile["allowed_unit_kinds"]
+                or required not in facility.get("capabilities", [])
+                or required not in unit.get("capabilities", [])
+                or (filters.get("care_levels") and "ambulatory" not in filters["care_levels"])
+                or (
+                    filters.get("allowed_profile_ids")
+                    and profile["resource_profile_id"] not in filters["allowed_profile_ids"]
+                )
+                or profile["resource_profile_id"] in filters.get("excluded_profile_ids", [])
+                or (filters.get("require_transfer_eligible") and not p.get("eligible_for_transfer"))
+            ):
+                self.clinic_fallback(p, policy, "incompatible_clinic_capability_or_eligibility", unit)
+                continue
+            transport = None
+            if policy.get("transport_required", False):
+                transport = self.clinic_transport(p, unit, plan, profile)
+                if not transport:
+                    self.clinic_fallback(p, policy, "clinic_transport_unavailable", unit)
+                    continue
+            if (
+                self.free(unit) < 1
+                or not any(required in self.slots[s].get("capabilities", []) for s in unit["_ready"])
+                or self.equipment_bundle(unit["unit_id"], profile["required_equipment"]) is None
+            ):
+                self.clinic_fallback(p, policy, "clinic_bundle_unavailable", unit)
+                continue
+            p["_clinic_policy"] = policy
+            p["clinic_policy_id"] = policy["clinic_policy_id"]
+            if transport:
+                self.reserve_clinic_transport(p, unit, transport, plan)
+                return True
+            if self.place(p, unit, "clinic"):
+                return True
+            # place() is atomic; a failed attempt does not change ED requirements.
+            p.pop("_clinic_policy", None)
+            p.pop("clinic_policy_id", None)
+            self.clinic_fallback(p, policy, "clinic_bundle_unavailable", unit)
+        return False
+
+    def clinic_transport(self, p, unit, plan, profile):
+        source = p["facility_id"]
+        route = self.routes.get((source, unit["facility_id"]))
+        if not route or route.get("unavailable"):
+            return None
+        capability = profile.get("required_transport_capability") or "BASIC_TRANSPORT"
+        for vehicle in sorted(self.vehicles.values(), key=lambda v: v["vehicle_id"]):
+            if (
+                vehicle["mission"] is not None
+                or vehicle["available_at"] > self.now
+                or capability not in vehicle["capabilities"]
+                or vehicle.get("patient_capacity", 1) < 1
+            ):
+                continue
+            reposition = (
+                self.routes.get((vehicle["location"], source)) if vehicle["location"] != source else None
+            )
+            if vehicle["location"] != source and (not reposition or reposition.get("unavailable")):
+                continue
+            departure = (
+                self.now
+                + (reposition["travel_minutes"] if reposition else 0)
+                + route.get("loading_minutes", 10)
+            )
+            arrival = departure + route["travel_minutes"] + route.get("unloading_minutes", 10)
+            if arrival >= plan["_end"]:
+                continue
+            return vehicle, departure, arrival
+        return None
+
+    def reserve_clinic_transport(self, p, unit, transport, plan):
+        vehicle, departure, arrival = transport
+        slot = self.place(p, unit, "clinic", reserved=True)
+        if not slot:
+            raise ValueError("Clinic transport reservation lost its prechecked atomic bundle")
+        transfer = {
+            "request_id": f"CLINIC-TRANSFER-{p['patient_id']}-{self.event_seq}",
+            "status": "reserved",
+            "destination_unit_id": unit["unit_id"],
+            "destination_slot_id": slot,
+            "vehicle_id": vehicle["vehicle_id"],
+            "requested_at": self.at(self.now),
+            "planned_departure_at": self.at(departure),
+            "planned_arrival_at": self.at(arrival),
+            "expiry_at": self.at(plan["_end"]),
+            "prior_state": "ed_waiting",
+            "source_unit_id": None,
+            "clinic_policy_id": plan["_clinic_policy"]["clinic_policy_id"],
+            "clinic_resource_profile_id": self.clinic_profile(p)["resource_profile_id"],
+        }
+        p["resource_profile_id"] = p["_ed_profile_id"]
+        p["cohort_template_id"] = p["_ed_cohort"]
+        p["target_unit_kind"] = "clinic"
+        p["pending_transfer"] = transfer
+        self.transfer_pending.add(p["patient_id"])
+        vehicle["mission"] = p["patient_id"]
+        vehicle["available_at"] = arrival + vehicle.get("turnaround_minutes", 10)
+        vehicle["location"] = p["facility_id"]
+        self.transition(p, "transfer_reserved")
+        self.emit(
+            "transfer_accepted",
+            p,
+            dest=unit["unit_id"],
+            payload=copy.deepcopy(transfer),
+            resources=[slot, vehicle["vehicle_id"]] + [a[0] for a in p["_reserved_allocations"]],
+        )
+        self.schedule(departure, "clinic_transfer_depart", p["patient_id"], 1)
+        self.schedule(arrival, "clinic_transfer_arrive", p["patient_id"], 1)
+        self.schedule(
+            vehicle["available_at"],
+            "vehicle_ready",
+            (vehicle["vehicle_id"], p["patient_id"], vehicle["available_at"]),
+            0,
+        )
+
+    def clinic_transfer(self, patient_id, arrived=False):
+        p = self.patients[patient_id]
+        transfer = p.get("pending_transfer")
+        if not transfer or transfer["status"] != ("departed" if arrived else "reserved"):
+            return
+        unit = self.units[transfer["destination_unit_id"]]
+        if not arrived:
+            if (
+                not unit["active"]
+                or not unit["gate"]
+                or self.occupancy(unit) + len(unit["reservations"]) > unit["staffed"]
+            ):
+                self.cancel_transfer(p, "clinic_capacity_lost_before_departure")
+                return
+            transfer["status"] = "departed"
+            self.transition(p, "in_transit")
+            self.emit("transfer_departed", p, dest=unit["unit_id"], payload=copy.deepcopy(transfer))
+            return
+        slot = unit["reservations"].pop(patient_id)
+        self.slots[slot].pop("reservation_id", None)
+        self.slots[slot]["patient_id"] = patient_id
+        unit["occupants"].add(patient_id)
+        for pool_id, count in p.get("_reserved_allocations", []):
+            self.pools[pool_id]["reserved"].pop(patient_id, None)
+            self.pools[pool_id]["in_use"][patient_id] = count
+        p["_allocations"] = p.pop("_reserved_allocations", [])
+        p["resource_requirements"] = copy.deepcopy(self.clinic_profile(p)["required_equipment"])
+        self.vehicles[transfer["vehicle_id"]]["location"] = unit["facility_id"]
+        p["pending_transfer"] = None
+        self.transfer_pending.discard(patient_id)
+        self.start_clinic_service(p, unit, slot)
+        self.emit("transfer_arrived", p, dest=unit["unit_id"], payload=transfer)
+        self.emit(
+            "clinic_start", p, dest=unit["unit_id"], resources=[slot] + [a[0] for a in p["_allocations"]]
+        )
 
     def arrival(self, payload):
         pid = payload["patient_id"]
@@ -1387,6 +1891,8 @@ class HospitalSimulation:
             "cohort_template_id": "COHORT-ED",
             "admitted_at": None,
             "resource_requirements": [],
+            "queue_location_id": s.get("initial_queue_location_id"),
+            "stage_status": "not_started",
             "eligible_for_transfer": entry != "ed",
             "needs_advanced_transport": False,
             "_token": 0,
@@ -1399,6 +1905,7 @@ class HospitalSimulation:
         p["_random_index"] = payload.get("random_index", self.stream_index(self.now))
         self.patients[pid] = p
         self.choose_path(p, s)
+        p["cohort_template_id"] = p.get("_ed_cohort", p["cohort_template_id"])
         self.metrics["arrivals"] += int(self.now >= self.measure_start)
         if self.current_day:
             self.daily[self.current_day]["arrivals"] += int(self.now >= self.measure_start)
@@ -1412,15 +1919,8 @@ class HospitalSimulation:
             },
         )
         if entry == "ed":
-            clinics = [
-                self.units[x["_target_unit"]]
-                for x in self.active_plans.values()
-                if x["kind"] == "clinic" and x.get("_target_unit") and not x.get("_draining")
-            ]
-            if p["eligible_for_clinic_diversion"]:
-                for clinic in sorted(clinics, key=lambda x: x["unit_id"]):
-                    if clinic["active"] and self.place(p, clinic, "clinic"):
-                        return
+            if self.divert_to_clinic(p, s):
+                return
             self.queue(p, "ed")
             self.transition(p, "ed_waiting")
         else:
@@ -1428,6 +1928,7 @@ class HospitalSimulation:
             p["target_unit_kind"] = "ward"
             p["admission_requested_at"] = self.at(self.now)
             p["cohort_template_id"] = p["_cohort"]
+            apply_stage_profile(self, p, "ward")
             self.queue(p, "ward")
             self.transition(p, "direct_waiting")
 
@@ -1447,12 +1948,14 @@ class HospitalSimulation:
                         heapq.heappop(heap)
                     if not heap:
                         continue
-                    requirements = [{"capability_code": c, "quantity": 1} for c in profile]
+                    required, declared = queue_spec(self, profile, kind)
+                    requirements = [{"capability_code": c, "quantity": 1} for c in required]
                     destination = next(
                         (
                             u
                             for u in candidates
                             if self.free(u) > 0
+                            and compatible(self, declared, u)
                             and self.equipment_bundle(u["unit_id"], requirements) is not None
                         ),
                         None,
@@ -1521,6 +2024,7 @@ class HospitalSimulation:
                 )
             )
         for (kind, profile), members in self.queue_members.items():
+            required, declared = queue_spec(self, profile, kind)
             key = kind + ":" + ",".join(profile)
             count = len(members) - sum(pid in members for pid in self.transfer_pending)
             inputs = (bool(count), tuple(resources[kind]))
@@ -1534,6 +2038,8 @@ class HospitalSimulation:
                     if unit["kind"] != kind or unit["capacity_mode"] != "staff_derived":
                         continue
                     reasons = []
+                    if not compatible(self, declared, unit):
+                        reasons.append("unsupported_care_capability")
                     if not unit["active"]:
                         reasons.append("destination_inactive")
                     if self.enabled(unit) == 0:
@@ -1551,7 +2057,7 @@ class HospitalSimulation:
                         reasons.append("minimum_operating_team")
                     if (
                         self.equipment_bundle(
-                            unit["unit_id"], [{"capability_code": cap, "quantity": 1} for cap in profile]
+                            unit["unit_id"], [{"capability_code": cap, "quantity": 1} for cap in required]
                         )
                         is None
                     ):
@@ -1594,6 +2100,8 @@ class HospitalSimulation:
             self.patients[p]
             for p in self.admission_pending
             if self.patients[p]["state"] in ("ed_boarding", "direct_waiting")
+            or self.patients[p]["state"] == "inpatient"
+            and self.patients[p].get("stage_status") == "ready_to_exit"
         ]
         if any(p.get("include_inpatients", False) for p in plans):
             eligible += [
@@ -1619,9 +2127,23 @@ class HospitalSimulation:
             f = plan.get("patient_eligibility_filter", {})
             if f.get("care_levels") and p["care_level"] not in f["care_levels"]:
                 continue
+            profile_id = p.get("_inpatient_profile_id", p.get("resource_profile_id"))
+            if f.get("allowed_profile_ids") and profile_id not in f["allowed_profile_ids"]:
+                continue
+            if profile_id in f.get("excluded_profile_ids", []):
+                continue
+            remaining = (
+                p.get("_inpatient_duration", 0)
+                if p.get("_awaiting_new_stage") or p["state"] != "inpatient"
+                else max(0, p.get("_service_end", self.now) - self.now)
+            )
+            if remaining < f.get("minimum_remaining_stage_minutes", 0):
+                continue
             requirements = p.get("_inpatient_requirements", [])
             advanced = bool(requirements) or p["care_level"] == "icu"
-            cap = "ADVANCED_TRANSPORT" if advanced else "BASIC_TRANSPORT"
+            cap = p.get("required_transport_capability") or (
+                "ADVANCED_TRANSPORT" if advanced else "BASIC_TRANSPORT"
+            )
             vehicles = [
                 v
                 for v in self.vehicles.values()
@@ -1673,10 +2195,11 @@ class HospitalSimulation:
                     "prior_state": prior,
                     "source_unit_id": p.get("unit_id"),
                     "remaining_stage_minutes": max(0, p.get("_service_end", self.now) - depart)
-                    if prior == "inpatient"
+                    if prior == "inpatient" and not p.get("_awaiting_new_stage")
                     else p["_inpatient_duration"],
                 }
                 p["pending_transfer"] = transfer
+                p["target_unit_kind"] = u["kind"]
                 p["_transfer_requested"] = self.now
                 self.transfer_pending.add(p["patient_id"])
                 vehicle["mission"] = p["patient_id"]
@@ -1712,14 +2235,33 @@ class HospitalSimulation:
         vehicle["available_at"] = self.now
         p["pending_transfer"] = None
         self.transfer_pending.discard(p["patient_id"])
+        if transfer["prior_state"] == "inpatient" and not p.get("_awaiting_new_stage"):
+            p["target_unit_kind"] = None
         if p["patient_id"] in self.admission_pending:
-            profile = tuple(sorted(p.get("_inpatient_requirements", [])))
+            profile = queue_profile(self, p, p["care_level"])
             heapq.heappush(
                 self.qheap[(p["care_level"], profile)],
                 (p.get("acuity_rank", 4), self.minute(p["admission_requested_at"]), p["patient_id"]),
             )
         self.transition(p, transfer["prior_state"], p.get("unit_id"), p.get("slot_id"))
         self.emit("transfer_cancelled", p, reason=reason)
+        if transfer.get("clinic_policy_id"):
+            self.clinic_fallback(p, p["_clinic_policy"], reason, u)
+            p.pop("_clinic_policy", None)
+            p.pop("clinic_policy_id", None)
+            p["target_unit_kind"] = None
+            if not p.get("queue_location_id"):
+                p["queue_location_id"] = next(
+                    (
+                        stream["initial_queue_location_id"]
+                        for stream in self.data["entry_streams"]
+                        if stream["entry_type"] == "ed"
+                        and stream["destination_facility_id"] == p["facility_id"]
+                    ),
+                    None,
+                )
+            self.queue(p, "ed")
+            self.transition(p, "ed_waiting")
 
     def transfer_depart(self, p):
         tr = p.get("pending_transfer")
@@ -1732,12 +2274,13 @@ class HospitalSimulation:
         tr["status"] = "departed"
         tr["remaining_stage_minutes"] = (
             max(0, p.get("_service_end", self.now) - self.now)
-            if tr["prior_state"] == "inpatient"
+            if tr["prior_state"] == "inpatient" and not p.get("_awaiting_new_stage")
             else p["_inpatient_duration"]
         )
         p["_token"] += 1
         source = p.get("unit_id")
         self.release_slot(p)
+        p["resource_requirements"] = []
         self.transition(p, "in_transit")
         self.emit("transfer_departed", p, source=source, dest=u["unit_id"], payload=tr)
 
@@ -1792,6 +2335,21 @@ class HospitalSimulation:
         ):
             raise ValueError("Intervention target has incompatible care capability")
         plan["_target_unit"] = target
+        if kind == "clinic" and "_clinic_policy" not in plan:
+            # Timestamped site-ready updates use this entry point directly.
+            policy = self.clinic_policy(plan)
+            plan["_clinic_policy"] = policy
+            plan["_start"] = max(self.now, self.minute(policy["admission_start_at"]))
+            plan["_end"] = min(
+                self.horizon, self.minute(policy.get("admission_end_at", self.at(self.horizon)))
+            )
+            if plan["_start"] >= plan["_end"]:
+                raise ValueError("Clinic readiness falls outside its admission interval")
+            if plan["_end"] < self.horizon:
+                self.schedule(plan["_end"], "plan_end", plan, 0)
+            if plan["_start"] > self.now:
+                self.schedule(plan["_start"], "plan_start", plan, 0)
+                return
         nurses = int(plan.get("nurses", 2 if kind == "clinic" else 5))
         providers = int(plan.get("providers", 1))
         support = int(plan.get("support", 1))
@@ -2465,7 +3023,16 @@ class HospitalSimulation:
         elif kind == "plan_end":
             active = self.active_plans.get(payload["id"])
             target = payload.get("_target_unit")
-            if active and payload["kind"] == "clinic" and target and self.units[target]["occupants"]:
+            if (
+                active
+                and payload["kind"] == "clinic"
+                and target
+                and (self.units[target]["occupants"] or self.units[target]["reservations"])
+            ):
+                if not active["_clinic_policy"].get("drain_after_close", True):
+                    raise ValueError(
+                        "Hard clinic closure is infeasible while patients or reservations remain"
+                    )
                 active["_draining"] = True
                 self.emit("site_admissions_closed", source=target, reason="drain_after_close")
             else:
@@ -2485,6 +3052,8 @@ class HospitalSimulation:
             self.emit(
                 "route_restored", payload={"route_id": route_id, "expired_update_id": override["update_id"]}
             )
+        elif kind in ("clinic_transfer_depart", "clinic_transfer_arrive"):
+            self.clinic_transfer(payload, arrived=kind == "clinic_transfer_arrive")
         elif kind in ("transfer_depart", "transfer_arrive", "transfer_expire"):
             p = self.patients[payload[0]]
             tr = p.get("pending_transfer")
@@ -2679,16 +3248,16 @@ def state_at(trace, at):
         if stage["state"] == "discharged":
             continue
         patients.append(
-            dict(
-                patient_id=p["patient_id"],
-                entry_type=p.get("entry_type"),
-                source_type=p.get("source_type"),
+            {
+                "patient_id": p["patient_id"],
+                "entry_type": p.get("entry_type"),
+                "source_type": p.get("source_type"),
                 **{key: p[key] for key in ("arrival_origin", "input_kind") if key in p},
-                arrival_at=p.get("arrival_at"),
-                acuity_rank=p.get("acuity_rank"),
-                cohort_template_id=p.get("cohort_template_id"),
+                "arrival_at": p.get("arrival_at"),
+                "acuity_rank": p.get("acuity_rank"),
+                "cohort_template_id": p.get("cohort_template_id"),
                 **copy.deepcopy(stage),
-            )
+            }
         )
     blockers = {}
     for group, history in trace.get("blocker_history", {}).items():

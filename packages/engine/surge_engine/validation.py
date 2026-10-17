@@ -28,6 +28,16 @@ def validate_dataset(dataset):
             "errors": [{"file": "dataset", "row": 0, "field": "", "message": "Expected JSON object"}],
             "warnings": [],
         }
+    from .schema_validation import canonical_schema_errors
+
+    schema_errors = canonical_schema_errors(dataset)
+    if schema_errors:
+        return {
+            "valid": False,
+            "errors": schema_errors,
+            "warnings": [],
+            "synthetic": dataset.get("synthetic", False),
+        }
     required = {
         "facilities": "facility_id",
         "units": "unit_id",
@@ -113,6 +123,24 @@ def validate_dataset(dataset):
             error("slots", i, "installation_status", "Unknown installation status")
         if s.get("installation_status") != "installed" and s.get("enabled"):
             error("slots", i, "enabled", "An uninstalled slot cannot be enabled")
+    policies = {p["capacity_policy_id"]: p for p in dataset["capacity_policies"]}
+
+    def bundle(unit_id, requirements):
+        quantities = Counter()
+        for item in requirements:
+            if isinstance(item, str):
+                quantities[item] += 1
+            else:
+                quantities[item["capability_code"]] += item["quantity"]
+        unit = indexes["units"].get(unit_id)
+        if unit:
+            blanket = Counter()
+            for item in policies[unit["capacity_policy_id"]]["per_slot_resources"]:
+                blanket[item["capability_code"]] += item["quantity"]
+            for capability, count in blanket.items():
+                quantities[capability] = max(quantities[capability], count)
+        return quantities
+
     occupied = set()
     reserved_slots = set()
     assigned_vehicles = set()
@@ -136,14 +164,23 @@ def validate_dataset(dataset):
         slot = p.get("slot_id")
         unit = p.get("unit_id")
         transfer = p.get("pending_transfer") or {}
+        clinic_transfer = (
+            state in ("transfer_reserved", "in_transit") and transfer.get("prior_state") == "ed_waiting"
+        )
+        completed_source = p.get("stage_status") == "ready_to_exit" and state in (
+            "inpatient",
+            "transfer_reserved",
+            "in_transit",
+        )
         if unit in indexes["units"] and indexes["units"][unit]["facility_id"] != p.get("facility_id"):
             error("patients", i, "facility_id", "Patient facility disagrees with occupied unit")
-        if p.get("care_level") not in ("ambulatory", "ward", "icu"):
+        if p.get("care_level") not in ("ambulatory", "ward", "icu", "nonclinical"):
             error("patients", i, "care_level", "Unsupported care level")
         if state not in allowed_states:
             error("patients", i, "state", "Unsupported patient state")
         if state in ("inpatient", "ed_assessment", "ed_boarding", "clinic_assessment") or (
-            state == "transfer_reserved" and transfer.get("prior_state") != "direct_waiting"
+            state == "transfer_reserved"
+            and transfer.get("prior_state") not in ("direct_waiting", "ed_waiting")
         ):
             if slot not in indexes["slots"]:
                 error("patients", i, "slot_id", "Occupying patient requires a valid slot")
@@ -156,7 +193,10 @@ def validate_dataset(dataset):
             occupied.add(slot)
         if (
             state in ("ed_waiting", "direct_waiting", "in_transit", "discharged")
-            or (state == "transfer_reserved" and transfer.get("prior_state") == "direct_waiting")
+            or (
+                state == "transfer_reserved"
+                and transfer.get("prior_state") in ("direct_waiting", "ed_waiting")
+            )
         ) and (slot or unit):
             error("patients", i, "unit_id", "Queue/transit/terminal state cannot occupy a slot")
         if state in ("ed_boarding", "direct_waiting") and not p.get("admission_requested_at"):
@@ -175,8 +215,9 @@ def validate_dataset(dataset):
                         error("patients", i, field, "Observation cannot be after snapshot")
                 except (ValueError, TypeError):
                     error("patients", i, field, "Timestamp must include timezone")
-        if state in ("inpatient", "ed_assessment", "clinic_assessment") or (
-            state == "transfer_reserved" and transfer.get("prior_state") == "inpatient"
+        if not completed_source and (
+            state in ("inpatient", "ed_assessment", "clinic_assessment")
+            or (state == "transfer_reserved" and transfer.get("prior_state") == "inpatient")
         ):
             spec = p.get("remaining_stage_spec")
             flat = [
@@ -222,7 +263,12 @@ def validate_dataset(dataset):
                             "Expected stage end requires timezone-aware timestamp",
                         )
         if state in ("transfer_reserved", "in_transit"):
-            if transfer.get("prior_state") not in ("inpatient", "ed_boarding", "direct_waiting"):
+            if transfer.get("prior_state") not in (
+                "inpatient",
+                "ed_boarding",
+                "direct_waiting",
+                "ed_waiting",
+            ):
                 error("patients", i, "pending_transfer.prior_state", "Explicit prior source state required")
             if transfer.get("status") != ("departed" if state == "in_transit" else "reserved"):
                 error(
@@ -231,7 +277,9 @@ def validate_dataset(dataset):
             sid = transfer.get("destination_slot_id") or transfer.get("reservation_id")
             destination = indexes["units"].get(transfer.get("destination_unit_id"))
             destination_slot = indexes["slots"].get(sid)
-            if not destination or destination["kind"] != p.get("care_level"):
+            if not destination or destination["kind"] != (
+                "clinic" if clinic_transfer else p.get("care_level")
+            ):
                 error(
                     "patients",
                     i,
@@ -268,10 +316,14 @@ def validate_dataset(dataset):
             assigned_vehicles.add(vehicle)
             duration = transfer.get("remaining_stage_minutes")
             if (
-                not isinstance(duration, (int, float))
-                or isinstance(duration, bool)
-                or not math.isfinite(duration)
-                or duration <= 0
+                not clinic_transfer
+                and not completed_source
+                and (
+                    not isinstance(duration, (int, float))
+                    or isinstance(duration, bool)
+                    or not math.isfinite(duration)
+                    or duration <= 0
+                )
             ):
                 error(
                     "patients",
@@ -304,17 +356,35 @@ def validate_dataset(dataset):
                     "pending_transfer",
                     "Transfer requires request, departure and arrival timestamps with timezones",
                 )
-            for req in p.get("inpatient_resource_requirements", []):
-                cap, qty = (
-                    (req, 1) if isinstance(req, str) else (req.get("capability_code"), req.get("quantity", 1))
+            destination_requirements = p.get("inpatient_resource_requirements", [])
+            if clinic_transfer:
+                destination_requirements = next(
+                    profile["required_equipment"]
+                    for profile in dataset["resource_profiles"]
+                    if profile["resource_profile_id"] == transfer["clinic_resource_profile_id"]
                 )
+            for cap, qty in bundle(transfer.get("destination_unit_id"), destination_requirements).items():
                 equipment_usage[(transfer.get("destination_unit_id"), cap)] += qty
-        for req in p.get("resource_requirements", []):
-            qty = req.get("quantity")
-            if not isinstance(qty, int) or qty <= 0:
-                error("patients", i, "resource_requirements", "Resource quantities must be positive integers")
-                continue
-            equipment_usage[(unit, req.get("capability_code"))] += qty
+        for cap, qty in bundle(unit, p.get("resource_requirements", [])).items():
+            equipment_usage[(unit, cap)] += qty
+        if unit in indexes["units"]:
+            policy = policies[indexes["units"][unit]["capacity_policy_id"]]
+            # An ED boarder still occupies the ED assessment stage; its target
+            # inpatient care level is not an ED policy exclusion.
+            stage_care = (
+                "ambulatory"
+                if indexes["units"][unit]["kind"] in ("ed", "clinic")
+                else indexes["units"][unit]["kind"]
+                if completed_source
+                else p["care_level"]
+            )
+            if stage_care not in policy["allowed_patient_care_levels"]:
+                error(
+                    "patients",
+                    i,
+                    "unit_id",
+                    "Occupied unit policy excludes the patient's current stage care level",
+                )
     if occupied.intersection(reserved_slots):
         error(
             "patients",
@@ -394,6 +464,73 @@ def validate_dataset(dataset):
         warnings.append("Synthetic engineering fixtures; these parameters are not clinically validated.")
     if dataset.get("historical_census_linkage") == "independent_demo_snapshot":
         warnings.append("Historical episodes and current census are separately constructed.")
+    reconciliation = []
+    active_staff = defaultdict(lambda: defaultdict(float))
+    if snapshot:
+        for assignment in assignments:
+            if (
+                assignment.get("unit_id")
+                and assignment["status"] != "unavailable"
+                and dt(assignment["start_at"]) <= snapshot < dt(assignment["end_at"])
+            ):
+                active_staff[assignment["unit_id"]][assignment["staff_id"]] = assignment[
+                    "allocation_fraction"
+                ]
+    facilities = indexes["facilities"]
+    for unit in dataset["units"]:
+        policy = policies[unit["capacity_policy_id"]]
+        allocation = active_staff[unit["unit_id"]]
+        qualifications = {
+            "rn": policy["nurse_capability"],
+            "provider": unit["kind"].upper() + "_PROVIDER",
+            "support": "GENERAL_SUPPORT",
+        }
+        counts = {
+            role: sum(
+                fraction
+                for identity, fraction in allocation.items()
+                if capability in indexes["staff"][identity]["capabilities"]
+            )
+            for role, capability in qualifications.items()
+        }
+        enabled = unit["enabled_capacity"]
+        if unit["capacity_mode"] == "advertised_aggregate":
+            staffed = min(enabled, unit["advertised_staffed_capacity"])
+            gate = True
+        else:
+            staffed = min(enabled, math.floor(counts["rn"] * policy["slots_per_nurse"]))
+            gate = (
+                counts["provider"] >= policy["minimum_provider_count"]
+                and counts["support"] >= policy["minimum_support_count"]
+            )
+            for capability, count in bundle(unit["unit_id"], []).items():
+                staffed = min(staffed, pool_qty[(unit["unit_id"], capability)] // count)
+        active = facilities[unit["facility_id"]]["status"] == "active"
+        if not active:
+            staffed, gate = 0, False
+        modeled = sum(p.get("unit_id") == unit["unit_id"] for p in dataset["patients"])
+        incoming = sum(
+            (p.get("pending_transfer") or {}).get("destination_unit_id") == unit["unit_id"]
+            and p["state"] in ("transfer_reserved", "in_transit")
+            for p in dataset["patients"]
+        )
+        occupied_count = modeled + unit["background_occupied"]
+        reconciliation.append(
+            {
+                "unit_id": unit["unit_id"],
+                "physical": unit["physical_capacity"],
+                "enabled": enabled,
+                "occupied": occupied_count,
+                "modeled_occupied": modeled,
+                "background_occupied": unit["background_occupied"],
+                "reserved": incoming,
+                "staffed": staffed,
+                "qualified_staff_by_role": counts,
+                "admission_gate": gate,
+                "available": max(0, min(enabled, staffed) - occupied_count - incoming) if gate else 0,
+                "capacity_deficit": max(0, occupied_count + incoming - staffed),
+            }
+        )
     return {
         "valid": not errors,
         "errors": errors,
@@ -401,16 +538,7 @@ def validate_dataset(dataset):
         "counts": {k: len(dataset.get(k, [])) for k in required},
         "snapshot_at": dataset.get("snapshot_at"),
         "synthetic": dataset.get("synthetic", False),
-        "capacity_reconciliation": [
-            {
-                "unit_id": u["unit_id"],
-                "physical": u["physical_capacity"],
-                "enabled": u["enabled_capacity"],
-                "occupied": sum(p.get("unit_id") == u["unit_id"] for p in dataset.get("patients", [])),
-                "staffed": u.get("staffed_capacity"),
-            }
-            for u in dataset.get("units", [])
-        ],
+        "capacity_reconciliation": reconciliation,
     }
 
 

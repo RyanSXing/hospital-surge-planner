@@ -8,6 +8,18 @@ export type PageId =
   | "replay"
   | "data";
 export type Grain = "day" | "week" | "month";
+export type UpdateTarget = {
+  kind:
+    | "unit"
+    | "patient"
+    | "facility"
+    | "staff"
+    | "equipment_pool"
+    | "route"
+    | "slot"
+    | "vehicle";
+  id: string;
+};
 export interface Dataset extends Entity {
   id: string;
   dataset_version_id?: string;

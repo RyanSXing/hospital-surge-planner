@@ -1,0 +1,58 @@
+{
+  "checked_at": "2026-10-17T23:21:02.006074+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "records": [
+    {
+      "path": "/scenarios/scenario_b44dbb255ef3494e8e22",
+      "unchanged": true,
+      "sha256": "1d973e290d8bab929104033713e9b95fc96a38394633a6b64884e7e314323107"
+    },
+    {
+      "path": "/scenarios/scenario_6477f7dd147540ecbda6",
+      "unchanged": true,
+      "sha256": "0005142009ec69984d061c2524faa768279bfa7ceb5fde0e814ba7b8a72eb623"
+    },
+    {
+      "path": "/scenarios/scenario_a8eb82da55cc4b4f972f",
+      "unchanged": true,
+      "sha256": "15086aef38d785f47b730b6d8065a18fb1c077467e2bc97f6987a7035bc12612"
+    },
+    {
+      "path": "/scenarios/scenario_fbab7254fd7e491283f4",
+      "unchanged": true,
+      "sha256": "5579ee00c9b87d20ab48e4128ddc2ad7dff57cd498be5a2558531a58ebee93d7"
+    },
+    {
+      "path": "/run-groups/run_55f4616391f94f1aa624",
+      "unchanged": true,
+      "sha256": "7a75688bdb659a9845ea618ae455cb5a256751c2a1905194e06b5c85e0b4d7e4"
+    },
+    {
+      "path": "/run-groups/run_756d3b941ab946d199e8",
+      "unchanged": true,
+      "sha256": "73563fdeaa64e0e8508ce8fb29f16ead325bebb9a25ce6aadf438bb8636bd674"
+    },
+    {
+      "path": "/comparisons/comparison_b5e5a246f40349ad84b2",
+      "unchanged": true,
+      "sha256": "31ef190bf7af4eef1e64c7ff0fd8d651d8c9be58e4aaf5403cb0599de555f923"
+    },
+    {
+      "path": "/datasets/demo-v1-1-0-planning_baseline-41021-365",
+      "unchanged": true,
+      "sha256": "c77a937a0f27c7ac207ac663e7d7ddfc215862dd884118ca7e1c3031797314a0"
+    }
+  ],
+  "all_protected_records_unchanged": true,
+  "default_scenario_id": "scenario_fbab7254fd7e491283f4",
+  "default_run_id": null,
+  "original_default_scenario_id": "scenario_fbab7254fd7e491283f4",
+  "original_default_run_id": null,
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  },
+  "default_preserved": true
+}

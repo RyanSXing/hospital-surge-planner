@@ -1,8 +1,22 @@
 # Hosted verification record
 
-[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) is running release **`072118d81f3b67bb97f771c5ef4ed52ea49bc3b0`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
+[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) is running release **`9db04450f2f0dab35dc40fc1270b09370ff5ffb4`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
 
-## Overview and Analysis release — 2026-10-17
+## Light hospital-management interface — 2026-10-17
+
+The current release adds a white compact interface, collapsible navigation, three-step simulation setup, Mantine components, chart-led results and optional detailed tools. Replay uses smooth presentation transitions and an original Vanderbilt campus reference while preserving synthetic operational data and exact recorded evidence.
+
+| Gate | Verified result |
+|---|---|
+| Frozen local regression | **111 unit tests**, **71 browser checks**, 29 intentional device-specific skips, zero failures. Desktop, touch mobile, keyboard, imports, roles, scenarios, update/reforecast, comparison, replay and checksum-verified ZIP export. [Local proof](../evidence/hospital-ui/local-verification.json), [full report](../evidence/hospital-ui/browser-final.json) |
+| Exact deployed interface | All **50 frontend files** match the tested build. API, worker and web identify the application commit; all six services run and named volumes are preserved. [Assets](../evidence/hospital-ui/live-assets.json), [runtime](../evidence/hospital-ui/runtime-preservation.json) |
+| Fresh hosted computation | One day × two runs completed on this release: **9.767 s worker**, **12.542 s pipeline**, four private OCI artifacts. This is a short smoke measurement. [Execution](../evidence/hospital-ui/cloud-smoke.json) |
+| Live interface inspection | Overview/setup, Summary, Replay playback, Analytics outcomes and the preserved Comparison opened successfully; no browser errors. [Browser proof](../evidence/hospital-ui/live-browser.json), [gallery](../evidence/hospital-ui/README.md) |
+| Saved data | Eight full protected records remain unchanged: four scenarios, two completed runs, one comparison and the source dataset. Default remains the saved staffing proposal with no standalone run. Only the newly created verification scenario was archived; its run is retained. [Protection](../evidence/hospital-ui/protected-final.json), [curation](../evidence/hospital-ui/verification-curation.json), [backup](../evidence/hospital-ui/backup.json) |
+
+The model, API and infrastructure are unchanged. Earlier backend, large-workload, image-security and restore results below retain their original release attribution. Export download and ZIP checksums passed locally; this hosted smoke skipped export download. See the [release proof](../evidence/hospital-ui/hosted-verification.json), [source identity](../evidence/hospital-ui/release.json) and [interface guide](hospital-management-interface.md).
+
+## Previous Overview and Analysis release — 2026-10-17
 
 The two primary pages are **Overview**, for the source hospital baseline and editable simulation, and **Analysis**, with **Summary, Replay, Analytics, Comparison**. Analytics contains Outcomes, Patients & units, and Resources. Draft inputs survive page changes; result views retain frozen run inputs and restore browser history and inspection context.
 
@@ -14,7 +28,7 @@ The two primary pages are **Overview**, for the source hospital baseline and edi
 | Actual OCI computation and export | Run `run_7fd7a1d88866425b9f12` completed two replications on this exact release, retained four private OCI artifacts, and verified every exported ZIP checksum. [Smoke proof](../evidence/cloud-acceptance-overview-analysis.json) |
 | Existing workspace preservation | A private backup preceded deployment. The original scenario, completed run and full dataset remain byte-identical, and the original default is restored after archiving only the explicitly recorded new verification scenarios. Named database, queue, artifact and TLS volumes are unchanged. [Preservation](../evidence/overview-analysis-postverification-preservation.json), [curation](../evidence/overview-analysis-hosted-curation.json) |
 
-The API, engine, deployment infrastructure and dependencies are unchanged by this rework. The preceding 595-case backend gate and measured performance/security/recovery/restore results remain attributed to their original source below; no new performance benchmark or security scan is claimed for this interface change. See [release proof](../evidence/overview-analysis-hosted-verification.json) and [workflow documentation](overview-analysis-flow.md).
+That navigation release left the API, engine, deployment infrastructure and dependencies unchanged. The preceding 595-case backend gate and measured performance/security/recovery/restore results remain attributed to their original source below; no new performance benchmark or security scan is claimed for this interface change. See [release proof](../evidence/overview-analysis-hosted-verification.json) and [workflow documentation](overview-analysis-flow.md).
 
 ## Earlier implementation and operational baseline — 84d
 

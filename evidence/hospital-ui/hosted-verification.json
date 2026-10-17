@@ -1,0 +1,55 @@
+{
+  "verified_at": "2026-10-17T23:25:14.344888+00:00",
+  "status": "verified",
+  "application_commit": "9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "local_tests": {
+    "unit": {
+      "passed": 111,
+      "files": 19
+    },
+    "browser": {
+      "startTime": "2026-10-17T23:05:08.732Z",
+      "duration": 745584.879,
+      "expected": 71,
+      "skipped": 29,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "live_asset_files_matching_tested_build": 50,
+  "all_six_services_running": true,
+  "same_named_data_volumes": true,
+  "fresh_hosted_simulation": {
+    "run_group_id": "run_e9c4ecfccd56486c9062",
+    "completed_replications": 2,
+    "horizon_days": 1,
+    "worker_seconds": 9.766832418004924,
+    "pipeline_seconds": 12.542047833907418,
+    "private_oci_artifacts": 4
+  },
+  "live_browser_views": [
+    "Overview and guided setup",
+    "Summary",
+    "Replay",
+    "Analytics outcomes",
+    "Saved Comparison"
+  ],
+  "live_console_errors": [],
+  "protected_full_records_unchanged": 8,
+  "default_scenario_id": "scenario_fbab7254fd7e491283f4",
+  "default_run_id": null,
+  "default_preserved": true,
+  "verification_curation": {
+    "curated_at": "2026-10-17T23:23:33.359421+00:00",
+    "archived_only_new_verification_scenario": "scenario_c04c147a0e3c48d59433",
+    "run_retained": "run_e9c4ecfccd56486c9062",
+    "user_scenarios_archived": false,
+    "default_scenario_id": "scenario_fbab7254fd7e491283f4",
+    "default_run_id": null
+  },
+  "export_scope": "Full local browser workflow downloaded the ZIP and verified complete checksum coverage. The new hosted smoke used --skip-export; no hosted export download was attempted. Earlier hosted export evidence remains attributed to its original release.",
+  "source_and_verification_files_still_match_tested_build": true,
+  "api_engine_infrastructure_changed": false,
+  "performance_scope": "One-day two-run smoke and Canvas animation checks only; earlier workload/FPS limits retain their original release attribution."
+}

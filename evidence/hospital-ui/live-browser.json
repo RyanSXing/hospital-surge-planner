@@ -1,0 +1,26 @@
+{
+  "verified_at": "2026-10-17T23:24:27.876Z",
+  "application_commit": "9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scope": "Live in-app browser inspection after full local regression and exact deployed-asset matching",
+  "views_verified": [
+    "Overview and guided setup",
+    "Summary",
+    "Replay",
+    "Analytics outcomes",
+    "Saved Comparison"
+  ],
+  "fresh_run_id": "run_e9c4ecfccd56486c9062",
+  "replay_advanced_from_start_to_horizon": true,
+  "saved_draft_scenario_id": "scenario_fbab7254fd7e491283f4",
+  "saved_draft_visible": true,
+  "console_errors_since_verification_start": [],
+  "screenshots": [
+    "live-overview.jpg",
+    "live-setup.jpg",
+    "live-summary.jpg",
+    "live-replay.jpg",
+    "live-analytics.jpg",
+    "live-comparison.jpg"
+  ]
+}

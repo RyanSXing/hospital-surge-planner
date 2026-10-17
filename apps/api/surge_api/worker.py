@@ -14,6 +14,7 @@ import logging
 import multiprocessing
 import os
 import resource
+import sqlite3
 import subprocess
 import sys
 import threading
@@ -25,6 +26,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from sqlalchemy import and_, or_, select, update
+from sqlalchemy.exc import DBAPIError
 
 from .artifacts import ArtifactStore
 from .db import Document, Job, canonical, digest, make_database, now
@@ -86,6 +88,64 @@ class Cancelled(Exception):
     pass
 
 
+def transient_failure(exc):
+    """Classify dependency failures, never arbitrary model/programming errors.
+
+    A configured job deadline is a builtin TimeoutError and deliberately does
+    not qualify. OCI's wrapper retains the original network exception in args.
+    Authentication, certificates, missing objects, and invalid SQL are terminal.
+    """
+    from oci._vendor.requests import exceptions as network
+    from oci.exceptions import RequestException, ServiceError
+
+    if isinstance(exc, ServiceError):
+        if exc.status in {408, 429} or 500 <= exc.status < 600 and exc.status != 501:
+            return "storage_service_unavailable"
+        if exc.status == 409 and exc.code in {"IncorrectState", "LockConflict"}:
+            return "storage_service_conflict"
+    if isinstance(exc, RequestException) and exc.args and isinstance(exc.args[0], Exception):
+        exc = exc.args[0]
+    if isinstance(exc, network.SSLError):
+        return None
+    if isinstance(exc, (network.ConnectionError, network.Timeout)):
+        return "storage_connection_unavailable"
+    if isinstance(exc, DBAPIError):
+        original = exc.orig
+        sqlstate = getattr(original, "sqlstate", None) or getattr(original, "pgcode", None) or ""
+        if (
+            exc.connection_invalidated
+            or sqlstate.startswith("08")
+            or sqlstate in {"40001", "40P01", "57P01", "57P02", "57P03", "53300"}
+        ):
+            return "database_temporarily_unavailable"
+        if not sqlstate and any(
+            message in str(original).lower()
+            for message in (
+                "connection refused",
+                "connection timed out",
+                "server closed the connection unexpectedly",
+                "connection is closed",
+                "connection not open",
+                "temporary failure in name resolution",
+            )
+        ):
+            return "database_temporarily_unavailable"
+        sqlite_code = getattr(original, "sqlite_errorcode", None)
+        if sqlite_code is not None and sqlite_code & 0xFF in {sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED}:
+            return "database_busy"
+    return None
+
+
+def log_persistence_failure(identity, exc):
+    # Leave the durable lease to recover after a database outage. Do not send
+    # SQL/connection exception text (which can contain credentials) to RQ logs.
+    logging.getLogger("surge_api.requests").warning(
+        json.dumps(
+            {"event": "job_persistence_unavailable", "job_id": identity, "error_category": type(exc).__name__}
+        )
+    )
+
+
 def job_control(Session, identity):
     deadline = time.monotonic() + int(os.getenv("JOB_TIMEOUT_SECONDS", "7200"))
     last = 0.0
@@ -136,13 +196,24 @@ def execute_job(identity, database_url=None):
             .where(
                 Job.id == identity,
                 or_(
-                    Job.status == "QUEUED",
-                    and_(Job.status.in_(["RUNNING", "AGGREGATING"]), Job.lease_until < time.time()),
+                    and_(Job.status == "QUEUED", or_(Job.dispatched == True, Job.lease_until <= time.time())),
+                    and_(
+                        Job.status.in_(["RUNNING", "AGGREGATING"]),
+                        Job.lease_until < time.time(),
+                        Job.attempts < 3,
+                    ),
                 ),
             )
-            .values(status="RUNNING", lease_until=time.time() + 120, attempts=Job.attempts + 1)
+            .values(
+                status="RUNNING",
+                lease_until=time.time() + 120,
+                attempts=Job.attempts + 1,
+                error=None,
+                completed_at=None,
+            )
         )
         if claimed.rowcount != 1:
+            engine.dispose()
             return
         job = session.get(Job, identity)
         if job.cancelled:
@@ -150,21 +221,34 @@ def execute_job(identity, database_url=None):
             job.completed_at = now()
             job.result = {**(job.result or {}), "execution_metrics": execution_metrics(started)}
             log_job_metrics(identity, job.kind, job.status, job.result["execution_metrics"])
+            job.lease_until = 0
+            job.dispatched = False
+            engine.dispose()
             return
         kind = job.kind
+        attempt = job.attempts
+        attempt_history = list(job.result.get("attempt_history", []))
     stopped = threading.Event()
 
     def heartbeat():
         while not stopped.wait(10):
-            with Session.begin() as session:
-                session.execute(
-                    update(Job)
-                    .where(Job.id == identity, Job.status.in_(["RUNNING", "AGGREGATING", "CANCEL_REQUESTED"]))
-                    .values(lease_until=time.time() + 120)
-                )
+            try:
+                with Session.begin() as session:
+                    session.execute(
+                        update(Job)
+                        .where(
+                            Job.id == identity,
+                            Job.attempts == attempt,
+                            Job.status.in_(["RUNNING", "AGGREGATING", "CANCEL_REQUESTED"]),
+                        )
+                        .values(lease_until=time.time() + 120)
+                    )
+            except DBAPIError as exc:
+                log_persistence_failure(identity, exc)
 
     beat = threading.Thread(target=heartbeat, daemon=True)
     beat.start()
+    failure_category = None
     try:
         if kind == "run":
             run_job(identity, Session)
@@ -174,23 +258,80 @@ def execute_job(identity, database_url=None):
             trace_job(identity, Session)
         else:
             raise ValueError("Unknown job kind")
-    except Exception as exc:  # noqa: BLE001 - persist a terminal status at the isolated job boundary.
+    except Exception as exc:  # noqa: BLE001 - classify failures at the isolated durable job boundary.
         cancelled = isinstance(exc, Cancelled) or type(exc).__name__ == "SimulationCancelled"
-        with Session.begin() as session:
-            job = session.get(Job, identity)
-            job.status = "CANCELLED" if cancelled or job.cancelled else "FAILED"
-            job.error = None if cancelled else f"{type(exc).__name__}: {str(exc)[:1000]}"
-            job.completed_at = now()
-            job.lease_until = 0
+        failure_category = transient_failure(exc)
+        try:
+            with Session.begin() as session:
+                job = session.get(Job, identity)
+                if job.attempts == attempt and job.status != "SUCCEEDED":
+                    cancelled = cancelled or job.cancelled
+                    retry = bool(failure_category and not cancelled and attempt < 3)
+                    delay = 5 * 2 ** (attempt - 1) if retry else 0
+                    job.status = "CANCELLED" if cancelled else "QUEUED" if retry else "FAILED"
+                    job.error = (
+                        None
+                        if cancelled
+                        else (
+                            f"{failure_category}: attempt {attempt} of 3 failed; "
+                            + (f"retrying in {delay} seconds" if retry else "automatic retries exhausted")
+                            if failure_category
+                            else f"{type(exc).__name__}: {str(exc)[:1000]}"
+                        )
+                    )
+                    job.completed_at = None if retry else now()
+                    job.dispatched = False
+                    job.lease_until = time.time() + delay if retry else 0
+                    job.result = {
+                        **(job.result or {}),
+                        "retry": {
+                            "automatic": retry,
+                            "attempt": attempt,
+                            "max_attempts": 3,
+                            "not_before": job.lease_until if retry else None,
+                            "error_category": failure_category or type(exc).__name__,
+                        },
+                    }
+        except DBAPIError as persistence_error:
+            log_persistence_failure(identity, persistence_error)
     finally:
         stopped.set()
         measured = execution_metrics(started)
-        with Session.begin() as session:
-            job = session.get(Job, identity)
-            if job:
-                job.result = {**(job.result or {}), "execution_metrics": measured}
-                log_job_metrics(identity, kind, job.status, measured)
-        engine.dispose()
+        try:
+            with Session.begin() as session:
+                job = session.get(Job, identity)
+                if job and job.attempts == attempt:
+                    if job.cancelled:
+                        job.status = "CANCELLED"
+                        job.error = None
+                        job.completed_at = now()
+                        job.lease_until = 0
+                        job.dispatched = False
+                    # Job handlers replace result on success; restore prior
+                    # attempt evidence without touching their final artifacts.
+                    history = [
+                        *attempt_history,
+                        {
+                            "attempt": attempt,
+                            "status": job.status,
+                            "finished_at": now(),
+                            "error_category": failure_category,
+                            "execution_metrics": measured,
+                        },
+                    ]
+                    job.result = {
+                        **(job.result or {}),
+                        "execution_metrics": measured,
+                        "attempt_history": history[-3:],
+                    }
+                    if job.status == "SUCCEEDED":
+                        job.error = None
+                        job.result.pop("retry", None)
+                    log_job_metrics(identity, kind, job.status, measured)
+        except DBAPIError as persistence_error:
+            log_persistence_failure(identity, persistence_error)
+        finally:
+            engine.dispose()
 
 
 def run_job(identity, Session):
@@ -291,7 +432,7 @@ def run_job(identity, Session):
                 )
 
     pending_indices = [i for i in range(scenario["replications"]) if i not in results_by_index]
-    workers = max(1, min(4, int(os.getenv("SIMULATION_WORKERS", str(min(4, os.cpu_count() or 1))))))
+    workers = max(1, min(8, int(os.getenv("SIMULATION_WORKERS", str(min(4, os.cpu_count() or 1))))))
     if workers == 1 or len(pending_indices) < 5:
         for index in pending_indices:
             if cancel_check():
@@ -751,7 +892,9 @@ def dispatch_loop(Session, stop, database_url):
                 jobs = list(
                     session.scalars(
                         select(Job)
-                        .where(Job.status == "QUEUED", Job.dispatched == False)
+                        .where(
+                            Job.status == "QUEUED", Job.dispatched == False, Job.lease_until <= time.time()
+                        )
                         .order_by(Job.created_at)
                         .limit(20)
                     )
@@ -759,6 +902,8 @@ def dispatch_loop(Session, stop, database_url):
                 for job in jobs:
                     if job.cancelled:
                         job.status = "CANCELLED"
+                        job.completed_at = now()
+                        job.lease_until = 0
                         continue
                     if os.getenv("REDIS_URL"):
                         from redis import Redis

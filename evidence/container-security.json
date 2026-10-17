@@ -1,13 +1,13 @@
 {
-  "checked_at": "2026-10-17T08:51:52.191036+00:00",
+  "checked_at": "2026-10-17T09:05:12.340406+00:00",
   "scanner": "aquasec/trivy:0.76.0",
   "scope": "Linux ARM64 runtime images; HIGH/CRITICAL OS and language vulnerabilities, including unfixed findings",
   "images": [
     {
       "image": "hospital-surge-planner-api:1.0.0",
-      "image_id": "sha256:aed9efc2ba6dff2af4b56f44f8e2a71d75c3d59960f9befabfa4c5f118756e69",
+      "image_id": "sha256:30544886efae569a9f3fdcb1e9c6a7bec3f438b78c974d6a54ed3e7e660422b7",
       "repo_digests": [
-        "hospital-surge-planner-api@sha256:aed9efc2ba6dff2af4b56f44f8e2a71d75c3d59960f9befabfa4c5f118756e69"
+        "hospital-surge-planner-api@sha256:30544886efae569a9f3fdcb1e9c6a7bec3f438b78c974d6a54ed3e7e660422b7"
       ],
       "high": 0,
       "critical": 0,
@@ -16,9 +16,9 @@
     },
     {
       "image": "hospital-surge-planner-web:1.0.0",
-      "image_id": "sha256:a56c20d7275e705b97ffcff7758ffec5421924fbbb6b9259611d55f244d8369b",
+      "image_id": "sha256:8db6c34e9f7eeee4909a6792f5d88c7b81c268408a3167f12b2edf3b2f776e1a",
       "repo_digests": [
-        "hospital-surge-planner-web@sha256:a56c20d7275e705b97ffcff7758ffec5421924fbbb6b9259611d55f244d8369b"
+        "hospital-surge-planner-web@sha256:8db6c34e9f7eeee4909a6792f5d88c7b81c268408a3167f12b2edf3b2f776e1a"
       ],
       "high": 0,
       "critical": 0,
@@ -27,9 +27,9 @@
     },
     {
       "image": "hospital-surge-planner-postgres:17.11-patched",
-      "image_id": "sha256:07dc19b19449214b2af59b2bb9f9cf0f09fea233e978b6a8647cce522baa2303",
+      "image_id": "sha256:dd7fadbd40a1595b6e9af34e5dc5ea260019fd1341d307e61b8dc300f79d8e65",
       "repo_digests": [
-        "hospital-surge-planner-postgres@sha256:07dc19b19449214b2af59b2bb9f9cf0f09fea233e978b6a8647cce522baa2303"
+        "hospital-surge-planner-postgres@sha256:dd7fadbd40a1595b6e9af34e5dc5ea260019fd1341d307e61b8dc300f79d8e65"
       ],
       "high": 0,
       "critical": 0,
@@ -38,9 +38,9 @@
     },
     {
       "image": "hospital-surge-planner-redis:7.4.11-patched",
-      "image_id": "sha256:1bf8d5145768718be8be92982310c1bed704307b6b4bd31499813030420f8e9d",
+      "image_id": "sha256:7ed3027ffeadb3373ea8f4fcd5c7b91bebf8540e9ab0fe0c4a46cff80577a445",
       "repo_digests": [
-        "hospital-surge-planner-redis@sha256:1bf8d5145768718be8be92982310c1bed704307b6b4bd31499813030420f8e9d"
+        "hospital-surge-planner-redis@sha256:7ed3027ffeadb3373ea8f4fcd5c7b91bebf8540e9ab0fe0c4a46cff80577a445"
       ],
       "high": 0,
       "critical": 0,
@@ -49,9 +49,9 @@
     },
     {
       "image": "hospital-surge-planner-caddy:2.11.7-patched",
-      "image_id": "sha256:516d7640f282d437dba2d9d9ce91b7be6d91fae8a51f76564e16e0c3d831cf74",
+      "image_id": "sha256:3ea700566bf854892b4e4d32623fb70a652f8300d14b8732a1bb5bfec52f72ac",
       "repo_digests": [
-        "hospital-surge-planner-caddy@sha256:516d7640f282d437dba2d9d9ce91b7be6d91fae8a51f76564e16e0c3d831cf74"
+        "hospital-surge-planner-caddy@sha256:3ea700566bf854892b4e4d32623fb70a652f8300d14b8732a1bb5bfec52f72ac"
       ],
       "high": 0,
       "critical": 0,

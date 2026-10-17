@@ -1,0 +1,18 @@
+{
+  "recorded_at": "2026-10-17T09:01:00Z",
+  "host": "hospital-surge.131.186.0.156.sslip.io",
+  "backup": {
+    "enabled": true,
+    "active": true,
+    "next": "2026-10-18T03:15:15Z",
+    "manual_service_result": "success",
+    "exit_status": 0
+  },
+  "retention": {
+    "enabled": true,
+    "active": true,
+    "next": "2026-10-18T04:19:54Z",
+    "manual_service_result": "success",
+    "exit_status": 0
+  }
+}

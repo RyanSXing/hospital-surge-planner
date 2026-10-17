@@ -1,0 +1,172 @@
+{"scope": "read-only frozen-input cProfile; profiling adds overhead; synthetic repeated aggregate is diagnostic only", "days": 30, "replications_requested": 100, "initial_census": 84}
+{"phase": "replication", "trace": false, "profiled_seconds": 8.164539312999977, "arrivals": 5165}
+         11972127 function calls (11570398 primitive calls) in 8.164 seconds
+
+   Ordered by: cumulative time
+   List reduced from 253 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.016    0.016    8.164    8.164 simulation.py:2424(run_replication)
+        1    0.000    0.000    7.635    7.635 simulation.py:2299(run)
+        1    0.007    0.007    7.630    7.630 core.py:214(run)
+     9281    0.010    0.000    7.622    0.001 core.py:182(step)
+     9279    0.013    0.000    7.610    0.001 events.py:388(_resume)
+     9279    0.005    0.000    7.595    0.001 {method 'send' of 'generator' objects}
+     9279    0.084    0.000    7.590    0.001 simulation.py:2270(process)
+     9277    0.290    0.000    3.508    0.000 simulation.py:1328(allocate)
+     9277    0.663    0.000    2.393    0.000 simulation.py:1411(update_blockers)
+     8701    0.019    0.000    1.892    0.000 simulation.py:2195(handle)
+     9278    0.300    0.000    1.854    0.000 simulation.py:2020(integrate)
+     5165    0.070    0.000    1.745    0.000 simulation.py:1276(arrival)
+798558/408924    0.467    0.000    1.484    0.000 {built-in method builtins.sum}
+     5177    0.342    0.000    1.433    0.000 simulation.py:354(choose_path)
+   100598    0.273    0.000    1.322    0.000 simulation.py:1059(equipment_bundle)
+   297220    0.338    0.000    1.126    0.000 {built-in method builtins.sorted}
+    24722    0.424    0.000    0.844    0.000 common.py:40(rng)
+    21837    0.035    0.000    0.808    0.000 simulation.py:226(random)
+    62688    0.075    0.000    0.681    0.000 simulation.py:1043(equipment_candidates)
+    10029    0.206    0.000    0.677    0.000 simulation.py:1999(totals)
+        1    0.001    0.001    0.513    0.513 simulation.py:38(__init__)
+   118383    0.335    0.000    0.508    0.000 simulation.py:1045(<genexpr>)
+        1    0.055    0.055    0.497    0.497 simulation.py:518(initialize)
+  2075197    0.456    0.000    0.456    0.000 {method 'get' of 'dict' objects}
+   134779    0.136    0.000    0.335    0.000 simulation.py:1035(free)
+    38285    0.102    0.000    0.329    0.000 simulation.py:202(at)
+   399097    0.192    0.000    0.325    0.000 simulation.py:1032(occupancy)
+   148432    0.159    0.000    0.320    0.000 simulation.py:2034(<genexpr>)
+   120601    0.068    0.000    0.295    0.000 simulation.py:2043(<genexpr>)
+   105040    0.067    0.000    0.278    0.000 simulation.py:205(minute)
+    24722    0.236    0.000    0.274    0.000 _ufunc_config.py:496(inner)
+     6431    0.032    0.000    0.253    0.000 simulation.py:313(duration)
+    41231    0.038    0.000    0.243    0.000 common.py:28(iso)
+   146459    0.123    0.000    0.216    0.000 common.py:18(dt)
+    32411    0.064    0.000    0.205    0.000 simulation.py:1331(<genexpr>)
+
+
+         11972127 function calls (11570398 primitive calls) in 8.164 seconds
+
+   Ordered by: internal time
+   List reduced from 253 to 15 due to restriction <15>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     9277    0.663    0.000    2.393    0.000 simulation.py:1411(update_blockers)
+798558/408924    0.467    0.000    1.484    0.000 {built-in method builtins.sum}
+  2075197    0.456    0.000    0.456    0.000 {method 'get' of 'dict' objects}
+    24722    0.424    0.000    0.844    0.000 common.py:40(rng)
+     5177    0.342    0.000    1.433    0.000 simulation.py:354(choose_path)
+   297220    0.338    0.000    1.126    0.000 {built-in method builtins.sorted}
+   118383    0.335    0.000    0.508    0.000 simulation.py:1045(<genexpr>)
+     9278    0.300    0.000    1.854    0.000 simulation.py:2020(integrate)
+     9277    0.290    0.000    3.508    0.000 simulation.py:1328(allocate)
+   100598    0.273    0.000    1.322    0.000 simulation.py:1059(equipment_bundle)
+    24722    0.236    0.000    0.274    0.000 _ufunc_config.py:496(inner)
+    10029    0.206    0.000    0.677    0.000 simulation.py:1999(totals)
+   399097    0.192    0.000    0.325    0.000 simulation.py:1032(occupancy)
+   517710    0.189    0.000    0.189    0.000 {built-in method builtins.max}
+   148432    0.159    0.000    0.320    0.000 simulation.py:2034(<genexpr>)
+
+
+{"phase": "replication", "trace": true, "profiled_seconds": 30.21892370799992, "arrivals": 5165}
+         48220188 function calls (47361562 primitive calls) in 30.219 seconds
+
+   Ordered by: cumulative time
+   List reduced from 234 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.031    0.031   30.219   30.219 simulation.py:2424(run_replication)
+        1    0.018    0.018   29.660   29.660 simulation.py:2299(run)
+        1    0.010    0.010   28.412   28.412 core.py:214(run)
+     9281    0.014    0.000   28.402    0.003 core.py:182(step)
+     9279    0.018    0.000   28.385    0.003 events.py:388(_resume)
+     9279    0.007    0.000   28.365    0.003 {method 'send' of 'generator' objects}
+     9279    0.120    0.000   28.358    0.003 simulation.py:2270(process)
+     9279    3.015    0.000   18.970    0.002 simulation.py:2109(record_state)
+  2542446    7.078    0.000   10.775    0.000 simulation.py:2133(slot_snapshot)
+ 27123257    5.488    0.000    5.488    0.000 {method 'get' of 'dict' objects}
+   120012    1.839    0.000    4.419    0.000 simulation.py:2072(unit_snapshot)
+     9277    0.312    0.000    3.986    0.000 simulation.py:1328(allocate)
+     9277    0.771    0.000    2.770    0.000 simulation.py:1411(update_blockers)
+     8701    0.026    0.000    2.721    0.000 simulation.py:2195(handle)
+     5165    0.094    0.000    2.389    0.000 simulation.py:1276(arrival)
+     9278    0.329    0.000    1.963    0.000 simulation.py:2020(integrate)
+1518630/1128996    0.657    0.000    1.717    0.000 {built-in method builtins.sum}
+     5177    0.436    0.000    1.708    0.000 simulation.py:354(choose_path)
+   100598    0.292    0.000    1.489    0.000 simulation.py:1059(equipment_bundle)
+     5249    0.097    0.000    1.179    0.000 simulation.py:33(_public_patient)
+   417232    0.439    0.000    1.158    0.000 {built-in method builtins.sorted}
+579126/137255    0.576    0.000    1.157    0.000 copy.py:118(deepcopy)
+   126968    0.305    0.000    1.023    0.000 simulation.py:202(at)
+   220612    0.446    0.000    1.003    0.000 __init__.py:595(__init__)
+    24722    0.496    0.000    0.986    0.000 common.py:40(rng)
+    21837    0.038    0.000    0.951    0.000 simulation.py:226(random)
+47516/21329    0.036    0.000    0.856    0.000 copy.py:191(_deepcopy_list)
+10923/10027    0.143    0.000    0.829    0.000 copy.py:217(_deepcopy_dict)
+    62688    0.285    0.000    0.803    0.000 simulation.py:1043(equipment_candidates)
+    10029    0.235    0.000    0.734    0.000 simulation.py:1999(totals)
+   129914    0.120    0.000    0.734    0.000 common.py:28(iso)
+   254791    0.268    0.000    0.644    0.000 simulation.py:1035(free)
+   739131    0.358    0.000    0.602    0.000 simulation.py:1032(occupancy)
+   220612    0.093    0.000    0.557    0.000 __init__.py:669(update)
+        1    0.001    0.001    0.528    0.528 simulation.py:38(__init__)
+
+
+         48220188 function calls (47361562 primitive calls) in 30.219 seconds
+
+   Ordered by: internal time
+   List reduced from 234 to 15 due to restriction <15>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+  2542446    7.078    0.000   10.775    0.000 simulation.py:2133(slot_snapshot)
+ 27123257    5.488    0.000    5.488    0.000 {method 'get' of 'dict' objects}
+     9279    3.015    0.000   18.970    0.002 simulation.py:2109(record_state)
+   120012    1.839    0.000    4.419    0.000 simulation.py:2072(unit_snapshot)
+     9277    0.771    0.000    2.770    0.000 simulation.py:1411(update_blockers)
+1518630/1128996    0.657    0.000    1.717    0.000 {built-in method builtins.sum}
+579126/137255    0.576    0.000    1.157    0.000 copy.py:118(deepcopy)
+    24722    0.496    0.000    0.986    0.000 common.py:40(rng)
+   220612    0.446    0.000    1.003    0.000 __init__.py:595(__init__)
+   417232    0.439    0.000    1.158    0.000 {built-in method builtins.sorted}
+     5177    0.436    0.000    1.708    0.000 simulation.py:354(choose_path)
+   129914    0.409    0.000    0.409    0.000 {method 'isoformat' of 'datetime.datetime' objects}
+   977756    0.364    0.000    0.364    0.000 {built-in method builtins.max}
+   739131    0.358    0.000    0.602    0.000 simulation.py:1032(occupancy)
+  1504599    0.329    0.000    0.329    0.000 {method 'values' of 'dict' objects}
+
+
+{"phase": "aggregation_repeated_replicate_diagnostic", "count": 100, "profiled_seconds": 8.29359184100008}
+         12375070 function calls in 8.293 seconds
+
+   Ordered by: cumulative time
+   List reduced from 94 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.017    0.017    8.293    8.293 aggregate.py:27(aggregate_results)
+        2    0.484    0.242    7.298    3.649 aggregate.py:53(aggregate_rows)
+    17707    0.812    0.000    6.086    0.000 aggregate.py:10(stats)
+    53355    0.203    0.000    4.768    0.000 _function_base_impl.py:4065(percentile)
+    53355    0.075    0.000    4.324    0.000 _function_base_impl.py:4513(_quantile_unchecked)
+    53356    0.135    0.000    4.250    0.000 _function_base_impl.py:3828(_ureduce)
+    53355    0.071    0.000    4.073    0.000 _function_base_impl.py:4652(_quantile_ureduce_func)
+    53355    0.615    0.000    3.881    0.000 _function_base_impl.py:4727(_quantile)
+    53355    0.477    0.000    1.083    0.000 _function_base_impl.py:4692(_get_indexes)
+    17785    0.540    0.000    0.540    0.000 {built-in method numpy.asarray}
+   213097    0.270    0.000    0.535    0.000 {method 'any' of 'numpy.generic' objects}
+    53355    0.066    0.000    0.504    0.000 _arraysetops_impl.py:145(unique)
+    53356    0.475    0.000    0.475    0.000 {method 'partition' of 'numpy.ndarray' objects}
+    53355    0.166    0.000    0.409    0.000 _arraysetops_impl.py:350(_unique1d)
+   160066    0.166    0.000    0.403    0.000 numerictypes.py:418(issubdtype)
+  3583576    0.387    0.000    0.387    0.000 {built-in method builtins.isinstance}
+   373271    0.373    0.000    0.373    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+  1931275    0.355    0.000    0.355    0.000 {method 'get' of 'dict' objects}
+    53355    0.052    0.000    0.310    0.000 fromnumeric.py:2474(any)
+    75952    0.291    0.000    0.305    0.000 aggregate.py:64(<genexpr>)
+   213097    0.060    0.000    0.265    0.000 _methods.py:55(_any)
+    53355    0.088    0.000    0.259    0.000 fromnumeric.py:86(_wrapreduction_any_all)
+    53355    0.249    0.000    0.249    0.000 _function_base_impl.py:4595(_lerp)
+    53355    0.052    0.000    0.234    0.000 _function_base_impl.py:4535(_quantile_is_valid)
+   320132    0.128    0.000    0.218    0.000 numerictypes.py:230(issubclass_)
+
+
+{"phase": "aggregate", "serialization_seconds": 0.10714767900003608, "gzip_seconds": 0.09004272399988622, "raw_bytes": 2984734, "gzip_bytes": 73257}
+{"phase": "trace", "serialization_seconds": 0.48045660200000384, "gzip_seconds": 0.4041056420001041, "raw_bytes": 28348397, "gzip_bytes": 1163234}
+{"phase": "inputs", "serialization_seconds": 0.29534454700001334, "gzip_seconds": 0.766659713000081, "raw_bytes": 22066758, "gzip_bytes": 707751}

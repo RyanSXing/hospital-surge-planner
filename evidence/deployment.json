@@ -1,0 +1,23 @@
+{
+  "deployed_at": "2026-10-17T09:04:42.108570+00:00",
+  "code_commit": "26c3122490b3f8ba9b69347dc8a7a8d94a05a16d",
+  "host": "131.186.0.156",
+  "directory": "/opt/hospital-surge-planner",
+  "steps": [
+    "tar -xzf release.tar.gz",
+    "CODE_COMMIT=26c3122490b3f8ba9b69347dc8a7a8d94a05a16d docker compose --env-file .env -f infra/compose.yaml --profile tls build",
+    "CODE_COMMIT=26c3122490b3f8ba9b69347dc8a7a8d94a05a16d docker compose --env-file .env -f infra/compose.yaml up -d postgres redis",
+    "CODE_COMMIT=26c3122490b3f8ba9b69347dc8a7a8d94a05a16d docker compose --env-file .env -f infra/compose.yaml run --rm api .venv/bin/alembic -c infra/alembic.ini upgrade head",
+    "CODE_COMMIT=26c3122490b3f8ba9b69347dc8a7a8d94a05a16d docker compose --env-file .env -f infra/compose.yaml up -d api worker web",
+    "CODE_COMMIT=26c3122490b3f8ba9b69347dc8a7a8d94a05a16d docker compose --env-file .env -f infra/compose.yaml --profile tls up -d tls",
+    "CODE_COMMIT=26c3122490b3f8ba9b69347dc8a7a8d94a05a16d docker compose --env-file .env -f infra/compose.yaml ps"
+  ],
+  "status": "deployed_pending_acceptance",
+  "required_next": [
+    "authenticated smoke run",
+    "OCI artifact upload/download",
+    "full workflow verification",
+    "backup and restore test",
+    "record image digests and benchmark"
+  ]
+}

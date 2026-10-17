@@ -54,6 +54,8 @@ export default function Overview({
     (f) => (f.id || f.facility_id) === ctx.selectedFacility,
   );
   const metric = ctx.metrics?.scalar_metrics || {};
+  const peakQueue = metric.peak_inpatient_queue;
+  const firstShortage = metric.time_to_first_shortage_hours;
   const wardIds = new Set(ward.units.map((u) => u.unit_id || u.id)),
     wardSlots = (ctx.state?.slots || ctx.dataset?.slots || [])
       .filter(
@@ -279,12 +281,22 @@ export default function Overview({
               {...ward}
               capacity={ward.staffed}
             />
+            <p className="capacity-ledger-summary">
+              {ward.unavailable
+                ? "Selected-time state unavailable"
+                : `${ward.ready} ready · ${ward.reserved} reserved · ${ward.cleaning} in turnover · ${ward.available} suitable available`}
+            </p>
             <CapacityBar
               label="Intensive care"
               {...icu}
               capacity={icu.staffed}
               color={icu.occupied >= icu.staffed ? "red" : "cyan"}
             />
+            <p className="capacity-ledger-summary">
+              {icu.unavailable
+                ? "Selected-time state unavailable"
+                : `${icu.ready} ready · ${icu.reserved} reserved · ${icu.cleaning} in turnover · ${icu.available} suitable available`}
+            </p>
             {main ? (
               <CapacityBar
                 label="Emergency department"
@@ -293,6 +305,36 @@ export default function Overview({
                 color="green"
               />
             ) : null}
+          </div>
+          <div className="inspector-section forecast-outlook">
+            <div className="spread">
+              <h3>Forecast outlook</h3>
+              <span className="micro-label">SYSTEM-WIDE</span>
+            </div>
+            <dl>
+              <div>
+                <dt>Peak inpatient queue · P10–P90</dt>
+                <dd>
+                  {peakQueue?.p10 != null
+                    ? `${fmt(peakQueue.p10, 1)}–${fmt(peakQueue.p90, 1)} patients`
+                    : "Awaiting simulation"}
+                </dd>
+              </div>
+              <div>
+                <dt>First unmet demand · median</dt>
+                <dd>
+                  {firstShortage?.p50 != null
+                    ? `${fmt(firstShortage.p50, 1)} hours`
+                    : ctx.metrics
+                      ? "None in completed runs"
+                      : "Awaiting simulation"}
+                </dd>
+              </div>
+            </dl>
+            <p>
+              Full forecast interval. First-unmet time is measured from the
+              forecast start or update cutoff, among runs with unmet demand.
+            </p>
           </div>
           <div className="inspector-section bottleneck-section">
             <div className="spread">

@@ -7312,6 +7312,30 @@ main {
   min-width: 32px;
   min-height: 32px;
 }
+.capacity-ledger-summary {
+  color: #a1bdcd;
+  font-size: 12px;
+  margin-top: -8px;
+  margin-bottom: 13px;
+  line-height: 1.6;
+}
+.forecast-outlook dl > div {
+  margin-top: 12px;
+  font-size: 12px;
+}
+.forecast-outlook dt,
+.forecast-outlook p {
+  color: #a1bdcd;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.forecast-outlook dd {
+  margin: 4px 0 0;
+  color: #e6eff5;
+}
+.forecast-outlook p {
+  margin-top: 12px;
+}
 @media (min-width: 1100px) {
   .timeline-resize-handle {
     display: flex;

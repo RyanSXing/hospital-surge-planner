@@ -59,7 +59,17 @@ export function ForecastChart({
     [hover, setHover] = useState<number | null>(null);
   const W = Math.max(280, width),
     H = height,
-    pad = { left: 42, right: 18, top: 18, bottom: 28 };
+    pad = { left: 42, right: 32, top: 18, bottom: 28 };
+  const tickCount = Math.min(
+    rows.length,
+    Math.max(2, Math.min(8, Math.floor((W - pad.left - pad.right) / 90) + 1)),
+  );
+  const firstAt = rows[0]?.at || rows[0]?.start_at,
+    lastAt = rows.at(-1)?.at || rows.at(-1)?.start_at,
+    intraday =
+      firstAt &&
+      lastAt &&
+      Math.abs(Date.parse(lastAt) - Date.parse(firstAt)) <= 36 * 3600000;
   const x = scaleLinear()
     .domain([0, Math.max(1, rows.length - 1)])
     .range([pad.left, W - pad.right]);
@@ -182,16 +192,27 @@ export function ForecastChart({
               strokeDasharray="4 4"
             />
           ) : null}
-          {Array.from({ length: Math.min(8, rows.length) }, (_, i) =>
-            Math.round(
-              (i * (rows.length - 1)) /
-                Math.max(1, Math.min(8, rows.length) - 1),
-            ),
+          {Array.from({ length: tickCount }, (_, i) =>
+            Math.round((i * (rows.length - 1)) / Math.max(1, tickCount - 1)),
           ).map((j, i) => (
             <text key={i} x={x(j)} y={H - 6} textAnchor="middle">
               {rows[j]?.at || rows[j]?.start_at
-                ? localDate(rows[j].at || rows[j].start_at)
+                ? localDate(
+                    rows[j].at || rows[j].start_at,
+                    intraday
+                      ? { hour: "numeric", minute: "2-digit" }
+                      : undefined,
+                  )
                 : rows[j]?.local_date?.slice(5) || `Day ${j + 1}`}
+              <title>
+                {localDate(rows[j]?.at || rows[j]?.start_at, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZoneName: "short",
+                })}
+              </title>
             </text>
           ))}
           {onSelect ? (
@@ -257,6 +278,7 @@ export function ForecastChart({
               day: "numeric",
               hour: "2-digit",
               minute: "2-digit",
+              timeZoneName: "short",
             })}
           </strong>
           {keys.map((k, i) => (

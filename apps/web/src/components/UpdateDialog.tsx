@@ -97,12 +97,26 @@ export default function UpdateDialog({
     patients = ctx.state?.patients || ctx.dataset?.patients || [];
   useEffect(() => {
     let ignore = false;
+    async function allPages(path: string) {
+      const collected: Entity[] = [];
+      let cursor: string | null = null;
+      do {
+        const result: Entity = await api(
+          `${path}${path.includes("?") ? "&" : "?"}limit=200${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
+        );
+        collected.push(...items(result));
+        cursor = result.next_cursor || null;
+      } while (cursor);
+      return collected;
+    }
     Promise.all([
-      api("/datasets?limit=200"),
-      api("/updates?limit=200"),
+      allPages("/datasets"),
+      allPages(
+        `/updates?scenario_id=${encodeURIComponent(ctx.scenario?.id || "")}`,
+      ),
       ctx.run
-        ? api(`/run-groups/${ctx.run.id}/replications?limit=200`)
-        : Promise.resolve({ items: [] }),
+        ? allPages(`/run-groups/${ctx.run.id}/replications`)
+        : Promise.resolve([]),
     ])
       .then(([versions, updates, runs]) => {
         if (ignore) return;
@@ -277,7 +291,6 @@ export default function UpdateDialog({
           note,
           replication_id:
             sourceMode === "selected_replication" ? selectedReplica : undefined,
-          idempotency_key: crypto.randomUUID(),
         }));
       setSavedEvent(record);
       if (!enqueue) {

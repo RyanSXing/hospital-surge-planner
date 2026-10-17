@@ -6,8 +6,7 @@
  RUN  v4.1.12 /Users/rsxing/Downloads/Agies/apps/web
 
 
- Test Files  5 passed (5)
-      Tests  25 passed (25)
-   Start at  03:59:58
-   Duration  265ms (transform 299ms, setup 0ms, import 509ms, tests 56ms, environment 0ms)
-
+ Test Files  6 passed (6)
+      Tests  28 passed (28)
+   Start at  04:19:18
+   Duration  239ms (transform 403ms, setup 0ms, import 506ms, tests 123ms, environment 0ms)

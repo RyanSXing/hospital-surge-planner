@@ -3,18 +3,18 @@
   "Trivy": {
     "Version": "0.76.0"
   },
-  "ReportID": "01a1490f-6dfa-76ed-8944-c2b07ee7ef65",
-  "CreatedAt": "2026-10-17T08:51:50.394457594Z",
-  "ArtifactID": "sha256:6b7da61556d2154c1dd9abb5bc95e10c3492135400b148506e46faeea5d7853b",
+  "ReportID": "01a1491b-a1bd-7af9-bfe7-53617d31f518",
+  "CreatedAt": "2026-10-17T09:05:10.077721822Z",
+  "ArtifactID": "sha256:bb7c800deeb6fc3a2d1ef6bdc28d609b6d68bef071e0e0885b3da21ef563e421",
   "ArtifactName": "hospital-surge-planner-web:1.0.0",
   "ArtifactType": "container_image",
   "Metadata": {
-    "Size": 72886272,
+    "Size": 72905728,
     "OS": {
       "Family": "alpine",
       "Name": "3.24.2"
     },
-    "ImageID": "sha256:a56c20d7275e705b97ffcff7758ffec5421924fbbb6b9259611d55f244d8369b",
+    "ImageID": "sha256:8db6c34e9f7eeee4909a6792f5d88c7b81c268408a3167f12b2edf3b2f776e1a",
     "DiffIDs": [
       "sha256:1b349a3334531b575b01d409540dd8aca14ef29abddacd50f36643d7c949db4b",
       "sha256:f40becd0555cb91511b060b0e929f35be45d648d50700d46795d2e7b24b29c09",
@@ -25,18 +25,18 @@
       "sha256:feb96f6affb47df7ec79365358db9ee34f5a065ace7d2cbf946b17dc561e00c2",
       "sha256:82faf857f2eba8c4612e538ef3a42989352a35818ce082dd9382ae0c7807a250",
       "sha256:5908ca5a380476750f05a58aa97f3967930db7678fe3fd9663a479db77d8cad0",
-      "sha256:ea6b3ae83a79b66a459e91d6cfcc8b1b4cbf1fcd1a7f1774e53dccb56c7b174e"
+      "sha256:9a7790f6799d63412f2bf5a8bf3fbe2418b3e57b5a35b536988e83660c518336"
     ],
     "RepoTags": [
       "hospital-surge-planner-web:1.0.0"
     ],
     "RepoDigests": [
-      "hospital-surge-planner-web@sha256:a56c20d7275e705b97ffcff7758ffec5421924fbbb6b9259611d55f244d8369b"
+      "hospital-surge-planner-web@sha256:8db6c34e9f7eeee4909a6792f5d88c7b81c268408a3167f12b2edf3b2f776e1a"
     ],
     "Reference": "hospital-surge-planner-web:1.0.0",
     "ImageConfig": {
       "architecture": "arm64",
-      "created": "2026-10-17T08:50:06.026171244Z",
+      "created": "2026-10-17T09:03:19.059654873Z",
       "history": [
         {
           "created": "2026-09-17T20:37:05Z",
@@ -152,13 +152,13 @@
         },
         {
           "created": "2026-10-17T08:49:18Z",
-          "created_by": "ARG CODE_COMMIT=afbb2e903b8b3d57d2cce2692c24c2df7dd24bda",
+          "created_by": "ARG CODE_COMMIT=26c3122490b3f8ba9b69347dc8a7a8d94a05a16d",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
           "created": "2026-10-17T08:49:18Z",
-          "created_by": "LABEL org.opencontainers.image.revision=afbb2e903b8b3d57d2cce2692c24c2df7dd24bda",
+          "created_by": "LABEL org.opencontainers.image.revision=26c3122490b3f8ba9b69347dc8a7a8d94a05a16d",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
@@ -168,12 +168,12 @@
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-10-17T08:50:06Z",
+          "created": "2026-10-17T09:03:19Z",
           "created_by": "COPY /app/dist /usr/share/nginx/html # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-10-17T08:50:06Z",
+          "created": "2026-10-17T09:03:19Z",
           "created_by": "EXPOSE [8080/tcp]",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
@@ -192,7 +192,7 @@
           "sha256:feb96f6affb47df7ec79365358db9ee34f5a065ace7d2cbf946b17dc561e00c2",
           "sha256:82faf857f2eba8c4612e538ef3a42989352a35818ce082dd9382ae0c7807a250",
           "sha256:5908ca5a380476750f05a58aa97f3967930db7678fe3fd9663a479db77d8cad0",
-          "sha256:ea6b3ae83a79b66a459e91d6cfcc8b1b4cbf1fcd1a7f1774e53dccb56c7b174e"
+          "sha256:9a7790f6799d63412f2bf5a8bf3fbe2418b3e57b5a35b536988e83660c518336"
         ]
       },
       "config": {
@@ -218,7 +218,7 @@
           "com.docker.compose.service": "web",
           "com.docker.compose.version": "2.40.3",
           "maintainer": "NGINX Docker Maintainers \u003cdocker-maint@nginx.com\u003e",
-          "org.opencontainers.image.revision": "afbb2e903b8b3d57d2cce2692c24c2df7dd24bda"
+          "org.opencontainers.image.revision": "26c3122490b3f8ba9b69347dc8a7a8d94a05a16d"
         },
         "WorkingDir": "/",
         "ExposedPorts": {
@@ -275,9 +275,9 @@
         "DiffID": "sha256:5908ca5a380476750f05a58aa97f3967930db7678fe3fd9663a479db77d8cad0"
       },
       {
-        "Size": 3710976,
-        "Digest": "sha256:630545eeb91b332cca77462c1db4f600201e024d5eff7c2596013eb440444219",
-        "DiffID": "sha256:ea6b3ae83a79b66a459e91d6cfcc8b1b4cbf1fcd1a7f1774e53dccb56c7b174e"
+        "Size": 3730432,
+        "Digest": "sha256:dc6f66fcc2bfdc99ed69b645d85d3667212eb3a2178157a5ead849af4adf0c58",
+        "DiffID": "sha256:9a7790f6799d63412f2bf5a8bf3fbe2418b3e57b5a35b536988e83660c518336"
       }
     ]
   },

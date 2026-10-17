@@ -78,6 +78,7 @@ class HospitalSimulation:
         self.queue_members = defaultdict(set)
         self.blocker_history = defaultdict(list)
         self.current_blockers = {}
+        self._blocker_inputs = {}
         self.blocker_patient_hours = Counter()
         self.admission_pending = set()
         self.ed_pending = set()
@@ -195,6 +196,14 @@ class HospitalSimulation:
         self.last_unit_snapshots = {}
         self.last_vehicle_snapshots = {}
         self.last_slot_snapshots = {}
+        self._unit_snapshot_inputs = {}
+        self._slot_snapshot_inputs = {}
+        self._vehicle_snapshot_inputs = {}
+        # All spaces are declared before a run. Capacity updates enable/install
+        # these same records; references let unchanged groups compare in C.
+        self._unit_slot_records = {
+            uid: [self.slots[sid] for sid in unit["slots"]] for uid, unit in self.units.items()
+        }
         self.conditions = copy.deepcopy(scenario.get("conditions", []))
         self.normalize_conditions()
         self.initialize()
@@ -1409,9 +1418,38 @@ class HospitalSimulation:
             self.emit("shortage_start", reason="compatible_resources_unavailable")
 
     def update_blockers(self):
+        # Reasons depend on resource availability, not the identity/number of
+        # waiting patients. Counts still update on every event for integration.
+        equipment = defaultdict(list)
+        for pool in self.pools.values():
+            equipment[pool.get("unit_id")].append((pool["capability_code"], self.equipment_available(pool)))
+        resources = defaultdict(list)
+        for unit in sorted(self.units.values(), key=lambda u: u["unit_id"]):
+            if unit["capacity_mode"] != "staff_derived":
+                continue
+            occupied = self.occupancy(unit)
+            resources[unit["kind"]].append(
+                (
+                    unit["unit_id"],
+                    unit["active"],
+                    self.enabled(unit) == 0,
+                    not unit["_ready"],
+                    bool(unit["cleaning"]),
+                    bool(unit["reservations"]),
+                    occupied >= self.enabled(unit),
+                    occupied + len(unit["reservations"]) >= unit["staffed"],
+                    unit["gate"],
+                    tuple(equipment[unit["unit_id"]]),
+                )
+            )
         for (kind, profile), members in self.queue_members.items():
             key = kind + ":" + ",".join(profile)
             count = len(members) - sum(pid in members for pid in self.transfer_pending)
+            inputs = (bool(count), tuple(resources[kind]))
+            if inputs == self._blocker_inputs.get(key):
+                self.current_blockers[key]["patient_count"] = count
+                continue
+            self._blocker_inputs[key] = inputs
             details = []
             if count > 0:
                 for unit in sorted(self.units.values(), key=lambda u: u["unit_id"]):
@@ -2109,17 +2147,75 @@ class HospitalSimulation:
     def record_state(self):
         if not self.keep:
             return
+        equipment_inputs = defaultdict(list)
+        for pool in self.pools.values():
+            equipment_inputs[pool.get("unit_id")].append(
+                (
+                    pool["capability_code"],
+                    pool["quantity"],
+                    sum(pool["in_use"].values()),
+                    sum(pool["reserved"].values()),
+                    pool["failed"],
+                    pool["pending_decommission"],
+                )
+            )
         for uid, u in self.units.items():
-            snap = self.unit_snapshot(u)
-            if snap != self.last_unit_snapshots.get(uid):
-                self.unit_history[uid].append(dict(at=self.at(self.now), elapsed_minutes=self.now, **snap))
-                self.last_unit_snapshots[uid] = snap
-        for sid, slot in self.slots.items():
-            snap = self.slot_snapshot(slot)
-            if snap != self.last_slot_snapshots.get(sid):
-                self.slot_history[sid].append(dict(at=self.at(self.now), elapsed_minutes=self.now, **snap))
-                self.last_slot_snapshots[sid] = snap
+            inputs = (
+                u["facility_id"],
+                u["kind"],
+                u["_physical"],
+                u["_enabled"],
+                u["staffed"],
+                len(u["occupants"]),
+                u.get("background_occupied", 0),
+                len(u["reservations"]),
+                len(u["cleaning"]),
+                len(u["_ready"]),
+                tuple(u["active_staff"]),
+                u["gate"],
+                u["active"],
+                tuple(equipment_inputs[uid]),
+            )
+            if inputs != self._unit_snapshot_inputs.get(uid):
+                snap = self.unit_snapshot(u)
+                if snap != self.last_unit_snapshots.get(uid):
+                    self.unit_history[uid].append(
+                        dict(at=self.at(self.now), elapsed_minutes=self.now, **snap)
+                    )
+                    self.last_unit_snapshots[uid] = snap
+                self._unit_snapshot_inputs[uid] = inputs
+
+            # A slot's visible state depends on its own fields plus these three
+            # unit collections. Compare copied source values, not only occupied
+            # counts: same-count bed swaps/reservations must remain observable.
+            slots = self._unit_slot_records[uid]
+            previous = self._slot_snapshot_inputs.get(uid)
+            background = u.get("background_occupied", 0)
+            if previous and (
+                background == previous[0]
+                and u["cleaning"] == previous[1]
+                and u["_ready"] == previous[2]
+                and slots == previous[3]
+            ):
+                continue
+            for slot in slots:
+                sid = slot["slot_id"]
+                snap = self.slot_snapshot(slot)
+                if snap != self.last_slot_snapshots.get(sid):
+                    self.slot_history[sid].append(
+                        dict(at=self.at(self.now), elapsed_minutes=self.now, **snap)
+                    )
+                    self.last_slot_snapshots[sid] = snap
+            self._slot_snapshot_inputs[uid] = (
+                background,
+                u["cleaning"].copy(),
+                u["_ready"].copy(),
+                [slot.copy() for slot in slots],
+            )
         for vid, v in self.vehicles.items():
+            inputs = (v["location"], v["available_at"], v["mission"])
+            if inputs == self._vehicle_snapshot_inputs.get(vid):
+                continue
             snap = {
                 "vehicle_id": vid,
                 "location": v["location"],
@@ -2129,6 +2225,7 @@ class HospitalSimulation:
             if snap != self.last_vehicle_snapshots.get(vid):
                 self.vehicle_history[vid].append(dict(at=self.at(self.now), elapsed_minutes=self.now, **snap))
                 self.last_vehicle_snapshots[vid] = snap
+            self._vehicle_snapshot_inputs[vid] = inputs
 
     def slot_snapshot(self, s):
         u = self.units[s["unit_id"]]
@@ -2178,7 +2275,9 @@ class HospitalSimulation:
                 self.unit_series[uid]["fields"][key].append(value)
         row = dict(at=self.at(self.now), elapsed_minutes=self.now, **self.totals())
         if self.keep:
-            row["units"] = [self.unit_snapshot(u) for u in self.units.values()]
+            # record_state runs immediately before each sample. Its snapshot
+            # values are immutable and already describe this exact timestamp.
+            row["units"] = list(self.last_unit_snapshots.values())
         self.series.append(row)
         if self.keep:
             # Checkpoint state is encoded by the shared interval ledger. Repeating

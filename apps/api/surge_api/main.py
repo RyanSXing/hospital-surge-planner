@@ -12,9 +12,11 @@ import os
 import secrets
 import threading
 import time
+from collections import OrderedDict
 from contextlib import asynccontextmanager
 from datetime import UTC
 from pathlib import Path
+from weakref import WeakKeyDictionary
 
 from fastapi import (
     APIRouter,
@@ -320,10 +322,16 @@ DATASET_CARD_FIELDS = (
     "validation",
     "source_dataset_version_id",
 )
+_dataset_card_caches = WeakKeyDictionary()
+_dataset_card_lock = threading.RLock()
 
 
 def dataset_cards(session, workspace_id, limit=50, cursor=None):
-    """Read only card metadata, with pagination performed by the database."""
+    """Page lightweight rows first; immutable card fields are cached by database and revision.
+
+    Repeating JSON extraction on PostgreSQL reparses the full dataset document.
+    Warm list queries must not repeatedly parse schedules/history to show a card.
+    """
     try:
         offset = max(0, int(cursor or 0))
     except ValueError:
@@ -331,25 +339,60 @@ def dataset_cards(session, workspace_id, limit=50, cursor=None):
     limit = max(1, min(limit, 200))
     predicate = (Document.kind == "dataset", Document.workspace_id == workspace_id)
     total = session.scalar(select(func.count()).select_from(Document).where(*predicate))
-    rows = session.execute(
-        select(
-            Document.id,
-            Document.workspace_id,
-            Document.revision,
-            Document.created_at,
-            Document.updated_at,
-            *(
-                (Document.data[key].as_boolean() if key == "synthetic" else Document.data[key]).label(key)
-                for key in DATASET_CARD_FIELDS
-            ),
+    metadata = (
+        session.execute(
+            select(
+                Document.id,
+                Document.workspace_id,
+                Document.revision,
+                Document.created_at,
+                Document.updated_at,
+            )
+            .where(*predicate)
+            .order_by(Document.created_at.desc(), Document.id)
+            .limit(limit)
+            .offset(offset)
         )
-        .where(*predicate)
-        .order_by(Document.created_at.desc(), Document.id)
-        .limit(limit)
-        .offset(offset)
-    ).mappings()
+        .mappings()
+        .all()
+    )
+    with _dataset_card_lock:
+        cache = _dataset_card_caches.setdefault(session.get_bind(), OrderedDict())
+
+        def card_key(row):
+            return (workspace_id, row["id"], row["revision"], row["updated_at"])
+
+        missing = [row["id"] for row in metadata if card_key(row) not in cache]
+        if missing:
+            cards = session.execute(
+                select(
+                    Document.id,
+                    *(
+                        (Document.data[key].as_boolean() if key == "synthetic" else Document.data[key]).label(
+                            key
+                        )
+                        for key in DATASET_CARD_FIELDS
+                    ),
+                )
+                .where(*predicate, Document.id.in_(missing))
+                .limit(limit)
+                .offset(0)
+            ).mappings()
+            by_id = {
+                row["id"]: {key: value for key, value in row.items() if value is not None} for row in cards
+            }
+            for row in metadata:
+                if row["id"] in by_id:
+                    cache[card_key(row)] = by_id[row["id"]]
+        items = []
+        for row in metadata:
+            key = card_key(row)
+            cache.move_to_end(key)
+            items.append({**dict(row), **copy.deepcopy(cache[key])})
+        while len(cache) > 256:
+            cache.popitem(last=False)
     return {
-        "items": [{key: value for key, value in row.items() if value is not None} for row in rows],
+        "items": items,
         "total": total,
         "next_cursor": str(offset + limit) if offset + limit < total else None,
     }

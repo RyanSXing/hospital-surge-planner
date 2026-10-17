@@ -80,8 +80,10 @@ def test_dataset_cards_are_projected_and_paginated_in_sql(client):
     assert card["manifest"] == context["dataset"]["manifest"]
     assert card["synthetic"] is True
     dataset_selects = [s for s in statements if "JSON_EXTRACT" in s]
-    assert len(dataset_selects) == 2
-    assert all("LIMIT" in s and "OFFSET" in s and ", documents.data," not in s for s in dataset_selects)
+    assert not dataset_selects, "Warm cards must not reparse a full dataset JSON document"
+    page_selects = [s for s in statements if "FROM documents" in s and "LIMIT" in s]
+    assert len(page_selects) == 2
+    assert all("OFFSET" in s and ", documents.data," not in s for s in page_selects)
     assert client.get("/api/datasets?cursor=invalid").status_code == 422
 
 

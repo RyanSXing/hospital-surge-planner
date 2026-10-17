@@ -1,4 +1,9 @@
 import type { Entity } from "./types";
+import {
+  clearWriteIdentities,
+  confirmWrite,
+  writeIdentity,
+} from "./writeIdentity";
 export class ApiError extends Error {
   code: string;
   details: Entity[];
@@ -19,21 +24,30 @@ export async function api<T = Entity>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const headers: Record<string, string> = {
-    ...(options.body instanceof FormData
-      ? {}
-      : { "Content-Type": "application/json" }),
-    ...((options.headers as Record<string, string>) || {}),
-  };
-  if (options.method && options.method !== "GET") {
-    headers["Idempotency-Key"] ??= crypto.randomUUID();
+  const headers = new Headers(options.headers);
+  if (!(options.body instanceof FormData) && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
   }
+  const method = (options.method || "GET").toUpperCase();
+  const mutating = method !== "GET" && method !== "HEAD";
+  const identity =
+    mutating && !path.startsWith("/auth/") && !headers.has("Idempotency-Key")
+      ? await writeIdentity(path, options, headers)
+      : null;
+  if (identity) headers.set("Idempotency-Key", identity.key);
   const response = await fetch(`/api${path}`, {
     credentials: "include",
     ...options,
     headers,
   });
   if (!response.ok) {
+    if (
+      identity &&
+      response.status >= 400 &&
+      response.status < 500 &&
+      response.status !== 408
+    )
+      confirmWrite(identity.fingerprint, identity.key);
     let data: Entity = {};
     try {
       data = await response.json();
@@ -48,8 +62,11 @@ export async function api<T = Entity>(
       response.status,
     );
   }
-  if (response.status === 204) return {} as T;
-  return response.json();
+  const result =
+    response.status === 204 ? ({} as T) : ((await response.json()) as T);
+  if (identity) confirmWrite(identity.fingerprint, identity.key);
+  if (path.startsWith("/auth/") && mutating) clearWriteIdentities();
+  return result;
 }
 export const post = <T = Entity>(
   path: string,

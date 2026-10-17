@@ -45,6 +45,16 @@
 .patients-page .patient-inspector {
   align-self: stretch;
 }
+@media (min-width: 1101px) {
+  .patients-page .patient-inspector {
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+    max-height: calc(100dvh - 140px);
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+}
 .patient-filter-panel {
   flex-shrink: 0;
   padding: 10px 14px;

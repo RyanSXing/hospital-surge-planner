@@ -24,6 +24,8 @@ def main():
     parser.add_argument("--run-id", help="Resume polling an existing run without starting another")
     parser.add_argument("--skip-export", action="store_true")
     parser.add_argument("--expected-commit")
+    parser.add_argument("--name", help="Readable name for the saved benchmark scenario")
+    parser.add_argument("--dataset-id", help="Freeze a specific dataset across repeated measurements")
     parser.add_argument("--output", type=Path, default=ROOT / "evidence/cloud-acceptance.json")
     args = parser.parse_args()
     settings = dotenv_values(args.env_file)
@@ -56,6 +58,10 @@ def main():
     call("POST", "/auth/login", json={"username": "admin", "password": settings["ADMIN_PASSWORD"]})
     summary = call("GET", "/workspaces/workspace-main/summary")
     dataset = summary["dataset"]
+    if args.dataset_id:
+        dataset = next((item for item in summary["datasets"] if item["id"] == args.dataset_id), None)
+        if dataset is None:
+            dataset = call("GET", "/datasets/" + args.dataset_id)
     if args.run_id:
         run = call("GET", "/run-groups/" + args.run_id)
         scenario = call("GET", "/scenarios/" + run["scenario_id"])
@@ -63,7 +69,7 @@ def main():
         start = datetime.fromisoformat(dataset["snapshot_at"].replace("Z", "+00:00"))
         end = start.astimezone(ZoneInfo(dataset["timezone"])) + timedelta(days=args.days)
         scenario = call("POST", "/scenarios", json={
-            "name": f"OCI acceptance {args.days} days × {args.replications} replications",
+            "name": args.name or f"OCI acceptance {args.days} days × {args.replications} replications",
             "dataset_version_id": dataset["id"], "start_at": dataset["snapshot_at"],
             "timezone": dataset["timezone"], "horizon_calendar_days": args.days,
             "replications": args.replications, "base_seed": 20261016,

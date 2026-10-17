@@ -1,0 +1,21 @@
+{
+  "read_only": true,
+  "checks": [
+    {
+      "mode": "desktop",
+      "run_id": "run_b96f743b8a174b5d8a0d",
+      "scenario_id": "scenario_1520401215594fdf819a",
+      "text": "Forecast outlook\nSYSTEM-WIDE\nPeak inpatient queue · P10–P90\n0.1–0.9 patients\nFirst unmet demand · median\n17.9 hours\n\nFull forecast interval. First-unmet time is measured from the forecast start or update cutoff, among runs with unmet demand.",
+      "page_errors": [],
+      "horizontal_overflow": false
+    },
+    {
+      "mode": "mobile",
+      "run_id": "run_432969c7c6d24fcf9001",
+      "scenario_id": "scenario_5e755945ccce4595a761",
+      "text": "Forecast outlook\nPeak inpatient queue · P10–P90\n0.1–0.9 patients\nFirst unmet demand · median\n17.9 hours\n\nFull forecast interval. First-unmet time is measured from the forecast start or update cutoff, among runs with unmet demand.",
+      "page_errors": [],
+      "horizontal_overflow": false
+    }
+  ]
+}

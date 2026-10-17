@@ -1,0 +1,30 @@
+{
+  "recorded_at": "2026-10-17T09:09:22.438297+00:00",
+  "scope": "Actual local browser observed-reset preview, reviewed confirmation and Save & reforecast; server verification after completion",
+  "parent_run_group_id": "run_0284e8f18a78474fb536",
+  "parent_status": "SUCCEEDED",
+  "parent_completed": 100,
+  "reset_run_group_id": "run_8828d9e43ea84fd288ab",
+  "reset_status": "SUCCEEDED",
+  "reset_completed": 10,
+  "matched": 84,
+  "absent": 0,
+  "new": 0,
+  "basis": {
+    "source": "selected_parent_projection",
+    "replication_id": "run_0284e8f18a78474fb536_rep_0091",
+    "run_group_id": "run_0284e8f18a78474fb536",
+    "scenario_revision_id": "revision_4cbbaba52a2940fb8655",
+    "at": "2026-10-16T05:00:00Z"
+  },
+  "update_disposition": [
+    {
+      "update_id": "update_3e4faa12903d436eaffd",
+      "action": "exclude",
+      "reason": "complete snapshot replaces census"
+    }
+  ],
+  "reconciliation_hash": "809b6b710fc0255d1f993750c0950c9d71cae55209bf70f9d155832dad377042",
+  "screenshot": "evidence/browser-reset-reconciliation.png",
+  "result": "passed"
+}

@@ -1,0 +1,29 @@
+{
+  "case": "one30-day sustained70% replication; unchanged exact outputs",
+  "results": [
+    {
+      "version": "release_reference",
+      "keep_trace": false,
+      "seconds": 0.9309900830266997,
+      "sha256": "a8168f3c4d8e198d2ac9045708071f93fc0dad574555dc1c141d3b673ae4dcfc"
+    },
+    {
+      "version": "cached",
+      "keep_trace": false,
+      "seconds": 0.8417935419711284,
+      "sha256": "a8168f3c4d8e198d2ac9045708071f93fc0dad574555dc1c141d3b673ae4dcfc"
+    },
+    {
+      "version": "release_reference",
+      "keep_trace": true,
+      "seconds": 2.9409238749649376,
+      "sha256": "cce03ba011d6391040fb3919deec8b201307fd0ed00f58d9e142d708c16b8376"
+    },
+    {
+      "version": "cached",
+      "keep_trace": true,
+      "seconds": 1.4809006669675,
+      "sha256": "cce03ba011d6391040fb3919deec8b201307fd0ed00f58d9e142d708c16b8376"
+    }
+  ]
+}

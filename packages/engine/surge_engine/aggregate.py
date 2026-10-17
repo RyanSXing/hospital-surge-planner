@@ -14,10 +14,11 @@ def stats(values):
     if not valid:
         return {"p10": None, "p50": None, "p90": None, "mean": None, "min": None, "max": None}
     a = np.asarray(valid, dtype=float)
+    p10, p50, p90 = np.percentile(a, [10, 50, 90])
     return {
-        "p10": float(np.percentile(a, 10)),
-        "p50": float(np.percentile(a, 50)),
-        "p90": float(np.percentile(a, 90)),
+        "p10": float(p10),
+        "p50": float(p50),
+        "p90": float(p90),
         "mean": float(np.mean(a)),
         "min": float(np.min(a)),
         "max": float(np.max(a)),
@@ -85,12 +86,13 @@ def aggregate_results(replications, scenario=None):
         fields = {}
         for field in unit["fields"]:
             values = np.asarray([r["unit_series"][uid]["fields"][field] for r in replications], dtype=float)
+            p10, p50, p90 = np.percentile(values, [10, 50, 90], axis=0)
             fields[field] = {
                 key: array.tolist()
                 for key, array in [
-                    ("p10", np.percentile(values, 10, axis=0)),
-                    ("p50", np.percentile(values, 50, axis=0)),
-                    ("p90", np.percentile(values, 90, axis=0)),
+                    ("p10", p10),
+                    ("p50", p50),
+                    ("p90", p90),
                     ("mean", np.mean(values, axis=0)),
                 ]
             }

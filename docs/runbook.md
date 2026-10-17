@@ -115,7 +115,9 @@ Make derives `CODE_COMMIT` from Git; dirty source is marked `-dirty` and an unco
 
 Install `hospital-retention.service` and `.timer` alongside the backup units after adjusting their deployment paths. At approximately 04:15 UTC daily, retention processes at most 100 eligible records. It expires old unselected traces, failed import staging, and exports according to workspace policy, preserving selected traces, frozen inputs, revisions, aggregates and audit records. Inspect first with `docker compose --env-file .env -f infra/compose.yaml run --rm --no-deps api python -m surge_api.manage retention`; the timer adds `--apply --limit 100`. Failed object deletions retain retry metadata.
 
-The approved host was provisioned with an A2 capacity fallback retaining eight ARM vCPUs and 16 GiB at a lower estimated cost. See `docs/oci-provisioning-plan.md` and `evidence/oci-provisioning.json`. The deployment login will be provided through private ignored `data/deployment/access.md`; credentials do not belong in the tracked runbook or evidence.
+The approved host was provisioned with an A2 capacity fallback retaining eight ARM vCPUs and 16 GiB at a lower estimated cost. See `docs/oci-provisioning-plan.md` and `evidence/oci-provisioning.json`. The deployment login is provided through private ignored `data/deployment/access.md`; credentials do not belong in the tracked runbook or evidence. `docs/hosted-verification.md` distinguishes verified operations from outstanding performance gates.
+
+To repeat the hosted cloud-download restore proof, run `python3 scripts/verify_hosted_backup.py --object-key backups/<name>.dump` on the deployment host. It verifies the private object's checksum, confirms anonymous access is denied, restores into a unique scratch database, checks core tables and drops only that scratch database. It preserves the live database.
 
 ## Hosted image verification
 

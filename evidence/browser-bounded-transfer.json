@@ -1,0 +1,11 @@
+{
+  "scenario_id": "scenario_d6a23f18c5ef443fa8ee",
+  "original_run_id": "run_a9c912b9cd44478a9ebd",
+  "run_id": "run_814307289d4c42dea09f",
+  "patient_id": "PAT-STRESS-000094",
+  "accepted_at": "2026-10-16T05:00:00Z",
+  "departed_at": "2026-10-16T05:10:00Z",
+  "arrived_at": "2026-10-16T05:28:00Z",
+  "clinic_icu_rejected": true,
+  "source_retained_until_pickup": true
+}

@@ -1,0 +1,45 @@
+{
+  "scope": "Local aggregation-only timing; 10 distinct actual30day70%stress replications;100-row case repeats10 actual results with unique replication IDs; five interleaved samples, not a full100rep simulation benchmark",
+  "measurements": {
+    "10": {
+      "before": [
+        0.914746374997776,
+        0.8630836670054123,
+        0.9097608330193907,
+        0.8629755830042996,
+        0.8661141250049695
+      ],
+      "after": [
+        0.4263821250060573,
+        0.3942466659937054,
+        0.4248506670119241,
+        0.4003927090088837,
+        0.3992832909571007
+      ],
+      "before_median_seconds": 0.8661141250049695,
+      "after_median_seconds": 0.4003927090088837,
+      "outputs_exactly_equal": true,
+      "output_sha256": "bdcbb1e74342fdccff3b6bf9880463430ab3e5227e0e4f11282d83d3168f5e1d"
+    },
+    "100": {
+      "before": [
+        1.2676698330324143,
+        1.273417457996402,
+        1.2476372920209542,
+        1.2877574170124717,
+        1.238968375022523
+      ],
+      "after": [
+        0.7859302079887129,
+        0.7670759589527734,
+        0.7521768749575131,
+        0.7597132920054719,
+        0.7292059159954078
+      ],
+      "before_median_seconds": 1.2676698330324143,
+      "after_median_seconds": 0.7597132920054719,
+      "outputs_exactly_equal": true,
+      "output_sha256": "e43537b6dd855ea6ea9c9e5de4b85257a4bd9a92dddd931dbdcda3d613ca437a"
+    }
+  }
+}

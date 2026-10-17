@@ -1,0 +1,16 @@
+{
+  "recorded_at": "2026-10-17T09:08:00Z",
+  "instance_shape": "VM.Standard.A2.Flex",
+  "ocpus": 4,
+  "native_physical_cores": 8,
+  "memory_gib": 16,
+  "machine": "aarch64",
+  "cpu_model": "Ampere-1",
+  "threads_per_core": 1,
+  "python_version": "3.12.15",
+  "simulation_workers": 4,
+  "cgroup_cpu_max": "max 100000",
+  "cpu_throttled_periods": 0,
+  "qemu_emulation": false,
+  "code_commit": "26c3122490b3f8ba9b69347dc8a7a8d94a05a16d"
+}

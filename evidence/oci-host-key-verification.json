@@ -1,0 +1,7 @@
+{
+  "verified_at": "2026-10-17T08:05:05.819356+00:00",
+  "instance_id": "ocid1.instance.oc1.us-chicago-1.anxxeljt7vqd3eqcnuulgz3hfcvj6f7su53fvcdgcisqbc3lt6f5bvzh7iaa",
+  "source": "Authenticated OCI serial console API",
+  "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINufydvyrDMhxkgRVf+Y8H4MbKW9vQjFCHUPEhsbOGQF",
+  "strict_host_key_checking": true
+}

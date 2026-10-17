@@ -1,0 +1,27 @@
+{
+  "method": "In-process HTTP TestClient, local SQLite, five requests per route; first request included",
+  "results": {
+    "/api/datasets?limit=200": {
+      "milliseconds": [
+        369.56,
+        281.41,
+        281.07,
+        271.35,
+        279.93
+      ],
+      "bytes": 54233,
+      "dataset_count": 9
+    },
+    "/api/workspaces/workspace-main/summary": {
+      "milliseconds": [
+        366.95,
+        377.04,
+        363.42,
+        362.96,
+        364.99
+      ],
+      "bytes": 432269,
+      "dataset_count": 9
+    }
+  }
+}

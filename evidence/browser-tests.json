@@ -1,0 +1,455 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "e2e/screens.spec.ts"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true,
+          "deviceScaleFactor": 1
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "../../.venv/bin/python ../../scripts/dev.py",
+      "url": "http://127.0.0.1:5173/api/health/ready",
+      "reuseExistingServer": true,
+      "timeout": 90000
+    }
+  },
+  "suites": [
+    {
+      "title": "screens.spec.ts",
+      "file": "screens.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "all seven screens render actual run context and keyboard navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 35657,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:41:36.837Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/overview-3bb628316b465a1c7e877fb1b6d1436116a981c5.png"
+                    },
+                    {
+                      "name": "scenarios",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/scenarios-174bcda7bb21ccddabec731e5aee6caea2f9de3a.png"
+                    },
+                    {
+                      "name": "scenarios-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/scenarios-middle-744223a42f027df9c38b0adeaa9da3f5b9fcb552.png"
+                    },
+                    {
+                      "name": "scenarios-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/scenarios-lower-43b688dd413442491205dceb60d417b3a42d2b95.png"
+                    },
+                    {
+                      "name": "patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/patients-9cb00bab9701d42415259635ec2c52940c773455.png"
+                    },
+                    {
+                      "name": "patients-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/patients-middle-f225a21a87d56462a1da3883bd058c876e9b4568.png"
+                    },
+                    {
+                      "name": "patients-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/patients-lower-5d4c82b876ac93d013d386356d44428a98f8e645.png"
+                    },
+                    {
+                      "name": "resources",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/resources-7e56859945d19a9e745c714c8ef9cfb89e78d92f.png"
+                    },
+                    {
+                      "name": "resources-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/resources-middle-9e52e39a3b9c66d22602a79bd2b3fdf82b52cb5c.png"
+                    },
+                    {
+                      "name": "resources-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/resources-lower-510665c4743122131e85e9b3c7ba346d1d66da4a.png"
+                    },
+                    {
+                      "name": "compare",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/compare-4795bbc452aa4c8f5377a28b4f634df0f5a97472.png"
+                    },
+                    {
+                      "name": "compare-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/compare-middle-259cb10a3d478afd409f1d17e120b3d5757a62a6.png"
+                    },
+                    {
+                      "name": "compare-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/compare-lower-ae9f42e3a967bc3e1fb7a8c7f813486692378d95.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/replay-5b543f52c64b6b53b97f905d3ada8077e04293fe.png"
+                    },
+                    {
+                      "name": "replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/replay-middle-b73a6377335d1f4374f2d2a932f45b1928ca5983.png"
+                    },
+                    {
+                      "name": "replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/replay-lower-b4dc53849bdd56a9c96130d2dc98a58fb0629eed.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/data-a8a052396575cd57fe96b35bddd23843c8dd4aa7.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/data-middle-c4d6ee0adfc9dd28985911bd68bb27e699769893.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/data-lower-7538e70ecb72ee4b4f41a4ef35a025e1f0bbbfa0.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-1dd194dc3685a89e85b2",
+          "file": "screens.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "all seven screens render actual run context and keyboard navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32739,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:42:13.123Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-3d3683778946fb04be297b4ca4707eff7b69ee66.png"
+                    },
+                    {
+                      "name": "overview-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-middle-616a1b0c7b303a813898205f9dfae3332a2ff611.png"
+                    },
+                    {
+                      "name": "overview-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-lower-3bf99689a540d4189b5e6d95ed74b5ada5357939.png"
+                    },
+                    {
+                      "name": "scenarios",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-059872a7bd2870fd8714b937ede156b63e29c91f.png"
+                    },
+                    {
+                      "name": "scenarios-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-middle-9a1f54c8f6c3eaf22f61c74efb94186736622c31.png"
+                    },
+                    {
+                      "name": "scenarios-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-lower-644b3da6dc04d2ae56f1526d6578ba2cb290c3ee.png"
+                    },
+                    {
+                      "name": "patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-e3043267e3229ad0f6c5586afe5c296a5148bce9.png"
+                    },
+                    {
+                      "name": "patients-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-middle-d0489d722c84961f9fd276b576f344bb19005f1a.png"
+                    },
+                    {
+                      "name": "patients-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-lower-565a1d9930a6ca9e8a38e9952a5091be06745335.png"
+                    },
+                    {
+                      "name": "resources",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-66ccdd8a21fe576ab54f6afb37fb1cbba3dc5ef6.png"
+                    },
+                    {
+                      "name": "resources-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-middle-473f05297d0ce06b9f11ac64e71c551890c15ada.png"
+                    },
+                    {
+                      "name": "resources-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-lower-ef92187f6641f63e96dfc9bb134574b6c1fabe5e.png"
+                    },
+                    {
+                      "name": "compare",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-1914679c9849b899b17999c8699564ca18ee50b8.png"
+                    },
+                    {
+                      "name": "compare-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-middle-7f7bb36ea1a48466392fea55a1e3ce093ccc2299.png"
+                    },
+                    {
+                      "name": "compare-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-lower-b23947005c8d73082f0ec8a333d329e020035cf5.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-90473a04d221111b21a39a8d54421bec8f41165f.png"
+                    },
+                    {
+                      "name": "replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-middle-28dad75e6efb25b3f7077a94f31779da9efb83f5.png"
+                    },
+                    {
+                      "name": "replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-lower-7ea26e881beb5fd5f8a9ab758e3d4742ccbf5a0e.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-761573125c44afedd43f21aae9ef41755c8cf982.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-middle-043652bc9a522b623b3f00278aea84b87dfc9079.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-lower-90377094ade08f0ece756142af94c68024f767c5.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-0d8dbb877460791952b1",
+          "file": "screens.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T08:41:36.598Z",
+    "duration": 69684.826,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

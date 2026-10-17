@@ -1,0 +1,123 @@
+name: hospital-surge-planner
+
+x-app: &app
+  image: hospital-surge-planner-api:${IMAGE_TAG:-1.0.0}
+  build:
+    context: ..
+    dockerfile: infra/Dockerfile.api
+    args:
+      CODE_COMMIT: ${CODE_COMMIT:-uncommitted-working-tree}
+  env_file: ../.env
+  environment: &app-env
+    APP_ENV: ${COMPOSE_APP_ENV:-production}
+    DEMO_MODE: "false"
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-hospital}:${POSTGRES_PASSWORD:?Run make setup first}@postgres:5432/${POSTGRES_DB:-hospital}
+    REDIS_URL: redis://redis:6379/0
+    ARTIFACT_BACKEND: ${COMPOSE_ARTIFACT_BACKEND:-local}
+    ARTIFACT_LOCAL_DIR: /app/data/artifacts
+    CODE_COMMIT: ${CODE_COMMIT:-uncommitted-working-tree}
+  volumes:
+    - artifacts:/app/data
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+  init: true
+  security_opt:
+    - no-new-privileges:true
+  logging:
+    driver: json-file
+    options:
+      max-size: 10m
+      max-file: "3"
+
+services:
+  postgres:
+    image: hospital-surge-planner-postgres:17.11-patched
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hospital}
+      POSTGRES_USER: ${POSTGRES_USER:-hospital}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run make setup first}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  redis:
+    image: hospital-surge-planner-redis:7.4.11-patched
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.redis
+    command: [redis-server, --appendonly, "yes"]
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  api:
+    <<: *app
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/ready', timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
+  worker:
+    <<: *app
+    command: [python, -m, surge_api.worker]
+    stop_grace_period: 30s
+  web:
+    image: hospital-surge-planner-web:${IMAGE_TAG:-1.0.0}
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.web
+      args:
+        CODE_COMMIT: ${CODE_COMMIT:-uncommitted-working-tree}
+    ports:
+      - 127.0.0.1:8080:8080
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, wget, -q, --spider, http://127.0.0.1:8080/]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  tls:
+    image: hospital-surge-planner-caddy:2.11.7-patched
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.caddy
+    profiles: [tls]
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      TLS_EMAIL: ${TLS_EMAIL:-}
+    ports:
+      - 443:443
+      - 443:443/udp
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  postgres:
+  redis:
+  artifacts:
+  caddy_data:
+  caddy_config:

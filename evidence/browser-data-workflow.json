@@ -1,0 +1,10 @@
+{
+  "original_dataset_id": "dataset_095c0c16c9f34b95afd5",
+  "edited_dataset_id": "dataset_a5aad098d95946b39dbf",
+  "imported_dataset_id": "dataset_a7f90ec43cf94c40b4b4",
+  "field_mapping": {
+    "site_key": "facility_id",
+    "unit_key": "unit_id",
+    "operator_note": "explicitly ignored"
+  }
+}

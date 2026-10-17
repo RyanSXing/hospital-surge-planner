@@ -1,0 +1,90 @@
+{
+  "tested_at": "2026-10-17T08:42:46.125Z",
+  "screens": [
+    {
+      "view": "overview",
+      "scenario": "scenario_8f83c5a0c06d43b8ba29",
+      "run": "run_8093238e992447478db4",
+      "title": [
+        "Command overview"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "scenarios",
+      "scenario": "scenario_8f83c5a0c06d43b8ba29",
+      "run": "run_8093238e992447478db4",
+      "title": [
+        "Build a surge scenario"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "patients",
+      "scenario": "scenario_8f83c5a0c06d43b8ba29",
+      "run": "run_8093238e992447478db4",
+      "title": [
+        "Hospital capacity"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "resources",
+      "scenario": "scenario_8f83c5a0c06d43b8ba29",
+      "run": "run_8093238e992447478db4",
+      "title": [
+        "Resource planning"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "compare",
+      "scenario": "scenario_8f83c5a0c06d43b8ba29",
+      "run": "run_8093238e992447478db4",
+      "title": [
+        "Compare responses"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "replay",
+      "scenario": "scenario_8f83c5a0c06d43b8ba29",
+      "run": "run_8093238e992447478db4",
+      "title": [
+        "Patient flow replay"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "data",
+      "scenario": "scenario_8f83c5a0c06d43b8ba29",
+      "run": "run_8093238e992447478db4",
+      "title": [
+        "A clear foundation for every forecast."
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ],
+  "page_errors": []
+}

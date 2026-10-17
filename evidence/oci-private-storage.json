@@ -1,0 +1,1 @@
+{"recorded_at": "2026-10-17T08:40:23.653892+00:00", "authentication": "OCI instance principal", "bucket": "hospital-surge-artifacts", "write_read_checksum_matches": true, "sha256": "02cdeb47c557f84489830f69a21cbf88f161e902a46b4f4fd7d008d7808f17f2", "unauthenticated_get_status": 404, "probe_removed": true}

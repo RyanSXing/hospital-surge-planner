@@ -1,0 +1,259 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=desktop",
+      "e2e/resources.spec.ts",
+      "e2e/replay-controls.spec.ts"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "../../.venv/bin/python ../../scripts/dev.py",
+      "url": "http://127.0.0.1:5173/api/health/ready",
+      "reuseExistingServer": true,
+      "timeout": 90000
+    }
+  },
+  "suites": [
+    {
+      "title": "replay-controls.spec.ts",
+      "file": "replay-controls.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11909,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:40:42.258Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-controls",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-bfe03a8f03f56cc55f7cac1ca0006cd1f9807547.png"
+                    },
+                    {
+                      "name": "replay-controls-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-middle-7a492e599487144b94f967adac3cb169c5dcb312.png"
+                    },
+                    {
+                      "name": "replay-controls-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-controls-playback-s-1bf53-ing-preserve-frozen-results-desktop/attachments/replay-controls-lower-4bbaf957f9220e65284cfe0191d9f9b04a3df01a.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b643cf260ddaf8d53c21-48293276ac78d0e4d746",
+          "file": "replay-controls.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "resources.spec.ts",
+      "file": "resources.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "candidate site requirements become a feasible saved and simulated resource response",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20620,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:40:54.924Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "new-candidate-resources",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/resources-candidate-site-r-acca4-simulated-resource-response-desktop/attachments/new-candidate-resources-6ac176362ea422682abd99380a48dfbb9a11bfd6.png"
+                    },
+                    {
+                      "name": "new-candidate-resources-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/resources-candidate-site-r-acca4-simulated-resource-response-desktop/attachments/new-candidate-resources-middle-f583b23247834e8f6bc81a37ea56a4d73d44173c.png"
+                    },
+                    {
+                      "name": "new-candidate-resources-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/resources-candidate-site-r-acca4-simulated-resource-response-desktop/attachments/new-candidate-resources-lower-8f6dcf17f66bd41eae5a46fb6b23062f460e58ab.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c5a9a91e1b9b058112b5-896fa96e6acbbc1ef18f",
+          "file": "resources.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T08:40:41.981Z",
+    "duration": 33698.547000000006,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

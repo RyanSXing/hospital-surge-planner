@@ -1,0 +1,89 @@
+{
+  "recorded_at": "2026-10-17T08:02:35.267294+00:00",
+  "measured": true,
+  "scope": "Local HTTP, SQLite, simulation, durable artifacts, bounded response serialization; 365 days, one replication, 70% surge. Five warm samples per read; not an OCI or 100-replication benchmark.",
+  "scenario_id": "scenario_19616033fcf7463e8e1f",
+  "run_group_id": "run_d77d558a14474056b566",
+  "pipeline_seconds": 77.73828950000461,
+  "measurements": {
+    "metrics_day": {
+      "cold_seconds": 3.0568539590458386,
+      "warm_seconds": [
+        2.09698579198448,
+        1.9485585409565829,
+        2.3813301660120487,
+        3.509027541964315,
+        2.2478456249809824
+      ],
+      "p95_seconds": 3.509027541964315,
+      "response_bytes": 4179290,
+      "series_points": 110,
+      "interval_points": 365
+    },
+    "metrics_week": {
+      "cold_seconds": 1.4168338750023395,
+      "warm_seconds": [
+        1.3034221249981783,
+        1.2656637500040233,
+        1.3059921250096522,
+        1.4605140830390155,
+        1.9449213749612682
+      ],
+      "p95_seconds": 1.9449213749612682,
+      "response_bytes": 2560195,
+      "series_points": 110,
+      "interval_points": 53
+    },
+    "metrics_month": {
+      "cold_seconds": 1.8516114589874633,
+      "warm_seconds": [
+        2.515956000017468,
+        2.349447750020772,
+        3.527941833017394,
+        2.03140129201347,
+        1.2901182080386207
+      ],
+      "p95_seconds": 3.527941833017394,
+      "response_bytes": 2442477,
+      "series_points": 110,
+      "interval_points": 13
+    },
+    "end_state": {
+      "cold_seconds": 3.9167595409671776,
+      "warm_seconds": [
+        2.5342133750091307,
+        2.36667979095364,
+        1.663794499996584,
+        1.6195042500039563,
+        2.96943904197542
+      ],
+      "p95_seconds": 2.96943904197542,
+      "response_bytes": 563700,
+      "patient_total": 54339,
+      "returned_patients": 500,
+      "exact_queue": {
+        "FAC-MAIN": {
+          "total": 24,
+          "ward": 9,
+          "icu": 15,
+          "ed": 54219,
+          "ed_boarding": 20,
+          "direct_waiting": 4,
+          "stepdown": 0
+        }
+      }
+    },
+    "end_census": {
+      "cold_seconds": 1.7714306249981746,
+      "warm_seconds": [
+        1.8712116249953397,
+        2.109557250048965,
+        2.200481250009034,
+        1.5925193330040202,
+        1.4597367090173066
+      ],
+      "p95_seconds": 2.200481250009034,
+      "response_bytes": 51270
+    }
+  }
+}

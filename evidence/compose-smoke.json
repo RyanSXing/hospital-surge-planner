@@ -1,0 +1,41 @@
+{
+  "recorded_at": "2026-10-17T07:37:12.247505+00:00",
+  "environment": "local Docker Desktop arm64, PostgreSQL17, Redis7, RQ worker, nginx",
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  },
+  "run_group_id": "run_8aba676585b44746b12c",
+  "status": "SUCCEEDED",
+  "replications": 2,
+  "horizon_days": 1,
+  "elapsed_seconds": 7.350386957987212,
+  "selected_patients_at_start": 84,
+  "export_files": [
+    "events.csv",
+    "events.jsonl",
+    "daily.csv",
+    "metrics.csv",
+    "manifest.json",
+    "model-manifest.json",
+    "dataset.json",
+    "scenario.json",
+    "metrics.json",
+    "inputs/patients.csv",
+    "inputs/facilities.csv",
+    "inputs/units.csv",
+    "inputs/slots.csv",
+    "inputs/staff.csv",
+    "inputs/assignments.csv",
+    "inputs/equipment_pools.csv",
+    "inputs/routes.csv",
+    "inputs/vehicles.csv",
+    "dataset-manifest.json",
+    "assumptions.csv",
+    "README.md",
+    "checksums.json"
+  ],
+  "checksums_present": true
+}

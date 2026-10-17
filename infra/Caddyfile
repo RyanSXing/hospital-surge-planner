@@ -1,0 +1,14 @@
+{
+    auto_https disable_redirects
+}
+
+{$DOMAIN:localhost} {
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+    encode zstd gzip
+    header Strict-Transport-Security "max-age=31536000"
+    reverse_proxy web:8080
+}

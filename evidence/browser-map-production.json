@@ -1,0 +1,9 @@
+{
+  "tested_at": "2026-10-17T07:52:45.167Z",
+  "url": "http://127.0.0.1:4173/?scenario=scenario_bd257fd0575243279f58&dataset=dataset_095c0c16c9f34b95afd5&at=2026-10-16T05%3A00%3A00Z&facility=FAC-MAIN&grain=day&run=run_6dcd45a6943c47babaa9",
+  "workers": [
+    "http://127.0.0.1:4173/assets/maplibre-gl-worker-DhKPqT7d.js"
+  ],
+  "markers": 6,
+  "errors": []
+}

@@ -1,0 +1,58 @@
+.patients-page {
+  height: auto;
+  min-height: 100%;
+}
+.patients-page .patient-workspace {
+  flex: 0 0 auto;
+  align-items: stretch;
+}
+.patients-page .patient-main {
+  flex-shrink: 0;
+}
+.patients-page .hospital-schematic {
+  flex: 0 0 auto;
+  min-height: 360px;
+  height: auto;
+}
+.patients-page .schematic-caption,
+.patients-page .bed-legend {
+  flex-shrink: 0;
+}
+.patients-page .unit-layout {
+  flex: 0 0 auto;
+  min-height: 285px;
+}
+.patients-page .ward-zones,
+.patients-page .schematic-zone {
+  min-height: min-content;
+}
+.patients-page .ward-unit .bed-grid {
+  margin-bottom: 8px;
+}
+.patients-page .patient-census {
+  flex: 0 0 auto;
+  max-height: 580px;
+  min-height: 300px;
+}
+.patients-page .census-toolbar,
+.patients-page .table-footer {
+  flex-shrink: 0;
+}
+.patients-page .patient-census .table-scroll {
+  min-height: 0;
+  overflow: auto;
+}
+.patients-page .patient-inspector {
+  align-self: stretch;
+}
+@media (max-width: 767px) {
+  .patients-page .unit-layout {
+    min-height: 0;
+  }
+  .patients-page .patient-census {
+    max-height: 500px;
+  }
+  .patients-page .hospital-schematic {
+    min-height: 0;
+  }
+}

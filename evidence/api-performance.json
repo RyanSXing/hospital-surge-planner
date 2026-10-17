@@ -1,0 +1,27 @@
+{
+  "fixture": "planning_baseline",
+  "horizon_calendar_days": 30,
+  "replications": 100,
+  "workers": 4,
+  "status": "SUCCEEDED",
+  "elapsed_seconds": 43.535,
+  "includes": [
+    "HTTP submission",
+    "input freeze",
+    "durable per-replication saves",
+    "ensemble aggregation",
+    "representative exact trace",
+    "compressed artifacts",
+    "final metadata"
+  ],
+  "database": "local SQLite",
+  "artifacts": "local filesystem",
+  "host": "arm64",
+  "python": "3.12.13",
+  "metric_read_seconds": 0.303,
+  "series_points": 722,
+  "cancellation_status": "CANCELLED",
+  "cancellation_seconds": 0.468,
+  "completed_before_cancellation": 1,
+  "environment_scope": "Local development host, not hosted OCI performance"
+}

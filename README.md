@@ -1,0 +1,47 @@
+# Hospital Surge Planner
+
+A planning workspace for configuring hospital surge scenarios, running constrained patient-flow simulations, comparing resource responses, and inspecting the events behind a forecast. The included operational data and medical parameters are synthetic engineering fixtures. The product does not dispatch patients or make clinical treatment decisions.
+
+The complete initial scope is P0 and P1 in [the build specification](docs/reference/hospital-surge-planner-build-spec.md). Current implementation and verification are tracked separately in [the acceptance ledger](docs/acceptance-tracker.md). Deferred P2 items include live hospital integrations, calibrated prediction, generalized optimization, AI assistance and 3D.
+
+## Start locally
+
+Prerequisites: Python 3.12, `uv`, Node.js 24 and npm. Docker is needed for the PostgreSQL/Redis deployment stack, but the local development path uses SQLite and local artifacts.
+
+```sh
+make setup
+make migrate
+make seed-demo
+make dev
+```
+
+Open [http://localhost:5173](http://localhost:5173). The API is [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api); OpenAPI is available at `/openapi.json`. Local development uses a visibly marked seeded session. `make setup` creates private `.env` settings with unique generated secrets and preserves an existing `.env`.
+
+The frontend is React/TypeScript/Vite; the API is FastAPI; the model uses Python/NumPy/SimPy; durable deployment uses PostgreSQL, Redis/RQ, private OCI Object Storage and separate API/worker containers. Locked Python dependencies are in `uv.lock`; locked frontend dependencies are in `apps/web/package-lock.json`.
+
+## Developer commands
+
+| Command | Purpose |
+|---|---|
+| `make setup` | Install locked dependencies and create local settings |
+| `make dev` | Start local API and web server together |
+| `make migrate` | Apply versioned Alembic database migrations |
+| `make seed-demo` | Generate/validate fixtures and load the local workspace |
+| `make validate-data` | Validate both canonical synthetic snapshots |
+| `make simulate-demo` | Run the model without the browser |
+| `make test` | Run model/API/contract checks |
+| `make test-e2e` | Run the browser acceptance suite |
+| `make benchmark` | Measure the 30-day, 10-replication preview workload |
+| `make benchmark-full` | Measure 30-day and 365-day, 100-replication workloads |
+| `make build` | Build the frontend and production container images |
+| `make containers-up` | Start PostgreSQL/Redis, migrate, then start API/worker/web |
+| `make containers-down` | Stop containers without deleting named data volumes |
+| `make backup` | Make a consistent local SQLite backup |
+| `make restore-check BACKUP=backups/<file>.sqlite` | Restore into a temporary database and verify integrity |
+| `make oci-readiness` | Read current OCI access/resources without provisioning |
+| `make deploy-demo` | Deploy to a configured, existing authorized OCI VM |
+| `make audit-status` | List requirements still awaiting acceptance evidence |
+
+The `demo` command names identify the supplied synthetic fixtures, not a separate product. A successful container build is not proof of a completed hosted run; deployment, performance and restoration evidence belong under `evidence/`.
+
+See [the runbook](docs/runbook.md) for hosted configuration, identity/storage setup, migrations, backups, recovery, health checks and deployment verification. The specification's numerical performance budgets remain targets until measured on the chosen host.

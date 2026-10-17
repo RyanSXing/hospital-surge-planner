@@ -1,0 +1,96 @@
+.replay-page {
+  height: auto;
+  min-height: 100%;
+}
+.replay-page .replay-workspace {
+  flex: 0 0 auto;
+  min-height: 640px;
+  align-items: stretch;
+}
+.replay-page .replay-scene {
+  flex: 1 1 0;
+  overflow: visible;
+  min-height: 640px;
+}
+.replay-page .scene-topline,
+.replay-page .replay-summary {
+  flex-shrink: 0;
+}
+.replay-canvas-viewport {
+  overflow: auto;
+  flex: 0 0 auto;
+  min-height: 550px;
+}
+.replay-page .replay-canvas {
+  display: block;
+  flex: none;
+  min-height: 550px;
+  min-width: 887px;
+  max-height: none;
+  height: auto;
+  aspect-ratio: 1000/620;
+}
+.replay-page .replay-summary {
+  margin-top: auto;
+}
+.replay-page .replay-inspector {
+  max-height: 760px;
+  overflow: auto;
+}
+.replay-page > .patient-census {
+  flex: 0 0 auto;
+  max-height: 460px;
+  min-height: 300px;
+}
+.replay-page .census-toolbar,
+.replay-page .table-footer,
+.replay-page .replay-scrubber {
+  flex-shrink: 0;
+}
+.replay-page .patient-census .table-scroll {
+  min-height: 0;
+  overflow: auto;
+}
+@media (max-width: 767px) {
+  .replay-page .replay-workspace {
+    min-height: 0;
+  }
+  .replay-page .replay-scene {
+    min-height: 0;
+  }
+  .replay-canvas-viewport {
+    min-height: 300px;
+  }
+  .replay-page .replay-canvas {
+    min-height: 300px;
+    min-width: 484px;
+  }
+  .replay-page .replay-inspector {
+    max-height: 430px;
+  }
+  .replay-page > .patient-census {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 767px) {
+  .replay-page .page-heading .heading-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px;
+  }
+  .replay-page .page-heading .heading-actions > .badge {
+    flex-basis: 100%;
+    width: max-content;
+    flex-grow: 0;
+  }
+  .replay-page .page-heading .heading-actions > .micro-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .replay-page .page-heading .heading-actions > .button {
+    margin-left: auto;
+  }
+}

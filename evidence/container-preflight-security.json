@@ -1,0 +1,62 @@
+{
+  "checked_at": "2026-10-17T08:42:08.581928+00:00",
+  "scanner": "aquasec/trivy:0.76.0",
+  "scope": "Linux ARM64 runtime images; HIGH/CRITICAL OS and language vulnerabilities, including unfixed findings",
+  "images": [
+    {
+      "image": "hospital-surge-planner-dependencies:preflight",
+      "image_id": "sha256:6c234a46346e93d7b1984784bbc9be4f6d8f1463755a8e25baeeb3ae40e810b0",
+      "repo_digests": [
+        "hospital-surge-planner-dependencies@sha256:6c234a46346e93d7b1984784bbc9be4f6d8f1463755a8e25baeeb3ae40e810b0"
+      ],
+      "high": 0,
+      "critical": 0,
+      "fixed_available": 0,
+      "report": "evidence/container-scans/hospital-surge-planner-dependencies-preflight.json"
+    },
+    {
+      "image": "hospital-surge-planner-postgres:17.11-patched",
+      "image_id": "sha256:7e5f43c416bb2c3d5ad349b50eee78999ea02e2e1d139f691e09fd38602f6aba",
+      "repo_digests": [
+        "hospital-surge-planner-postgres@sha256:7e5f43c416bb2c3d5ad349b50eee78999ea02e2e1d139f691e09fd38602f6aba"
+      ],
+      "high": 0,
+      "critical": 0,
+      "fixed_available": 0,
+      "report": "evidence/container-scans/hospital-surge-planner-postgres-17.11-patched.json"
+    },
+    {
+      "image": "hospital-surge-planner-redis:7.4.11-patched",
+      "image_id": "sha256:4dd17c070edf22f72060318630fe130cc35c68785b5ec274099d447a679af838",
+      "repo_digests": [
+        "hospital-surge-planner-redis@sha256:4dd17c070edf22f72060318630fe130cc35c68785b5ec274099d447a679af838"
+      ],
+      "high": 0,
+      "critical": 0,
+      "fixed_available": 0,
+      "report": "evidence/container-scans/hospital-surge-planner-redis-7.4.11-patched.json"
+    },
+    {
+      "image": "hospital-surge-planner-caddy:2.11.7-patched",
+      "image_id": "sha256:fcbbfc754884fbd209822da7e1f19b3f6f1d560b2341e245a78fb0bec26e43b7",
+      "repo_digests": [
+        "hospital-surge-planner-caddy@sha256:fcbbfc754884fbd209822da7e1f19b3f6f1d560b2341e245a78fb0bec26e43b7"
+      ],
+      "high": 0,
+      "critical": 0,
+      "fixed_available": 0,
+      "report": "evidence/container-scans/hospital-surge-planner-caddy-2.11.7-patched.json"
+    },
+    {
+      "image": "nginx:1.30.6-alpine",
+      "image_id": "sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5",
+      "repo_digests": [
+        "nginx@sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5"
+      ],
+      "high": 0,
+      "critical": 0,
+      "fixed_available": 0,
+      "report": "evidence/container-scans/nginx-1.30.6-alpine.json"
+    }
+  ]
+}

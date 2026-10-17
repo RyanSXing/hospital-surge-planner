@@ -1,0 +1,11 @@
+[Unit]
+Description=Hospital Surge Planner bounded artifact retention
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/hospital-surge-planner
+ExecStart=/bin/bash /opt/hospital-surge-planner/infra/retention.sh
+User=root
+UMask=0077

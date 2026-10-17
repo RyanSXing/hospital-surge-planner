@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Hospital Surge Planner transient artifact cleanup
+
+[Timer]
+OnCalendar=*-*-* 04:15:00 UTC
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

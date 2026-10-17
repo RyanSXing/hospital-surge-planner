@@ -1,0 +1,3 @@
+FROM redis:7.4.11-alpine
+# The upstream Redis patch contains an older OpenSSL package; use its patched repository revision.
+RUN apk upgrade --no-cache

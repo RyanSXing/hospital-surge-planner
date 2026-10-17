@@ -1,0 +1,1 @@
+Typeface files downloaded from Google Fonts on 2026-10-17. Barlow Condensed and IBM Plex Sans are licensed under the SIL Open Font License 1.1; notices are included alongside the fonts. Source: https://fonts.google.com/specimen/Barlow+Condensed and https://fonts.google.com/specimen/IBM+Plex+Sans . These files are served locally and require no external font requests.

@@ -1,0 +1,12 @@
+[Unit]
+Description=Hospital Surge Planner private PostgreSQL backup
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Replace /opt/hospital-surge-planner with the reviewed deployment directory.
+WorkingDirectory=/opt/hospital-surge-planner
+ExecStart=/bin/bash /opt/hospital-surge-planner/infra/backup.sh
+User=root
+UMask=0077

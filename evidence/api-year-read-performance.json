@@ -1,0 +1,89 @@
+{
+  "recorded_at": "2026-10-17T08:19:24.941930+00:00",
+  "measured": true,
+  "scope": "Local HTTP, SQLite, simulation, durable artifacts, bounded response serialization; 365 days, one replication, 70% surge. Five warm samples per read; not an OCI or 100-replication benchmark.",
+  "scenario_id": "scenario_19616033fcf7463e8e1f",
+  "run_group_id": "run_d77d558a14474056b566",
+  "pipeline_seconds": null,
+  "measurements": {
+    "metrics_day": {
+      "cold_seconds": 1.509085584024433,
+      "warm_seconds": [
+        0.034765749995131046,
+        0.035831790999509394,
+        0.034279000014066696,
+        0.03555379202589393,
+        0.03396604204317555
+      ],
+      "p95_seconds": 0.035831790999509394,
+      "response_bytes": 4179290,
+      "series_points": 110,
+      "interval_points": 365
+    },
+    "metrics_week": {
+      "cold_seconds": 1.117650792002678,
+      "warm_seconds": [
+        0.022080875001847744,
+        0.021375207987148315,
+        0.02304566599195823,
+        0.02239837497472763,
+        0.02177633304381743
+      ],
+      "p95_seconds": 0.02304566599195823,
+      "response_bytes": 2560195,
+      "series_points": 110,
+      "interval_points": 53
+    },
+    "metrics_month": {
+      "cold_seconds": 1.146382667007856,
+      "warm_seconds": [
+        0.02261499996529892,
+        0.020742167020216584,
+        0.02028883300954476,
+        0.02126079105073586,
+        0.0375637499964796
+      ],
+      "p95_seconds": 0.0375637499964796,
+      "response_bytes": 2442477,
+      "series_points": 110,
+      "interval_points": 13
+    },
+    "end_state": {
+      "cold_seconds": 3.6915454999543726,
+      "warm_seconds": [
+        0.006927874987013638,
+        0.005896458984352648,
+        0.005855916999280453,
+        0.005415207997430116,
+        0.005471375014167279
+      ],
+      "p95_seconds": 0.006927874987013638,
+      "response_bytes": 563700,
+      "patient_total": 54339,
+      "returned_patients": 500,
+      "exact_queue": {
+        "FAC-MAIN": {
+          "direct_waiting": 4,
+          "ed": 54219,
+          "ed_boarding": 20,
+          "icu": 15,
+          "stepdown": 0,
+          "total": 24,
+          "ward": 9
+        }
+      }
+    },
+    "end_census": {
+      "cold_seconds": 0.005105583986733109,
+      "warm_seconds": [
+        0.003881916985847056,
+        0.0032476249616593122,
+        0.0032022499945014715,
+        0.003388292039744556,
+        0.0032392499851994216
+      ],
+      "p95_seconds": 0.003881916985847056,
+      "response_bytes": 51270
+    }
+  }
+}

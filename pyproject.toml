@@ -1,0 +1,39 @@
+[project]
+name = "hospital-surge-planner"
+version = "1.0.0"
+description = "Reproducible hospital surge planning with synthetic operational data"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.34,<1",
+  "sqlalchemy>=2.0,<3",
+  "alembic>=1.14,<2",
+  "psycopg[binary]>=3.2,<4",
+  "redis>=5,<7",
+  "rq>=2,<3",
+  "simpy>=4.1,<5",
+  "numpy>=2.2,<3",
+  "scipy>=1.15,<2",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3",
+  "python-multipart>=0.0.20,<1",
+  "httpx>=0.28,<1",
+  "oci>=2.150,<3",
+  "python-dotenv>=1,<2",
+  "tzdata>=2025.1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.11,<1"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["apps/api", "packages/engine"]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"

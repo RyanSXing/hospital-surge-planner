@@ -1,0 +1,32 @@
+{
+  "recorded_at": "2026-10-17T07:40:20.827295+00:00",
+  "environment": "local Docker Desktop, PostgreSQL, Redis, RQ; no OCI assertion",
+  "checks": [
+    {
+      "check": "Redis outage preserves outbox and recovers queued job",
+      "passed": true,
+      "run_group_id": "run_38cb332ba08a42bfb3cb",
+      "completed": 1,
+      "recovery_seconds": 4.203724584018346,
+      "readiness_during_outage": 503
+    },
+    {
+      "check": "Killed worker resumes immutable job after lease expiry",
+      "passed": true,
+      "run_group_id": "run_2e9c9b61712449e9b53a",
+      "completed_before_kill": 3,
+      "completed_after_recovery": 30,
+      "recovery_seconds": 133.95987791701918,
+      "incomplete_metrics_status": 409,
+      "input_sha256": "0f205235d5c55bb5b3c89fc8431182a8868f0ced773836b76fb9670b55b6d430"
+    },
+    {
+      "check": "Artifact write failure stays terminal until explicit retry",
+      "passed": true,
+      "run_group_id": "run_d4ca25a787514724a740",
+      "failure_message": "FileNotFoundError: [Errno 2] No such file or directory: '/proc/surge-storage-fault'",
+      "final_status": "SUCCEEDED",
+      "input_sha256": "30d785a93492f9a145ad255ba7e4f90ae1786c7be6a6fa865f0b0079352ad2bd"
+    }
+  ]
+}

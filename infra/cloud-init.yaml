@@ -1,0 +1,44 @@
+#cloud-config
+package_update: true
+packages:
+  - docker.io
+  - docker-compose-v2
+  - docker-buildx
+  - python3
+  - ca-certificates
+write_files:
+  - path: /usr/local/sbin/hospital-host-init
+    permissions: '0700'
+    content: |
+      #!/bin/bash
+      set -euo pipefail
+      echo "HSP_SSH_HOST_KEY $(cat /etc/ssh/ssh_host_ed25519_key.pub)"
+      systemctl stop docker.service docker.socket
+      device=/dev/oracleoci/oraclevdb
+      for attempt in $(seq 1 180); do
+        test -b "$device" && break
+        sleep 2
+      done
+      test -b "$device"
+      if ! blkid "$device" >/dev/null; then mkfs.ext4 -L hospital-data "$device"; fi
+      disk_uuid=$(blkid -s UUID -o value "$device")
+      mkdir -p /mnt/hospital-data
+      if ! grep -q "$disk_uuid" /etc/fstab; then
+        echo "UUID=$disk_uuid /mnt/hospital-data ext4 defaults,noatime,_netdev 0 2" >> /etc/fstab
+      fi
+      mount /mnt/hospital-data
+      mkdir -p /etc/docker /etc/systemd/system/docker.service.d
+      printf '%s\n' '{"data-root":"/mnt/hospital-data/docker","log-driver":"json-file","log-opts":{"max-size":"10m","max-file":"3"}}' > /etc/docker/daemon.json
+      printf '%s\n' '[Unit]' 'RequiresMountsFor=/mnt/hospital-data/docker' > /etc/systemd/system/docker.service.d/data-volume.conf
+      usermod -aG docker ubuntu
+      install -d -m 0700 -o ubuntu -g ubuntu /opt/hospital-surge-planner
+      iptables -I INPUT 1 -p tcp --dport 443 -j ACCEPT
+      mkdir -p /etc/iptables
+      iptables-save > /etc/iptables/rules.v4
+      systemctl daemon-reload
+      systemctl enable --now docker
+      docker version --format '{{.Server.Version}}'
+      touch /var/lib/hospital-host-ready
+      echo HSP_HOST_READY
+runcmd:
+  - /usr/local/sbin/hospital-host-init

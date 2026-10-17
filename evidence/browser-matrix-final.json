@@ -1,0 +1,1341 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true,
+          "deviceScaleFactor": 1
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "../../.venv/bin/python ../../scripts/dev.py",
+      "url": "http://127.0.0.1:5173/api/health/ready",
+      "reuseExistingServer": true,
+      "timeout": 90000
+    }
+  },
+  "suites": [
+    {
+      "title": "context-editor.spec.ts",
+      "file": "context-editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "selected alternate replication and patient survive a page reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14818,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T07:58:38.991Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "restored-context",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/context-editor-selected-al-310b3-tient-survive-a-page-reload-desktop/attachments/restored-context-7c8bf5fa1f7f6efd2f4cbe7de68f9e13d4e45389.png"
+                    },
+                    {
+                      "name": "restored-context-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/context-editor-selected-al-310b3-tient-survive-a-page-reload-desktop/attachments/restored-context-middle-e594af65a1c68fb967e6745dc8f0b24968254f71.png"
+                    },
+                    {
+                      "name": "restored-context-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/context-editor-selected-al-310b3-tient-survive-a-page-reload-desktop/attachments/restored-context-lower-1022b7a64093119bc37a8f04e15e19b9c53ceb9e.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4937d382eda8c3444f65-be501b5a1da8818112dc",
+          "file": "context-editor.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "condition drag and care mix edits create inspectable saved differences",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9045,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T07:58:54.202Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "saved-input-differences",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/context-editor-condition-d-cadc8-spectable-saved-differences-desktop/attachments/saved-input-differences-23b0635ae313b0e574c2059a78463be320bfb759.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4937d382eda8c3444f65-8fe31af646df2ac2d235",
+          "file": "context-editor.spec.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "title": "selected alternate replication and patient survive a page reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Context persistence runs once; responsive screens run separately.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/context-editor.spec.ts",
+                    "line": 5,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 210,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:01:52.691Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Context persistence runs once; responsive screens run separately.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/context-editor.spec.ts",
+                        "line": 5,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "4937d382eda8c3444f65-cadfec91ca3d295edb1a",
+          "file": "context-editor.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "condition drag and care mix edits create inspectable saved differences",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Pointer drag and immutable save workflow runs on desktop.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/context-editor.spec.ts",
+                    "line": 10,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 146,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:01:53.139Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Pointer drag and immutable save workflow runs on desktop.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/context-editor.spec.ts",
+                        "line": 10,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "4937d382eda8c3444f65-1f2dee8a4fd08e4bd945",
+          "file": "context-editor.spec.ts",
+          "line": 9,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "data-roles.spec.ts",
+      "file": "data-roles.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "typed data editor and multi-file mapped import create immutable versions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24700,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T07:59:03.269Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "typed-editor",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/data-roles-typed-data-edit-e3061-t-create-immutable-versions-desktop/attachments/typed-editor-a29e6c9e8c34452478450181d935eccfd714e0fb.png"
+                    },
+                    {
+                      "name": "csv-field-mapping",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/data-roles-typed-data-edit-e3061-t-create-immutable-versions-desktop/attachments/csv-field-mapping-f30df72819ffc401525f98513d8625b7974ad0f2.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "16693b1112c04078f494-9e5e0fd1181cdc4b6d97",
+          "file": "data-roles.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "viewer sees disabled mutation controls and the API rejects writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6046,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T07:59:27.975Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "viewer-permissions",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/data-roles-viewer-sees-dis-e266c--and-the-API-rejects-writes-desktop/attachments/viewer-permissions-365c204adbfdd4e865e578bb31f693abf69e4442.png"
+                    },
+                    {
+                      "name": "viewer-permissions-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/data-roles-viewer-sees-dis-e266c--and-the-API-rejects-writes-desktop/attachments/viewer-permissions-middle-52bdd47dc5ad0558d5d9981f1fe8b1bb24a12233.png"
+                    },
+                    {
+                      "name": "viewer-permissions-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/data-roles-viewer-sees-dis-e266c--and-the-API-rejects-writes-desktop/attachments/viewer-permissions-lower-c67a386589f9f8ee807bd88107f5dda171e51a27.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "16693b1112c04078f494-187b6a5e7c9755679555",
+          "file": "data-roles.spec.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "title": "typed data editor and multi-file mapped import create immutable versions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Data mutation workflow runs once; mobile data view is covered by the screen matrix.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/data-roles.spec.ts",
+                    "line": 6,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 129,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:01:53.299Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Data mutation workflow runs once; mobile data view is covered by the screen matrix.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/data-roles.spec.ts",
+                        "line": 6,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "16693b1112c04078f494-42251c7812b0e84a10e5",
+          "file": "data-roles.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "viewer sees disabled mutation controls and the API rejects writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9515,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:01:53.434Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "viewer-permissions",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/data-roles-viewer-sees-dis-e266c--and-the-API-rejects-writes-mobile/attachments/viewer-permissions-3a4ba8bcc090b4105a5de3fdcce9b96625bb047e.png"
+                    },
+                    {
+                      "name": "viewer-permissions-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/data-roles-viewer-sees-dis-e266c--and-the-API-rejects-writes-mobile/attachments/viewer-permissions-middle-87b276a8f52735eb2f4d9dc68a262b6b6a19db32.png"
+                    },
+                    {
+                      "name": "viewer-permissions-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/data-roles-viewer-sees-dis-e266c--and-the-API-rejects-writes-mobile/attachments/viewer-permissions-lower-4f7b613ff31411592446a6b07f3b0bc2e30d9edf.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "16693b1112c04078f494-746c8920bdd93e359c5c",
+          "file": "data-roles.spec.ts",
+          "line": 11,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "keyboard-alerts.spec.ts",
+      "file": "keyboard-alerts.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard entry, calendar drilldown, inspection, comparison and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 35123,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T07:59:34.039Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "keyboard-export",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/keyboard-alerts-keyboard-e-b7427-ction-comparison-and-export-desktop/attachments/keyboard-export-7127bd9741f885680ee4a49010a28fa128300cf1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-6839bcfeb3b799c36268",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "planning alert review preserves the completed result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7734,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:00:09.167Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "alert-review",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/keyboard-alerts-planning-a-e5a7d-serves-the-completed-result-desktop/attachments/alert-review-c6ec5e46aca86fb731859fb9bdfc13619d8ca398.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-274861cf9c5a12652e1d",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "keyboard entry, calendar drilldown, inspection, comparison and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Desktop keyboard workflow; mobile touch layout is covered by the screen matrix.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                    "line": 11,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 193,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:02:02.968Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Desktop keyboard workflow; mobile touch layout is covered by the screen matrix.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                        "line": 11,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-8380bf854925636705c5",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "planning alert review preserves the completed result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Alert mutation runs once.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                    "line": 26,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 194,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:02:03.173Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Alert mutation runs once.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                        "line": 26,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-6d6f9efb466b494d6d1c",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 25,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "screens.spec.ts",
+      "file": "screens.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "all seven screens render actual run context and keyboard navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29073,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:00:16.918Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/overview-3bb628316b465a1c7e877fb1b6d1436116a981c5.png"
+                    },
+                    {
+                      "name": "scenarios",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/scenarios-174bcda7bb21ccddabec731e5aee6caea2f9de3a.png"
+                    },
+                    {
+                      "name": "scenarios-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/scenarios-middle-744223a42f027df9c38b0adeaa9da3f5b9fcb552.png"
+                    },
+                    {
+                      "name": "scenarios-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/scenarios-lower-43b688dd413442491205dceb60d417b3a42d2b95.png"
+                    },
+                    {
+                      "name": "patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/patients-9cb00bab9701d42415259635ec2c52940c773455.png"
+                    },
+                    {
+                      "name": "patients-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/patients-middle-f225a21a87d56462a1da3883bd058c876e9b4568.png"
+                    },
+                    {
+                      "name": "patients-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/patients-lower-5d4c82b876ac93d013d386356d44428a98f8e645.png"
+                    },
+                    {
+                      "name": "resources",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/resources-7e56859945d19a9e745c714c8ef9cfb89e78d92f.png"
+                    },
+                    {
+                      "name": "resources-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/resources-middle-9e52e39a3b9c66d22602a79bd2b3fdf82b52cb5c.png"
+                    },
+                    {
+                      "name": "resources-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/resources-lower-510665c4743122131e85e9b3c7ba346d1d66da4a.png"
+                    },
+                    {
+                      "name": "compare",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/compare-4795bbc452aa4c8f5377a28b4f634df0f5a97472.png"
+                    },
+                    {
+                      "name": "compare-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/compare-middle-259cb10a3d478afd409f1d17e120b3d5757a62a6.png"
+                    },
+                    {
+                      "name": "compare-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/compare-lower-ae9f42e3a967bc3e1fb7a8c7f813486692378d95.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/replay-5b543f52c64b6b53b97f905d3ada8077e04293fe.png"
+                    },
+                    {
+                      "name": "replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/replay-middle-b73a6377335d1f4374f2d2a932f45b1928ca5983.png"
+                    },
+                    {
+                      "name": "replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/replay-lower-b4dc53849bdd56a9c96130d2dc98a58fb0629eed.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/data-a8a052396575cd57fe96b35bddd23843c8dd4aa7.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/data-middle-c4d6ee0adfc9dd28985911bd68bb27e699769893.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-desktop/attachments/data-lower-7538e70ecb72ee4b4f41a4ef35a025e1f0bbbfa0.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-1dd194dc3685a89e85b2",
+          "file": "screens.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "all seven screens render actual run context and keyboard navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 46364,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:02:03.379Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-3d3683778946fb04be297b4ca4707eff7b69ee66.png"
+                    },
+                    {
+                      "name": "overview-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-middle-616a1b0c7b303a813898205f9dfae3332a2ff611.png"
+                    },
+                    {
+                      "name": "overview-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-lower-3bf99689a540d4189b5e6d95ed74b5ada5357939.png"
+                    },
+                    {
+                      "name": "scenarios",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-059872a7bd2870fd8714b937ede156b63e29c91f.png"
+                    },
+                    {
+                      "name": "scenarios-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-middle-9a1f54c8f6c3eaf22f61c74efb94186736622c31.png"
+                    },
+                    {
+                      "name": "scenarios-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-lower-644b3da6dc04d2ae56f1526d6578ba2cb290c3ee.png"
+                    },
+                    {
+                      "name": "patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-e3043267e3229ad0f6c5586afe5c296a5148bce9.png"
+                    },
+                    {
+                      "name": "patients-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-middle-d0489d722c84961f9fd276b576f344bb19005f1a.png"
+                    },
+                    {
+                      "name": "patients-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-lower-565a1d9930a6ca9e8a38e9952a5091be06745335.png"
+                    },
+                    {
+                      "name": "resources",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-66ccdd8a21fe576ab54f6afb37fb1cbba3dc5ef6.png"
+                    },
+                    {
+                      "name": "resources-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-middle-473f05297d0ce06b9f11ac64e71c551890c15ada.png"
+                    },
+                    {
+                      "name": "resources-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-lower-ef92187f6641f63e96dfc9bb134574b6c1fabe5e.png"
+                    },
+                    {
+                      "name": "compare",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-1914679c9849b899b17999c8699564ca18ee50b8.png"
+                    },
+                    {
+                      "name": "compare-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-middle-7f7bb36ea1a48466392fea55a1e3ce093ccc2299.png"
+                    },
+                    {
+                      "name": "compare-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-lower-b23947005c8d73082f0ec8a333d329e020035cf5.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-90473a04d221111b21a39a8d54421bec8f41165f.png"
+                    },
+                    {
+                      "name": "replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-middle-28dad75e6efb25b3f7077a94f31779da9efb83f5.png"
+                    },
+                    {
+                      "name": "replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-lower-7ea26e881beb5fd5f8a9ab758e3d4742ccbf5a0e.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-761573125c44afedd43f21aae9ef41755c8cf982.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-middle-043652bc9a522b623b3f00278aea84b87dfc9079.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-lower-90377094ade08f0ece756142af94c68024f767c5.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-0d8dbb877460791952b1",
+          "file": "screens.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "stress.spec.ts",
+      "file": "stress.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "stress census exposes initial boarding and actual patient blockers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8103,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:00:46.008Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "stress-overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/stress-stress-census-expos-79cf9-and-actual-patient-blockers-desktop/attachments/stress-overview-47e17b74a90111ed20db05150de171e37c01c3e5.png"
+                    },
+                    {
+                      "name": "stress-patient-blockers",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/stress-stress-census-expos-79cf9-and-actual-patient-blockers-desktop/attachments/stress-patient-blockers-934568049b7e832bacb0cad37a1fb4c88e602e66.png"
+                    },
+                    {
+                      "name": "stress-patient-blockers-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/stress-stress-census-expos-79cf9-and-actual-patient-blockers-desktop/attachments/stress-patient-blockers-middle-c8c1476a1432354048a1c4469f7641a5a4955300.png"
+                    },
+                    {
+                      "name": "stress-patient-blockers-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/stress-stress-census-expos-79cf9-and-actual-patient-blockers-desktop/attachments/stress-patient-blockers-lower-5b3a2b7fc4474c388b425ec0c4dbe8d65fce872f.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "496454548f4205703e07-7a6ac4ddc6b4bceb46b5",
+          "file": "stress.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "stress census exposes initial boarding and actual patient blockers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Detailed stress-context workflow runs once.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/stress.spec.ts",
+                    "line": 4,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 186,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:02:49.760Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Detailed stress-context workflow runs once.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/stress.spec.ts",
+                        "line": 4,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "496454548f4205703e07-ed43235dd26d4e236429",
+          "file": "stress.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "workflows.spec.ts",
+      "file": "workflows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "configure, compute, inspect, compare, update, replay and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 58135,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "workflow: created scenario_8f005d96e2cc4a2f9106\n"
+                    },
+                    {
+                      "text": "workflow: scenario screen loaded\n"
+                    },
+                    {
+                      "text": "workflow: fields configured\n"
+                    },
+                    {
+                      "text": "workflow: submit clicked\n"
+                    },
+                    {
+                      "text": "workflow: queued run_8fc0866a891243fcb208\n"
+                    },
+                    {
+                      "text": "workflow: run complete\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:00:54.129Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workflow-patient",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-291190d91ce3401a8bd656ea15497ca476ff7249.png"
+                    },
+                    {
+                      "name": "workflow-patient-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-middle-7d4b25861d3bac29849fd3035c45a5070cfdb395.png"
+                    },
+                    {
+                      "name": "workflow-patient-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-lower-a8e496a3447d9b26146dcc1c405c7352d524124c.png"
+                    },
+                    {
+                      "name": "workflow-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-96d39cb25af203ec4c1a59628039e3ee8f0eafe1.png"
+                    },
+                    {
+                      "name": "workflow-comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-middle-a1cc304714fe6f7fcb4a24869f61a04719742f13.png"
+                    },
+                    {
+                      "name": "workflow-comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-lower-6041d17487642e74ca24284268d9d956377d4e4d.png"
+                    },
+                    {
+                      "name": "workflow-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-2fa5aafe4b0256a125d493914754a374dbff722f.png"
+                    },
+                    {
+                      "name": "workflow-replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-middle-9a95af10a9670c3b26f0862e87feb747631b059f.png"
+                    },
+                    {
+                      "name": "workflow-replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-replay-lower-71e9bbf9ca99579776e320dd520a161fae9fa296.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "26aa48cee8983222f549-582cfc57ecd6a6d378f0",
+          "file": "workflows.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "configure, compute, inspect, compare, update, replay and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Full computational workflow runs on desktop; every screen is audited on mobile separately.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/workflows.spec.ts",
+                    "line": 5,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 132,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T08:02:49.957Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Full computational workflow runs on desktop; every screen is audited on mobile separately.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/workflows.spec.ts",
+                        "line": 5,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "26aa48cee8983222f549-da5f08b83b9cff868160",
+          "file": "workflows.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T07:58:38.705Z",
+    "duration": 251501.534,
+    "expected": 11,
+    "skipped": 7,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

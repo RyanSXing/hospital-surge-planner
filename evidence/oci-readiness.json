@@ -1,0 +1,95 @@
+{
+  "recorded_at": "2026-10-17T07:00:15.210393+00:00",
+  "region": "us-chicago-1",
+  "mode": "read_only",
+  "provisioned": false,
+  "checks": {
+    "region_subscriptions": {
+      "ok": true,
+      "value": [
+        {
+          "region": "us-chicago-1",
+          "status": "READY"
+        }
+      ]
+    },
+    "compartments": {
+      "ok": true,
+      "value": []
+    },
+    "instances": {
+      "ok": true,
+      "value": []
+    },
+    "vcns": {
+      "ok": true,
+      "value": []
+    },
+    "object_storage_namespace": {
+      "ok": true,
+      "value": "axzborbjfrwq"
+    },
+    "buckets": {
+      "ok": true,
+      "value": []
+    },
+    "standard-a1-core-count": {
+      "ok": true,
+      "value": [
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-1",
+          "value": 41
+        },
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-2",
+          "value": 41
+        },
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-3",
+          "value": 41
+        }
+      ]
+    },
+    "standard-a1-memory-count": {
+      "ok": true,
+      "value": [
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-1",
+          "value": 277
+        },
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-2",
+          "value": 277
+        },
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-3",
+          "value": 277
+        }
+      ]
+    },
+    "standard-e4-core-count": {
+      "ok": true,
+      "value": [
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-1",
+          "value": 0
+        },
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-2",
+          "value": 0
+        },
+        {
+          "availability_domain": "lnDT:US-CHICAGO-1-AD-3",
+          "value": 0
+        }
+      ]
+    }
+  },
+  "remaining": [
+    "Select and authorize region/shape/storage budget",
+    "Provision network, VM, private buckets and scoped instance identity",
+    "Configure public URL/TLS and hosted login",
+    "Deploy and record an actual engine run plus artifact round trip",
+    "Measure accepted performance and restore a backup"
+  ]
+}

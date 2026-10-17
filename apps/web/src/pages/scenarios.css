@@ -1,0 +1,110 @@
+.condition-window {
+  position: relative;
+  min-height: 56px;
+  margin: 12px 0 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    #132936 0,
+    #132936 calc(10% - 1px),
+    #345263 calc(10% - 1px),
+    #345263 10%
+  );
+  border: 1px solid #36566a;
+  border-radius: 5px;
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+.condition-window-block {
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  display: flex;
+  min-width: 24px;
+  border: 1px solid #53d4e3;
+  border-radius: 4px;
+  background: #17495bcc;
+  overflow: hidden;
+}
+.condition-window-block button {
+  padding: 0 5px;
+  color: #d5fbff;
+  background: transparent;
+  border: 0;
+  cursor: ew-resize;
+  min-width: 12px;
+}
+.condition-window-block .condition-window-body {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 0 3px;
+  cursor: grab;
+}
+.condition-window-block button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: -3px;
+  background: #236c80;
+}
+.window-instruction {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #98aebc;
+  margin: 12px 0 0;
+}
+.care-mix-fields {
+  padding: 12px;
+  border: 1px solid #36566a;
+  border-radius: 5px;
+  display: grid;
+  gap: 10px;
+  margin: 5px 0;
+}
+.care-mix-fields legend {
+  font-size: 12px;
+  color: #b6d1df;
+  padding: 0 5px;
+}
+.care-mix-fields p,
+.care-mix-fields small {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #9db5c3;
+  margin: 0;
+}
+.care-mix-fields pre {
+  white-space: pre-wrap;
+  font-size: 11px;
+  max-height: 150px;
+  overflow: auto;
+}
+.version-differences th {
+  vertical-align: top;
+  min-width: 115px;
+}
+.version-differences td {
+  vertical-align: top;
+  width: 40%;
+}
+.version-differences pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  max-height: 300px;
+  overflow: auto;
+  margin: 0;
+}
+
+.compute-estimate .compute-warning {
+  color: #edc27f;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 8px 0;
+}
+.compute-estimate small {
+  display: block;
+  line-height: 1.6;
+  margin-top: 7px;
+}

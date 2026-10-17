@@ -1,0 +1,131 @@
+[
+  {
+    "compartment_id": "ocid1.compartment.oc1..aaaaaaaazomfb4gxuso6rhfrkyh2fgtfmjpms7b33tnymkcn74q2qb4hstzq",
+    "availability_domain": "lnDT:US-CHICAGO-1-AD-1",
+    "shape_availabilities": [
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.A1.Flex",
+        "instance_shape_config": {
+          "ocpus": 4.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "OUT_OF_HOST_CAPACITY"
+      },
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.A2.Flex",
+        "instance_shape_config": {
+          "ocpus": 4.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "AVAILABLE"
+      },
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.E5.Flex",
+        "instance_shape_config": {
+          "ocpus": 2.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "AVAILABLE"
+      }
+    ],
+    "time_created": "2026-10-17T08:01:00.617000+00:00"
+  },
+  {
+    "compartment_id": "ocid1.compartment.oc1..aaaaaaaazomfb4gxuso6rhfrkyh2fgtfmjpms7b33tnymkcn74q2qb4hstzq",
+    "availability_domain": "lnDT:US-CHICAGO-1-AD-2",
+    "shape_availabilities": [
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.A1.Flex",
+        "instance_shape_config": {
+          "ocpus": 4.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "OUT_OF_HOST_CAPACITY"
+      },
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.A2.Flex",
+        "instance_shape_config": {
+          "ocpus": 4.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "AVAILABLE"
+      },
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.E5.Flex",
+        "instance_shape_config": {
+          "ocpus": 2.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "AVAILABLE"
+      }
+    ],
+    "time_created": "2026-10-17T08:01:00.644000+00:00"
+  },
+  {
+    "compartment_id": "ocid1.compartment.oc1..aaaaaaaazomfb4gxuso6rhfrkyh2fgtfmjpms7b33tnymkcn74q2qb4hstzq",
+    "availability_domain": "lnDT:US-CHICAGO-1-AD-3",
+    "shape_availabilities": [
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.A1.Flex",
+        "instance_shape_config": {
+          "ocpus": 4.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "OUT_OF_HOST_CAPACITY"
+      },
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.A2.Flex",
+        "instance_shape_config": {
+          "ocpus": 4.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "AVAILABLE"
+      },
+      {
+        "fault_domain": null,
+        "instance_shape": "VM.Standard.E5.Flex",
+        "instance_shape_config": {
+          "ocpus": 2.0,
+          "memory_in_gbs": 16.0,
+          "nvmes": 0,
+          "baseline_ocpu_utilization": null
+        },
+        "available_count": null,
+        "availability_status": "AVAILABLE"
+      }
+    ],
+    "time_created": "2026-10-17T08:01:00.629000+00:00"
+  }
+]

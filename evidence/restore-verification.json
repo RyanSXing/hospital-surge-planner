@@ -1,0 +1,8 @@
+{
+  "recorded_at": "2026-10-17T07:19:51.451959+00:00",
+  "backup": "hospital-20261017T071943Z.dump",
+  "database": "postgresql",
+  "restored_into_isolated_database": true,
+  "integrity_and_core_queries": "passed",
+  "production_data_modified": false
+}

@@ -45,6 +45,44 @@
 .patients-page .patient-inspector {
   align-self: stretch;
 }
+.patient-filter-panel {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.patient-filter-panel summary {
+  cursor: pointer;
+  padding: 6px 0;
+}
+.patient-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(125px, 1fr));
+  gap: 10px;
+  margin: 10px 0;
+}
+.patient-filter-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+}
+.patient-cell-note {
+  display: block;
+  color: var(--muted);
+  white-space: normal;
+  margin-top: 3px;
+}
+.patients-page .patient-census {
+  max-height: 780px;
+}
+.patient-table {
+  min-width: 1000px;
+}
+@media (max-width: 1100px) {
+  .patient-filter-grid {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+}
 @media (max-width: 767px) {
   .patients-page .unit-layout {
     min-height: 0;

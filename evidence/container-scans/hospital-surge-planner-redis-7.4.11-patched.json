@@ -3,9 +3,9 @@
   "Trivy": {
     "Version": "0.76.0"
   },
-  "ReportID": "01a14906-8496-73cc-953d-16eec33c323a",
-  "CreatedAt": "2026-10-17T08:42:06.358250979Z",
-  "ArtifactID": "sha256:0a587a29e0a541233c9a5d69ff2ceb1c656733a192eedaf4da2c5921f9196f2d",
+  "ReportID": "01a1490f-7241-7295-bf49-37920153f4ce",
+  "CreatedAt": "2026-10-17T08:51:51.489176516Z",
+  "ArtifactID": "sha256:0c447f7d91011e8e5a6a5b2af3daa4222209dfcb48bedc2034540d1de1b1bcd1",
   "ArtifactName": "hospital-surge-planner-redis:7.4.11-patched",
   "ArtifactType": "container_image",
   "Metadata": {
@@ -14,7 +14,7 @@
       "Family": "alpine",
       "Name": "3.21.8"
     },
-    "ImageID": "sha256:4dd17c070edf22f72060318630fe130cc35c68785b5ec274099d447a679af838",
+    "ImageID": "sha256:1bf8d5145768718be8be92982310c1bed704307b6b4bd31499813030420f8e9d",
     "DiffIDs": [
       "sha256:545d2c9a9459641b6e79f68d7e5cc87f1a8c03461997e936d0fd77485887cd69",
       "sha256:e1acaef088afe3b29dfd3ed014c8a231b548e65d647b40bbf06cab78fe8d8d98",
@@ -29,7 +29,7 @@
       "hospital-surge-planner-redis:7.4.11-patched"
     ],
     "RepoDigests": [
-      "hospital-surge-planner-redis@sha256:4dd17c070edf22f72060318630fe130cc35c68785b5ec274099d447a679af838"
+      "hospital-surge-planner-redis@sha256:1bf8d5145768718be8be92982310c1bed704307b6b4bd31499813030420f8e9d"
     ],
     "Reference": "hospital-surge-planner-redis:7.4.11-patched",
     "ImageConfig": {
@@ -150,6 +150,11 @@
           "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
           "REDIS_VERSION=7.4.11"
         ],
+        "Labels": {
+          "com.docker.compose.project": "hospital-surge-planner",
+          "com.docker.compose.service": "redis",
+          "com.docker.compose.version": "2.40.3"
+        },
         "Volumes": {
           "/data": {}
         },

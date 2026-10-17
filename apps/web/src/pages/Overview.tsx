@@ -5,9 +5,14 @@ import {
   Clock3,
   Hospital,
   Info,
+  PanelBottomClose,
+  PanelBottomOpen,
+  PanelRightClose,
+  PanelRightOpen,
   ShieldCheck,
   Users,
 } from "lucide-react";
+import { useRef, useState, type CSSProperties } from "react";
 import type { PlanningContext } from "../types";
 import CampusMap from "../components/CampusMap";
 import {
@@ -35,6 +40,12 @@ export default function Overview({
   ctx: PlanningContext;
   onUpdate: () => void;
 }) {
+  const [inspectorCollapsed, setInspectorCollapsed] = useState(false),
+    [timelineCollapsed, setTimelineCollapsed] = useState(false),
+    [timelineHeight, setTimelineHeight] = useState(260);
+  const timelineDrag = useRef<{ y: number; height: number } | null>(null);
+  const resizeTimeline = (height: number) =>
+    setTimelineHeight(Math.max(180, Math.min(420, height)));
   const ward = statsFor(ctx, "ward"),
     icu = statsFor(ctx, "icu"),
     ed = statsFor(ctx, "ed"),
@@ -64,7 +75,14 @@ export default function Overview({
       }));
   const main = ctx.selectedFacility === "FAC-MAIN";
   return (
-    <div className="overview-page">
+    <div
+      className={`overview-page${inspectorCollapsed ? " inspector-collapsed" : ""}${timelineCollapsed ? " timeline-collapsed" : ""}`}
+      style={
+        {
+          "--overview-timeline-height": `${timelineCollapsed ? 0 : timelineHeight}px`,
+        } as CSSProperties
+      }
+    >
       <div className="page-heading">
         <div>
           <div className="eyebrow">
@@ -75,6 +93,50 @@ export default function Overview({
           <p>Understand pressure. Explore your next response.</p>
         </div>
         <div className="heading-actions">
+          <button
+            className="icon-button overview-layout-control"
+            onClick={() => setInspectorCollapsed(!inspectorCollapsed)}
+            aria-label={
+              inspectorCollapsed
+                ? "Show facility inspector"
+                : "Hide facility inspector"
+            }
+            aria-expanded={!inspectorCollapsed}
+            aria-controls="overview-facility-inspector"
+            title={
+              inspectorCollapsed
+                ? "Show facility inspector"
+                : "Hide facility inspector"
+            }
+          >
+            {inspectorCollapsed ? (
+              <PanelRightOpen size={18} />
+            ) : (
+              <PanelRightClose size={18} />
+            )}
+          </button>
+          <button
+            className="icon-button overview-layout-control"
+            onClick={() => setTimelineCollapsed(!timelineCollapsed)}
+            aria-label={
+              timelineCollapsed
+                ? "Show forecast timeline"
+                : "Hide forecast timeline"
+            }
+            aria-expanded={!timelineCollapsed}
+            aria-controls="overview-timeline-dock"
+            title={
+              timelineCollapsed
+                ? "Show forecast timeline"
+                : "Hide forecast timeline"
+            }
+          >
+            {timelineCollapsed ? (
+              <PanelBottomOpen size={18} />
+            ) : (
+              <PanelBottomClose size={18} />
+            )}
+          </button>
           <span className="as-of">
             <Clock3 size={13} />{" "}
             {ctx.run?.status === "SUCCEEDED"
@@ -153,7 +215,11 @@ export default function Overview({
             </span>
           </div>
         </div>
-        <aside className="inspector">
+        <aside
+          className="inspector"
+          id="overview-facility-inspector"
+          hidden={inspectorCollapsed}
+        >
           <div className="inspector-header">
             <div className="inspector-icon">
               <Hospital size={21} />
@@ -292,7 +358,56 @@ export default function Overview({
           </div>
         </aside>
       </div>
-      <Timeline ctx={ctx} />
+      <div
+        className="overview-timeline-dock"
+        id="overview-timeline-dock"
+        hidden={timelineCollapsed}
+      >
+        <div
+          className="timeline-resize-handle"
+          role="separator"
+          aria-label="Resize forecast timeline"
+          aria-orientation="horizontal"
+          aria-valuemin={180}
+          aria-valuemax={420}
+          aria-valuenow={timelineHeight}
+          aria-valuetext={`${timelineHeight} pixels high`}
+          title="Drag to resize timeline. Arrow keys resize by 10 pixels."
+          tabIndex={0}
+          onPointerDown={(event) => {
+            if (event.button !== 0) return;
+            timelineDrag.current = { y: event.clientY, height: timelineHeight };
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={(event) => {
+            const drag = timelineDrag.current;
+            if (drag) resizeTimeline(drag.height + drag.y - event.clientY);
+          }}
+          onPointerUp={(event) => {
+            timelineDrag.current = null;
+            if (event.currentTarget.hasPointerCapture(event.pointerId))
+              event.currentTarget.releasePointerCapture(event.pointerId);
+          }}
+          onLostPointerCapture={() => {
+            timelineDrag.current = null;
+          }}
+          onKeyDown={(event) => {
+            if (["ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) {
+              event.preventDefault();
+              resizeTimeline(
+                event.key === "Home"
+                  ? 180
+                  : event.key === "End"
+                    ? 420
+                    : timelineHeight + (event.key === "ArrowUp" ? 10 : -10),
+              );
+            }
+          }}
+        >
+          <span />
+        </div>
+        <Timeline ctx={ctx} />
+      </div>
     </div>
   );
 }

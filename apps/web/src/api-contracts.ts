@@ -23,6 +23,8 @@ export type BranchSource = {
   observed_dataset_version_id?: string | null;
   reconciliation_policy?: "replace_complete_snapshot" | null;
   included_update_ids?: Array<string> | null;
+  reference_replication_id?: string | null;
+  reconciliation_hash?: string | null;
   [key: string]: unknown;
 };
 
@@ -170,6 +172,17 @@ export type OperationalPayload = {
 export type Plan = {
   name: string;
   interventions?: Array<Intervention>;
+  [key: string]: unknown;
+};
+
+export type ResetReconciliation = {
+  observed_dataset_version_id: string;
+  effective_at: string;
+  parent_scenario_revision_id?: string | null;
+  parent_run_group_id?: string | null;
+  reference_replication_id?: string | null;
+  included_update_ids?: Array<string> | null;
+  update_ids?: Array<string> | null;
   [key: string]: unknown;
 };
 

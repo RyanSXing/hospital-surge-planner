@@ -148,6 +148,18 @@ class BranchSource(Command):
     observed_dataset_version_id: str | None = None
     reconciliation_policy: Literal["replace_complete_snapshot"] | None = None
     included_update_ids: list[str] | None = None
+    reference_replication_id: str | None = None
+    reconciliation_hash: str | None = None
+
+
+class ResetReconciliation(Command):
+    observed_dataset_version_id: str
+    effective_at: str
+    parent_scenario_revision_id: str | None = None
+    parent_run_group_id: str | None = None
+    reference_replication_id: str | None = None
+    included_update_ids: list[str] | None = None
+    update_ids: list[str] | None = None
 
 
 class UpdateApply(Command):

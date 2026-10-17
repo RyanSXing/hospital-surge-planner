@@ -459,6 +459,8 @@ class HospitalSimulation:
                     "state": state,
                     "unit_entered_at": p.get("unit_entered_at"),
                     "current_stage_started_at": p.get("current_stage_started_at"),
+                    "admission_requested_at": p.get("admission_requested_at"),
+                    "queue_entered_at": p.get("queue_entered_at"),
                     "expected_stage_end_at": self.at(p["_service_end"])
                     if p.get("_service_end")
                     and (
@@ -2097,6 +2099,7 @@ class HospitalSimulation:
             "ready": len(u["_ready"]),
             "available": self.free(u),
             "staff_by_role": dict(Counter(self.staff[s]["role"] for s in u["active_staff"])),
+            "active_staff_ids": sorted(u["active_staff"]),
             "equipment": equipment,
             "admission_gate": u["gate"],
             "active": u["active"],

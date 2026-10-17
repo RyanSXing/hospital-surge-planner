@@ -1,10 +1,10 @@
 {
-  "tested_at": "2026-10-17T08:42:12.711Z",
+  "tested_at": "2026-10-17T08:54:35.811Z",
   "screens": [
     {
       "view": "overview",
-      "scenario": "scenario_3a52d8c03edd4f42a8ea",
-      "run": "run_618b1a065e8545dea352",
+      "scenario": "scenario_88d81d7a3ea4400694f1",
+      "run": "run_d5bde040bc4b4560aef0",
       "title": [
         "Command overview"
       ],
@@ -15,8 +15,8 @@
     },
     {
       "view": "scenarios",
-      "scenario": "scenario_3a52d8c03edd4f42a8ea",
-      "run": "run_618b1a065e8545dea352",
+      "scenario": "scenario_88d81d7a3ea4400694f1",
+      "run": "run_d5bde040bc4b4560aef0",
       "title": [
         "Build a surge scenario"
       ],
@@ -27,8 +27,8 @@
     },
     {
       "view": "patients",
-      "scenario": "scenario_3a52d8c03edd4f42a8ea",
-      "run": "run_618b1a065e8545dea352",
+      "scenario": "scenario_88d81d7a3ea4400694f1",
+      "run": "run_d5bde040bc4b4560aef0",
       "title": [
         "Hospital capacity"
       ],
@@ -39,8 +39,8 @@
     },
     {
       "view": "resources",
-      "scenario": "scenario_3a52d8c03edd4f42a8ea",
-      "run": "run_618b1a065e8545dea352",
+      "scenario": "scenario_88d81d7a3ea4400694f1",
+      "run": "run_d5bde040bc4b4560aef0",
       "title": [
         "Resource planning"
       ],
@@ -51,8 +51,8 @@
     },
     {
       "view": "compare",
-      "scenario": "scenario_3a52d8c03edd4f42a8ea",
-      "run": "run_618b1a065e8545dea352",
+      "scenario": "scenario_88d81d7a3ea4400694f1",
+      "run": "run_d5bde040bc4b4560aef0",
       "title": [
         "Compare responses"
       ],
@@ -63,8 +63,8 @@
     },
     {
       "view": "replay",
-      "scenario": "scenario_3a52d8c03edd4f42a8ea",
-      "run": "run_618b1a065e8545dea352",
+      "scenario": "scenario_88d81d7a3ea4400694f1",
+      "run": "run_d5bde040bc4b4560aef0",
       "title": [
         "Patient flow replay"
       ],
@@ -75,8 +75,8 @@
     },
     {
       "view": "data",
-      "scenario": "scenario_3a52d8c03edd4f42a8ea",
-      "run": "run_618b1a065e8545dea352",
+      "scenario": "scenario_88d81d7a3ea4400694f1",
+      "run": "run_d5bde040bc4b4560aef0",
       "title": [
         "A clear foundation for every forecast."
       ],

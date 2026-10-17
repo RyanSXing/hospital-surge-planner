@@ -4,6 +4,8 @@
       "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
       "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
       "test",
+      "--project=desktop",
+      "e2e/workflows.spec.ts",
       "e2e/screens.spec.ts"
     ],
     "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
@@ -72,7 +74,7 @@
         "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
         "timeout": 180000,
         "use": {
-          "baseURL": "http://127.0.0.1:5173",
+          "baseURL": "https://hospital-surge.131.186.0.156.sslip.io",
           "browserName": "chromium",
           "channel": "chrome",
           "trace": "retain-on-failure",
@@ -88,42 +90,6 @@
         "dependencies": [],
         "ignoreSnapshots": false,
         "__projectId": "desktop"
-      },
-      {
-        "grep": {},
-        "grepInvert": null,
-        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
-        "repeatEach": 1,
-        "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
-        "name": "mobile",
-        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
-        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
-        "testIgnore": [],
-        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
-        "timeout": 180000,
-        "use": {
-          "baseURL": "http://127.0.0.1:5173",
-          "browserName": "chromium",
-          "channel": "chrome",
-          "trace": "retain-on-failure",
-          "screenshot": "only-on-failure",
-          "actionTimeout": 20000,
-          "navigationTimeout": 30000,
-          "serviceWorkers": "block",
-          "viewport": {
-            "width": 390,
-            "height": 844
-          },
-          "isMobile": true,
-          "hasTouch": true,
-          "deviceScaleFactor": 1
-        },
-        "dependencies": [],
-        "ignoreSnapshots": false,
-        "__projectId": "mobile"
       }
     ],
     "quiet": false,
@@ -156,12 +122,7 @@
     "updateSourceMethod": "patch",
     "version": "1.64.1",
     "workers": 1,
-    "webServer": {
-      "command": "../../.venv/bin/python ../../scripts/dev.py",
-      "url": "http://127.0.0.1:5173/api/health/ready",
-      "reuseExistingServer": true,
-      "timeout": 90000
-    }
+    "webServer": null
   },
   "suites": [
     {
@@ -186,12 +147,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 35657,
+                  "duration": 82266,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T08:41:36.837Z",
+                  "startTime": "2026-10-17T08:53:13.247Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -299,145 +260,136 @@
           "file": "screens.spec.ts",
           "line": 3,
           "column": 1
-        },
+        }
+      ]
+    },
+    {
+      "title": "workflows.spec.ts",
+      "file": "workflows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
         {
-          "title": "all seven screens render actual run context and keyboard navigation",
-          "ok": true,
+          "title": "configure, compute, inspect, compare, update, replay and export",
+          "ok": false,
           "tags": [],
           "tests": [
             {
               "timeout": 180000,
               "annotations": [],
               "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
+              "projectId": "desktop",
+              "projectName": "desktop",
               "results": [
                 {
-                  "workerIndex": 1,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 32739,
-                  "errors": [],
-                  "stdout": [],
+                  "status": "failed",
+                  "duration": 180239,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"SUCCEEDED\"\u001b[39m\nReceived: \u001b[31m\"AGGREGATING\"\u001b[39m\n\nCall Log:\n- Test timeout of 180000ms exceeded",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"SUCCEEDED\"\u001b[39m\nReceived: \u001b[31m\"AGGREGATING\"\u001b[39m\n\nCall Log:\n- Test timeout of 180000ms exceeded\n    at waitRun (/Users/rsxing/Downloads/Agies/apps/web/e2e/helpers.ts:8:224)\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/workflows.spec.ts:12:903",
+                    "location": {
+                      "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/helpers.ts",
+                      "column": 224,
+                      "line": 8
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mhelpers.ts:8\n\n   6 | export async function login(page:Page){let r=await page.request.post('/api/auth/login',{data:{demo_role:'admin'}});if(!r.ok()){const env=readFileSync(process.env.E2E_AUTH_ENV_FILE||resolve(process.cwd(),'../../.env'),'utf8'),password=env.match(/^ADMIN_PASSWORD=(.*)$/m)?.[1]?.trim().replace(/^([\"'])(.*)\\1$/,'$2');r=await page.request.post('/api/auth/login',{data:{username:'admin',password}});}expect(r.ok()).toBeTruthy();}\n   7 | export async function scenario(page:Page,name:string,options:Entity={},fixture='planning_baseline'){await login(page);const list=await api(page.request,'/datasets?limit=200'),dataset=(list.items||list).filter((d:Entity)=>d.fixture===fixture&&!d.source_dataset_version_id).sort((a:Entity,b:Entity)=>String(a.created_at).localeCompare(String(b.created_at)))[0];expect(dataset).toBeTruthy();const chosen=await api(page.request,'/scenarios','POST',{name:`E2E ${name} ${Date.now()}`,dataset_version_id:dataset.id,horizon_calendar_days:3,replications:10,conditions:[],...options});return {scenario:chosen,dataset};}\n>  8 | export async function waitRun(page:Page,runId:string){let result:Entity={};await expect.poll(async()=>{result=await api(page.request,'/run-groups/'+runId);return result.status;},{timeout:150_000,intervals:[500,1000,2000]}).toBe('SUCCEEDED');return result;}\n     |                                                                                                                                                                                                                                ^\n   9 | export async function open(page:Page,scenarioId:string,view='overview',runId?:string){await page.goto(`/?scenario=${scenarioId}&view=${view}${runId?`&run=${runId}`:''}`);await expect(page.locator('.app-shell')).toBeVisible();await expect(page.getByText('Loading planning workspace')).toHaveCount(0);await page.locator('.page-heading,.overview-page,.patients-page').first().waitFor({state:'visible'});}\n  10 | export async function capture(page:Page,name:string,testInfo:TestInfo){await page.evaluate(()=>document.fonts.ready);const file=resolve(process.cwd(),`../../evidence/browser-${testInfo.project.name}-${name}.png`);mkdirSync(resolve(process.cwd(),'../../evidence'),{recursive:true});await page.screenshot({path:file,fullPage:true,animations:'disabled'});await testInfo.attach(name,{path:file,contentType:'image/png'});if(await page.getByRole('dialog').count())return;const main=page.locator('main'),scroll=await main.evaluate(e=>({top:e.scrollTop,max:e.scrollHeight-e.clientHeight}));if(scroll.max>100){for(const [label,fraction] of [['middle',.5],['lower',1]] as const){await main.evaluate((e,top)=>{e.scrollTop=top;},scroll.max*fraction);const part=file.replace('.png',`-${label}.png`);await page.screenshot({path:part,fullPage:true,animations:'disabled'});await testInfo.attach(name+'-'+label,{path:part,contentType:'image/png'});}await main.evaluate((e,top)=>{e.scrollTop=top;},scroll.top);}}\n  11 | export async function assertPageHealthy(page:Page){await expect(page.locator('.global-error .error-box')).toHaveCount(0);const overflow=await page.evaluate(()=>({viewport:innerWidth,body:document.documentElement.scrollWidth}));expect.soft(overflow.body).toBeLessThanOrEqual(overflow.viewport+1);const tiny=await page.locator('main button,main input,main select').evaluateAll(elements=>elements.filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&r.width<10&&r.height<10&&!e.matches('.patient-token')&&!e.closest('.bed-grid');}).map(e=>({label:e.getAttribute('aria-label'),text:e.textContent,className:e.className})));expect.soft(tiny,JSON.stringify(tiny)).toEqual([]);}"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/helpers.ts",
+                        "column": 224,
+                        "line": 8
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"SUCCEEDED\"\u001b[39m\nReceived: \u001b[31m\"AGGREGATING\"\u001b[39m\n\nCall Log:\n- Test timeout of 180000ms exceeded\n\n   at helpers.ts:8\n\n   6 | export async function login(page:Page){let r=await page.request.post('/api/auth/login',{data:{demo_role:'admin'}});if(!r.ok()){const env=readFileSync(process.env.E2E_AUTH_ENV_FILE||resolve(process.cwd(),'../../.env'),'utf8'),password=env.match(/^ADMIN_PASSWORD=(.*)$/m)?.[1]?.trim().replace(/^([\"'])(.*)\\1$/,'$2');r=await page.request.post('/api/auth/login',{data:{username:'admin',password}});}expect(r.ok()).toBeTruthy();}\n   7 | export async function scenario(page:Page,name:string,options:Entity={},fixture='planning_baseline'){await login(page);const list=await api(page.request,'/datasets?limit=200'),dataset=(list.items||list).filter((d:Entity)=>d.fixture===fixture&&!d.source_dataset_version_id).sort((a:Entity,b:Entity)=>String(a.created_at).localeCompare(String(b.created_at)))[0];expect(dataset).toBeTruthy();const chosen=await api(page.request,'/scenarios','POST',{name:`E2E ${name} ${Date.now()}`,dataset_version_id:dataset.id,horizon_calendar_days:3,replications:10,conditions:[],...options});return {scenario:chosen,dataset};}\n>  8 | export async function waitRun(page:Page,runId:string){let result:Entity={};await expect.poll(async()=>{result=await api(page.request,'/run-groups/'+runId);return result.status;},{timeout:150_000,intervals:[500,1000,2000]}).toBe('SUCCEEDED');return result;}\n     |                                                                                                                                                                                                                                ^\n   9 | export async function open(page:Page,scenarioId:string,view='overview',runId?:string){await page.goto(`/?scenario=${scenarioId}&view=${view}${runId?`&run=${runId}`:''}`);await expect(page.locator('.app-shell')).toBeVisible();await expect(page.getByText('Loading planning workspace')).toHaveCount(0);await page.locator('.page-heading,.overview-page,.patients-page').first().waitFor({state:'visible'});}\n  10 | export async function capture(page:Page,name:string,testInfo:TestInfo){await page.evaluate(()=>document.fonts.ready);const file=resolve(process.cwd(),`../../evidence/browser-${testInfo.project.name}-${name}.png`);mkdirSync(resolve(process.cwd(),'../../evidence'),{recursive:true});await page.screenshot({path:file,fullPage:true,animations:'disabled'});await testInfo.attach(name,{path:file,contentType:'image/png'});if(await page.getByRole('dialog').count())return;const main=page.locator('main'),scroll=await main.evaluate(e=>({top:e.scrollTop,max:e.scrollHeight-e.clientHeight}));if(scroll.max>100){for(const [label,fraction] of [['middle',.5],['lower',1]] as const){await main.evaluate((e,top)=>{e.scrollTop=top;},scroll.max*fraction);const part=file.replace('.png',`-${label}.png`);await page.screenshot({path:part,fullPage:true,animations:'disabled'});await testInfo.attach(name+'-'+label,{path:part,contentType:'image/png'});}await main.evaluate((e,top)=>{e.scrollTop=top;},scroll.top);}}\n  11 | export async function assertPageHealthy(page:Page){await expect(page.locator('.global-error .error-box')).toHaveCount(0);const overflow=await page.evaluate(()=>({viewport:innerWidth,body:document.documentElement.scrollWidth}));expect.soft(overflow.body).toBeLessThanOrEqual(overflow.viewport+1);const tiny=await page.locator('main button,main input,main select').evaluateAll(elements=>elements.filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&r.width<10&&r.height<10&&!e.matches('.patient-token')&&!e.closest('.bed-grid');}).map(e=>({label:e.getAttribute('aria-label'),text:e.textContent,className:e.className})));expect.soft(tiny,JSON.stringify(tiny)).toEqual([]);}\n    at waitRun (/Users/rsxing/Downloads/Agies/apps/web/e2e/helpers.ts:8:224)\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/workflows.spec.ts:12:903"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "workflow: created scenario_3af3908121f945e386d1\n"
+                    },
+                    {
+                      "text": "workflow: scenario screen loaded\n"
+                    },
+                    {
+                      "text": "workflow: fields configured\n"
+                    },
+                    {
+                      "text": "workflow: submit clicked\n"
+                    },
+                    {
+                      "text": "workflow: queued run_9b72d484def64b069b52\n"
+                    },
+                    {
+                      "text": "workflow: run complete\n"
+                    }
+                  ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T08:42:13.123Z",
+                  "startTime": "2026-10-17T08:54:35.911Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "overview",
+                      "name": "workflow-patient",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-3d3683778946fb04be297b4ca4707eff7b69ee66.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-291190d91ce3401a8bd656ea15497ca476ff7249.png"
                     },
                     {
-                      "name": "overview-middle",
+                      "name": "workflow-patient-middle",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-middle-616a1b0c7b303a813898205f9dfae3332a2ff611.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-middle-7d4b25861d3bac29849fd3035c45a5070cfdb395.png"
                     },
                     {
-                      "name": "overview-lower",
+                      "name": "workflow-patient-lower",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/overview-lower-3bf99689a540d4189b5e6d95ed74b5ada5357939.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-patient-lower-a8e496a3447d9b26146dcc1c405c7352d524124c.png"
                     },
                     {
-                      "name": "scenarios",
+                      "name": "workflow-comparison",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-059872a7bd2870fd8714b937ede156b63e29c91f.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-96d39cb25af203ec4c1a59628039e3ee8f0eafe1.png"
                     },
                     {
-                      "name": "scenarios-middle",
+                      "name": "workflow-comparison-middle",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-middle-9a1f54c8f6c3eaf22f61c74efb94186736622c31.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-middle-a1cc304714fe6f7fcb4a24869f61a04719742f13.png"
                     },
                     {
-                      "name": "scenarios-lower",
+                      "name": "workflow-comparison-lower",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/scenarios-lower-644b3da6dc04d2ae56f1526d6578ba2cb290c3ee.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/attachments/workflow-comparison-lower-6041d17487642e74ca24284268d9d956377d4e4d.png"
                     },
                     {
-                      "name": "patients",
+                      "name": "screenshot",
                       "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-e3043267e3229ad0f6c5586afe5c296a5148bce9.png"
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/test-failed-1.png"
                     },
                     {
-                      "name": "patients-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-middle-d0489d722c84961f9fd276b576f344bb19005f1a.png"
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/error-context.md"
                     },
                     {
-                      "name": "patients-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/patients-lower-565a1d9930a6ca9e8a38e9952a5091be06745335.png"
-                    },
-                    {
-                      "name": "resources",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-66ccdd8a21fe576ab54f6afb37fb1cbba3dc5ef6.png"
-                    },
-                    {
-                      "name": "resources-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-middle-473f05297d0ce06b9f11ac64e71c551890c15ada.png"
-                    },
-                    {
-                      "name": "resources-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/resources-lower-ef92187f6641f63e96dfc9bb134574b6c1fabe5e.png"
-                    },
-                    {
-                      "name": "compare",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-1914679c9849b899b17999c8699564ca18ee50b8.png"
-                    },
-                    {
-                      "name": "compare-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-middle-7f7bb36ea1a48466392fea55a1e3ce093ccc2299.png"
-                    },
-                    {
-                      "name": "compare-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/compare-lower-b23947005c8d73082f0ec8a333d329e020035cf5.png"
-                    },
-                    {
-                      "name": "replay",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-90473a04d221111b21a39a8d54421bec8f41165f.png"
-                    },
-                    {
-                      "name": "replay-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-middle-28dad75e6efb25b3f7077a94f31779da9efb83f5.png"
-                    },
-                    {
-                      "name": "replay-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/replay-lower-7ea26e881beb5fd5f8a9ab758e3d4742ccbf5a0e.png"
-                    },
-                    {
-                      "name": "data",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-761573125c44afedd43f21aae9ef41755c8cf982.png"
-                    },
-                    {
-                      "name": "data-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-middle-043652bc9a522b623b3f00278aea84b87dfc9079.png"
-                    },
-                    {
-                      "name": "data-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-all-seven-screens--ada34-ext-and-keyboard-navigation-mobile/attachments/data-lower-90377094ade08f0ece756142af94c68024f767c5.png"
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/workflows-configure-comput-d765c-re-update-replay-and-export-desktop/trace.zip"
                     }
-                  ]
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/helpers.ts",
+                    "column": 224,
+                    "line": 8
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
-          "id": "2676ef668c5398eed988-0d8dbb877460791952b1",
-          "file": "screens.spec.ts",
-          "line": 3,
+          "id": "26aa48cee8983222f549-582cfc57ecd6a6d378f0",
+          "file": "workflows.spec.ts",
+          "line": 4,
           "column": 1
         }
       ]
@@ -445,11 +397,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-17T08:41:36.598Z",
-    "duration": 69684.826,
-    "expected": 2,
+    "startTime": "2026-10-17T08:53:13.006Z",
+    "duration": 264690.752,
+    "expected": 1,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

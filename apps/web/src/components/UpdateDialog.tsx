@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, History, Save } from "lucide-react";
 import type { Dataset, Entity, PlanningContext } from "../types";
-import type { BranchSource, UpdateCreate } from "../api-contracts";
+import type {
+  BranchSource,
+  ResetReconciliation,
+  UpdateCreate,
+} from "../api-contracts";
 import { createUpdate, applyUpdate } from "../commands";
 import { api, ApiError, fmt, items, localDate, patientId, post } from "../api";
 import { Badge, Button, Busy, ErrorBox, Modal } from "./ui";
@@ -207,35 +211,27 @@ export default function UpdateDialog({
       "Review the effective timestamp and equipment allocation JSON.";
   }
   async function previewReset() {
-    if (!observed) return;
+    if (!observed || !ctx.scenario) return;
     setPreviewBusy(true);
     setError("");
     try {
-      const prior =
-        complete && ctx.run?.selected_replication_id
-          ? await api(
-              `/runs/${ctx.run.selected_replication_id}/state?at=${encodeURIComponent(isoMinute(when))}`,
-            )
-          : { patients: ctx.dataset?.patients || [] };
-      const before = new Set<string>(
-          (prior.patients || []).map((p: Entity) => patientId(p)),
+      const request: ResetReconciliation = {
+        observed_dataset_version_id: observed.id,
+        effective_at: isoMinute(when),
+        parent_scenario_revision_id: complete
+          ? ctx.run?.scenario_revision_id
+          : undefined,
+        parent_run_group_id: complete ? ctx.run?.id : undefined,
+        reference_replication_id: complete
+          ? ctx.activeReplicationId || ctx.run?.selected_replication_id
+          : undefined,
+      };
+      setReconciliation(
+        await post(
+          `/scenarios/${ctx.scenario.id}/reset-reconciliation`,
+          request,
         ),
-        after = new Set<string>(observed.patients.map(patientId));
-      const report = await post(`/datasets/${observed.id}/validate`);
-      if (!report.valid)
-        throw new Error(
-          report.errors
-            .map((e: Entity) => `${e.field}: ${e.message}`)
-            .join("; "),
-        );
-      setReconciliation({
-        matched: [...before].filter((id) => after.has(id)),
-        absent: [...before].filter((id) => !after.has(id)),
-        new: [...after].filter((id) => !before.has(id)),
-        conflicting: report.errors,
-        counts: report.counts,
-        warnings: report.warnings,
-      });
+      );
       setConfirmed(false);
     } catch (e) {
       setError(errorText(e));
@@ -297,6 +293,9 @@ export default function UpdateDialog({
           ? {
               observed_dataset_version_id: observedId,
               reconciliation_policy: "replace_complete_snapshot",
+              parent_run_group_id: reconciliation?.basis.run_group_id,
+              reference_replication_id: reconciliation?.basis.replication_id,
+              reconciliation_hash: reconciliation?.reconciliation_hash,
             }
           : {
               parent_run_group_id: ctx.run!.id,
@@ -309,7 +308,10 @@ export default function UpdateDialog({
       const result = await applyUpdate(
         record.id,
         {
-          parent_scenario_revision_id: ctx.run?.scenario_revision_id,
+          parent_scenario_revision_id:
+            sourceMode === "observed_reset"
+              ? reconciliation?.basis.scenario_revision_id
+              : ctx.run?.scenario_revision_id,
           effective_at: time,
           state_origin: origin,
           update_ids: [record.id],
@@ -343,6 +345,16 @@ export default function UpdateDialog({
           "Open the source scenario from the scenario library to reforecast this recorded input.",
         );
       const observed = event.state_origin === "observed_reset";
+      if (observed) {
+        setSourceMode("observed_reset");
+        setObservedId(event.payload.observed_dataset_version_id);
+        setReconciliation(null);
+        setConfirmed(false);
+        setSavedEvent(event);
+        setEnqueue(true);
+        setTab("record");
+        return;
+      }
       if (!observed && !complete)
         throw new Error(
           "Complete a parent run of this scenario before applying the recorded input.",
@@ -688,7 +700,9 @@ export default function UpdateDialog({
                         not be added a second time.
                       </p>
                       <details>
-                        <summary>Patient ID changes</summary>
+                        <summary>
+                          Patient ID changes and update reconciliation
+                        </summary>
                         <pre
                           style={{
                             whiteSpace: "pre-wrap",
@@ -701,17 +715,11 @@ export default function UpdateDialog({
                               matched: reconciliation.matched,
                               absent: reconciliation.absent,
                               new: reconciliation.new,
-                              excluded_update_ids: history
-                                .filter(
-                                  (input) =>
-                                    Date.parse(input.effective_at) <=
-                                    Date.parse(effective),
-                                )
-                                .map((input) => ({
-                                  id: input.id,
-                                  reason:
-                                    "Previous projection input is replaced by this complete snapshot; it will not be added again.",
-                                })),
+                              basis: reconciliation.basis,
+                              update_disposition:
+                                reconciliation.update_disposition,
+                              included_update_ids:
+                                reconciliation.included_update_ids,
                             },
                             null,
                             2,

@@ -776,8 +776,8 @@ def dispatch_loop(Session, stop, database_url):
                             queue.enqueue(
                                 "surge_api.worker.execute_job",
                                 job.id,
-                                database_url,
                                 job_id=queue_id,
+                                description=f"Hospital Surge Planner {job.kind} {job.id}",
                                 job_timeout=int(os.getenv("JOB_TIMEOUT_SECONDS", "7200")),
                                 result_ttl=86400,
                             )

@@ -1,0 +1,11 @@
+{
+  "recorded_at": "2026-10-17T08:56:45.142119+00:00",
+  "scope": "actual OCI app container; process-cached SDK instance principal client",
+  "constructor_seconds": [
+    2.1959457810000913,
+    0.00021663899997292901,
+    7.428000003528723e-05,
+    6.55599999390688e-05,
+    6.38999999864609e-05
+  ]
+}

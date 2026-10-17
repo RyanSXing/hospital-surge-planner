@@ -6,8 +6,9 @@ import {
   conditionWindow,
   inputDifferences,
   mixError,
+  horizonDays,
 } from "./scenarioEditor";
-import type { MixMode } from "./scenarioEditor";
+import type { HorizonUnit, MixMode } from "./scenarioEditor";
 import "./scenarios.css";
 import {
   Activity,
@@ -36,7 +37,14 @@ import {
   localDayIndex,
   post,
 } from "../api";
-import { Badge, Button, Modal, PanelTitle } from "../components/ui";
+import {
+  Badge,
+  Busy,
+  Button,
+  ErrorBox,
+  Modal,
+  PanelTitle,
+} from "../components/ui";
 import { patientsOf, statsFor } from "../model";
 const presets = [
   [
@@ -66,12 +74,20 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     [name, setName] = useState(""),
     [percent, setPercent] = useState(70),
     [days, setDays] = useState(30),
+    [horizonUnit, setHorizonUnit] = useState<HorizonUnit>("days"),
+    [horizonAmount, setHorizonAmount] = useState(30),
     [replications, setReplications] = useState(100),
     [shape, setShape] = useState("sustained"),
     [absence, setAbsence] = useState(0),
     [dirty, setDirty] = useState(false),
     [library, setLibrary] = useState(false),
     [scenarios, setScenarios] = useState<Entity[]>([]),
+    [librarySearch, setLibrarySearch] = useState(""),
+    [libraryArchived, setLibraryArchived] = useState(false),
+    [libraryCursor, setLibraryCursor] = useState<string | null>(null),
+    [libraryTotal, setLibraryTotal] = useState(0),
+    [libraryLoading, setLibraryLoading] = useState(false),
+    [libraryError, setLibraryError] = useState(""),
     [undo, setUndo] = useState<Entity[]>([]),
     [redo, setRedo] = useState<Entity[]>([]),
     [startDay, setStartDay] = useState(0),
@@ -90,6 +106,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     [estimating, setEstimating] = useState(false),
     [estimateError, setEstimateError] = useState(""),
     [draftConditions, setDraftConditions] = useState<Entity[]>([]);
+  const libraryRequest = useRef(0);
   function loadCondition(c: Entity | undefined, s = ctx.scenario) {
     if (!s) return;
     setStream(c?.entry_stream_id || "ED_MAIN");
@@ -142,6 +159,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setDraftConditions(s.conditions || []);
     setName(s.name);
     setDays(s.horizon_calendar_days);
+    setHorizonUnit("days");
+    setHorizonAmount(s.horizon_calendar_days);
     setReplications(s.replications || 100);
     loadCondition(
       s.conditions?.find((x) => x.kind === "arrival_multiplier"),
@@ -169,6 +188,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   const snapshot = () => ({
     percent,
     days,
+    horizonUnit,
+    horizonAmount,
     shape,
     absence,
     startDay,
@@ -188,6 +209,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   function restore(v: Entity) {
     setPercent(v.percent);
     setDays(v.days);
+    setHorizonUnit(v.horizonUnit || "days");
+    setHorizonAmount(v.horizonAmount || v.days);
     setShape(v.shape);
     setAbsence(v.absence);
     setStartDay(v.startDay);
@@ -323,11 +346,68 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
       setEditorError((e as Error).message);
     }
   }
-  async function openLibrary() {
-    await ctx.action("Loading scenario library", async () => {
-      setScenarios(items(await api("/scenarios")));
-      setLibrary(true);
-    });
+  async function loadLibrary(cursor?: string) {
+    const request = ++libraryRequest.current;
+    setLibraryLoading(true);
+    setLibraryError("");
+    try {
+      const params = new URLSearchParams({
+        limit: "50",
+        archived: String(libraryArchived),
+        search: librarySearch.trim(),
+      });
+      if (cursor) params.set("cursor", cursor);
+      const result = await api(`/scenarios?${params}`);
+      if (request !== libraryRequest.current) return;
+      setScenarios((previous) =>
+        cursor
+          ? [
+              ...previous,
+              ...items(result).filter(
+                (row) => !previous.some((p) => p.id === row.id),
+              ),
+            ]
+          : items(result),
+      );
+      setLibraryCursor(result.next_cursor || null);
+      setLibraryTotal(result.total ?? items(result).length);
+    } catch (error) {
+      if (request === libraryRequest.current)
+        setLibraryError((error as Error).message);
+    } finally {
+      if (request === libraryRequest.current) setLibraryLoading(false);
+    }
+  }
+  useEffect(() => {
+    if (!library) return;
+    const timer = setTimeout(() => void loadLibrary(), librarySearch ? 200 : 0);
+    return () => {
+      clearTimeout(timer);
+      ++libraryRequest.current;
+    };
+  }, [library, librarySearch, libraryArchived]);
+  function openLibrary() {
+    setScenarios([]);
+    setLibraryCursor(null);
+    setLibrary(true);
+  }
+  function changeHorizon(amount: number, unit: HorizonUnit = horizonUnit) {
+    remember();
+    const limit =
+      unit === "days"
+        ? 365
+        : unit === "weeks"
+          ? 52
+          : horizonDays(startAt, 12, "months", ctx.scenario?.timezone) <= 365
+            ? 12
+            : 11;
+    const count = Math.max(1, Math.min(limit, Math.round(amount) || 1));
+    const total = horizonDays(startAt, count, unit, ctx.scenario?.timezone);
+    setHorizonUnit(unit);
+    setHorizonAmount(count);
+    setDays(total);
+    setStartDay((a) => Math.min(a, total - 1));
+    setEndDay(total);
   }
   const multiplier = Math.max(0, 1 + percent / 100),
     minimum = Math.min(1, multiplier) * 0.9,
@@ -907,19 +987,65 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 <input
                   type="number"
                   min="1"
-                  max="365"
-                  value={days}
-                  onChange={(e) => {
-                    remember();
-                    const n = Math.max(1, Math.min(365, +e.target.value));
-                    setDays(n);
-                    setStartDay((a) => Math.min(a, n - 1));
-                    setEndDay(n);
-                  }}
+                  max={
+                    horizonUnit === "days"
+                      ? 365
+                      : horizonUnit === "weeks"
+                        ? 52
+                        : horizonDays(
+                              startAt,
+                              12,
+                              "months",
+                              ctx.scenario?.timezone,
+                            ) <= 365
+                          ? 12
+                          : 11
+                  }
+                  step={1}
+                  value={horizonUnit === "days" ? days : horizonAmount}
+                  onChange={(e) => changeHorizon(+e.target.value)}
                 />
-                <span>days</span>
+                <span>{horizonUnit}</span>
               </div>
             </label>
+            <label>
+              Horizon unit
+              <select
+                value={horizonUnit}
+                onChange={(e) => {
+                  const unit = e.target.value as HorizonUnit;
+                  changeHorizon(
+                    unit === "days"
+                      ? days
+                      : Math.max(
+                          1,
+                          Math.round(days / (unit === "weeks" ? 7 : 30)),
+                        ),
+                    unit,
+                  );
+                }}
+              >
+                <option value="days">Calendar days</option>
+                <option value="weeks">Calendar weeks</option>
+                <option value="months">Calendar months</option>
+              </select>
+            </label>
+            <p className="small-copy" aria-live="polite">
+              {days} local calendar days ·{" "}
+              {localDate(startAt, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}{" "}
+              through{" "}
+              {localDate(atDay(startAt, days, 0, ctx.scenario?.timezone), {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}{" "}
+              (exclusive end). Calendar months retain the day of month, clamped
+              at month end. Maximum 365 days.
+            </p>
             <label>
               Simulation runs
               <select
@@ -1172,6 +1298,25 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
       ) : null}
       {library ? (
         <Modal title="Scenario library" onClose={() => setLibrary(false)} wide>
+          <div className="form-stack">
+            <label>
+              Search saved scenarios
+              <input
+                value={librarySearch}
+                onChange={(e) => setLibrarySearch(e.target.value)}
+                placeholder="Name or scenario ID"
+              />
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={libraryArchived}
+                onChange={(e) => setLibraryArchived(e.target.checked)}
+              />
+              Show archived scenarios
+            </label>
+          </div>
+          {libraryError ? <ErrorBox error={libraryError} /> : null}
           <div className="library-list">
             {scenarios.map((s) => (
               <div className="library-row" key={s.id}>
@@ -1181,6 +1326,28 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                     {s.horizon_calendar_days} days · {s.replications} runs ·
                     Revision {s.revision}
                   </span>
+                  <small className="mono">Dataset {s.dataset_version_id}</small>
+                  <small>
+                    Owner: {s.owner_name || s.created_by || "Not recorded"} ·
+                    Created{" "}
+                    {localDate(s.created_at, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}{" "}
+                    · Modified{" "}
+                    {localDate(s.updated_at, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </small>
+                  <small>
+                    Latest run: {s.latest_run?.status || "No runs recorded"}.{" "}
+                    {s.change_summary ||
+                      s.description ||
+                      `${s.conditions?.length || 0} conditions · ${s.interventions?.length || 0} responses · ${s.updates?.length || 0} updates`}
+                  </small>
                 </div>
                 <Badge>{s.archived ? "Archived" : "Saved"}</Badge>
                 <Button
@@ -1200,7 +1367,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                       await post(`/scenarios/${s.id}/clone`, {
                         name: `${s.name} — copy`,
                       });
-                      setScenarios(items(await api("/scenarios")));
+                      await loadLibrary();
                     })
                   }
                 >
@@ -1210,11 +1377,11 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                 <Button
                   small
                   aria-label={`Archive ${s.name}`}
-                  disabled={ctx.canWrite === false}
+                  disabled={ctx.canWrite === false || s.archived}
                   onClick={() =>
                     ctx.action("Archiving scenario", async () => {
                       await post(`/scenarios/${s.id}/archive`);
-                      setScenarios(items(await api("/scenarios")));
+                      await loadLibrary();
                     })
                   }
                 >
@@ -1223,6 +1390,19 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               </div>
             ))}
           </div>
+          {libraryLoading ? <Busy label="Loading saved scenarios" /> : null}
+          <p className="small-copy">
+            {scenarios.length} of {libraryTotal}{" "}
+            {libraryArchived ? "archived" : "saved"} scenarios
+          </p>
+          {libraryCursor ? (
+            <Button
+              disabled={libraryLoading}
+              onClick={() => void loadLibrary(libraryCursor)}
+            >
+              Load more saved scenarios
+            </Button>
+          ) : null}
           <Button
             primary
             disabled={ctx.canWrite === false}

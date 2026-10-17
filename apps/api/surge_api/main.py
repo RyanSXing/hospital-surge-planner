@@ -58,6 +58,7 @@ from .domain import (
     serialize,
     validate_scenario,
 )
+from .patients import filtered_patients, patient_filters, patient_summary
 from .schemas import (
     AlertRule,
     ComparisonCreate,
@@ -65,6 +66,7 @@ from .schemas import (
     ExportCreate,
     JobView,
     MemberCreate,
+    ResetReconciliation,
     RunCreate,
     ScenarioCreate,
     ScenarioPatch,
@@ -942,19 +944,25 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         identity: str,
         limit: int = 50,
         cursor: str | None = None,
-        unit_id: str | None = None,
-        state: str | None = None,
+        filters=Depends(patient_filters),
         user=Depends(current_user),
         session=Depends(db),
     ):
         row = owned(session, identity, "dataset", user)
-        items = [
-            p
-            for p in row.data.get("patients", [])
-            if (not unit_id or p.get("unit_id") == unit_id) and (not state or p.get("state") == state)
-        ]
+        templates = {t["template_id"]: t for t in row.data.get("los_templates", [])}
+        items = list(
+            filtered_patients(
+                row.data.get("patients", []),
+                row.data["snapshot_at"],
+                filters,
+                templates,
+                units={u["unit_id"]: u for u in row.data.get("units", [])},
+            )
+        )
+        page = listing(items, limit, cursor)
+        page["items"] = [patient_summary(p, row.data["snapshot_at"], templates) for p in page["items"]]
         return {
-            **listing(items, limit, cursor),
+            **page,
             "context": context(dataset_version_id=identity, state_origin="source_snapshot"),
         }
 
@@ -966,6 +974,50 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "total": len(row.data.get("facilities", [])),
             "geometry": row.data.get("geometry"),
             "context": context(dataset_version_id=identity),
+        }
+
+    @router.get("/datasets/{identity}/units/{unit_id}/schedule")
+    def dataset_unit_schedule(
+        identity: str, unit_id: str, at: str | None = None, user=Depends(current_user), session=Depends(db)
+    ):
+        dataset = owned(session, identity, "dataset", user).data
+        unit = next((u for u in dataset.get("units", []) if u["unit_id"] == unit_id), None)
+        if not unit:
+            fail(404, "Unit does not belong to this dataset")
+        try:
+            instant = date(at or dataset["snapshot_at"])
+        except (ValueError, TypeError):
+            fail(422, "Schedule time requires an explicit UTC offset")
+        roster = {s["staff_id"]: s for s in dataset.get("staff", [])}
+        assignments = sorted(
+            (
+                a
+                for a in dataset.get("assignments", [])
+                if a.get("unit_id") == unit_id and date(a["end_at"]) > instant
+            ),
+            key=lambda a: (a["start_at"], a["staff_id"]),
+        )
+        return {
+            "unit": unit,
+            "assignments": [
+                {
+                    **a,
+                    "role": roster.get(a["staff_id"], {}).get("role"),
+                    "capabilities": roster.get(a["staff_id"], {}).get("capabilities", []),
+                }
+                for a in assignments[:100]
+            ],
+            "total": len(assignments),
+            "source": "declared_dataset_schedule",
+            "at": instant.isoformat(),
+            "policy": next(
+                (
+                    p
+                    for p in dataset.get("capacity_policies", [])
+                    if p["capacity_policy_id"] == unit.get("capacity_policy_id")
+                ),
+                None,
+            ),
         }
 
     @router.get("/datasets/{identity}/resources")
@@ -1402,6 +1454,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         dataset = owned(session, payload.get("dataset_version_id"), "dataset", user)
         value = normalize_conditions(scenario_defaults(payload, dataset.data), dataset.data)
         value["id"] = uid("scenario")
+        value["created_by"] = user["id"]
         report = validate_scenario(value, dataset.data)
         if not report["valid"]:
             fail(422, "Invalid scenario", "validation_failed", report["errors"])
@@ -1415,6 +1468,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         limit: int = 50,
         cursor: str | None = None,
         archived: bool = False,
+        search: str | None = Query(default=None, max_length=128),
         user=Depends(current_user),
         session=Depends(db),
     ):
@@ -1422,12 +1476,32 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         for row in documents(session, user, "scenario"):
             if bool(row.data.get("archived", False)) != archived:
                 continue
+            if search and search.lower() not in f"{row.id} {row.data.get('name', '')}".lower():
+                continue
             last = session.scalar(
                 select(Job)
-                .where(Job.workspace_id == user["workspace_id"], Job.kind == "run")
+                .where(
+                    Job.workspace_id == user["workspace_id"],
+                    Job.kind == "run",
+                    Job.payload["scenario_id"].as_string() == row.id,
+                    Job.payload["comparison_id"].as_string().is_(None),
+                )
                 .order_by(Job.created_at.desc())
+                .limit(1)
             )
             value = serialize(row)
+            if not value.get("created_by"):
+                creator = session.scalar(
+                    select(AuditEvent.user_id)
+                    .where(
+                        AuditEvent.workspace_id == user["workspace_id"],
+                        AuditEvent.entity_id == row.id,
+                        AuditEvent.action.in_(["scenario.created", "scenario.cloned"]),
+                    )
+                    .order_by(AuditEvent.created_at)
+                    .limit(1)
+                )
+                value["created_by"] = creator or "synthetic_demo_seed"
             if last and last.payload.get("scenario_id") == row.id:
                 value["latest_run"] = job_view(last)
             items.append(value)
@@ -1545,6 +1619,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "name": payload.get("name", parent.data["name"] + " — copy"),
             "parent_scenario_id": identity,
             "archived": False,
+            "created_by": user["id"],
         }
         row = add_document(session, user["workspace_id"], "scenario", value)
         audit(session, user, "scenario.cloned", row.id, {"parent": identity})
@@ -1772,12 +1847,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
     def run_patients(
         identity: str,
         at: str | None = None,
-        unit_id: str | None = None,
-        facility_id: str | None = None,
-        admission_pending: bool | None = None,
-        state: str | None = None,
-        care_level: str | None = None,
-        search: str | None = None,
+        filters=Depends(patient_filters),
         limit: int = 50,
         cursor: str | None = None,
         user=Depends(current_user),
@@ -1788,25 +1858,22 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         items = value.get("patients", [])
         if isinstance(items, dict):
             items = list(items.values())
-        items = [
-            p
-            for p in items
-            if (not unit_id or p.get("unit_id") == unit_id)
-            and (not facility_id or p.get("facility_id") == facility_id)
-            and (admission_pending is None or bool(p.get("admission_pending")) == admission_pending)
-            and (
-                not state or (p.get("state") == "ed_waiting" or p.get("admission_pending"))
-                if state == "waiting"
-                else not state or p.get("state") == state
-            )
-            and (not care_level or p.get("care_level") == care_level)
-            and (not search or search.lower() in p.get("patient_id", p.get("id", "")).lower())
-        ]
+        items = list(filtered_patients(items, value["at"], filters, simulated=True))
+        page = listing(items, limit, cursor)
+        selected_ids = {p["patient_id"] for p in page["items"]}
+        originals = {p["patient_id"]: p for p in trace.get("patients", []) if p["patient_id"] in selected_ids}
+        enriched = []
+        for patient in page["items"]:
+            timestamps = {}
+            for field in ("admission_requested_at", "queue_entered_at"):
+                supplied = originals.get(patient["patient_id"], {}).get(field)
+                if not patient.get(field) and supplied and date(supplied) <= date(value["at"]):
+                    timestamps[field] = supplied
+            enriched.append(patient_summary({**patient, **timestamps}, value["at"], simulated=True))
+        page["items"] = enriched
         from .responses import json_response
 
-        return json_response(
-            {**listing(items, limit, cursor), "context": context(replication_id=identity, at=at)}
-        )
+        return json_response({**page, "context": context(replication_id=identity, at=value["at"])})
 
     @router.get("/runs/{identity}/patients/{patient_id}")
     def patient_detail(
@@ -1835,6 +1902,32 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "events": [x for x in trace.get("events", []) if x.get("patient_id") == patient_id],
             "context": context(replication_id=identity, at=at),
         }
+
+    @router.get("/runs/{identity}/units/{unit_id}/timeline")
+    def run_unit_timeline(
+        identity: str,
+        unit_id: str,
+        at: str | None = None,
+        max_points: int = Query(default=400, ge=200, le=2000),
+        user=Depends(current_user),
+        session=Depends(db),
+    ):
+        from .patients import unit_timeline
+        from .responses import json_response
+
+        row, trace = trace_for(session, user, identity)
+        try:
+            value = unit_timeline(trace, unit_id, at or trace["start_at"], max_points)
+        except (ValueError, TypeError):
+            fail(422, "Invalid selected unit timeline time")
+        return json_response(
+            {
+                **value,
+                "context": context(
+                    replication_id=identity, run_group_id=row.data["run_group_id"], at=at or trace["start_at"]
+                ),
+            }
+        )
 
     @router.get("/runs/{identity}/events")
     def events(
@@ -2413,6 +2506,211 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         ]
         return listing(items, limit, cursor)
 
+    def reset_reconciliation(
+        session, user, scenario, parent, parent_revision, dataset, effective, source, selected_updates
+    ):
+        """Use the same complete patient ledger and update decisions for preview and commit."""
+        from datetime import timedelta
+        from zoneinfo import ZoneInfo
+
+        from surge_engine import validate_dataset
+
+        try:
+            effective = date(effective).astimezone(UTC).isoformat().replace("+00:00", "Z")
+        except (TypeError, ValueError):
+            fail(422, "Choose a cutoff timestamp with an explicit UTC offset", "SNAPSHOT_TIME_MISMATCH")
+        end = (
+            date(parent["end_at"])
+            if parent.get("end_at")
+            else date(parent["start_at"]).astimezone(ZoneInfo(parent["timezone"]))
+            + timedelta(days=parent["horizon_calendar_days"])
+        )
+        if not date(parent["start_at"]) <= date(effective) < end:
+            fail(422, "Reset time must lie within the original horizon", "SNAPSHOT_TIME_MISMATCH")
+        validation = validate_dataset(dataset.data)
+        if not validation["valid"]:
+            fail(
+                422,
+                "Observed snapshot must be complete and valid",
+                "INCOMPLETE_RESET_SNAPSHOT",
+                validation["errors"],
+            )
+        if date(dataset.data["snapshot_at"]) != date(effective):
+            fail(422, "Observed snapshot and cutoff must be the same instant", "SNAPSHOT_TIME_MISMATCH")
+        prior = owned(session, parent["dataset_version_id"], "dataset", user).data
+        predicted = prior.get("patients", [])
+        basis = {"source": "previous_dataset_snapshot", "at": prior["snapshot_at"]}
+        explicit_run = source.get("parent_run_group_id")
+        reference = source.get("reference_replication_id")
+        if reference and not explicit_run:
+            fail(422, "Choose the parent run for the reconciliation reference", "INVALID_BRANCH_SOURCE")
+        candidates = (
+            [owned_job(session, explicit_run, user, "run")]
+            if explicit_run
+            else session.scalars(
+                select(Job)
+                .where(
+                    Job.workspace_id == user["workspace_id"],
+                    Job.kind == "run",
+                    Job.status == "SUCCEEDED",
+                    Job.payload["scenario_id"].as_string() == scenario.id,
+                )
+                .order_by(Job.created_at.desc())
+            )
+        )
+        for candidate in candidates:
+            compatible = candidate.status == "SUCCEEDED" and candidate.payload["scenario_id"] == scenario.id
+            compatible = compatible and (
+                not parent_revision or candidate.payload["scenario_revision_id"] == parent_revision.id
+            )
+            if not compatible:
+                if explicit_run:
+                    fail(
+                        422,
+                        "Reconciliation run must match the parent scenario and revision",
+                        "INVALID_BRANCH_SOURCE",
+                    )
+                continue
+            selected = reference or candidate.result.get("selected_replication_id")
+            if not selected:
+                continue
+            run, trace = trace_for(session, user, selected)
+            if run.data["run_group_id"] != candidate.id:
+                fail(422, "Reference replication belongs to a different run", "INVALID_BRANCH_SOURCE")
+            if not date(candidate.payload["scenario"]["start_at"]) <= date(effective) < date(trace["end_at"]):
+                if explicit_run:
+                    fail(422, "Reconciliation time lies outside the parent run", "INVALID_BRANCH_SOURCE")
+                continue
+            predicted = state_for(trace, effective)["patients"]
+            parent = candidate.payload["scenario"]
+            basis = {
+                "source": "selected_parent_projection",
+                "replication_id": selected,
+                "run_group_id": candidate.id,
+                "scenario_revision_id": candidate.payload["scenario_revision_id"],
+                "at": effective,
+            }
+            break
+        old_ids = {p["patient_id"] for p in predicted}
+        new_ids = {p["patient_id"] for p in dataset.data.get("patients", [])}
+        included = set(dataset.data.get("manifest", {}).get("included_update_ids", [])) | set(
+            source.get("included_update_ids") or []
+        )
+        declared = {
+            x.id: x for x in documents(session, user, "update") if x.data.get("scenario_id") == scenario.id
+        }
+        if included - set(declared):
+            fail(
+                422,
+                "Snapshot included_update_ids must reference inputs from the source scenario",
+                "UNKNOWN_INCLUDED_UPDATE",
+            )
+        retained_ids = {
+            x["update_id"]
+            for x in selected_updates
+            if x["type"] != "census_replacement" and x["update_id"] not in included
+        }
+        disposition = [
+            {
+                "update_id": x["update_id"],
+                "action": "apply" if x["update_id"] in retained_ids else "exclude",
+                "reason": "already included in replacement snapshot"
+                if x["update_id"] in included
+                else "complete snapshot replaces census"
+                if x["type"] == "census_replacement"
+                else "additional change at the reset cutoff",
+            }
+            for x in selected_updates
+        ]
+        selected_ids = {x["update_id"] for x in selected_updates}
+        disposition.extend(
+            {
+                "update_id": x.get("update_id", x.get("id")),
+                "action": "exclude",
+                "reason": "prior projection inputs are replaced by the complete observed state",
+            }
+            for x in parent.get("updates", [])
+            if x.get("update_id", x.get("id")) not in selected_ids
+        )
+        mentioned = {x["update_id"] for x in disposition}
+        disposition.extend(
+            {"update_id": identity, "action": "exclude", "reason": "already included in replacement snapshot"}
+            for identity in sorted(included - mentioned)
+        )
+        report = {
+            "previous_dataset_version_id": parent["dataset_version_id"],
+            "observed_dataset_version_id": dataset.id,
+            "effective_at": effective,
+            "matched": sorted(old_ids & new_ids),
+            "absent": sorted(old_ids - new_ids),
+            "new": sorted(new_ids - old_ids),
+            "conflicting": [],
+            "basis": basis,
+            "update_disposition": disposition,
+            "included_update_ids": sorted(included),
+            "policy": "replace_complete_snapshot",
+            "absent_is_not_discharge": True,
+            "counts": validation["counts"],
+            "warnings": validation["warnings"],
+            "prior_patient_total": len(old_ids),
+            "observed_patient_total": len(new_ids),
+        }
+        report["reconciliation_hash"] = digest(
+            {
+                key: report[key]
+                for key in (
+                    "previous_dataset_version_id",
+                    "observed_dataset_version_id",
+                    "effective_at",
+                    "matched",
+                    "absent",
+                    "new",
+                    "basis",
+                    "included_update_ids",
+                )
+            }
+        )
+        if (
+            source.get("reconciliation_hash")
+            and source["reconciliation_hash"] != report["reconciliation_hash"]
+        ):
+            fail(409, "The reset reference changed; review reconciliation again", "UNRESOLVED_RECONCILIATION")
+        return report
+
+    @router.post("/scenarios/{identity}/reset-reconciliation")
+    def preview_reset(
+        identity: str, payload: ResetReconciliation, user=Depends(current_user), session=Depends(db)
+    ):
+        source = command_dict(payload)
+        scenario = owned(session, identity, "scenario", user)
+        revision = (
+            owned(session, source["parent_scenario_revision_id"], "scenario_revision", user)
+            if source.get("parent_scenario_revision_id")
+            else None
+        )
+        if revision and revision.data["scenario_id"] != scenario.id:
+            fail(422, "Parent revision belongs to another scenario", "INVALID_BRANCH_SOURCE")
+        selected = []
+        for update_id in dict.fromkeys(source.get("update_ids") or []):
+            event = owned(session, update_id, "update", user)
+            if event.data["scenario_id"] != scenario.id or date(event.data["effective_at"]) != date(
+                source["effective_at"]
+            ):
+                fail(422, "Selected updates must share scenario and cutoff")
+            selected.append({**copy.deepcopy(event.data), "update_id": event.id})
+        dataset = owned(session, source["observed_dataset_version_id"], "dataset", user)
+        return reset_reconciliation(
+            session,
+            user,
+            scenario,
+            revision.data if revision else scenario.data,
+            revision,
+            dataset,
+            source["effective_at"],
+            source,
+            selected,
+        )
+
     @router.post("/updates/{identity}/apply")
     def apply_update(
         identity: str,
@@ -2532,79 +2830,23 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             remaining = (end - date(effective)).total_seconds() / 86400
             if remaining <= 0:
                 fail(422, "Reset time must precede the original horizon end")
-            prior = owned(session, parent["dataset_version_id"], "dataset", user).data
-            predicted = prior.get("patients", [])
-            reconciliation_basis = {"source": "previous_dataset_snapshot", "at": prior["snapshot_at"]}
-            candidates = session.scalars(
-                select(Job)
-                .where(
-                    Job.workspace_id == user["workspace_id"],
-                    Job.kind == "run",
-                    Job.status == "SUCCEEDED",
-                    Job.payload["scenario_id"].as_string() == source_scenario.id,
-                )
-                .order_by(Job.created_at.desc())
+            reconciliation = reset_reconciliation(
+                session,
+                user,
+                source_scenario,
+                parent,
+                parent_revision,
+                dataset,
+                effective,
+                branch_source,
+                selected_updates,
             )
-            for candidate in candidates:
-                if parent_revision and candidate.payload["scenario_revision_id"] != parent_revision.id:
-                    continue
-                selected = candidate.result.get("selected_replication_id")
-                if not selected:
-                    continue
-                _, trace = trace_for(session, user, selected)
-                try:
-                    predicted = state_for(trace, effective)["patients"]
-                except (ValueError, TypeError):
-                    continue
-                reconciliation_basis = {
-                    "source": "selected_parent_projection",
-                    "replication_id": selected,
-                    "run_group_id": candidate.id,
-                    "at": effective,
-                }
-                break
-            old_ids = {p["patient_id"] for p in predicted}
-            new_ids = {p["patient_id"] for p in dataset.data.get("patients", [])}
-            included = set(dataset.data.get("manifest", {}).get("included_update_ids", [])) | set(
-                branch_source.get("included_update_ids", [])
-            )
-            declared = {
-                x.id: x
-                for x in documents(session, user, "update")
-                if x.data.get("scenario_id") == source_scenario.id
-            }
-            if included - set(declared):
-                fail(
-                    422,
-                    "Snapshot included_update_ids must reference inputs from the source scenario",
-                    "UNKNOWN_INCLUDED_UPDATE",
-                )
+            included = set(reconciliation["included_update_ids"])
             retained = [
                 x
                 for x in selected_updates
                 if x["type"] != "census_replacement" and x["update_id"] not in included
             ]
-            disposition = [
-                {
-                    "update_id": x["update_id"],
-                    "action": "apply" if x in retained else "exclude",
-                    "reason": "already included in replacement snapshot"
-                    if x["update_id"] in included
-                    else "complete snapshot replaces census"
-                    if x["type"] == "census_replacement"
-                    else "additional change at the reset cutoff",
-                }
-                for x in selected_updates
-            ]
-            disposition.extend(
-                {
-                    "update_id": x.get("update_id", x.get("id")),
-                    "action": "exclude",
-                    "reason": "prior projection inputs are replaced by the complete observed state",
-                }
-                for x in parent.get("updates", [])
-                if x.get("update_id", x.get("id")) not in selected_ids
-            )
             value.update(
                 dataset_version_id=dataset.id,
                 start_at=effective,
@@ -2612,20 +2854,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                 horizon_calendar_days=max(1, math.ceil(remaining)),
                 updates=retained,
             )
-            value["reconciliation"] = {
-                "previous_dataset_version_id": parent["dataset_version_id"],
-                "observed_dataset_version_id": dataset.id,
-                "effective_at": effective,
-                "matched": sorted(old_ids & new_ids),
-                "absent": sorted(old_ids - new_ids),
-                "new": sorted(new_ids - old_ids),
-                "conflicting": [],
-                "basis": reconciliation_basis,
-                "update_disposition": disposition,
-                "included_update_ids": sorted(included),
-                "policy": "replace_complete_snapshot",
-                "absent_is_not_discharge": True,
-            }
+            value["reconciliation"] = reconciliation
         else:
             replication_id = branch_source.get("source_replication_id", event.data.get("replication_id"))
             parent_run_id = branch_source.get("parent_run_group_id")

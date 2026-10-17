@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./patients.css";
 import { usePatientPage } from "./usePatientPage";
+import UnitEvidence from "../components/UnitEvidence";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -164,6 +165,13 @@ export default function Patients({
     [filter, setFilter] = useState("all"),
     [search, setSearch] = useState(""),
     [unit, setUnit] = useState(""),
+    [care, setCare] = useState(""),
+    [reason, setReason] = useState(""),
+    [arrivedFrom, setArrivedFrom] = useState(""),
+    [arrivedUntil, setArrivedUntil] = useState(""),
+    [remainingMin, setRemainingMin] = useState(""),
+    [remainingMax, setRemainingMax] = useState(""),
+    [transfer, setTransfer] = useState(""),
     [detail, setDetail] = useState<Entity | null>(null),
     [eligibility, setEligibility] = useState<Entity[]>([]),
     [detailError, setDetailError] = useState(""),
@@ -176,6 +184,9 @@ export default function Patients({
     units = allUnits.filter((u) => u.facility_id === ctx.selectedFacility);
   const selected = ctx.selectedPatient,
     rep = ctx.activeReplicationId || ctx.run?.selected_replication_id,
+    censusAt = rep
+      ? ctx.selectedTime
+      : ctx.dataset?.snapshot_at || ctx.selectedTime,
     q = queueStats(ctx),
     unavailable = stateUnavailable(ctx);
   const filtered = useMemo(
@@ -203,9 +214,17 @@ export default function Patients({
         unit_id: unit || undefined,
         search: search || undefined,
         state: filter === "all" ? undefined : filter,
+        care_level: care || undefined,
+        waiting_reason: reason || undefined,
+        arrival_from: arrivedFrom ? `${arrivedFrom}:00Z` : undefined,
+        arrival_until: arrivedUntil ? `${arrivedUntil}:00Z` : undefined,
+        remaining_min_hours: remainingMin || undefined,
+        remaining_max_hours: remainingMax || undefined,
+        transfer_eligible: transfer || undefined,
       },
       30,
       filtered,
+      ctx.dataset?.id,
     ),
     { page, setPage } = census;
   const facilityTotal = Number(
@@ -533,7 +552,7 @@ export default function Patients({
                     {tab === "patients" ? census.total : units.length}
                   </span>
                 </h3>
-                <span className="micro-label">{time(ctx.selectedTime)}</span>
+                <span className="micro-label">{time(censusAt)}</span>
               </div>
               <div className="table-tools">
                 <label className="search-input">
@@ -563,6 +582,150 @@ export default function Patients({
                 ) : null}
               </div>
             </div>
+            {tab === "patients" ? (
+              <details className="patient-filter-panel">
+                <summary>
+                  Care, waiting, arrival and remaining-stay filters
+                </summary>
+                <div className="patient-filter-grid">
+                  <label>
+                    Required care
+                    <select
+                      value={care}
+                      onChange={(e) => setCare(e.target.value)}
+                    >
+                      <option value="">All care levels</option>
+                      <option value="ward">Ward</option>
+                      <option value="icu">ICU</option>
+                      <option value="ambulatory">Ambulatory</option>
+                    </select>
+                  </label>
+                  <label>
+                    Current unit
+                    <select
+                      value={unit}
+                      onChange={(e) => setUnit(e.target.value)}
+                    >
+                      <option value="">All units</option>
+                      {units.map((u) => (
+                        <option key={unitId(u)} value={unitId(u)}>
+                          {nameOf(u)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Waiting reason
+                    <select
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                      disabled={!rep}
+                    >
+                      <option value="">All reasons</option>
+                      {[
+                        "nursing_capacity",
+                        "minimum_operating_team",
+                        "required_equipment_unavailable",
+                        "no_matching_physical_place",
+                        "place_turnover",
+                        "destination_inactive",
+                        "unsupported_care_capability",
+                        "incoming_reservation",
+                        "awaiting_transport_pickup",
+                        "in_transit",
+                        ...Object.keys(
+                          ctx.state?.blocker_summary?.[ctx.selectedFacility] ||
+                            {},
+                        ),
+                      ]
+                        .filter(
+                          (value, index, values) =>
+                            values.indexOf(value) === index,
+                        )
+                        .map((value) => (
+                          <option key={value} value={value}>
+                            {value.replaceAll("_", " ")}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                  <label>
+                    Transfer eligibility
+                    <select
+                      value={transfer}
+                      onChange={(e) => setTransfer(e.target.value)}
+                    >
+                      <option value="">All declarations</option>
+                      <option value="true">Declared eligible</option>
+                      <option value="false">Declared ineligible</option>
+                    </select>
+                  </label>
+                  <label>
+                    Arrived from (UTC)
+                    <input
+                      type="datetime-local"
+                      value={arrivedFrom}
+                      onChange={(e) => setArrivedFrom(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Arrived before (UTC)
+                    <input
+                      type="datetime-local"
+                      value={arrivedUntil}
+                      onChange={(e) => setArrivedUntil(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Minimum remaining hours
+                    <input
+                      type="number"
+                      min="0"
+                      max="1000000"
+                      step="0.1"
+                      value={remainingMin}
+                      onChange={(e) => setRemainingMin(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Maximum remaining hours
+                    <input
+                      type="number"
+                      min="0"
+                      max="1000000"
+                      step="0.1"
+                      value={remainingMax}
+                      onChange={(e) => setRemainingMax(e.target.value)}
+                    />
+                  </label>
+                </div>
+                <p className="small-copy muted">
+                  Remaining filters use the retained stage sample for a
+                  simulation or the supplied residual/template mean for a source
+                  snapshot. Unknown or not-started stages do not match a numeric
+                  range. Transfer eligibility is a patient declaration;
+                  placement still requires destination and transport checks.
+                  Waiting reasons are available after a simulation.
+                </p>
+                <Button
+                  small
+                  onClick={() => {
+                    setCare("");
+                    setReason("");
+                    setArrivedFrom("");
+                    setArrivedUntil("");
+                    setRemainingMin("");
+                    setRemainingMax("");
+                    setTransfer("");
+                    setUnit("");
+                    setFilter("all");
+                    setSearch("");
+                  }}
+                >
+                  Clear census filters
+                </Button>
+              </details>
+            ) : null}
             {census.error ? <ErrorBox error={census.error} /> : null}
             {census.loading && tab === "patients" ? (
               <div className="info-note" role="status">
@@ -578,6 +741,9 @@ export default function Patients({
                       <th>Current location</th>
                       <th>Required care</th>
                       <th>Elapsed stage</th>
+                      <th>Remaining modeled stage</th>
+                      <th>Time waiting</th>
+                      <th>Required resources</th>
                       <th>Status</th>
                       <th>
                         <span className="muted">Inspect</span>
@@ -616,9 +782,41 @@ export default function Patients({
                           {p.target_unit_kind || p.care_level || "ambulatory"}
                         </td>
                         <td className="numeric">
-                          {elapsed(p, ctx.selectedTime) === null
+                          {elapsed(p, censusAt) === null
                             ? "—"
-                            : `${fmt(elapsed(p, ctx.selectedTime), 1)} h`}
+                            : `${fmt(elapsed(p, censusAt), 1)} h`}
+                        </td>
+                        <td>
+                          {p.remaining_summary?.hours == null ? (
+                            <span className="muted">
+                              {p.remaining_summary?.label || "Unavailable"}
+                            </span>
+                          ) : (
+                            <>
+                              <strong>
+                                {fmt(p.remaining_summary.hours, 1)} h
+                              </strong>
+                              <small className="patient-cell-note">
+                                {p.remaining_summary.label}
+                              </small>
+                            </>
+                          )}
+                        </td>
+                        <td>
+                          {p.waiting_hours == null
+                            ? "Unknown"
+                            : `${fmt(p.waiting_hours, 1)} h`}
+                        </td>
+                        <td>
+                          {(p.placement_resource_requirements || []).length
+                            ? p.placement_resource_requirements
+                                .map((r: Entity | string) =>
+                                  typeof r === "string"
+                                    ? r.replaceAll("_", " ")
+                                    : `${r.quantity || 1} × ${(r.capability_code || r.resource_profile_id || "resource").replaceAll("_", " ")}`,
+                                )
+                                .join(", ")
+                            : "Standard care bundle"}
                         </td>
                         <td>
                           <span
@@ -917,6 +1115,7 @@ export default function Patients({
               {currentUnit ? (
                 <div className="inspector-section">
                   <UnitDetails unit={currentUnit} />
+                  <UnitEvidence ctx={ctx} unit={currentUnit} />
                 </div>
               ) : null}
               <div className="inspector-section">
@@ -948,6 +1147,7 @@ export default function Patients({
               ) : null}
               <div className="inspector-section">
                 <UnitDetails unit={chosenUnit} />
+                <UnitEvidence ctx={ctx} unit={chosenUnit} />
               </div>
             </>
           ) : (

@@ -5,6 +5,7 @@ import {
   clampWindow,
   conditionWindow,
   inputDifferences,
+  horizonDays,
   mixError,
 } from "./scenarioEditor";
 import type { EditorValues } from "./scenarioEditor";
@@ -163,5 +164,19 @@ describe("scenario input edits", () => {
       "base seed",
       "conditions",
     ]);
+  });
+});
+
+describe("calendar horizon units", () => {
+  it("clamps month ends and counts leap dates in the local calendar", () => {
+    expect(horizonDays("2028-01-31T06:00:00Z", 1, "months")).toBe(29);
+    expect(horizonDays("2028-01-31T06:00:00Z", 2, "months")).toBe(60);
+    expect(horizonDays("2028-01-01T06:00:00Z", 12, "months")).toBe(366);
+    expect(horizonDays("2027-01-31T06:00:00Z", 1, "months")).toBe(28);
+  });
+  it("keeps weeks as seven calendar dates across daylight saving", () => {
+    expect(horizonDays("2026-11-01T05:00:00Z", 1, "weeks")).toBe(7);
+    expect(horizonDays("2026-03-08T06:00:00Z", 2, "weeks")).toBe(14);
+    expect(() => horizonDays("2026-01-01T06:00:00Z", 1.5, "months")).toThrow();
   });
 });

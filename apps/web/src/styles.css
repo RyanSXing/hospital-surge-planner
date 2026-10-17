@@ -7209,7 +7209,10 @@ main {
   .overview-page {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;
-    grid-template-rows: 84px 116px minmax(390px, 1fr) 288px;
+    grid-template-rows: 84px 116px minmax(390px, 1fr) var(
+        --overview-timeline-height,
+        260px
+      );
     min-height: 900px;
     height: 100%;
   }
@@ -7252,11 +7255,22 @@ main {
     scrollbar-gutter: stable;
     border-top: 1px solid #294352;
   }
-  .overview-page > .timeline-panel {
+  .overview-page > .overview-timeline-dock {
     grid-column: 1;
     grid-row: 4;
     min-height: 0;
-    height: 288px;
+    height: var(--overview-timeline-height, 260px);
+    overflow: auto;
+    position: relative;
+  }
+  .overview-timeline-dock > .timeline-panel {
+    min-height: 0;
+  }
+  .overview-page.inspector-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .overview-page.timeline-collapsed {
+    min-height: 700px;
   }
   .overview-page .timeline-header {
     gap: 10px;
@@ -7283,6 +7297,40 @@ main {
   }
   .overview-page .inspector-section .bed-grid {
     margin-top: 12px;
+  }
+}
+
+.overview-page .inspector[hidden],
+.overview-timeline-dock[hidden] {
+  display: none;
+}
+.timeline-resize-handle {
+  display: none;
+}
+.overview-layout-control {
+  border: 1px solid #35596d;
+  min-width: 32px;
+  min-height: 32px;
+}
+@media (min-width: 1100px) {
+  .timeline-resize-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10px;
+    position: sticky;
+    top: 0;
+    background: #0d2533;
+    border-top: 1px solid #35596d;
+    cursor: ns-resize;
+    touch-action: none;
+    z-index: 2;
+  }
+  .timeline-resize-handle > span {
+    width: 42px;
+    height: 3px;
+    border-radius: 2px;
+    background: #799fb5;
   }
 }
 

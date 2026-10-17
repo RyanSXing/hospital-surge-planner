@@ -23,8 +23,9 @@ export function usePatientPage(
   filters: Record<string, string | undefined>,
   size: number,
   fallback: Entity[] = [],
+  datasetId?: string,
 ) {
-  const key = JSON.stringify([replication, at, filters]),
+  const key = JSON.stringify([replication, datasetId, at, filters]),
     [position, setPosition] = useState({ key: "", page: 0 }),
     [result, setResult] = useState<{
       url: string;
@@ -36,7 +37,9 @@ export function usePatientPage(
   const page = position.key === key ? position.page : 0,
     url = replication
       ? patientPageQuery(replication, at, filters, page, size)
-      : null;
+      : datasetId
+        ? `/datasets/${encodeURIComponent(datasetId)}/patients?${new URLSearchParams({ ...Object.fromEntries(Object.entries(filters).filter(([, value]) => value !== undefined && value !== "") as [string, string][]), limit: String(size), cursor: String(page * size) })}`
+        : null;
   const setPage = (value: number | ((page: number) => number)) =>
     setPosition({
       key,

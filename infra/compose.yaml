@@ -2,11 +2,6 @@ name: hospital-surge-planner
 
 x-app: &app
   image: hospital-surge-planner-api:${IMAGE_TAG:-1.0.0}
-  build:
-    context: ..
-    dockerfile: infra/Dockerfile.api
-    args:
-      CODE_COMMIT: ${CODE_COMMIT:-uncommitted-working-tree}
   env_file: ../.env
   environment: &app-env
     APP_ENV: ${COMPOSE_APP_ENV:-production}
@@ -67,6 +62,11 @@ services:
     restart: unless-stopped
   api:
     <<: *app
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.api
+      args:
+        CODE_COMMIT: ${CODE_COMMIT:-uncommitted-working-tree}
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/ready', timeout=4)"]
       interval: 15s

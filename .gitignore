@@ -11,6 +11,7 @@ __pycache__/
 htmlcov/
 node_modules/
 apps/web/dist/
+*.tsbuildinfo
 data/
 artifacts/
 backups/

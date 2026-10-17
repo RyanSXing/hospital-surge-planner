@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-10-17T08:58:26.934140+00:00",
+  "scope": "Local desktop Chrome, actual stored 30-day/100-replication run",
+  "run_group_id": "run_0284e8f18a78474fb536",
+  "viewport": {
+    "width": 1600,
+    "height": 1000
+  },
+  "checks": {
+    "independent_inspector_and_timeline_collapse": true,
+    "timeline_expansion_preserves_hidden_inspector": true,
+    "timeline_initial_height_px": 260,
+    "timeline_keyboard_End_height_px": 420,
+    "separator_aria_valuenow": "420",
+    "heatmap_Enter_opens_selected_day_dialog": true,
+    "selected_dialog": "Day 1 \u00b7 October 16, 2026"
+  },
+  "screenshot": "evidence/browser-overview-docked-layout.png",
+  "result": "passed"
+}

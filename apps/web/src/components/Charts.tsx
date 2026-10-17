@@ -568,6 +568,11 @@ export function Timeline({
               className={`heat-cell heat-${tone} ${ctx.selectedDay === i ? "selected" : ""}`}
               onClick={() => ctx.setDay(i)}
               onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  ctx.setDay(i);
+                  if (ctx.metrics) setDetailOpen(true);
+                }
                 if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
                   e.preventDefault();
                   const next = Math.max(

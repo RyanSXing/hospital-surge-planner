@@ -62,6 +62,15 @@ def test_stress_queue_and_reproducibility(stress):
     assert a["scalar_metrics"]["inpatient_waiting_patient_hours"] > 0
     first = state_at(a, 0)
     assert first["inpatient_queue"] == 14
+    source = {p["patient_id"]: p for p in d["patients"]}
+    for patient in first["patients"]:
+        if patient["state"] == "ed_boarding":
+            assert patient["admission_requested_at"] == source[patient["patient_id"]]["admission_requested_at"]
+            assert patient["queue_entered_at"] == patient["admission_requested_at"]
+    staff = {person["staff_id"]: person for person in d["staff"]}
+    for unit in first["units"]:
+        assert len(unit["active_staff_ids"]) == sum(unit["staff_by_role"].values())
+        assert all(sid in staff for sid in unit["active_staff_ids"])
     assert sum(u["modeled_occupied"] for u in first["units"]) == 116
     assert a["scalar_metrics"]["patient_conservation_ok"]
 

@@ -173,3 +173,39 @@ export function inputDifferences(before: Entity, after: Entity) {
       after: after[field] ?? null,
     }));
 }
+
+export type HorizonUnit = "days" | "weeks" | "months";
+export function horizonDays(
+  start: string,
+  amount: number,
+  unit: HorizonUnit,
+  zone = "America/Chicago",
+) {
+  if (!Number.isInteger(amount) || amount < 1)
+    throw new Error("Enter a positive whole horizon amount.");
+  if (unit === "days") return amount;
+  if (unit === "weeks") return amount * 7;
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: zone,
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    })
+      .formatToParts(new Date(start))
+      .map((p) => [p.type, p.value]),
+  );
+  const year = Number(parts.year),
+    month = Number(parts.month),
+    day = Number(parts.day);
+  const target = new Date(Date.UTC(year, month - 1 + amount, 1));
+  const last = new Date(
+    Date.UTC(target.getUTCFullYear(), target.getUTCMonth() + 1, 0),
+  ).getUTCDate();
+  const end = Date.UTC(
+    target.getUTCFullYear(),
+    target.getUTCMonth(),
+    Math.min(day, last),
+  );
+  return (end - Date.UTC(year, month - 1, day)) / 86400000;
+}

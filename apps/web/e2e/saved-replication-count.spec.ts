@@ -47,6 +47,47 @@ test("saved custom replication counts stay visible and are submitted unchanged",
       },
     ],
   });
+  const projected = await api(page.request, `/comparisons/${comparison.id}`);
+  expect(projected.plans.every((plan: any) => plan.total === 2)).toBe(true);
+  // Deterministic pending UI fixture derived from the real GET projection.
+  // Status and completion are deliberately reset; requested totals stay real.
+  // This tests pre-result rendering without racing the live worker's completion.
+  const pendingProjection = {
+    ...projected,
+    status: "RUNNING",
+    completed: 0,
+    plans: projected.plans.map((plan: any) => ({
+      ...plan,
+      status: "RUNNING",
+      completed: 0,
+      metrics: undefined,
+    })),
+  };
+  const comparisonCount = page.getByRole("combobox", {
+    name: "Comparison simulation runs",
+    exact: true,
+  });
+  // Only initial saved-view reads use the fixture. Computation and subsequent
+  // completion, reevaluation, and reload remain actual API operations.
+  const queuedRoute = `**/api/comparisons/${comparison.id}`;
+  await page.route(queuedRoute, (route) =>
+    route.fulfill({ json: pendingProjection }),
+  );
+  try {
+    await page.goto(
+      `/?scenario=${context.scenario.id}&view=analysis&analysis=comparison&comparison=${comparison.id}`,
+    );
+    await expect(
+      page.getByText("Computation in progress", { exact: true }),
+    ).toBeVisible();
+    await expect(comparisonCount).toHaveValue("2");
+    await expect(comparisonCount.locator("option:checked")).toHaveText(
+      "2 runs · Saved count",
+    );
+    await expect(comparisonCount.locator("option")).toHaveCount(4);
+  } finally {
+    await page.unroute(queuedRoute);
+  }
   await expect
     .poll(
       async () =>
@@ -54,18 +95,7 @@ test("saved custom replication counts stay visible and are submitted unchanged",
       { timeout: 120000 },
     )
     .toBe("SUCCEEDED");
-  await page.goto(
-    `/?scenario=${context.scenario.id}&view=analysis&analysis=comparison&comparison=${comparison.id}`,
-  );
-  const comparisonCount = page.getByRole("combobox", {
-    name: "Comparison simulation runs",
-    exact: true,
-  });
   await expect(comparisonCount).toHaveValue("2");
-  await expect(comparisonCount.locator("option:checked")).toHaveText(
-    "2 runs · Saved count",
-  );
-  await expect(comparisonCount.locator("option")).toHaveCount(4);
   await expect(
     page.getByText("2 runs per plan", { exact: true }),
   ).toBeVisible();
@@ -106,6 +136,15 @@ test("saved custom replication counts stay visible and are submitted unchanged",
     source_comparison_id: comparison.id,
     submitted_comparison_id: repeated.id,
     saved_and_submitted_replications: 2,
+    metadata_projection_source_status: projected.status,
+    pending_ui_fixture: {
+      derived_from_actual_get: true,
+      overridden_status: "RUNNING",
+      completed_reset_to_zero: true,
+      metrics_removed: true,
+      actual_requested_count: 2,
+    },
+    count_restored_without_metrics: true,
     custom_option_visible_in_both_selectors: true,
     reload_retains_custom_count: true,
   });

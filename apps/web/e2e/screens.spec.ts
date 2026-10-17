@@ -58,6 +58,17 @@ test("the two-page workspace and analysis sections render actual run context", a
       await expect(page.locator(".replay-summary")).toContainText(
         "84 active patients",
       );
+    if (view === "comparison") {
+      const caption = page.locator(".comparison-chart .chart-empty small");
+      await expect(caption).toBeVisible();
+      const captionBox = await caption.boundingBox();
+      const chartBox = await page.locator(".comparison-chart").boundingBox();
+      expect(captionBox).not.toBeNull();
+      expect(chartBox).not.toBeNull();
+      expect(captionBox!.y + captionBox!.height).toBeLessThanOrEqual(
+        chartBox!.y + chartBox!.height,
+      );
+    }
     if (view === "data")
       await expect(
         page.getByRole("button", { name: "Export dataset", exact: true }),

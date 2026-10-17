@@ -1,3 +1,15 @@
+.compare-page .chart-empty {
+  height: auto;
+  min-height: 111px;
+  padding: 12px 0;
+  text-align: center;
+}
+
+.compare-page .chart-empty svg {
+  min-height: 0;
+  flex-shrink: 0;
+}
+
 /* Keep the decision chain visible with the fixed selected-time dock at desktop sizes. */
 @media (min-width: 1024px) {
   .compare-page.planning-panel-page > .page-heading {

@@ -167,8 +167,15 @@ export default function Compare({
       return;
     }
     setComparison(c);
-    if (c.plans?.[0]?.metrics?.replications_completed)
-      setReplications(c.plans[0].metrics.replications_completed);
+    const plan = c.plans?.[0];
+    const savedCount = [
+      plan?.metrics?.replications_completed,
+      plan?.total,
+    ].find(
+      (count) =>
+        typeof count === "number" && Number.isFinite(count) && count > 0,
+    );
+    if (savedCount !== undefined) setReplications(savedCount);
     const kinds = c.plans
       ?.slice(1)
       .map((p: Entity) => p.interventions?.at(-1)?.kind)

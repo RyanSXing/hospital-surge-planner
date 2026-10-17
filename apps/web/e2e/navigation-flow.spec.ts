@@ -425,7 +425,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
 
   await page
     .locator(".overview-page:visible")
-    .getByRole("button", { name: "Record update", exact: true })
+    .getByRole("button", { name: /Record update$/ })
     .click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Additional patients").fill("5");
@@ -759,7 +759,7 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   await expectRoute(page, "analysis", "analytics", "patients");
   expect(new URL(page.url()).searchParams.get("at")).toBe(selectedAt);
   const patientRow = page.locator(".patient-table tbody tr").first();
-  await patientRow.click();
+  await patientRow.locator(".link-button").first().click();
   await expect(page.locator(".patient-inspector")).toBeVisible();
   await expect.poll(() => selection(page).patient).toBeTruthy();
   const patientContext = selection(page);

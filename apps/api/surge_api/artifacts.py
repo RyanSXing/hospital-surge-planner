@@ -16,6 +16,70 @@ from .db import canonical, now, uid
 _json_cache = OrderedDict()
 _cache_lock = threading.RLock()
 _cache_bytes = 0
+_oci_clients = OrderedDict()
+_oci_clients_lock = threading.RLock()
+
+
+def _reset_oci_clients_after_fork():
+    # Child workers must not inherit a parent's HTTP sessions or a held lock.
+    global _oci_clients, _oci_clients_lock
+    _oci_clients = OrderedDict()
+    _oci_clients_lock = threading.RLock()
+
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_reset_oci_clients_after_fork)
+
+
+def _credential_file_signature(config):
+    signatures = []
+    for key in ("key_file", "security_token_file"):
+        if not config.get(key):
+            continue
+        path = Path(config[key]).expanduser().resolve()
+        try:
+            stat = path.stat()
+            signatures.append((str(path), stat.st_mtime_ns, stat.st_size, stat.st_ino))
+        except OSError:
+            signatures.append((str(path), None))
+    return tuple(signatures)
+
+
+def _oci_client():
+    """Reuse the SDK client and its refreshing signer, never a copied token."""
+    import oci
+
+    auth = os.getenv("OCI_AUTH", "instance_principal")
+    profile = os.getenv("OCI_CONFIG_PROFILE", "DEFAULT")
+    config = {} if auth == "instance_principal" else oci.config.from_file(profile_name=profile)
+    key = (
+        os.getpid(),
+        auth,
+        profile,
+        os.getenv("OCI_CONFIG_FILE"),
+        os.getenv("OCI_REGION"),
+        os.getenv("OCI_METADATA_BASE_URL"),
+        hashlib.sha256(canonical(config)).hexdigest(),
+        _credential_file_signature(config),
+    )
+    with _oci_clients_lock:
+        if key in _oci_clients:
+            client = _oci_clients.pop(key)
+            _oci_clients[key] = client
+            return client
+        if auth == "instance_principal":
+            # The SDK signer checks/refreshes its federation token on each
+            # signed request; keeping it alive preserves that refresh behavior.
+            signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
+            client = oci.object_storage.ObjectStorageClient(config, signer=signer)
+        else:
+            client = oci.object_storage.ObjectStorageClient(config)
+        # Failed construction is never cached. Do not close evicted clients:
+        # an in-flight request may still hold an ArtifactStore using one.
+        while len(_oci_clients) >= 4:
+            _oci_clients.popitem(last=False)
+        _oci_clients[key] = client
+        return client
 
 
 class ArtifactStore:
@@ -24,15 +88,7 @@ class ArtifactStore:
         self.root = Path(os.getenv("ARTIFACT_LOCAL_DIR", "data/artifacts")).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         if self.backend == "oci":
-            import oci
-
-            if os.getenv("OCI_AUTH", "instance_principal") == "instance_principal":
-                signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
-                self.client = oci.object_storage.ObjectStorageClient({}, signer=signer)
-            else:
-                self.client = oci.object_storage.ObjectStorageClient(
-                    oci.config.from_file(profile_name=os.getenv("OCI_CONFIG_PROFILE", "DEFAULT"))
-                )
+            self.client = _oci_client()
             self.namespace = os.environ["OCI_NAMESPACE"]
             self.bucket = os.environ["OCI_ARTIFACT_BUCKET"]
 

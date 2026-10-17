@@ -86,6 +86,7 @@ def main():
     run = wait("/run-groups", run)
     report.update(status=run["status"], completed=run["completed"], pipeline_seconds=time.perf_counter() - started,
                   pipeline_timing_is_resumed=args.run_id is not None, manifest=run.get("manifest"))
+    assert all(a["backend"] == "oci" for a in run["manifest"]["artifacts"])
     if args.expected_commit:
         assert run["manifest"]["code_commit"] == args.expected_commit, run["manifest"]
     selected = run["selected_replication_id"]
@@ -107,6 +108,11 @@ def main():
             measurement.update(patient_total=value["patient_total"], returned_patients=len(value["patients"]))
             assert len(value["patients"]) <= 500
         report["reads"][label] = measurement
+    observations = call("GET", "/workspaces/workspace-main/execution-metrics")
+    observed = next((job for job in observations["recent_jobs"] if job["id"] == run["id"]), None)
+    assert observed and observed["execution_metrics"], "Worker completion metrics were not persisted"
+    report["worker_execution_metrics"] = observed["execution_metrics"]
+    report["worker_started_to_durable_completion_seconds"] = observed["execution_metrics"]["wall_seconds"]
     if not args.skip_export:
         export = wait("/exports", call("POST", "/exports", json={"run_group_id": run["id"], "format": "zip"}))
         response = client.get(export["download_url"])

@@ -7094,6 +7094,14 @@ main {
   .compare-page .page-heading {
     align-items: flex-start;
   }
+  .compare-page .heading-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+  }
+  .compare-page .heading-actions select {
+    min-width: 150px;
+  }
 }
 
 .evaluated-plan-banner {

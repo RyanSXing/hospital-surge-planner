@@ -1,0 +1,12 @@
+{
+  "recorded_at": "2026-10-17T08:46:29.088015+00:00",
+  "scope": "Actual OCI A2 host inside locked dependency image; creating a new SDK instance-principal signer and ObjectStorageClient per call",
+  "constructor_seconds": [
+    0.382232733,
+    0.369127809,
+    0.355366581,
+    0.418247851,
+    0.302856681
+  ],
+  "implication": "Repeated client creation alone exceeds 250ms warm-read target; cache per process/config and retain SDK token refresh"
+}

@@ -1,13 +1,13 @@
 {
-  "run_id": "run_160f20b35ce14ea2b79c",
-  "replication_id": "run_160f20b35ce14ea2b79c_rep_0000",
+  "run_id": "run_61b7813fc2814ce28a12",
+  "replication_id": "run_61b7813fc2814ce28a12_rep_0000",
   "paginated_window_total": 60,
   "type_filter": "arrival",
   "selected_patient": "PAT-ED_MAIN-20261016-000240-s-0001",
   "exact_slot_count": 30,
   "patient_history_events": 8,
   "exact_shortage_periods": 1,
-  "viewport": "desktop",
+  "viewport": "mobile",
   "future_censored_selection_does_not_add_marker": true,
   "departed_selection_does_not_add_marker": true,
   "utc_jump_reconstructs_requested_time": true

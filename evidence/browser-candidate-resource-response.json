@@ -1,15 +1,21 @@
 {
-  "source_dataset_id": "dataset_095c0c16c9f34b95afd5",
-  "dataset_id": "dataset_182d975f968345abb687",
-  "scenario_id": "scenario_bc6985228f80453bbccc",
-  "evaluation_run_id": "run_370ce7f075cb4748bc99",
-  "facility_id": "FAC-4B528787",
-  "unit_id": "UNIT-FAC-4B528787",
+  "source_dataset_id": "demo-v1-1-0-planning_baseline-41021-365",
+  "dataset_id": "dataset_840ce779ab8c470a8ef4",
+  "scenario_id": "scenario_9b70d58efb8c4afaaa77",
+  "evaluation_run_id": "run_282523204f504aa5b920",
+  "facility_id": "FAC-CD28CAB3",
+  "unit_id": "UNIT-FAC-CD28CAB3",
   "declared_places": 12,
   "staff_supported_places": 8,
   "at": "2026-10-16T13:00:00.000Z",
   "actual_unit": {
     "active": true,
+    "active_staff_ids": [
+      "STAFF-RES-T1-PROVIDER-01",
+      "STAFF-RES-T1-RN-01",
+      "STAFF-RES-T1-RN-02",
+      "STAFF-RES-T1-SUPPORT-01"
+    ],
     "admission_gate": true,
     "at": "2026-10-16T12:59:41.266049Z",
     "available": 8,
@@ -27,7 +33,7 @@
         "reserved": 0
       }
     },
-    "facility_id": "FAC-4B528787",
+    "facility_id": "FAC-CD28CAB3",
     "kind": "clinic",
     "modeled_occupied": 0,
     "occupied": 0,
@@ -40,6 +46,6 @@
       "support": 1
     },
     "staffed": 8,
-    "unit_id": "UNIT-FAC-4B528787"
+    "unit_id": "UNIT-FAC-CD28CAB3"
   }
 }

@@ -1,12 +1,12 @@
 {
-  "tested_at": "2026-10-17T09:12:47.064Z",
+  "tested_at": "2026-10-17T21:07:09.906Z",
   "screens": [
     {
       "view": "overview",
-      "scenario": "scenario_1520401215594fdf819a",
-      "run": "run_b96f743b8a174b5d8a0d",
+      "scenario": "scenario_a1f7879fbe134539a5c4",
+      "run": "run_92058f97a52c4c5e939e",
       "title": [
-        "Command overview"
+        "Hospital overview"
       ],
       "viewport": {
         "width": 1600,
@@ -14,47 +14,11 @@
       }
     },
     {
-      "view": "scenarios",
-      "scenario": "scenario_1520401215594fdf819a",
-      "run": "run_b96f743b8a174b5d8a0d",
+      "view": "summary",
+      "scenario": "scenario_a1f7879fbe134539a5c4",
+      "run": "run_92058f97a52c4c5e939e",
       "title": [
-        "Build a surge scenario"
-      ],
-      "viewport": {
-        "width": 1600,
-        "height": 1000
-      }
-    },
-    {
-      "view": "patients",
-      "scenario": "scenario_1520401215594fdf819a",
-      "run": "run_b96f743b8a174b5d8a0d",
-      "title": [
-        "Hospital capacity"
-      ],
-      "viewport": {
-        "width": 1600,
-        "height": 1000
-      }
-    },
-    {
-      "view": "resources",
-      "scenario": "scenario_1520401215594fdf819a",
-      "run": "run_b96f743b8a174b5d8a0d",
-      "title": [
-        "Resource planning"
-      ],
-      "viewport": {
-        "width": 1600,
-        "height": 1000
-      }
-    },
-    {
-      "view": "compare",
-      "scenario": "scenario_1520401215594fdf819a",
-      "run": "run_b96f743b8a174b5d8a0d",
-      "title": [
-        "Compare responses"
+        "Results summary"
       ],
       "viewport": {
         "width": 1600,
@@ -63,8 +27,8 @@
     },
     {
       "view": "replay",
-      "scenario": "scenario_1520401215594fdf819a",
-      "run": "run_b96f743b8a174b5d8a0d",
+      "scenario": "scenario_a1f7879fbe134539a5c4",
+      "run": "run_92058f97a52c4c5e939e",
       "title": [
         "Patient flow replay"
       ],
@@ -74,9 +38,57 @@
       }
     },
     {
+      "view": "analytics-outcomes",
+      "scenario": "scenario_a1f7879fbe134539a5c4",
+      "run": "run_92058f97a52c4c5e939e",
+      "title": [
+        "Simulation outcomes"
+      ],
+      "viewport": {
+        "width": 1600,
+        "height": 1000
+      }
+    },
+    {
+      "view": "analytics-patients",
+      "scenario": "scenario_a1f7879fbe134539a5c4",
+      "run": "run_92058f97a52c4c5e939e",
+      "title": [
+        "Hospital capacity"
+      ],
+      "viewport": {
+        "width": 1600,
+        "height": 1000
+      }
+    },
+    {
+      "view": "analytics-resources",
+      "scenario": "scenario_a1f7879fbe134539a5c4",
+      "run": "run_92058f97a52c4c5e939e",
+      "title": [
+        "Resource planning"
+      ],
+      "viewport": {
+        "width": 1600,
+        "height": 1000
+      }
+    },
+    {
+      "view": "comparison",
+      "scenario": "scenario_a1f7879fbe134539a5c4",
+      "run": "run_92058f97a52c4c5e939e",
+      "title": [
+        "Compare responses"
+      ],
+      "viewport": {
+        "width": 1600,
+        "height": 1000
+      }
+    },
+    {
       "view": "data",
-      "scenario": "scenario_1520401215594fdf819a",
-      "run": "run_b96f743b8a174b5d8a0d",
+      "scenario": "scenario_a1f7879fbe134539a5c4",
+      "run": "run_92058f97a52c4c5e939e",
       "title": [
         "A clear foundation for every forecast."
       ],

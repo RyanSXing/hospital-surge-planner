@@ -1,0 +1,106 @@
+
+Running 90 tests using 1 worker
+
+(node:49014) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/arrival-resource-mix.spec.ts:4:1 › reported arrival resource mixtures are editable, validated and retained after reload (3.7s)
+  ✓   2 [desktop] › e2e/context-editor.spec.ts:4:1 › selected alternate replication and patient survive a page reload (10.2s)
+  ✓   3 [desktop] › e2e/context-editor.spec.ts:9:1 › condition drag and care mix edits create inspectable saved differences (6.1s)
+  ✓   4 [desktop] › e2e/data-roles.spec.ts:5:1 › typed data editor and multi-file mapped import create immutable versions (28.7s)
+  ✓   5 [desktop] › e2e/data-roles.spec.ts:11:1 › viewer sees disabled mutation controls and the API rejects writes (2.7s)
+  ✓   6 [desktop] › e2e/demand-source.spec.ts:4:1 › entry stream edit derives read-only demand summaries and commits one immutable version (5.4s)
+  ✓   7 [desktop] › e2e/frozen-context.spec.ts:4:1 › historical results retain frozen dates and assumptions beside an edited draft (6.8s)
+  ✓   8 [desktop] › e2e/frozen-context.spec.ts:114:1 › completed comparisons and source search preserve distinct frozen and rebased datasets (9.9s)
+  ✓   9 [desktop] › e2e/inspector-updates.spec.ts:4:1 › cancelled runs explain their state and retry the same frozen input snapshot (2.4s)
+  ✓  10 [desktop] › e2e/inspector-updates.spec.ts:68:1 › inspector updates retain selected entities, exact time and frozen parent provenance (13.1s)
+  ✓  11 [desktop] › e2e/keyboard-alerts.spec.ts:10:1 › keyboard entry, calendar drilldown, inspection, comparison and export (37.8s)
+  ✓  12 [desktop] › e2e/keyboard-alerts.spec.ts:25:1 › planning alert review preserves the completed result (6.0s)
+  ✓  13 [desktop] › e2e/map-search.spec.ts:51:1 › workspace search keeps completed-run context and map controls preserve their routes (10.9s)
+  ✓  14 [desktop] › e2e/navigation-flow.spec.ts:85:1 › Overview setup to complete Analysis workflow preserves baseline and browser context (39.8s)
+  -  15 [desktop] › e2e/navigation-flow.spec.ts:528:1 › mobile touch navigation retains the Overview draft and source baseline
+  ✓  16 [desktop] › e2e/navigation-flow.spec.ts:624:1 › root, legacy aliases and invalid navigation canonicalize without losing context (6.0s)
+  ✓  17 [desktop] › e2e/navigation-flow.spec.ts:672:1 › Analytics outcomes match recorded metrics and preserve trajectory context (19.4s)
+  ✓  18 [desktop] › e2e/operational-time.spec.ts:4:1 › observed reset preserves an explicit-offset snapshot cutoff finer than one minute (8.8s)
+  ✓  19 [desktop] › e2e/pulse-preset.spec.ts:4:1 › short arrival pulse is editable, undoable and frozen as one additive batch (8.6s)
+  ✓  20 [desktop] › e2e/pulse-preset.spec.ts:124:1 › short arrival pulse rejects a horizon ending before day-two noon (1.6s)
+  ✓  21 [desktop] › e2e/recovery.spec.ts:4:1 › active run survives reload and cancellation excludes incomplete results (2.3s)
+  ✓  22 [desktop] › e2e/recovery.spec.ts:9:1 › failed state, event and checkpoint reads can retry without changing the run (6.9s)
+  ✓  23 [desktop] › e2e/release-workflows.spec.ts:4:1 › calendar horizons, complete library search, pagination, clone and archive lifecycle (12.6s)
+  ✓  24 [desktop] › e2e/release-workflows.spec.ts:143:1 › ICU transfer to a clinic is rejected and ward transfer reserves and travels (12.1s)
+  ✓  25 [desktop] › e2e/release-workflows.spec.ts:253:1 › patient filters and unit evidence expose exact selected-run details (6.5s)
+  ✓  26 [desktop] › e2e/replay-clinical-capacity.spec.ts:14:1 › replay clinical capacity excludes nonclinical shelter inventory (5.7s)
+  ✓  27 [desktop] › e2e/replay-clinical-capacity.spec.ts:86:1 › replay holds a stepdown patient and care path in ICU until actual ward entry (4.7s)
+  ✓  28 [desktop] › e2e/replay-controls.spec.ts:4:1 › playback speed, pause, seek and exact event stepping preserve frozen results (11.2s)
+  ✓  29 [desktop] › e2e/replay-evidence.spec.ts:5:1 › replay exposes complete filtered events, patient history and recorded resources (11.2s)
+  ✓  30 [desktop] › e2e/replay-resources.spec.ts:4:1 › replay resource inspection follows exact reservations, inventory and transport mission (6.7s)
+  ✓  31 [desktop] › e2e/resource-inspector.spec.ts:4:1 › resource tables use persistent selected-time inspectors and reloadable links (10.1s)
+  ✓  32 [desktop] › e2e/resources.spec.ts:4:1 › candidate site requirements become a feasible saved and simulated resource response (25.5s)
+  ✓  33 [desktop] › e2e/scenario-assumptions.spec.ts:4:1 › advanced assumptions save preserves unsaved visual conditions (2.0s)
+  ✓  34 [desktop] › e2e/scenario-curves.spec.ts:4:1 › cohort edit and stream changes retain compatible visible mix semantics (2.4s)
+  ✓  35 [desktop] › e2e/scenario-curves.spec.ts:82:1 › custom imported curves, multiple windows and timeline moves retain exact inputs (2.7s)
+  ✓  36 [desktop] › e2e/scenario-equipment.spec.ts:4:1 › planned equipment quantities use prior exact inventory and reject saturation (2.4s)
+  ✓  37 [desktop] › e2e/scenario-equipment.spec.ts:87:1 › inherited observed equipment failures bound future planned repairs and failures (2.4s)
+  ✓  38 [desktop] › e2e/scenario-families.spec.ts:12:1 › all visual scenario families save canonical inputs and compute actual effects (11.9s)
+  -  39 [desktop] › e2e/scenario-families.spec.ts:338:1 › scenario resource forms and independent inspector remain keyboard accessible on mobile
+  ✓  40 [desktop] › e2e/scenario-timezone.spec.ts:4:1 › scenario fields preserve the second repeated Chicago hour and reject the spring gap (3.0s)
+  ✓  41 [desktop] › e2e/screens.spec.ts:13:1 › the two-page workspace and analysis sections render actual run context (18.7s)
+  ✓  42 [desktop] › e2e/shared-panels.spec.ts:12:1 › linked workspaces keep time docks visible and collapse panels without changing the run (11.7s)
+  ✓  43 [desktop] › e2e/stress.spec.ts:3:1 › stress census exposes initial boarding and actual patient blockers (7.0s)
+  ✓  44 [desktop] › e2e/transfer-selection.spec.ts:4:1 › a slower destination check cannot overwrite the current transfer choice (3.5s)
+workflow: created scenario_fa0b779ccb75444aa700
+workflow: scenario screen loaded
+workflow: fields configured
+workflow: submit clicked
+workflow: queued run_e6596862b9f040a5bb3d
+workflow: run complete
+  ✓  45 [desktop] › e2e/workflows.spec.ts:14:1 › configure, compute, inspect, compare, update, replay and export (39.2s)
+(node:51931) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  46 [mobile] › e2e/arrival-resource-mix.spec.ts:4:1 › reported arrival resource mixtures are editable, validated and retained after reload (3.7s)
+  -  47 [mobile] › e2e/context-editor.spec.ts:4:1 › selected alternate replication and patient survive a page reload
+  -  48 [mobile] › e2e/context-editor.spec.ts:9:1 › condition drag and care mix edits create inspectable saved differences
+  -  49 [mobile] › e2e/data-roles.spec.ts:5:1 › typed data editor and multi-file mapped import create immutable versions
+  ✓  50 [mobile] › e2e/data-roles.spec.ts:11:1 › viewer sees disabled mutation controls and the API rejects writes (2.6s)
+  ✓  51 [mobile] › e2e/demand-source.spec.ts:4:1 › entry stream edit derives read-only demand summaries and commits one immutable version (5.5s)
+  ✓  52 [mobile] › e2e/frozen-context.spec.ts:4:1 › historical results retain frozen dates and assumptions beside an edited draft (7.6s)
+  -  53 [mobile] › e2e/frozen-context.spec.ts:114:1 › completed comparisons and source search preserve distinct frozen and rebased datasets
+  ✓  54 [mobile] › e2e/inspector-updates.spec.ts:4:1 › cancelled runs explain their state and retry the same frozen input snapshot (2.3s)
+  ✓  55 [mobile] › e2e/inspector-updates.spec.ts:68:1 › inspector updates retain selected entities, exact time and frozen parent provenance (13.0s)
+  -  56 [mobile] › e2e/keyboard-alerts.spec.ts:10:1 › keyboard entry, calendar drilldown, inspection, comparison and export
+  -  57 [mobile] › e2e/keyboard-alerts.spec.ts:25:1 › planning alert review preserves the completed result
+  -  58 [mobile] › e2e/map-search.spec.ts:51:1 › workspace search keeps completed-run context and map controls preserve their routes
+  -  59 [mobile] › e2e/navigation-flow.spec.ts:85:1 › Overview setup to complete Analysis workflow preserves baseline and browser context
+  ✓  60 [mobile] › e2e/navigation-flow.spec.ts:528:1 › mobile touch navigation retains the Overview draft and source baseline (5.0s)
+  ✓  61 [mobile] › e2e/navigation-flow.spec.ts:624:1 › root, legacy aliases and invalid navigation canonicalize without losing context (5.9s)
+  ✓  62 [mobile] › e2e/navigation-flow.spec.ts:672:1 › Analytics outcomes match recorded metrics and preserve trajectory context (31.4s)
+  -  63 [mobile] › e2e/operational-time.spec.ts:4:1 › observed reset preserves an explicit-offset snapshot cutoff finer than one minute
+  ✓  64 [mobile] › e2e/pulse-preset.spec.ts:4:1 › short arrival pulse is editable, undoable and frozen as one additive batch (8.9s)
+  ✓  65 [mobile] › e2e/pulse-preset.spec.ts:124:1 › short arrival pulse rejects a horizon ending before day-two noon (1.5s)
+  -  66 [mobile] › e2e/recovery.spec.ts:4:1 › active run survives reload and cancellation excludes incomplete results
+  -  67 [mobile] › e2e/recovery.spec.ts:9:1 › failed state, event and checkpoint reads can retry without changing the run
+  -  68 [mobile] › e2e/release-workflows.spec.ts:4:1 › calendar horizons, complete library search, pagination, clone and archive lifecycle
+  -  69 [mobile] › e2e/release-workflows.spec.ts:143:1 › ICU transfer to a clinic is rejected and ward transfer reserves and travels
+  -  70 [mobile] › e2e/release-workflows.spec.ts:253:1 › patient filters and unit evidence expose exact selected-run details
+  ✓  71 [mobile] › e2e/replay-clinical-capacity.spec.ts:14:1 › replay clinical capacity excludes nonclinical shelter inventory (5.4s)
+  ✓  72 [mobile] › e2e/replay-clinical-capacity.spec.ts:86:1 › replay holds a stepdown patient and care path in ICU until actual ward entry (7.3s)
+  -  73 [mobile] › e2e/replay-controls.spec.ts:4:1 › playback speed, pause, seek and exact event stepping preserve frozen results
+  ✓  74 [mobile] › e2e/replay-evidence.spec.ts:5:1 › replay exposes complete filtered events, patient history and recorded resources (9.9s)
+  ✓  75 [mobile] › e2e/replay-resources.spec.ts:4:1 › replay resource inspection follows exact reservations, inventory and transport mission (6.6s)
+  ✓  76 [mobile] › e2e/resource-inspector.spec.ts:4:1 › resource tables use persistent selected-time inspectors and reloadable links (9.9s)
+  -  77 [mobile] › e2e/resources.spec.ts:4:1 › candidate site requirements become a feasible saved and simulated resource response
+  -  78 [mobile] › e2e/scenario-assumptions.spec.ts:4:1 › advanced assumptions save preserves unsaved visual conditions
+  -  79 [mobile] › e2e/scenario-curves.spec.ts:4:1 › cohort edit and stream changes retain compatible visible mix semantics
+  -  80 [mobile] › e2e/scenario-curves.spec.ts:82:1 › custom imported curves, multiple windows and timeline moves retain exact inputs
+  -  81 [mobile] › e2e/scenario-equipment.spec.ts:4:1 › planned equipment quantities use prior exact inventory and reject saturation
+  -  82 [mobile] › e2e/scenario-equipment.spec.ts:87:1 › inherited observed equipment failures bound future planned repairs and failures
+  -  83 [mobile] › e2e/scenario-families.spec.ts:12:1 › all visual scenario families save canonical inputs and compute actual effects
+  ✓  84 [mobile] › e2e/scenario-families.spec.ts:338:1 › scenario resource forms and independent inspector remain keyboard accessible on mobile (1.8s)
+  -  85 [mobile] › e2e/scenario-timezone.spec.ts:4:1 › scenario fields preserve the second repeated Chicago hour and reject the spring gap
+  ✓  86 [mobile] › e2e/screens.spec.ts:13:1 › the two-page workspace and analysis sections render actual run context (20.3s)
+  -  87 [mobile] › e2e/shared-panels.spec.ts:12:1 › linked workspaces keep time docks visible and collapse panels without changing the run
+  -  88 [mobile] › e2e/stress.spec.ts:3:1 › stress census exposes initial boarding and actual patient blockers
+  ✓  89 [mobile] › e2e/transfer-selection.spec.ts:4:1 › a slower destination check cannot overwrite the current transfer choice (2.9s)
+  -  90 [mobile] › e2e/workflows.spec.ts:14:1 › configure, compute, inspect, compare, update, replay and export
+
+  28 skipped
+  62 passed (10.2m)

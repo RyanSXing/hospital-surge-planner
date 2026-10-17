@@ -1,38 +1,38 @@
 {
-  "scenario_id": "scenario_2b0d0c7d19f1461f9cea",
-  "run_id": "run_4c1e71a9131047e78085",
-  "frozen_revision": "revision_629b55ac19d1457f975b",
+  "scenario_id": "scenario_d184eb647f8c43cbb6b8",
+  "run_id": "run_55bc516af4214b84b1e6",
+  "frozen_revision": "revision_1a9b55a73df94affbe97",
   "all_collections_frozen": true,
   "all_six_resource_rails_visible_together": [
     {
       "name": "Arrival cohorts timeline",
-      "top": 637.65625,
-      "bottom": 690.65625
+      "top": 229.328125,
+      "bottom": 282.328125
     },
     {
       "name": "Staff availability timeline",
-      "top": 690.65625,
-      "bottom": 743.65625
+      "top": 282.328125,
+      "bottom": 335.328125
     },
     {
       "name": "Physical, ready & usable capacity timeline",
-      "top": 743.65625,
-      "bottom": 812.65625
+      "top": 335.328125,
+      "bottom": 404.328125
     },
     {
       "name": "Equipment availability timeline",
-      "top": 812.65625,
-      "bottom": 865.65625
+      "top": 404.328125,
+      "bottom": 457.328125
     },
     {
       "name": "Sites & transfers timeline",
-      "top": 865.65625,
-      "bottom": 918.65625
+      "top": 457.328125,
+      "bottom": 510.328125
     },
     {
       "name": "One-time incident batches timeline",
-      "top": 918.65625,
-      "bottom": 971.65625
+      "top": 510.328125,
+      "bottom": 563.328125
     }
   ],
   "synthetic_incident_count": 7,

@@ -1,0 +1,22 @@
+
+Running 12 tests using 1 worker
+
+(node:54134) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/navigation-flow.spec.ts:85:1 › Overview setup to complete Analysis workflow preserves baseline and browser context (40.7s)
+  -   2 [desktop] › e2e/navigation-flow.spec.ts:528:1 › mobile touch navigation retains the Overview draft and source baseline
+  ✓   3 [desktop] › e2e/navigation-flow.spec.ts:624:1 › root, legacy aliases and invalid navigation canonicalize without losing context (6.4s)
+  ✓   4 [desktop] › e2e/navigation-flow.spec.ts:672:1 › Analytics outcomes match recorded metrics and preserve trajectory context (17.3s)
+  ✓   5 [desktop] › e2e/saved-replication-count.spec.ts:4:1 › saved custom replication counts stay visible and are submitted unchanged (10.1s)
+  ✓   6 [desktop] › e2e/screens.spec.ts:13:1 › the two-page workspace and analysis sections render actual run context (20.7s)
+(node:54888) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -   7 [mobile] › e2e/navigation-flow.spec.ts:85:1 › Overview setup to complete Analysis workflow preserves baseline and browser context
+  ✓   8 [mobile] › e2e/navigation-flow.spec.ts:528:1 › mobile touch navigation retains the Overview draft and source baseline (5.0s)
+  ✓   9 [mobile] › e2e/navigation-flow.spec.ts:624:1 › root, legacy aliases and invalid navigation canonicalize without losing context (5.1s)
+  ✓  10 [mobile] › e2e/navigation-flow.spec.ts:672:1 › Analytics outcomes match recorded metrics and preserve trajectory context (17.6s)
+  ✓  11 [mobile] › e2e/saved-replication-count.spec.ts:4:1 › saved custom replication counts stay visible and are submitted unchanged (11.5s)
+  ✓  12 [mobile] › e2e/screens.spec.ts:13:1 › the two-page workspace and analysis sections render actual run context (20.9s)
+
+  2 skipped
+  10 passed (2.6m)

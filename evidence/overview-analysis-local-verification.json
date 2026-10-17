@@ -1,0 +1,27 @@
+{
+  "verified_at": "2026-10-17T21:08:41.476071+00:00",
+  "application_commit": "37911bd050674a570aaa223ae1598e319cfa37f8",
+  "full_regression": {
+    "passed": 62,
+    "skipped": 28,
+    "failed": 0,
+    "skip_reason": "Project-specific tests execute on their designated desktop or mobile project.",
+    "report": "browser-overview-analysis-local-full.json",
+    "source": "overview-analysis-frozen-source.json"
+  },
+  "final_followup": {
+    "passed": 10,
+    "skipped": 2,
+    "failed": 0,
+    "report": "browser-overview-analysis-final-local.json",
+    "source": "overview-analysis-final-source.json",
+    "scope": "Full new navigation, saved custom counts including pending metadata, all screen layouts, exact analytics and cutoff projection, desktop/mobile320px."
+  },
+  "frontend_unit_tests": {
+    "passed": 103,
+    "failed": 0
+  },
+  "production_build": "passed",
+  "backend_engine_and_infrastructure_changes": [],
+  "independent_code_and_visual_review": "All findings closed; final mobile caption containment visually checked."
+}

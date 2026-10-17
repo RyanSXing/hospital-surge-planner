@@ -1,0 +1,17 @@
+{
+  "scenario_id": "scenario_61d5f9758828482081d4",
+  "source_comparison_id": "comparison_0f27fdeeaec34a4aaec3",
+  "submitted_comparison_id": "comparison_e52b0d0e17b144c1bd0f",
+  "saved_and_submitted_replications": 2,
+  "metadata_projection_source_status": "RUNNING",
+  "pending_ui_fixture": {
+    "derived_from_actual_get": true,
+    "overridden_status": "RUNNING",
+    "completed_reset_to_zero": true,
+    "metrics_removed": true,
+    "actual_requested_count": 2
+  },
+  "count_restored_without_metrics": true,
+  "custom_option_visible_in_both_selectors": true,
+  "reload_retains_custom_count": true
+}

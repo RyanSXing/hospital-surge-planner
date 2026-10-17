@@ -24,3 +24,7 @@ Page and section navigation add browser history entries. Time, grain, facility, 
 The browser suite includes the existing configuration, import, role, resource, frozen-context, replay, update, recovery, comparison, export, keyboard, and responsive checks, migrated to the new navigation. `navigation-flow.spec.ts` adds complete setup-to-results navigation, baseline stability, unsaved draft retention, all Analysis tabs, deep-link refresh/back/forward, comparison plan selection, update/reforecast, Replay, and ZIP checksum verification.
 
 Release-specific results and hosted commit identity are recorded in the rework evidence and the hosted verification log after deployment.
+
+### Local release verification — 2026-10-17
+
+The full existing and new browser suite passed62 checks with28 intentional device-specific skips and zero failures on the frozen production bundle. After the narrow saved-count restoration and mobile chart-caption repairs,10 focused desktop/mobile checks passed with two device-specific skips. All103 frontend unit tests and the production TypeScript/Vite build passed. The final source and bundle stayed unchanged during the focused suite. See [local verification](../evidence/overview-analysis-local-verification.json), [full report](../evidence/browser-overview-analysis-local-full.json), and [final follow-up](../evidence/browser-overview-analysis-final-local.json).

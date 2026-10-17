@@ -1,8 +1,8 @@
 {
   "project": "mobile",
-  "parent_run_id": "run_b279d7cc89344bcead42",
-  "update_id": "update_ccc28ce526714d149233",
-  "branch_scenario_id": "scenario_579ccf35bfa040228ec8",
+  "parent_run_id": "run_0d96529fdc1d4596af74",
+  "update_id": "update_5ed6834794bc4094aec3",
+  "branch_scenario_id": "scenario_b6d77ab5f33b43d9b7d7",
   "selected_unit": "UNIT-WARD-B",
   "exact_effective_at": "2026-10-16T06:01:01.250Z",
   "resource_types": [

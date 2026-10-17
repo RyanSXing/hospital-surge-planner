@@ -1,6 +1,6 @@
 {
-  "scenario_id": "scenario_2c0c2a03d90c481e91cf",
-  "run_id": "run_92c48a1707ce4b1e8b76",
+  "scenario_id": "scenario_01c993c628e14e50a871",
+  "run_id": "run_058ab21d8b524abb84eb",
   "saved_batch": {
     "kind": "arrival_batch",
     "entry_stream_id": "ED_MAIN",
@@ -12,7 +12,7 @@
       "ward": 0.16,
       "icu": 0.04
     },
-    "id": "e320f349-a3ce-4c6c-82b6-e8d90528e5b9",
+    "id": "3cea1fa4-2c9d-4d1b-b400-1a18e8800ef0",
     "name": "Short arrival pulse",
     "preset_id": "PRESET-PULSE",
     "source": "synthetic_preset",

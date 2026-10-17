@@ -1,7 +1,7 @@
 {
-  "scenario_id": "scenario_bfdf055e46a54e2696c5",
-  "run_id": "run_fad806a37a26499b8568",
-  "comparison_id": "comparison_32717509de014e75a395",
+  "scenario_id": "scenario_3b1c04cb663040b9960e",
+  "run_id": "run_ef5bba516cb4489f8205",
+  "comparison_id": "comparison_9ed88a965e6e44a2ac75",
   "actions": "Tab/Shift+Tab, Enter, ArrowRight, ArrowDown, text entry; no pointer clicks",
   "calendar_grains": [
     "day",

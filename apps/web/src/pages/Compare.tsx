@@ -429,6 +429,11 @@ export default function Compare({
             value={replications}
             onChange={(e) => setReplications(+e.target.value)}
           >
+            {![10, 100, 500].includes(replications) && (
+              <option value={replications}>
+                {replications} runs · Saved count
+              </option>
+            )}
             <option value="10">10 runs · Preview</option>
             <option value="100">100 runs · Standard</option>
             <option value="500">500 runs</option>

@@ -1447,6 +1447,11 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                   setReplications(+e.target.value);
                 }}
               >
+                {![10, 100, 500].includes(replications) && (
+                  <option value={replications}>
+                    {replications} · Saved count
+                  </option>
+                )}
                 <option value="10">10 · Quick preview</option>
                 <option value="100">100 · Standard</option>
                 <option value="500">500 · Extended</option>

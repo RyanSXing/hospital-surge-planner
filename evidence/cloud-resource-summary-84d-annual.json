@@ -1,0 +1,18 @@
+{
+  "code_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+  "run_group_id": "run_f84dc1bc84704677a1ed",
+  "input_sha256": "c0cd88bfdb39a69cdefb3d7a65283c60b3a0e8d521bf0e96de2d1dd4ca415094",
+  "sample_scope": "Configured 15-second gauges; Docker collection adds overhead. Not a continuous peak. Execution window uses manifest creation/completion; all samples additionally include final HTTP read validation.",
+  "execution_window": {
+    "start_at": "2026-10-17T15:12:14.611810+00:00",
+    "end_at": "2026-10-17T15:23:52.221652+00:00"
+  },
+  "execution_samples": 41,
+  "all_samples": 44,
+  "execution_min_available_bytes": 8362524672,
+  "all_samples_min_available_bytes": 8362524672,
+  "max_swap_used_bytes": 0,
+  "worker_process_peak_rss_bytes": 4890173440,
+  "largest_child_process_peak_rss_bytes": 1223229440,
+  "sampler_stopped": true
+}

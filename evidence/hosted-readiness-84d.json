@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-10-17T15:01:31.190353+00:00",
+  "code_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+  "https_status": 200,
+  "readiness": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  },
+  "unauthenticated_workspace_status": 401,
+  "runtime_budget_seconds": 1200
+}

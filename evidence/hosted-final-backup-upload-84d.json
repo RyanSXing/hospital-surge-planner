@@ -1,0 +1,7 @@
+{
+  "created_at": "2026-10-17T15:27:46.745272+00:00",
+  "sha256": "2aa2dbd6f278e0e7dbb4b8f6cb9d4f3393edee81cf5e6c339bfa9bc77cc127d2",
+  "byte_size": 4238326,
+  "object_key": "backups/hospital-20261017T152741Z.dump",
+  "format": "postgresql-custom-dump"
+}

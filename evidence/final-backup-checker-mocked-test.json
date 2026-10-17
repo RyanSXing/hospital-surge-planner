@@ -1,0 +1,7 @@
+{
+  "scope": "Post-release operational checker only; deployed84d application bytes unchanged",
+  "checker_path": "evidence/diagnostics/verify_hosted_final_backup_84d.py",
+  "checker_sha256": "20eddbaa30d66f53f830cddf77a7d3a5425aa9ea5a34c21b56a88656a37f5169",
+  "mocked_failure_case": "Scratch drop failure still removes downloaded dump and propagates failure; all database operations target isolated generated scratch name",
+  "status": "PASSED"
+}

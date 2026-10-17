@@ -1,0 +1,56 @@
+{
+  "recorded_at": "2026-10-17T15:28:09.580261+00:00",
+  "code_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+  "checker_sha256": "20eddbaa30d66f53f830cddf77a7d3a5425aa9ea5a34c21b56a88656a37f5169",
+  "scope": "Hosted PostgreSQL backup downloaded from private OCI storage and restored into a separate scratch database",
+  "backup": {
+    "created_at": "2026-10-17T15:27:46.745272+00:00",
+    "sha256": "2aa2dbd6f278e0e7dbb4b8f6cb9d4f3393edee81cf5e6c339bfa9bc77cc127d2",
+    "byte_size": 4238326,
+    "object_key": "backups/hospital-20261017T152741Z.dump",
+    "format": "postgresql-custom-dump",
+    "public_access_type": "NoPublicAccess",
+    "anonymous_read_status": 404,
+    "download_sha256": "2aa2dbd6f278e0e7dbb4b8f6cb9d4f3393edee81cf5e6c339bfa9bc77cc127d2"
+  },
+  "restored_counts": {
+    "documents": 1411,
+    "jobs": 55,
+    "audit_events": 202,
+    "current_seed_datasets": [
+      {
+        "id": "demo-v1-1-0-planning_baseline-41021-365",
+        "revision": 1,
+        "generator_version": "1.1.0",
+        "input_sha256": "f48749ad91f051f6f6d642a95c37ca4bc59f11d1f65b50ac69a1b876b3dffac4",
+        "validation_valid": true
+      },
+      {
+        "id": "demo-v1-1-0-stress_snapshot-41021-365",
+        "revision": 1,
+        "generator_version": "1.1.0",
+        "input_sha256": "dafb3b69b428d49f19173423a87ad7d67ca0f984f9ff53b80343d1b0fe984561",
+        "validation_valid": true
+      }
+    ],
+    "final_release_successful_runs": 9,
+    "active_jobs": 0
+  },
+  "download_and_restore_seconds": 7.349086549998901,
+  "production_database_replaced": false,
+  "scratch_database_dropped": true,
+  "post_restore_cleanup_check": {
+    "scratch_database_count": 0,
+    "downloaded_restore_dump_count": 0,
+    "maintenance_timers": {
+      "hospital-backup.timer": {
+        "enabled": "enabled",
+        "active": "active"
+      },
+      "hospital-retention.timer": {
+        "enabled": "enabled",
+        "active": "active"
+      }
+    }
+  }
+}

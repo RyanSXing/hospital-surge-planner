@@ -1,9 +1,14 @@
 {
-  "recorded_at": "2026-10-17T11:11:54.406841+00:00",
+  "recorded_at": "2026-10-17T15:12:14.680282+00:00",
   "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
   "scope": "Actual public HTTPS, OCI A2 ARM8 physical cores/16GiB, PostgreSQL, Redis worker and private ObjectStorage",
-  "scenario_id": "scenario_ce74d6918df646cf9e5a",
-  "run_group_id": "run_498137b160f948a3bd9a",
+  "scenario_id": "scenario_36115b5d1883495db98a",
+  "run_group_id": "run_f84dc1bc84704677a1ed",
+  "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
+  "input_sha256": "c0cd88bfdb39a69cdefb3d7a65283c60b3a0e8d521bf0e96de2d1dd4ca415094",
+  "scenario_revision_id": "revision_b285a314c96b4e84a00d",
+  "start_at": "2026-10-16T05:00:00Z",
+  "end_at": "2027-10-16T05:00:00Z",
   "horizon_days": 365,
   "replications": 100,
   "health": {
@@ -14,144 +19,144 @@
   },
   "status": "SUCCEEDED",
   "completed": 100,
-  "pipeline_seconds": 620.0016150840092,
+  "pipeline_seconds": 696.4626402079593,
   "pipeline_timing_is_resumed": false,
   "manifest": {
     "schema_version": "1.0",
-    "run_group_id": "run_498137b160f948a3bd9a",
+    "run_group_id": "run_f84dc1bc84704677a1ed",
     "workspace_id": "workspace-main",
-    "dataset_version_id": "dataset_245582261d284b6a9b1c",
-    "scenario_revision_id": "revision_1ef4751341dd4172b437",
-    "model_version": "1.0.0",
-    "code_commit": "e2e65eb81c023ae8b4385742756662be524c29fb",
-    "input_sha256": "bf137b085d5e19ce79d6361b86198344a68e1e26b26183fb8f47e33b996a9398",
-    "generator_version": "1.0.0",
+    "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
+    "scenario_revision_id": "revision_b285a314c96b4e84a00d",
+    "model_version": "1.1.0",
+    "code_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+    "input_sha256": "c0cd88bfdb39a69cdefb3d7a65283c60b3a0e8d521bf0e96de2d1dd4ca415094",
+    "generator_version": "1.1.0",
     "timezone": "America/Chicago",
     "start_at": "2026-10-16T05:00:00Z",
     "end_at": "2027-10-16T05:00:00Z",
-    "created_at": "2026-10-17T11:11:54.367040Z",
+    "created_at": "2026-10-17T15:12:14.611810Z",
     "replications_requested": 100,
     "replications_completed": 100,
     "seed_policy": "keyed-streams-v1",
     "base_seed": 20261016,
-    "selected_replication_id": "run_498137b160f948a3bd9a_rep_0068",
+    "selected_replication_id": "run_f84dc1bc84704677a1ed_rep_0068",
     "selected_replication_index": 68,
     "status": "SUCCEEDED",
     "data_origin": "synthetic",
     "artifacts": [
       {
-        "object_key": "workspace-main/run_498137b160f948a3bd9a/artifact_21a4e4a30d4c4c608af6/aggregate.json.gz",
-        "sha256": "3cc517d7daf518f6ec1c60d87a29aac80bbe37796be3ec5135e2989e19ba1093",
-        "byte_size": 1646040,
+        "object_key": "workspace-main/run_f84dc1bc84704677a1ed/artifact_ededb869cebf4e0e840f/aggregate.json.gz",
+        "sha256": "b713ba20e8d4eed2a0a60f3a423b441b5d234cdc4bf3bd151f7478c4b0863022",
+        "byte_size": 1646036,
         "media_type": "application/gzip",
         "name": "aggregate.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T11:21:47.095299Z"
+        "created_at": "2026-10-17T15:22:37.750938Z"
       },
       {
-        "object_key": "workspace-main/run_498137b160f948a3bd9a/artifact_b2ef81f0d6d74f6f817c/replications.json.gz",
-        "sha256": "c1828abd5e1710b1e8246cfa3f98738537efdf1fcd3fb69b5fe3aa9c6717d4e2",
-        "byte_size": 30261380,
+        "object_key": "workspace-main/run_f84dc1bc84704677a1ed/artifact_ee2eba9dfeca46c285f0/replications.json.gz",
+        "sha256": "4a83c31f22904934c9f9cb1a32744ce5468fccfd0c58cd8d374dbcec1b7b1ac7",
+        "byte_size": 30261917,
         "media_type": "application/gzip",
         "name": "replications.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T11:22:13.048953Z"
+        "created_at": "2026-10-17T15:23:03.917097Z"
       },
       {
-        "object_key": "workspace-main/run_498137b160f948a3bd9a/artifact_48f9027fd7da40afa557/selected-trace.json.gz",
-        "sha256": "7f63c190e177b0d8390b3eb761757388bba678f227be22dafacfbc01ca6c9652",
-        "byte_size": 13361747,
+        "object_key": "workspace-main/run_f84dc1bc84704677a1ed/artifact_791055a8ba1d438ab841/selected-trace.json.gz",
+        "sha256": "3b8c01628ab0c8df8cead54d66a1a575746c9e6956bdaadc1c1afd694606a4d6",
+        "byte_size": 14012276,
         "media_type": "application/gzip",
         "name": "selected-trace.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T11:21:42.889771Z"
+        "created_at": "2026-10-17T15:23:52.216027Z"
       },
       {
-        "object_key": "workspace-main/run_498137b160f948a3bd9a/artifact_bed8e75821354a778061/inputs.json.gz",
-        "sha256": "1c2adb4fa32e79a939999469f17d4e56dfc3905264ebfc24351af12ae664d9da",
-        "byte_size": 889332,
+        "object_key": "workspace-main/run_f84dc1bc84704677a1ed/artifact_e74a141475604a6c9021/inputs.json.gz",
+        "sha256": "1086ad35f21a66dd88db0efa0f745f55ff1bfdab944759b810a66af94bc71599",
+        "byte_size": 889640,
         "media_type": "application/gzip",
         "name": "inputs.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T11:22:13.621433Z"
+        "created_at": "2026-10-17T15:23:04.461076Z"
       }
     ],
-    "completed_at": "2026-10-17T11:22:13.621635Z",
+    "completed_at": "2026-10-17T15:23:52.221652Z",
     "warnings": [
       "Synthetic assumptions; simulation ranges are not clinical predictions."
     ]
   },
   "reads": {
     "metrics": {
-      "cold_seconds": 6.7274069170234725,
+      "cold_seconds": 7.5627722080098465,
       "warm_seconds": [
-        0.12604441703297198,
-        0.1164989999961108,
-        0.11124541598837823,
-        0.11310029192827642,
-        0.11311804095748812
+        0.4188713750336319,
+        0.3038480000104755,
+        0.2502399170771241,
+        0.22996720799710602,
+        0.19016933406237513
       ],
-      "warm_p95_seconds": 0.12604441703297198
+      "warm_p95_seconds": 0.4188713750336319
     },
     "end_state": {
-      "cold_seconds": 12.057868666015565,
+      "cold_seconds": 13.485267832991667,
       "warm_seconds": [
-        0.05326099996455014,
-        0.051686333026736975,
-        0.0511992919491604,
-        0.05078883399255574,
-        0.051367083098739386
+        0.06053112505469471,
+        0.05597433296497911,
+        0.056171375093981624,
+        0.07187437498942018,
+        0.05292387504596263
       ],
-      "warm_p95_seconds": 0.05326099996455014,
+      "warm_p95_seconds": 0.07187437498942018,
       "patient_total": 54133,
       "returned_patients": 500
     },
     "census": {
-      "cold_seconds": 0.2175388749456033,
+      "cold_seconds": 0.2382200410356745,
       "warm_seconds": [
-        0.21593091706745327,
-        0.21396812493912876,
-        0.20838062500115484,
-        0.22778420895338058,
-        0.24438337504398078
+        0.23240108299069107,
+        0.2322287909919396,
+        0.23403816693462431,
+        0.23274674999993294,
+        0.23096370801795274
       ],
-      "warm_p95_seconds": 0.24438337504398078
+      "warm_p95_seconds": 0.23403816693462431
     },
     "events": {
-      "cold_seconds": 0.22181354102212936,
+      "cold_seconds": 0.2188405831111595,
       "warm_seconds": [
-        0.19776816596277058,
-        0.1895249169319868,
-        0.2063240419374779,
-        0.19837354205083102,
-        0.18297154200263321
+        0.18820445809978992,
+        0.1901300000026822,
+        0.18669845804106444,
+        0.19320233294274658,
+        0.2138271660078317
       ],
-      "warm_p95_seconds": 0.2063240419374779
+      "warm_p95_seconds": 0.2138271660078317
     },
     "checkpoints": {
-      "cold_seconds": 0.04359658295288682,
+      "cold_seconds": 0.05088933394290507,
       "warm_seconds": [
-        0.04225579195190221,
-        0.04688641696702689,
-        0.041547125088982284,
-        0.04245249996893108,
-        0.04155687498860061
+        0.04509229201357812,
+        0.04579570796340704,
+        0.04929750005248934,
+        0.04240766598377377,
+        0.0429492499679327
       ],
-      "warm_p95_seconds": 0.04688641696702689
+      "warm_p95_seconds": 0.04929750005248934
     }
   },
   "worker_execution_metrics": {
-    "wall_seconds": 622.2562531380008,
-    "cpu_seconds": 205.59751462,
-    "terminated_children_cpu_seconds": 3460.799965,
-    "process_peak_rss_bytes": 5583421440,
-    "largest_terminated_child_peak_rss_bytes": 362823680,
+    "wall_seconds": 700.3003616280002,
+    "cpu_seconds": 125.40047473999999,
+    "terminated_children_cpu_seconds": 4466.334397,
+    "process_peak_rss_bytes": 4890173440,
+    "largest_terminated_child_peak_rss_bytes": 1223229440,
     "cpu_scope": "current process plus separately reported terminated child CPU",
     "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
   },
-  "worker_started_to_durable_completion_seconds": 622.2562531380008
+  "worker_started_to_durable_completion_seconds": 700.3003616280002
 }

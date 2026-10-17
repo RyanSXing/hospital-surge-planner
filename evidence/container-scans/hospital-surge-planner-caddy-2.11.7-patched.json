@@ -3,9 +3,9 @@
   "Trivy": {
     "Version": "0.76.0"
   },
-  "ReportID": "01a14a52-c5bd-7032-b4a5-7b214928b33b",
-  "CreatedAt": "2026-10-17T14:45:00.989018414Z",
-  "ArtifactID": "sha256:87eb5be3d894fb9f96e6c52f16e89075c8cc42e1913324fe380da9d50c9271c0",
+  "ReportID": "01a14a61-63f7-70e4-9ad0-09a50f99eb36",
+  "CreatedAt": "2026-10-17T15:00:58.999062288Z",
+  "ArtifactID": "sha256:ae774f6ec310125c899c58ea99073271c92179f0485756bdb0e397f3d8dda60d",
   "ArtifactName": "hospital-surge-planner-caddy:2.11.7-patched",
   "ArtifactType": "container_image",
   "Metadata": {
@@ -14,7 +14,7 @@
       "Family": "alpine",
       "Name": "3.23.6"
     },
-    "ImageID": "sha256:26fc35da388817f3a8f8386e1aa869bac11b90dfaf130314f626e9886312fcfb",
+    "ImageID": "sha256:d43af8cd4d15c2eb642eb30ab061cd09e524078bac2b19176850d139196cd580",
     "DiffIDs": [
       "sha256:18932007cc273c0541920263e57c02d40013c4730d7db35437a4ffcc31422eda",
       "sha256:2f85427f3cf10f3f5ec83a6f9348e4a5aa39a055ef865c483699137ec245fb09",
@@ -28,7 +28,7 @@
       "hospital-surge-planner-caddy:2.11.7-patched"
     ],
     "RepoDigests": [
-      "hospital-surge-planner-caddy@sha256:26fc35da388817f3a8f8386e1aa869bac11b90dfaf130314f626e9886312fcfb"
+      "hospital-surge-planner-caddy@sha256:d43af8cd4d15c2eb642eb30ab061cd09e524078bac2b19176850d139196cd580"
     ],
     "Reference": "hospital-surge-planner-caddy:2.11.7-patched",
     "ImageConfig": {

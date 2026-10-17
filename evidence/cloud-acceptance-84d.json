@@ -1,0 +1,192 @@
+{
+  "recorded_at": "2026-10-17T15:01:53.739571+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scope": "Actual public HTTPS, OCI A2 ARM8 physical cores/16GiB, PostgreSQL, Redis worker and private ObjectStorage",
+  "scenario_id": "scenario_e34c27568ce14a4e87b4",
+  "run_group_id": "run_64c4032566f04b1d89a0",
+  "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
+  "input_sha256": "8bf568d423001aabf764f8927bb0b77445cf40739d25e56f9c77e891608eb0bd",
+  "scenario_revision_id": "revision_162222a2162c4819a7ca",
+  "start_at": "2026-10-16T05:00:00Z",
+  "end_at": "2026-10-17T05:00:00Z",
+  "horizon_days": 1,
+  "replications": 2,
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  },
+  "status": "SUCCEEDED",
+  "completed": 2,
+  "pipeline_seconds": 11.519963709055446,
+  "pipeline_timing_is_resumed": false,
+  "manifest": {
+    "schema_version": "1.0",
+    "run_group_id": "run_64c4032566f04b1d89a0",
+    "workspace_id": "workspace-main",
+    "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
+    "scenario_revision_id": "revision_162222a2162c4819a7ca",
+    "model_version": "1.1.0",
+    "code_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+    "input_sha256": "8bf568d423001aabf764f8927bb0b77445cf40739d25e56f9c77e891608eb0bd",
+    "generator_version": "1.1.0",
+    "timezone": "America/Chicago",
+    "start_at": "2026-10-16T05:00:00Z",
+    "end_at": "2026-10-17T05:00:00Z",
+    "created_at": "2026-10-17T15:01:53.799981Z",
+    "replications_requested": 2,
+    "replications_completed": 2,
+    "seed_policy": "keyed-streams-v1",
+    "base_seed": 20261016,
+    "selected_replication_id": "run_64c4032566f04b1d89a0_rep_0000",
+    "selected_replication_index": 0,
+    "status": "SUCCEEDED",
+    "data_origin": "synthetic",
+    "artifacts": [
+      {
+        "object_key": "workspace-main/run_64c4032566f04b1d89a0/artifact_6a321695581242149ea6/aggregate.json.gz",
+        "sha256": "13913de69fb83d16d29f71c0666d8f3a8b099985f31d172f6740fc8620680ef7",
+        "byte_size": 7834,
+        "media_type": "application/gzip",
+        "name": "aggregate.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-17T15:02:03.786959Z"
+      },
+      {
+        "object_key": "workspace-main/run_64c4032566f04b1d89a0/artifact_e8d5a4e446714eaca0bc/replications.json.gz",
+        "sha256": "c35258474ecb8d79a46e34ba5629025a5c896d51b4b1b95f9270a79e05dff083",
+        "byte_size": 4143,
+        "media_type": "application/gzip",
+        "name": "replications.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-17T15:02:03.816858Z"
+      },
+      {
+        "object_key": "workspace-main/run_64c4032566f04b1d89a0/artifact_bf0cc6a267da4eb18d57/selected-trace.json.gz",
+        "sha256": "c3de46b2783a8dc33110d7efe9f777954de3baaf1944943f7fb9bc08b37fc1ac",
+        "byte_size": 107981,
+        "media_type": "application/gzip",
+        "name": "selected-trace.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-17T15:02:04.437901Z"
+      },
+      {
+        "object_key": "workspace-main/run_64c4032566f04b1d89a0/artifact_417ddb5c677845a7b6da/inputs.json.gz",
+        "sha256": "24c28f59ecff95031c91a9bf43465743d528b2b13160eecfc2b9bc58b086df1f",
+        "byte_size": 889640,
+        "media_type": "application/gzip",
+        "name": "inputs.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-17T15:02:04.346053Z"
+      }
+    ],
+    "completed_at": "2026-10-17T15:02:04.437992Z",
+    "warnings": [
+      "Synthetic assumptions; simulation ranges are not clinical predictions."
+    ]
+  },
+  "reads": {
+    "metrics": {
+      "cold_seconds": 1.901444665971212,
+      "warm_seconds": [
+        0.04314054094720632,
+        0.04459883307572454,
+        0.0399334590183571,
+        0.042097333003766835,
+        0.039956332999281585
+      ],
+      "warm_p95_seconds": 0.04459883307572454
+    },
+    "end_state": {
+      "cold_seconds": 0.11086254194378853,
+      "warm_seconds": [
+        0.04612854099832475,
+        0.04811345902271569,
+        0.048532625078223646,
+        0.04927062499336898,
+        0.04774208297021687
+      ],
+      "warm_p95_seconds": 0.04927062499336898,
+      "patient_total": 120,
+      "returned_patients": 120
+    },
+    "census": {
+      "cold_seconds": 0.04565787501633167,
+      "warm_seconds": [
+        0.042859540903009474,
+        0.0442560410592705,
+        0.0440280829789117,
+        0.04415545903611928,
+        0.04312783293426037
+      ],
+      "warm_p95_seconds": 0.0442560410592705
+    },
+    "events": {
+      "cold_seconds": 0.04084599995985627,
+      "warm_seconds": [
+        0.03919708402827382,
+        0.03936275001615286,
+        0.03918025002349168,
+        0.03969649993814528,
+        0.040420499979518354
+      ],
+      "warm_p95_seconds": 0.040420499979518354
+    },
+    "checkpoints": {
+      "cold_seconds": 0.03681149997282773,
+      "warm_seconds": [
+        0.034967083018273115,
+        0.033764875028282404,
+        0.033209291053935885,
+        0.034723208053037524,
+        0.04244716698303819
+      ],
+      "warm_p95_seconds": 0.04244716698303819
+    }
+  },
+  "worker_execution_metrics": {
+    "wall_seconds": 9.715101793997746,
+    "cpu_seconds": 10.34026738,
+    "terminated_children_cpu_seconds": 0.000874,
+    "process_peak_rss_bytes": 338780160,
+    "largest_terminated_child_peak_rss_bytes": 313425920,
+    "cpu_scope": "current process plus separately reported terminated child CPU",
+    "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+  },
+  "worker_started_to_durable_completion_seconds": 9.715101793997746,
+  "export": {
+    "id": "export_fd6ab0dbfde14d31b4f9",
+    "bytes": 1254089,
+    "all_checksums_verified": true,
+    "files": [
+      "events.csv",
+      "events.jsonl",
+      "daily.csv",
+      "metrics.csv",
+      "manifest.json",
+      "model-manifest.json",
+      "dataset.json",
+      "scenario.json",
+      "metrics.json",
+      "inputs/patients.csv",
+      "inputs/facilities.csv",
+      "inputs/units.csv",
+      "inputs/slots.csv",
+      "inputs/staff.csv",
+      "inputs/assignments.csv",
+      "inputs/equipment_pools.csv",
+      "inputs/routes.csv",
+      "inputs/vehicles.csv",
+      "dataset-manifest.json",
+      "assumptions.csv",
+      "README.md",
+      "checksums.json"
+    ],
+    "sha256": "ba5d96e88e44490a5f1f79087e231ba2a1228967df4e7f9496866b3b2ce59365"
+  }
+}

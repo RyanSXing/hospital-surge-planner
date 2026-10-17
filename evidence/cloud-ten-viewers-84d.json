@@ -1,0 +1,63 @@
+{
+  "recorded_at": "2026-10-17T15:24:50.481097+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scope": "Ten distinct viewer accounts and HTTPS sessions; warmed, bounded reads from Chicago OCI to this workstation",
+  "checker_sha256": "a2ab251c6518502b4b4a4c1e5a35122f2a60563f65d3c44ca99e18525efd2f8a",
+  "serving_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+  "serving_commit_source": "evidence/deployment.json (deployment evidence; not inferred from a retained run)",
+  "referenced_run_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+  "referenced_run_model_version": "1.1.0",
+  "referenced_run_generator_version": "1.1.0",
+  "referenced_dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
+  "provenance_scope": "Serving-release read/auth behavior over retained completed outputs; does not assert fresh forecast provenance",
+  "run_group_id": "run_b9fb98023d5b4d75a669",
+  "viewers": 10,
+  "status": "PASSED",
+  "requests": 250,
+  "elapsed_seconds": 4.090937834000215,
+  "viewer_mutations_rejected": true,
+  "endpoints": {
+    "metrics_week": {
+      "samples": 50,
+      "p50_seconds": 0.151984125492163,
+      "p95_seconds": 0.24223992148181422,
+      "max_seconds": 0.2491699579404667,
+      "within_500ms_target": true
+    },
+    "initial_state": {
+      "samples": 50,
+      "p50_seconds": 0.11528910405468196,
+      "p95_seconds": 0.16113987659336998,
+      "max_seconds": 0.21376129193231463,
+      "within_500ms_target": true
+    },
+    "census_50": {
+      "samples": 50,
+      "p50_seconds": 0.1539750624797307,
+      "p95_seconds": 0.2560668853635434,
+      "max_seconds": 0.29720754199661314,
+      "within_500ms_target": true
+    },
+    "events_20": {
+      "samples": 50,
+      "p50_seconds": 0.19276745850220323,
+      "p95_seconds": 0.2293391713523306,
+      "max_seconds": 0.2450318749761209,
+      "within_500ms_target": true
+    },
+    "datasets": {
+      "samples": 50,
+      "p50_seconds": 0.1680724374600686,
+      "p95_seconds": 0.228652906086063,
+      "max_seconds": 0.23619874997530133,
+      "within_500ms_target": true
+    }
+  },
+  "all_p95_within_500ms": true,
+  "temporary_accounts_attempted": 10,
+  "temporary_accounts_disabled": 10,
+  "cleanup_complete": true,
+  "cleanup_unresolved_usernames": [],
+  "cleanup_errors": [],
+  "client_close_errors": []
+}

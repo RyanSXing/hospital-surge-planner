@@ -1,0 +1,16 @@
+{
+  "deployed_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+  "scope": "Post-deployment handoff evidence and operational checker changes; no application, engine, infrastructure, dependency or worker source change",
+  "application_paths_checked": [
+    "apps",
+    "packages",
+    "infra",
+    "pyproject.toml",
+    "uv.lock"
+  ],
+  "changed_application_paths": [],
+  "application_source_identical_to_deployed": true,
+  "post_release_operational_checker": "scripts/verify_viewer_load.py; evidence/diagnostics/verify_hosted_final_backup_84d.py",
+  "checker_provenance": "Final viewer/backup reports include exact checker SHA256 separately from the serving release",
+  "checks": "595 frozen-release backend tests;90 frontend tests/build;7 separate viewer-checker failure tests;separate backup-cleanup mocked proof"
+}

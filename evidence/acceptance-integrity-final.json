@@ -1,22 +1,22 @@
 {
-  "recorded_at": "2026-10-17T14:48:30Z",
-  "reviewed_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
-  "scope": "Read-only acceptance-ledger and local-evidence integrity audit. Hosted verification remained under its separate in-progress F26 gate.",
+  "recorded_at": "2026-10-17T15:32:48Z",
+  "reviewed_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+  "scope": "Final read-only acceptance-ledger, evidence-reference, content-provenance and release-summary integrity audit after all local and hosted gates completed.",
   "documents_reviewed": [
     "docs/acceptance-tracker.json",
     "docs/acceptance-tracker.md",
     "docs/gap-audit.md",
-    "docs/audits/configured-input-review.md"
+    "docs/audits/configured-input-review.md",
+    "docs/hosted-verification.md",
+    "evidence/final-release-acceptance-84d.json"
   ],
   "machine_statuses": {
     "features": {
       "total": 31,
-      "verified": 25,
-      "implemented": 1,
-      "deferred": 5,
-      "implemented_ids": [
-        "F26"
-      ]
+      "required_P0_P1": 26,
+      "required_verified": 26,
+      "optional_P2_deferred": 5,
+      "other_statuses": 0
     },
     "workflows": {
       "total": 15,
@@ -26,43 +26,58 @@
       "total": 16,
       "verified": 16
     },
+    "F26": {
+      "status": "verified",
+      "remaining_checks": []
+    },
     "id_sequences_complete_without_duplicates": true,
     "markdown_statuses_match_json": true,
     "markdown_evidence_lists_match_json_item_for_item": true
   },
   "reference_integrity": {
-    "unique_path_references_checked": 180,
+    "tracker_unique_path_references_checked": 192,
+    "reviewed_documents_unique_repo_paths_checked": 235,
     "all_referenced_paths_exist": true,
     "all_referenced_paths_are_git_tracked": true,
-    "unique_test_function_anchors_checked": 41,
-    "test_function_anchor_occurrences_checked": 269,
+    "test_function_anchor_occurrences_checked": 275,
+    "unique_test_function_anchors_checked": 42,
     "all_test_function_anchors_resolve": true,
-    "feature_workflow_acceptance_spec_line_pointers_match": true
+    "staged_diff_whitespace_check_passed": true
   },
   "current_local_evidence_reconciled": {
-    "complete_backend_suite": "evidence/backend-pytest-observed-clock-frozen.log: 594 passed",
-    "focused_continuation_snapshot_reset": "evidence/backend-observed-clock-focused-final.log: 73 passed",
-    "frontend_suite": "evidence/frontend-tests-replay-clinical-capacity.log: 87 passed",
-    "frontend_build": "evidence/frontend-build-replay-clinical-capacity.log: production build passed",
-    "observed_clock_browser": "evidence/browser-observed-clock-final-report.json: 3 passed, 3 deliberate project skips, 0 unexpected",
-    "replay_capacity_browser": "evidence/browser-replay-clinical-capacity-report.json: 1 passed, 0 unexpected",
-    "replay_capacity_api_canvas": "evidence/browser-replay-clinical-capacity.json: 108 occupied / 132 staffed ward places; 24 shelter places excluded",
-    "backend_source_identity": "evidence/replay-clinical-capacity-source-review.json records an empty backend diff from 7a2dda15bc2ecd9c5ce1e0bbab2cb33ed5751d9b"
+    "complete_backend_suite": "evidence/backend-pytest-replay-location-frozen.log: 595 passed; evidence/backend-replay-location-frozen-source.json: 84 Python source/test files unchanged during the suite",
+    "frontend_suite": "evidence/frontend-tests-replay-held-unit.log: 90 passed",
+    "frontend_build": "evidence/frontend-build-replay-held-unit.log: production build passed",
+    "application_source_identity": "evidence/final-application-source-identity-84d.json: application, engine, infrastructure and dependency source identical to deployed 84d; post-release operational checkers separately identified",
+    "actual_hosted_browser_cases": "evidence/browser-hosted-workflow-84d-report.json: 1 passed; evidence/browser-hosted-replay-84d-report.json: 2 passed; 0 skipped or unexpected",
+    "visual_closure": "evidence/visual-reference-hosted-84d.json: all 6 reference images, 20 gallery PNGs across 11 views and 3 focused Replay proof PNGs reviewed; no actionable finding",
+    "gallery_consistency": "evidence/screens/hosted-84d-day12/index.json: 11 selected-state views, 20 unique PNGs, 0 page errors and 0 horizontal overflows"
   },
-  "pending_gate": {
-    "feature_id": "F26",
-    "status": "implemented",
-    "truthful": true,
-    "remaining_checks": [
-      "Repeat the complete hosted 30-day 70% browser-created workflow and export checksums on the reviewed release",
-      "Repeat hosted short and annual performance plus useful-navigation timing",
-      "Refresh the final hosted gallery and UI timing on the reviewed release"
-    ]
+  "hosted_evidence_reconciled": {
+    "release_and_runtime": "84d225e2776630cf84e17bf7d0913b01553e0cd4; model/generator 1.1.0; API and worker timeout 1200 seconds with 8 bounded simulation workers",
+    "security": "evidence/container-security-84d.json: 5 exact runtime images with 0 HIGH and 0 CRITICAL findings at scan time",
+    "short_forecasts_historical_scope": "Byte-identical 2faf compute source: 30 days x 10 completed in 33.226 seconds worker / 34.586 seconds HTTPS; 30 days x 100 completed in 75.694 / 76.627 seconds; both speed targets missed",
+    "annual_forecast": "evidence/cloud-benchmark-365d-100r-84d.json: exact 84d, 100/100 replications, 4 private OCI artifacts, 700.300 seconds worker / 696.463 seconds HTTPS; 600-second target missed",
+    "annual_resources": "evidence/cloud-resource-summary-84d-annual.json: 41 execution / 44 total gauges, minimum available memory 7.788 GiB, 0 swap, sampler stopped",
+    "ten_viewers": "evidence/cloud-ten-viewers-84d.json: serving 84d over retained 2faf output, 10 distinct sessions, 250/250 successful reads, endpoint p95 161-256 ms, writes denied, all 10 temporary accounts disabled, no cleanup errors",
+    "curation": "evidence/hosted-final-curation-84d.json: 5 explicitly recorded scenarios archived, working scenario is default, 11 protected documents including 8 runs unchanged and readable, no DELETE request",
+    "backup_restore": "evidence/hosted-backup-restore-84d.json: fresh private post-curation backup checksum verified; isolated restore has 1,411 documents, 55 jobs, 202 audit events, both valid current fixtures, 9 successful exact-84d runs and 0 active jobs; scratch database and download removed; production unchanged"
   },
-  "result": "No actionable acceptance-ledger, evidence-reference, status, or source-identity discrepancy found within this audit scope.",
+  "final_release_summary_integrity": {
+    "record": "evidence/final-release-acceptance-84d.json",
+    "deployed_commit_matches": true,
+    "scope_counts_match_tracker": true,
+    "local_test_counts_match_evidence": true,
+    "hosted_case_and_gallery_counts_match_evidence": true,
+    "performance_values_and_target_misses_match_evidence": true,
+    "curation_and_backup_counts_match_evidence": true,
+    "known_boundaries_remain_explicit": true
+  },
+  "result": "No actionable acceptance-ledger, evidence-reference, content-provenance, release-summary or source-identity discrepancy found in the final 84d release records.",
   "limits": [
-    "docs/hosted-verification.md was excluded because its 2faf hosted refresh was in progress",
-    "No heavy test suite or browser workflow was rerun during this integrity audit",
-    "This record does not claim F26 hosted acceptance"
+    "This was a local read-only integrity audit of staged records; no hosted request, browser run or heavy test suite was performed.",
+    "The three forecast speed targets remain missed and are reported explicitly; functional completion does not convert them into passes.",
+    "Five optional P2 features remain deferred, including calibrated real-world forecasting/integrations; all product data and patient records are synthetic engineering fixtures.",
+    "Short forecast and recovery evidence remains attributed to byte-identical 2faf compute source; the annual forecast and serving UI are exact 84d."
   ]
 }

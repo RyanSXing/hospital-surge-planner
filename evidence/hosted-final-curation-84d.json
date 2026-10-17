@@ -1,0 +1,75 @@
+{
+  "recorded_at": "2026-10-17T15:27:02.317903+00:00",
+  "scope": "Only explicitly recorded final-84d acceptance scenarios plus the explicitly nominated saved-response scenario were archived. No DELETE request was made. Protected dataset, scenario, comparison and all recorded run documents remain byte-identical and readable.",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "kept_scenario_id": "scenario_b44dbb255ef3494e8e22",
+  "kept_run_id": "run_08ee3b44e84541dc8ba2",
+  "kept_comparison_id": "comparison_7b7f1793cb374422bc6f",
+  "default_scenario_id": "scenario_b44dbb255ef3494e8e22",
+  "active_scenarios_before": 41,
+  "active_scenarios_after": 36,
+  "archived_verification_scenarios": [
+    {
+      "id": "scenario_36115b5d1883495db98a",
+      "name": "Annual planning \u2014 70% additional ED demand",
+      "source_revision": 1
+    },
+    {
+      "id": "scenario_7a6b4fdd222649a6afd2",
+      "name": "ICU stepdown recorded source location",
+      "source_revision": 1
+    },
+    {
+      "id": "scenario_ebf88151e1b9447597bd",
+      "name": "E2E clinical replay capacity 1792249785421",
+      "source_revision": 1
+    },
+    {
+      "id": "scenario_943a69451963459d9953",
+      "name": "Winter planning \u2014 70% additional ED demand \u2014 updated",
+      "source_revision": 1
+    },
+    {
+      "id": "scenario_811cbcd11ca1474eae98",
+      "name": "Staff existing ward beds",
+      "source_revision": 1
+    }
+  ],
+  "protected_context_sha256_before": {
+    "scenario": "bd42b62cb9648b57acedcd006c04635d23e7c42f9bb2b8b1f524a5c678cf633c",
+    "dataset": "c77a937a0f27c7ac207ac663e7d7ddfc215862dd884118ca7e1c3031797314a0",
+    "comparison": "e2383d57bf7d0e35a642b80ab61d3388e239dce5789f7f3a3824d2ca06c4420a",
+    "run_08ee3b44e84541dc8ba2": "9858e0fb734de8756a01c0a97bf80c8ee990a56b2c7f0dac171da2d256dd53e5",
+    "run_33834bf15d574c808372": "113af3a7c74b014bf3f2bc4fe4f2437527d08a09858a117798f588fb7abb41b1",
+    "run_e8d0e6cd9af64149a113": "2b730fa123cb727359545ba731a1b21d8f608c333ec033873dbeb6919a6ef7fe",
+    "run_edc6c70cfaaa4a388a82": "87ecae743680b1cd60ab19e6b75779f3e418099d97e7406b86ddc8038bbb4723",
+    "run_f84dc1bc84704677a1ed": "841bc18d74f6c83a0816ae4dc0bb31b0589376d006e3df9f3a32359265a64afe",
+    "run_5005631fcbe1468c879d": "239d6c5d93db68dd8c3bdc4edef75253009425d1e40ece0c70b9832a1038511a",
+    "run_cd89ec6e21ac40d18a52": "eb9b2fc4b49fc607adc0c2618ea7256675dacf206153fd17e8950c534decc3b0",
+    "run_0e1af17bd4de41838039": "56cd434a0d6a1c18b7d872dce1d2f0c30ffb416189311d45d2377a06403c8430"
+  },
+  "protected_context_sha256_after": {
+    "scenario": "bd42b62cb9648b57acedcd006c04635d23e7c42f9bb2b8b1f524a5c678cf633c",
+    "dataset": "c77a937a0f27c7ac207ac663e7d7ddfc215862dd884118ca7e1c3031797314a0",
+    "comparison": "e2383d57bf7d0e35a642b80ab61d3388e239dce5789f7f3a3824d2ca06c4420a",
+    "run_08ee3b44e84541dc8ba2": "9858e0fb734de8756a01c0a97bf80c8ee990a56b2c7f0dac171da2d256dd53e5",
+    "run_33834bf15d574c808372": "113af3a7c74b014bf3f2bc4fe4f2437527d08a09858a117798f588fb7abb41b1",
+    "run_e8d0e6cd9af64149a113": "2b730fa123cb727359545ba731a1b21d8f608c333ec033873dbeb6919a6ef7fe",
+    "run_edc6c70cfaaa4a388a82": "87ecae743680b1cd60ab19e6b75779f3e418099d97e7406b86ddc8038bbb4723",
+    "run_f84dc1bc84704677a1ed": "841bc18d74f6c83a0816ae4dc0bb31b0589376d006e3df9f3a32359265a64afe",
+    "run_5005631fcbe1468c879d": "239d6c5d93db68dd8c3bdc4edef75253009425d1e40ece0c70b9832a1038511a",
+    "run_cd89ec6e21ac40d18a52": "eb9b2fc4b49fc607adc0c2618ea7256675dacf206153fd17e8950c534decc3b0",
+    "run_0e1af17bd4de41838039": "56cd434a0d6a1c18b7d872dce1d2f0c30ffb416189311d45d2377a06403c8430"
+  },
+  "protected_context_unchanged": true,
+  "verification_source_files": [
+    "evidence/browser-hosted-workflow-84d.json",
+    "evidence/browser-hosted-replay-clinical-capacity-84d.json",
+    "evidence/browser-hosted-replay-held-unit-84d.json",
+    "evidence/cloud-benchmark-365d-100r-84d.json"
+  ],
+  "checker_sha256": "0f053809f663f1953f666b0162d6a8a9792c4062ddc4fd349273402b956c3147",
+  "protected_document_count": 11,
+  "protected_run_count": 8,
+  "no_delete_requests": true
+}

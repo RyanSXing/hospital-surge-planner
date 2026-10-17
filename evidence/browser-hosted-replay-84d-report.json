@@ -1,0 +1,260 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/replay-clinical-capacity.spec.ts",
+      "--project=desktop"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "https://hospital-surge.131.186.0.156.sslip.io",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "replay-clinical-capacity.spec.ts",
+      "file": "replay-clinical-capacity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "replay clinical capacity excludes nonclinical shelter inventory",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15030,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T15:09:44.444Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-clinical-capacity",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-2610c-nclinical-shelter-inventory-desktop/attachments/replay-clinical-capacity-148831ec05a24cce9fd5a6027bde29ebd07490ee.png"
+                    },
+                    {
+                      "name": "replay-clinical-capacity-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-2610c-nclinical-shelter-inventory-desktop/attachments/replay-clinical-capacity-middle-9b1694b99287fd03be7ba23aeb76040c2e2d608c.png"
+                    },
+                    {
+                      "name": "replay-clinical-capacity-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-2610c-nclinical-shelter-inventory-desktop/attachments/replay-clinical-capacity-lower-73279b539fb95cff82182a78914dd4a9a1829529.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ea0ea2874c73aa059c10-605dc4577672271f6cc9",
+          "file": "replay-clinical-capacity.spec.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "title": "replay holds a stepdown patient and care path in ICU until actual ward entry",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13392,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T15:09:59.854Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-stepdown-held-icu",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-ef6bb-ICU-until-actual-ward-entry-desktop/attachments/replay-stepdown-held-icu-f05cd94ebf7036fa6ae6acf544895967e57759a9.png"
+                    },
+                    {
+                      "name": "replay-stepdown-held-icu-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-ef6bb-ICU-until-actual-ward-entry-desktop/attachments/replay-stepdown-held-icu-middle-7b8953fdfc767930fea2a5afebc3c6efff7ad971.png"
+                    },
+                    {
+                      "name": "replay-stepdown-held-icu-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-ef6bb-ICU-until-actual-ward-entry-desktop/attachments/replay-stepdown-held-icu-lower-8ddb57440ac342133433319148541adfeaf23fc7.png"
+                    },
+                    {
+                      "name": "replay-stepdown-actual-ward-path",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-ef6bb-ICU-until-actual-ward-entry-desktop/attachments/replay-stepdown-actual-ward-path-a5d557978f5592a1e6fcd115b3a55b13a5474c4d.png"
+                    },
+                    {
+                      "name": "replay-stepdown-actual-ward-path-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-ef6bb-ICU-until-actual-ward-entry-desktop/attachments/replay-stepdown-actual-ward-path-middle-3895ca35a83817d517c58d46a2f8f9fa8a03b3db.png"
+                    },
+                    {
+                      "name": "replay-stepdown-actual-ward-path-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/replay-clinical-capacity-r-ef6bb-ICU-until-actual-ward-entry-desktop/attachments/replay-stepdown-actual-ward-path-lower-07f320ed5d72315484b5a1aa16484892a4318418.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ea0ea2874c73aa059c10-a7fde6edb3e03c366ac8",
+          "file": "replay-clinical-capacity.spec.ts",
+          "line": 86,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T15:09:44.179Z",
+    "duration": 29142.983,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

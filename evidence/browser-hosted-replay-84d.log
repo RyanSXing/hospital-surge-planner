@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+(node:18994) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18994) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [desktop] › e2e/replay-clinical-capacity.spec.ts:14:1 › replay clinical capacity excludes nonclinical shelter inventory (15.0s)
+  ✓  2 [desktop] › e2e/replay-clinical-capacity.spec.ts:86:1 › replay holds a stepdown patient and care path in ICU until actual ward entry (13.4s)
+
+  2 passed (29.1s)

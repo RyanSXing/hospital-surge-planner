@@ -1,0 +1,80 @@
+{
+  "recorded_at": "2026-10-17T15:30:29.855240+00:00",
+  "deployed_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+  "status": "functional_acceptance_complete_with_measured_compute_target_misses",
+  "model_version": "1.1.0",
+  "generator_version": "1.1.0",
+  "application_url": "https://hospital-surge.131.186.0.156.sslip.io/?scenario=scenario_b44dbb255ef3494e8e22&run=run_08ee3b44e84541dc8ba2&at=2026-10-27T13%3A00%3A00Z&view=overview",
+  "private_access_file": "data/deployment/access.md (ignored,0600)",
+  "scope_counts": {
+    "required_P0_P1_features_verified": 26,
+    "workflows_verified": 15,
+    "acceptance_cases_verified": 16,
+    "optional_P2_features_deferred": 5
+  },
+  "local_checks": {
+    "frozen_backend_passed": 595,
+    "frontend_passed": 90,
+    "production_build_passed": true,
+    "additional_viewer_checker_failure_tests_passed": 7,
+    "independent_source_review_clean": true
+  },
+  "hosted_acceptance": {
+    "complete_30day_10run_workflow_passed": true,
+    "comparison_plans": 3,
+    "export_members_checksum_verified": 22,
+    "focused_replay_cases_passed": 2,
+    "desktop_mobile_gallery_views": 11,
+    "visual_reference_images_reviewed": 6,
+    "page_errors": 0,
+    "horizontal_overflows": 0,
+    "five_images_high_critical_findings": 0,
+    "private_OCI_artifacts_verified": true,
+    "controlled_aggregating_recovery_passed": true,
+    "ten_viewers_requests_passed": 250,
+    "ten_temporary_viewers_verified_disabled": true,
+    "post_curation_private_backup_and_isolated_restore_passed": true,
+    "no_active_hosted_jobs": true
+  },
+  "performance": {
+    "all_targets_met": false,
+    "worker_seconds": {
+      "30days_10runs": 33.226,
+      "30days_100runs": 75.694,
+      "365days_100runs": 700.3
+    },
+    "worker_target_seconds": {
+      "30days_10runs": 10,
+      "30days_100runs": 60,
+      "365days_100runs": 600
+    },
+    "job_timeout_seconds": 1200,
+    "seeded_useful_navigation_max_ms": 585.4,
+    "panel_max_ms": 8.3,
+    "cached_seek_max_ms": 17.3,
+    "replay_visible_markers": 500,
+    "active_replay_fps_range": [
+      59.97,
+      60.02
+    ],
+    "ten_viewer_endpoint_p95_ms_range": [
+      161,
+      256
+    ],
+    "measurement_scope": "Short forecasts/recovery use byte-identical2faf compute source; annual and UI use84d; viewer reads serving84d over retained2faf outputs. Durations are completed workload observations, not distributions or promises.",
+    "preview_options": "Select fewer runs or shorter horizons per spec8.1; no model fidelity or durable publication requirement relaxed."
+  },
+  "evidence": [
+    "docs/acceptance-tracker.json",
+    "docs/hosted-verification.md",
+    "evidence/final-application-source-identity-84d.json",
+    "evidence/visual-reference-hosted-84d.json",
+    "evidence/hosted-final-curation-84d.json",
+    "evidence/hosted-backup-restore-84d.json"
+  ],
+  "known_boundaries": [
+    "All operational and patient data are synthetic engineering fixtures; calibrated real-world forecasts and integrations are optional P2.",
+    "One OCI host with private storage and verified backup/recovery; no high-availability claim.",
+    "The three compute speed targets remain missed and explicit."
+  ]
+}

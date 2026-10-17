@@ -1,186 +1,120 @@
 {
-  "recorded_at": "2026-10-17T11:03:14.640Z",
+  "recorded_at": "2026-10-17T15:05:19.256Z",
   "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
   "scope": "Read-only initial seeded source census; five warm authenticated reloads after an untimed first asset load. Useful means three populated current-state KPIs, source-census identity and six facility markers.",
-  "deployed_commit": "e2e65eb81c023ae8b4385742756662be524c29fb",
+  "deployed_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
   "samples": [
     {
-      "useful_ms": 3678.599999964237,
+      "useful_ms": 585.3999999761581,
       "source": " Source: synthetic planning datasetInitial census · planning baseline",
       "resources": [
         {
+          "path": "/api/workspaces/workspace-main/summary",
+          "start_ms": 45.10000002384186,
+          "duration_ms": 120.79999995231628,
+          "transfer_bytes": 34640,
+          "decoded_bytes": 406042
+        },
+        {
           "path": "/api/me",
-          "start_ms": 42.299999952316284,
-          "duration_ms": 37.700000047683716,
+          "start_ms": 45.200000047683716,
+          "duration_ms": 36.59999990463257,
           "transfer_bytes": 515,
           "decoded_bytes": 215
-        },
-        {
-          "path": "/api/workspaces/workspace-main/summary",
-          "start_ms": 42.299999952316284,
-          "duration_ms": 114.60000002384186,
-          "transfer_bytes": 34348,
-          "decoded_bytes": 386286
-        },
-        {
-          "path": "/api/scenarios/scenario_b11737d18a6b4691844b",
-          "start_ms": 159.29999995231628,
-          "duration_ms": 38.90000003576279,
-          "transfer_bytes": 674,
-          "decoded_bytes": 588
-        },
-        {
-          "path": "/api/datasets/dataset_245582261d284b6a9b1c",
-          "start_ms": 198.79999995231628,
-          "duration_ms": 3030.600000023842,
-          "transfer_bytes": 811769,
-          "decoded_bytes": 22066287
         }
       ]
     },
     {
-      "useful_ms": 3681.599999964237,
+      "useful_ms": 563.6000000238419,
       "source": " Source: synthetic planning datasetInitial census · planning baseline",
       "resources": [
         {
-          "path": "/api/workspaces/workspace-main/summary",
-          "start_ms": 38.5,
-          "duration_ms": 110.09999996423721,
-          "transfer_bytes": 34348,
-          "decoded_bytes": 386286
-        },
-        {
           "path": "/api/me",
-          "start_ms": 38.59999996423721,
-          "duration_ms": 36.40000003576279,
+          "start_ms": 45.700000047683716,
+          "duration_ms": 45.5,
           "transfer_bytes": 515,
           "decoded_bytes": 215
         },
         {
-          "path": "/api/scenarios/scenario_b11737d18a6b4691844b",
-          "start_ms": 150.5,
-          "duration_ms": 38,
-          "transfer_bytes": 674,
-          "decoded_bytes": 588
-        },
-        {
-          "path": "/api/datasets/dataset_245582261d284b6a9b1c",
-          "start_ms": 188.80000001192093,
-          "duration_ms": 3051.599999964237,
-          "transfer_bytes": 811769,
-          "decoded_bytes": 22066287
+          "path": "/api/workspaces/workspace-main/summary",
+          "start_ms": 45.700000047683716,
+          "duration_ms": 127.20000004768372,
+          "transfer_bytes": 34640,
+          "decoded_bytes": 406042
         }
       ]
     },
     {
-      "useful_ms": 3630.199999988079,
+      "useful_ms": 579.6000000238419,
       "source": " Source: synthetic planning datasetInitial census · planning baseline",
       "resources": [
         {
           "path": "/api/workspaces/workspace-main/summary",
-          "start_ms": 38.69999998807907,
-          "duration_ms": 109.80000001192093,
-          "transfer_bytes": 34348,
-          "decoded_bytes": 386286
+          "start_ms": 43.60000002384186,
+          "duration_ms": 114,
+          "transfer_bytes": 34640,
+          "decoded_bytes": 406042
         },
         {
           "path": "/api/me",
-          "start_ms": 38.80000001192093,
-          "duration_ms": 37.89999997615814,
+          "start_ms": 43.700000047683716,
+          "duration_ms": 37.09999990463257,
           "transfer_bytes": 515,
           "decoded_bytes": 215
-        },
-        {
-          "path": "/api/scenarios/scenario_b11737d18a6b4691844b",
-          "start_ms": 150,
-          "duration_ms": 36.90000003576279,
-          "transfer_bytes": 674,
-          "decoded_bytes": 588
-        },
-        {
-          "path": "/api/datasets/dataset_245582261d284b6a9b1c",
-          "start_ms": 187.5,
-          "duration_ms": 3031.900000035763,
-          "transfer_bytes": 811769,
-          "decoded_bytes": 22066287
         }
       ]
     },
     {
-      "useful_ms": 3730.5,
+      "useful_ms": 580.5,
       "source": " Source: synthetic planning datasetInitial census · planning baseline",
       "resources": [
         {
           "path": "/api/workspaces/workspace-main/summary",
-          "start_ms": 35.69999998807907,
-          "duration_ms": 115.40000003576279,
-          "transfer_bytes": 34348,
-          "decoded_bytes": 386286
+          "start_ms": 44.39999997615814,
+          "duration_ms": 119.60000002384186,
+          "transfer_bytes": 34640,
+          "decoded_bytes": 406042
         },
         {
           "path": "/api/me",
-          "start_ms": 35.80000001192093,
-          "duration_ms": 37.30000001192093,
+          "start_ms": 44.5,
+          "duration_ms": 38.700000047683716,
           "transfer_bytes": 515,
           "decoded_bytes": 215
-        },
-        {
-          "path": "/api/scenarios/scenario_b11737d18a6b4691844b",
-          "start_ms": 153.10000002384186,
-          "duration_ms": 42,
-          "transfer_bytes": 674,
-          "decoded_bytes": 588
-        },
-        {
-          "path": "/api/datasets/dataset_245582261d284b6a9b1c",
-          "start_ms": 195.80000001192093,
-          "duration_ms": 3079.899999976158,
-          "transfer_bytes": 811769,
-          "decoded_bytes": 22066287
         }
       ]
     },
     {
-      "useful_ms": 3647.7999999523163,
+      "useful_ms": 579.2000000476837,
       "source": " Source: synthetic planning datasetInitial census · planning baseline",
       "resources": [
         {
-          "path": "/api/workspaces/workspace-main/summary",
-          "start_ms": 38.39999997615814,
-          "duration_ms": 108.39999997615814,
-          "transfer_bytes": 34348,
-          "decoded_bytes": 386286
-        },
-        {
           "path": "/api/me",
-          "start_ms": 38.5,
-          "duration_ms": 39.09999996423721,
+          "start_ms": 45.39999997615814,
+          "duration_ms": 39.10000002384186,
           "transfer_bytes": 515,
           "decoded_bytes": 215
         },
         {
-          "path": "/api/scenarios/scenario_b11737d18a6b4691844b",
-          "start_ms": 149.29999995231628,
-          "duration_ms": 37.90000003576279,
-          "transfer_bytes": 674,
-          "decoded_bytes": 588
-        },
-        {
-          "path": "/api/datasets/dataset_245582261d284b6a9b1c",
-          "start_ms": 187.69999998807907,
-          "duration_ms": 3026.699999988079,
-          "transfer_bytes": 811769,
-          "decoded_bytes": 22066287
+          "path": "/api/workspaces/workspace-main/summary",
+          "start_ms": 45.39999997615814,
+          "duration_ms": 123.70000004768372,
+          "transfer_bytes": 34640,
+          "decoded_bytes": 406042
         }
       ]
     }
   ],
   "errors": [],
   "model_mutations": [],
-  "scenario_id": "scenario_b11737d18a6b4691844b",
-  "dataset_version_id": "dataset_245582261d284b6a9b1c",
-  "median_ms": 3678.599999964237,
-  "max_ms": 3730.5,
+  "scenario_id": "scenario-demo-v1-1-0-planning_baseline-41021-365",
+  "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
+  "generator_version": "1.1.0",
+  "generator_seed": 41021,
+  "seed_source_identity": "demo-v1-1-0-planning_baseline-41021-365",
+  "dataset_input_sha256": "f48749ad91f051f6f6d642a95c37ca4bc59f11d1f65b50ac69a1b876b3dffac4",
+  "median_ms": 579.6000000238419,
+  "max_ms": 585.3999999761581,
   "target_ms": 3000,
-  "all_within_target": false
+  "all_within_target": true
 }

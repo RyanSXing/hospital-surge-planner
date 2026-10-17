@@ -1,35 +1,35 @@
 {
-  "checked_at": "2026-10-17T14:45:01.206788+00:00",
+  "checked_at": "2026-10-17T15:00:59.145727+00:00",
   "scanner": "aquasec/trivy:0.76.0",
   "scope": "Linux ARM64 runtime images; HIGH/CRITICAL OS and language vulnerabilities, including unfixed findings",
   "images": [
     {
-      "image": "hospital-surge-planner-api:2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
-      "image_id": "sha256:1651c9f8fef2ff4773f6e9c2944160fbbbc867845aa4f86fd76ab0c57617d356",
+      "image": "hospital-surge-planner-api:84d225e2776630cf84e17bf7d0913b01553e0cd4",
+      "image_id": "sha256:ef9862f9a33578daba55bde80e4e592e9bd164bc346721b910c73bfc0f681ef0",
       "repo_digests": [
-        "hospital-surge-planner-api@sha256:1651c9f8fef2ff4773f6e9c2944160fbbbc867845aa4f86fd76ab0c57617d356"
+        "hospital-surge-planner-api@sha256:ef9862f9a33578daba55bde80e4e592e9bd164bc346721b910c73bfc0f681ef0"
       ],
       "high": 0,
       "critical": 0,
       "fixed_available": 0,
-      "report": "evidence/container-scans/hospital-surge-planner-api-2fafb69c498aa38b08745fc8939e6a9a92a0e0a3.json"
+      "report": "evidence/container-scans/hospital-surge-planner-api-84d225e2776630cf84e17bf7d0913b01553e0cd4.json"
     },
     {
-      "image": "hospital-surge-planner-web:2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
-      "image_id": "sha256:64bcdafa07090e6612109bc727195534bfb5fffc944f4c54f2fd99e5880096cd",
+      "image": "hospital-surge-planner-web:84d225e2776630cf84e17bf7d0913b01553e0cd4",
+      "image_id": "sha256:fc45801166917c1faf3c58974e027b0638fc72e0d54c2d4afc0e0bd63f455576",
       "repo_digests": [
-        "hospital-surge-planner-web@sha256:64bcdafa07090e6612109bc727195534bfb5fffc944f4c54f2fd99e5880096cd"
+        "hospital-surge-planner-web@sha256:fc45801166917c1faf3c58974e027b0638fc72e0d54c2d4afc0e0bd63f455576"
       ],
       "high": 0,
       "critical": 0,
       "fixed_available": 0,
-      "report": "evidence/container-scans/hospital-surge-planner-web-2fafb69c498aa38b08745fc8939e6a9a92a0e0a3.json"
+      "report": "evidence/container-scans/hospital-surge-planner-web-84d225e2776630cf84e17bf7d0913b01553e0cd4.json"
     },
     {
       "image": "hospital-surge-planner-postgres:17.11-patched",
-      "image_id": "sha256:23e6774d879bc55cd5fd2e80a854a9533ceb5e7f610b87541e064bbc444778bd",
+      "image_id": "sha256:ce398f71d9e9e54d91c8258d11f4d6822bfd48ad515798a3c978c6ff13a23363",
       "repo_digests": [
-        "hospital-surge-planner-postgres@sha256:23e6774d879bc55cd5fd2e80a854a9533ceb5e7f610b87541e064bbc444778bd"
+        "hospital-surge-planner-postgres@sha256:ce398f71d9e9e54d91c8258d11f4d6822bfd48ad515798a3c978c6ff13a23363"
       ],
       "high": 0,
       "critical": 0,
@@ -38,9 +38,9 @@
     },
     {
       "image": "hospital-surge-planner-redis:7.4.11-patched",
-      "image_id": "sha256:a2e2a4ecf3dee8fd5db47a1c95f1f3151acc4bedcb50da81728284e2e229221b",
+      "image_id": "sha256:c31968ab6e8be4e14669969a40248b01162f8a35e417fc3866fd17a8cd544d7e",
       "repo_digests": [
-        "hospital-surge-planner-redis@sha256:a2e2a4ecf3dee8fd5db47a1c95f1f3151acc4bedcb50da81728284e2e229221b"
+        "hospital-surge-planner-redis@sha256:c31968ab6e8be4e14669969a40248b01162f8a35e417fc3866fd17a8cd544d7e"
       ],
       "high": 0,
       "critical": 0,
@@ -49,9 +49,9 @@
     },
     {
       "image": "hospital-surge-planner-caddy:2.11.7-patched",
-      "image_id": "sha256:26fc35da388817f3a8f8386e1aa869bac11b90dfaf130314f626e9886312fcfb",
+      "image_id": "sha256:d43af8cd4d15c2eb642eb30ab061cd09e524078bac2b19176850d139196cd580",
       "repo_digests": [
-        "hospital-surge-planner-caddy@sha256:26fc35da388817f3a8f8386e1aa869bac11b90dfaf130314f626e9886312fcfb"
+        "hospital-surge-planner-caddy@sha256:d43af8cd4d15c2eb642eb30ab061cd09e524078bac2b19176850d139196cd580"
       ],
       "high": 0,
       "critical": 0,

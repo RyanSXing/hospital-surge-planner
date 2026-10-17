@@ -1,0 +1,12 @@
+{
+  "run_id": "run_e8d0e6cd9af64149a113",
+  "replication_id": "run_e8d0e6cd9af64149a113_rep_0000",
+  "at": "2026-10-16T05:00:00Z",
+  "ward": {
+    "occupied": 108,
+    "staffed": 132,
+    "background": 44
+  },
+  "excluded_shelter_places": 24,
+  "actual_canvas_label": "108/132"
+}

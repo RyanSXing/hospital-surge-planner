@@ -1,0 +1,134 @@
+{
+  "reviewed_at": "2026-10-17T15:14:27.528621Z",
+  "deployed_commit": "84d225e2776630cf84e17bf7d0913b01553e0cd4",
+  "status": "No new actionable visual defect found in the reviewed captures",
+  "method": "Offline visual inspection of all six supplied reference PNGs, all 20 hosted gallery PNGs across 11 desktop/mobile views, and 3 focused hosted Replay proof PNGs. Read gallery/proof metadata and narrow scroll-container CSS to distinguish cropped scroll viewports from inaccessible content. No browser, network, hosted workload, app mutation or new functional test.",
+  "scope": "Final visual closure only: hierarchy, legibility, clipping, selected-state context and corrected Replay capacity/location labels. Reference values are illustrative; computed state is authoritative.",
+  "references": [
+    "docs/reference/gotham-inspired-mockups/01-command-overview.png",
+    "docs/reference/gotham-inspired-mockups/02-visual-scenario-builder-v2.png",
+    "docs/reference/gotham-inspired-mockups/03-patient-unit-explorer.png",
+    "docs/reference/gotham-inspired-mockups/04-resources-and-updates.png",
+    "docs/reference/gotham-inspired-mockups/05-visual-plan-comparison-v2.png",
+    "docs/reference/gotham-inspired-mockups/06-visual-patient-flow-replay.png"
+  ],
+  "gallery_index": "evidence/screens/hosted-84d-day12/index.json",
+  "reviewed_gallery_files": [
+    "evidence/screens/hosted-84d-day12/desktop-overview.png",
+    "evidence/screens/hosted-84d-day12/desktop-scenarios.png",
+    "evidence/screens/hosted-84d-day12/desktop-scenarios-lower.png",
+    "evidence/screens/hosted-84d-day12/desktop-patients.png",
+    "evidence/screens/hosted-84d-day12/desktop-resources.png",
+    "evidence/screens/hosted-84d-day12/desktop-resources-candidate.png",
+    "evidence/screens/hosted-84d-day12/desktop-compare.png",
+    "evidence/screens/hosted-84d-day12/desktop-replay.png",
+    "evidence/screens/hosted-84d-day12/desktop-replay-lower.png",
+    "evidence/screens/hosted-84d-day12/desktop-data.png",
+    "evidence/screens/hosted-84d-day12/desktop-data-lower.png",
+    "evidence/screens/hosted-84d-day12/mobile-overview.png",
+    "evidence/screens/hosted-84d-day12/mobile-overview-lower.png",
+    "evidence/screens/hosted-84d-day12/mobile-patients.png",
+    "evidence/screens/hosted-84d-day12/mobile-patients-lower.png",
+    "evidence/screens/hosted-84d-day12/mobile-compare.png",
+    "evidence/screens/hosted-84d-day12/mobile-compare-lower.png",
+    "evidence/screens/hosted-84d-day12/mobile-replay.png",
+    "evidence/screens/hosted-84d-day12/mobile-replay-lower.png",
+    "evidence/screens/hosted-84d-day12/mobile-replay-zone.png"
+  ],
+  "focused_proofs": [
+    "evidence/browser-desktop-replay-clinical-capacity-84d.png",
+    "evidence/browser-desktop-replay-stepdown-held-icu-84d.png",
+    "evidence/browser-desktop-replay-stepdown-actual-ward-path-84d.png",
+    "evidence/browser-hosted-replay-clinical-capacity-84d.json",
+    "evidence/browser-hosted-replay-held-unit-84d.json"
+  ],
+  "context_checks": {
+    "scenario_id": "scenario_b44dbb255ef3494e8e22",
+    "run_id": "run_08ee3b44e84541dc8ba2",
+    "comparison_id": "comparison_7b7f1793cb374422bc6f",
+    "selected_at_utc": "2026-10-27T13:00:00Z",
+    "displayed_local_time": "2026-10-27 08:00 CDT (America/Chicago), Day 12",
+    "all11_metadata_timestamps_match": true,
+    "all11_metadata_patient_totals_match": true,
+    "selected_replication_label": "Run 5 representative / one simulation trajectory",
+    "comparison_ensemble_label": "10 runs per plan / paired random inputs",
+    "main_ward_occupied_staffed": [
+      80,
+      80
+    ],
+    "main_icu_occupied_staffed": [
+      12,
+      12
+    ],
+    "inpatient_requests": {
+      "total": 22,
+      "ward": 7,
+      "icu": 15,
+      "ed_boarders": 20,
+      "direct_waiting": 2
+    },
+    "replay_zone_patient_sum": {
+      "ed_waiting": 1358,
+      "ed_treatment": 24,
+      "direct_waiting": 2,
+      "ward": 80,
+      "icu": 12,
+      "total": 1476
+    },
+    "replay_day12_clinical_ward_header": [
+      124,
+      132
+    ],
+    "replay_day12_clinical_icu_header": [
+      19,
+      20
+    ],
+    "replay_start_proof_clinical_ward_header": [
+      108,
+      132
+    ],
+    "excluded_nonclinical_shelter_places": 24,
+    "background_ward_occupants": 44,
+    "density_disclosure": "500 individual markers; 976 grouped;1 marker=976 in the ED waiting cohort",
+    "starting_source_census": 84,
+    "calendar_context": "30 local calendar days from Oct 16 to Nov 15 exclusive; 721 elapsed hours includes fall-back hour"
+  },
+  "visual_checks": [
+    {
+      "area": "Overview/resources",
+      "result": "Map geometry and six site markers are loaded; map/list/inspector layout and capacity hierarchy match reference direction. Synthetic and selected-run context are explicit."
+    },
+    {
+      "area": "Scenario builder",
+      "result": "Visible condition palette, arrival preview, six editable track families and selected-condition form. Sustained +70% = 1.70x is shown honestly; exact local end, 10-run preview, compute estimate and 84-patient starting census appear in lower capture."
+    },
+    {
+      "area": "Patients/units",
+      "result": "Readable clinical slot grids, local legends and census/inspector separation; mobile rows use cards. Main ward 80/80, ICU 12/12 and 22 requests agree with Overview."
+    },
+    {
+      "area": "Comparison",
+      "result": "Three plan cards distinguish 80/100, 80/120 and 100/100 capacity. Chart axes/legend/table action fit above timeline; physical-only plan retains waiting burden. Mobile controls wrap without page overflow."
+    },
+    {
+      "area": "Replay",
+      "result": "Desktop canvas, inspector, playback and annotations coexist. Clinical ward 132 denominator is corrected; held-ICU and subsequent ward/path proof agree with actual unit placement. Mobile uses explicit zone navigation and scrollable schematic/annotation/census viewports."
+    },
+    {
+      "area": "Data/setup",
+      "result": "Immutable synthetic dataset metadata,source timestamp, generator seed,entity rows and validation action are readable. Original 84-patient source census remains distinct from selected-time 1476-patient result."
+    }
+  ],
+  "capture_report": {
+    "horizontal_overflow_views": 0,
+    "page_errors": [],
+    "overview_resource_maps": "6 markers each; 30 stable animation frames recorded"
+  },
+  "findings": [],
+  "limits": [
+    "Screenshots establish visible presentation and consistency at these captured states; this pass does not prove every hidden control, keyboard action, scroll gesture, animation frame rate or all viewport sizes.",
+    "Mobile timeline, census and schematic use bounded scrolling; screenshots show only the captured viewport. Narrow source inspection confirmed overflow:auto, but scrolling was not re-exercised during this offline pass.",
+    "No new accessibility contrast measurement, backend audit, model correctness test, performance benchmark or hosted request was performed. Existing functional and performance evidence remains separate.",
+    "Reference matching is design-direction review, not pixel identity; synthetic identifiers, computed quantities, and complete working-app forms intentionally differ from illustrative mockups."
+  ]
+}

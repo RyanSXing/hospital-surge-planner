@@ -29,7 +29,8 @@
         "tests/test_seed_upgrade.py: deterministic generator 1.1 lineage, exact immutable checksum, current defaults, idempotent upgrades and retained historical bytes",
         "evidence/generator-release-candidate.json: valid current 365-day planning and stress fixtures",
         "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow",
-        "evidence/visual-reference-release-candidate.json:all six reference directions reviewed;11desktop/mobile views and closed chart/readiness findings"
+        "evidence/visual-reference-release-candidate.json:all six reference directions reviewed;11desktop/mobile views and closed chart/readiness findings",
+        "evidence/visual-reference-hosted-84d.json: final offline review of all six references, 20 hosted captures across eleven desktop/mobile views and three focused Replay proofs; no new actionable visual finding, captured time/counts agree"
       ],
       "spec_line": 88
     },
@@ -507,7 +508,8 @@
         "evidence/backend-replay-held-unit-groups.log: two bounded-state API regressions passed",
         "evidence/browser-replay-held-unit-report.json: two browser cases passed; evidence/browser-replay-held-unit.json: actual imported ICU-stepdown snapshot remains in ICU until recorded ward entry, with the same care path",
         "evidence/backend-pytest-replay-location-frozen.log: 595 complete backend tests passed; evidence/backend-replay-location-frozen-source.json: all 84 frozen Python source/test files unchanged during the suite",
-        "evidence/replay-held-location-source-review.json: independent review clean; engine and worker bytes identical to the 2faf hosted short/recovery release"
+        "evidence/replay-held-location-source-review.json: independent review clean; engine and worker bytes identical to the 2faf hosted short/recovery release",
+        "evidence/browser-hosted-replay-84d-report.json: both final hosted Replay cases pass; evidence/browser-hosted-replay-held-unit-84d.json and evidence/browser-hosted-replay-clinical-capacity-84d.json record actual source-unit location/path and clinical-capacity agreement"
       ],
       "spec_line": 107,
       "current_reaudit": "Closed final Replay inventory gate:explicit clinical unit-kind mapping excludes24 nonclinical shelter places;87frontendtests/build,actual132-place browserproofandindependentreviewpass.Backendunchangedfrom594-testsource."
@@ -573,7 +575,8 @@
         "tests/test_api.py::test_export_preserves_explicit_run_when_comparison_reference_is_separate",
         "evidence/browser-workflow.json",
         "tests/test_creation_idempotency.py::test_export_regeneration_retry_reuses_completed_artifact",
-        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance",
+        "evidence/browser-hosted-workflow-84d.json: final actual 30-day 70% browser-created inputs match saved/frozen/exported settings; all 22 ZIP members have complete checksum coverage and verified hashes"
       ],
       "spec_line": 110
     },
@@ -622,35 +625,42 @@
       "name": "OCI deployment",
       "stage": "P0",
       "requirement": "Backend/worker actually runs on OCI; real Object Storage writes/reads; deployment proof and observable job IDs.",
-      "status": "implemented",
+      "status": "verified",
       "implementation": [
         "infra/compose.yaml",
         "infra/cloud-init.yaml",
         "docs/runbook.md"
       ],
       "evidence": [
-        "docs/hosted-verification.md: deployment identity, exact image scans and preserved historical measurements",
-        "evidence/cloud-acceptance.json: actual HTTPS authentication, OCI worker, private Object Storage and checksum-verified export",
-        "evidence/oci-private-storage.json: instance-principal write/read/checksum and unauthenticated404",
-        "evidence/hosted-backup-restore.json: authenticated backup and isolated restore",
-        "evidence/credential-rotation.json",
-        "evidence/cloud-benchmark-30d-10r.json: e2e65eb 31.373 s worker/32.473 s HTTPS; 10 s target missed",
-        "evidence/cloud-benchmark-30d-100r.json: e2e65eb 69.150 s worker/70.260 s HTTPS; 60 s target missed",
-        "evidence/cloud-benchmark-365d-100r-e2e65eb.json:622.256 s worker/620.002 s HTTPS; 600 s target missed;100 complete outputs and exact54,133-patient bounded state",
-        "evidence/cloud-ten-viewers.json:250 requests from 10 authenticated viewers; all endpoint p95 below 500 ms and writes denied",
-        "evidence/hosted-worker-recovery.json: natural lease recovery after SIGKILL,30 unique replications, identical saved seeds/checksums and abandoned private input cleanup",
-        "evidence/browser-hosted-performance-30d.json:500 actual markers and active transition cadence pass; panel/seek budgets pass; useful navigation median 3.866 s misses3 s",
-        "evidence/browser-hosted-workflow-final.json: intermediate candidate interaction and ZIP checks passed, but exported conditions were empty; explicitly not70% surge acceptance. Fixed locally, hosted repeat pending",
-        "evidence/screens/hosted-final/index.md: durable seven-screen intermediate-candidate gallery; refresh after the reviewed release",
+        "docs/hosted-verification.md: exact release, runtime image scans, current gates and preserved historical measurements",
+        "evidence/cloud-acceptance-84d.json: actual public HTTPS authentication, OCI worker, four private OCI artifacts and every export ZIP checksum verified on exact 84d release",
+        "evidence/hosted-startup-preservation-84d.json: all 38 existing dataset/scenario records and 44 jobs retained; current fixture hashes/revisions unchanged",
+        "evidence/hosted-runtime-budget-84d.json: API and worker JOB_TIMEOUT_SECONDS=1200 and eight bounded simulation workers",
+        "evidence/container-security-84d.json: five exact deployed runtime images have zero HIGH/CRITICAL findings at scan time, including unfixed",
+        "evidence/oci-private-storage.json: instance-principal write/read/checksum and anonymous read rejection",
+        "evidence/cloud-benchmark-30d-10r-2faf.json: 33.226 s worker / 34.586 s HTTPS; 10 s target missed; engine and worker unchanged in 84d",
+        "evidence/cloud-benchmark-30d-100r-2faf.json: 75.694 s worker / 76.627 s HTTPS; 60 s target missed; engine and worker unchanged in 84d",
+        "evidence/replay-held-location-source-review.json: exact engine/worker identity across 2faf and 84d; only the API Replay grouping projection changed",
+        "evidence/hosted-worker-recovery-aggregating-2faf.json: controlled AGGREGATING process failure, normal lease recovery in 148.392 s, 30 unique saved seeds/checksums unchanged, children exited in 0.609 s and private input cleanup",
+        "evidence/browser-hosted-seeded-navigation-84d.json: current generator 1.1 starter useful navigation median 579.6 ms / maximum 585.4 ms, below 3 s",
+        "evidence/browser-hosted-performance-84d.json: 500 actual patient markers at approximately 60 FPS, panel maximum 8.3 ms, cached seek maximum 17.3 ms; no page errors or model mutations",
+        "evidence/browser-hosted-workflow-84d.json: complete 30-day / 10-run scenario, three computed response plans, observed update branch, Replay and 22-member export with exact 70% inputs and every checksum verified",
+        "evidence/browser-hosted-workflow-84d-report.json: one complete hosted desktop workflow passed",
+        "evidence/browser-hosted-replay-84d-report.json: two actual hosted Replay cases passed; shelter exclusion and held ICU stepdown with recorded care path",
+        "evidence/screens/hosted-84d-day12/index.json: all seven desktop screens and four mobile views at one exact selected state, no page errors or horizontal overflow",
         "tests/test_release_archive.py: immutable committed release packaging with private/runtime exclusions",
-        "tests/test_cloud_recovery_harness.py: guarded RUNNING/AGGREGATING recovery harness phase checks; hosted AGGREGATING proof pending"
+        "tests/test_cloud_recovery_harness.py: guarded RUNNING/AGGREGATING recovery harness phase and process identity checks",
+        "evidence/visual-reference-hosted-84d.json: final six-reference visual closure, exact selected state across eleven views and corrected clinical capacity/location labels",
+        "evidence/cloud-benchmark-365d-100r-84d.json: exact final release completed all 100 annual replications and four private OCI artifacts; 700.300 s worker / 696.463 s HTTPS misses 600 s target; exact 54,133-patient census returned in a bounded 500-item response",
+        "evidence/cloud-resource-summary-84d-annual.json: 41 execution gauges / 44 total gauges, minimum available memory 7.788 GiB, zero swap; parent process-lifetime peak RSS 4.89 GB is separate from child peaks",
+        "evidence/cloud-ten-viewers-84d.json: 250 successful reads across ten distinct viewer sessions; bounded endpoint p95 161–256 ms; writes denied, all ten temporary accounts verified disabled and no cleanup errors; serving 84d reads retained 2faf results",
+        "evidence/hosted-final-curation-84d.json: five explicitly recorded verification scenarios archived; named working scenario is the verified default, with dataset/scenario/comparison/eight run hashes unchanged and readable",
+        "evidence/hosted-backup-restore-84d.json: fresh post-curation private OCI backup downloaded and checksum verified, isolated restore reads 1,411 documents / 55 jobs / 202 audit events and both current valid fixtures; nine successful exact-84d runs, zero active jobs, scratch database/download cleaned up, production unchanged",
+        "evidence/viewer-load-harness-tests.log: seven independent operational-cleanup failure checks pass; evidence/final-backup-checker-mocked-test.json: scratch-cleanup failure cannot produce a passed restore gate",
+        "evidence/final-application-source-identity-84d.json: application/engine/infrastructure/dependency source unchanged after deployment; operational checker identities are recorded separately"
       ],
       "spec_line": 113,
-      "remaining_checks": [
-        "Repeat full30-day70% browser-created workflow and every export checksum on the reviewed release",
-        "Re-measure hosted short/annual performance after worker overlap and useful navigation after bounded summary loading",
-        "Refresh final hosted gallery and UI timing on the reviewed release"
-      ]
+      "remaining_checks": []
     },
     {
       "id": "F27",
@@ -1133,5 +1143,5 @@
     }
   ],
   "last_reviewed_at": "2026-10-17",
-  "verification_scope": "All local functional repairs independently reviewed and verified: 595 complete backend tests on frozen source, 90 frontend tests/build, two focused API regressions and two actual browser cases for final held-unit Replay projection. Engine/worker bytes remain identical to 2faf. F26 final hosted browser/annual/load/backup checks remain pending. P2 is deferred and measured performance misses are explicit."
+  "verification_scope": "All 26 required P0/P1 features,15 workflows and16 acceptance scenarios have scoped implementation and acceptance evidence. Final release84d passes595 frozen-source backend tests,90 frontend tests/build,actual hosted30-day configure/compute/compare/update/Replay/checksummed-export workflow,focused Replay checks,eleven-view gallery/visual review,500-marker timing,private OCI persistence,recovery,ten-viewer reads,and fresh post-curation isolated backup restore. Forecast compute targets remain missed at33.226/75.694/700.300seconds and are explicitly reported per spec8.1; lower-cost previews retain configurable horizons/run counts. Five optional P2 features are deferred."
 }

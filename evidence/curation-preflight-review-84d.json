@@ -1,0 +1,13 @@
+{
+  "scope": "Final handoff curation preflight review; no hosted calls or mutations",
+  "checker_sha256": "0f053809f663f1953f666b0162d6a8a9792c4062ddc4fd349273402b956c3147",
+  "optimized_execution_rejected_before_input_or_network": true,
+  "explicit_versioned_inputs": 4,
+  "recursive_descendant_expansion": false,
+  "wildcard_mutation_inputs": false,
+  "default_mode": "dry-run",
+  "unknown_newer_survivor_aborts_before_mutation": true,
+  "protected_context": "Dataset, base scenario, comparison and all recorded workflow/branch/Replay/annual/comparison-plan run documents",
+  "independent_review": "next_release_review original scope/preflight findings fixed; optimized-mode refusal and exact saved/exported 70% condition checks added afterward",
+  "final_execution": "Explicit five-scenario dry-run reviewed before --apply; see hosted-final-curation-84d.json"
+}

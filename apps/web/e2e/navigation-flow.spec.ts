@@ -584,7 +584,7 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
       page,
       "analysis",
       tab.toLowerCase(),
-      tab === "Analytics" ? "patients" : undefined,
+      tab === "Analytics" ? "outcomes" : undefined,
     );
     await expectNarrowWidth();
     expect(selection(page)).toEqual(retained);
@@ -784,7 +784,16 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
       kind: "arrival_multiplier",
       entry_stream_id: stream,
       shape: "step",
-      multiplier: 0,
+      surge_percent: -100,
+      control_points: [
+        { at: context.scenario.start_at, multiplier: 0 },
+        {
+          at: new Date(
+            Date.parse(context.scenario.start_at) + 86400000,
+          ).toISOString(),
+          multiplier: 0,
+        },
+      ],
       start_at: context.scenario.start_at,
       end_at: new Date(
         Date.parse(context.scenario.start_at) + 86400000,
@@ -802,7 +811,7 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   );
   expect(quietMetrics.scalar_metrics.arrivals.p50).toBe(0);
   expect(
-    quietMetrics.scalar_metrics.time_to_first_shortage_hours.p50,
+    quietMetrics.scalar_metrics.time_to_first_shortage_hours?.p50 ?? null,
   ).toBeNull();
   await open(page, quiet.id, "analytics-outcomes", quietRun.id);
   await expect(row("New arrivals").getByRole("cell").nth(2)).toHaveText("0");
@@ -905,6 +914,12 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
         exact: true,
       })
       .click();
+    await expect(outcomes.locator(".outcome-scalars")).toBeVisible();
+    const showTable = outcomes.getByRole("button", {
+      name: "View chart data table",
+      exact: true,
+    });
+    if (await showTable.isVisible()) await showTable.click();
     const plotted = outcomes.locator(".chart-data-table tbody tr");
     await expect(plotted).toHaveCount(rows.length);
     await expect(plotted.first().getByRole("cell").nth(1)).toHaveText(

@@ -1,24 +1,25 @@
 # Hosted verification record
 
-[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) is running reviewed release **`7a2dda15bc2ecd9c5ce1e0bbab2cb33ed5751d9b`**, with model and generator **1.1.0**. The private login handoff is `data/deployment/access.md` (ignored, mode 0600). Correct completion and speed acceptance are separate gates.
+[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) is running reviewed release **`2fafb69c498aa38b08745fc8939e6a9a92a0e0a3`**, with model and generator **1.1.0**. The private login handoff is `data/deployment/access.md` (ignored, mode 0600). Correct completion and speed acceptance are separate gates.
 
 ## Current release gates
 
 | Gate | Current evidence and status |
 |---|---|
-| Immutable release and public HTTPS/authentication | **Passed.** Clean committed archive, fresh build, exact commit tags, HTTPS 200, readiness 200 and unauthenticated workspace 401 — [deployment](../evidence/deployment-7a2.json), [readiness](../evidence/hosted-readiness-7a2.json) |
-| Exact runtime image security | **Passed at scan time.** Five ARM64 runtime images have zero HIGH/CRITICAL findings, including unfixed — [scan](../evidence/container-security-7a2.json) |
-| Current curated fixtures and immutable upgrade | **Passed.** Both generator 1.1.0 planning/stress fixtures cover 365 days and validate. This restart preserved all 31 dataset/scenario documents and 35 jobs exactly — [startup proof](../evidence/hosted-startup-preservation-7a2.json), [original seed upgrade](../evidence/hosted-seed-upgrade.json) |
-| Actual simulation, private OCI artifacts and ZIP integrity | **Passed.** One day × two replications, four private artifacts and every ZIP checksum verified — [smoke](../evidence/cloud-acceptance-7a2.json) |
+| Immutable release and public HTTPS/authentication | **Passed.** Clean committed archive, fresh build, exact commit tags, HTTPS 200, readiness 200 and unauthenticated workspace 401 — [deployment](../evidence/deployment-2faf.json), [readiness](../evidence/hosted-readiness-2faf.json) |
+| Exact runtime image security | **Passed at scan time.** Five ARM64 runtime images have zero HIGH/CRITICAL findings, including unfixed — [scan](../evidence/container-security-2faf.json) |
+| Current curated fixtures and immutable upgrade | **Passed.** Both generator 1.1.0 planning/stress fixtures cover 365 days and validate. This restart preserved all 34 dataset/scenario documents and 39 jobs exactly — [startup proof](../evidence/hosted-startup-preservation-2faf.json), [original seed upgrade](../evidence/hosted-seed-upgrade.json) |
+| Actual simulation, private OCI artifacts and ZIP integrity | **Passed.** One day × two replications, four private artifacts and every ZIP checksum verified — [smoke](../evidence/cloud-acceptance-2faf.json) |
 | Selected-time snapshot projection | **Reviewed repair deployed.** Fractional-cutoff residuals and complete reserved/clinic state passed the final 594-case backend gate and focused local browser checks. Fresh hosted workflow acceptance remains pending. |
-| Replay clinical capacity header | **Open frontend-only finding.** The current header includes 24 Shelter places in the staffed-bed total (156 instead of the correct 132). Engine capacity is unchanged; the reviewed UI repair must deploy before remaining hosted gates. |
-| 30 days × 10 replications, worker <10 s | **Missed.** 32.995 s worker / 33.634 s HTTPS — [measurement](../evidence/cloud-benchmark-30d-10r-7a2.json) |
-| 30 days × 100 replications, worker <60 s | **Missed.** 75.658 s worker / 76.537 s HTTPS — [measurement](../evidence/cloud-benchmark-30d-100r-7a2.json) |
+| Replay clinical capacity header | **Reviewed correction deployed.** The clinical staffed-bed total excludes Shelter places; focused canvas and API evidence matched 108 occupied / 132 staffed beds. |
+| Held-unit schematic routing | **Open projection finding.** Stepdown and reserved patients can be routed by required care rather than their actually held unit; the compact patient-group projection also needs nested transfer prior-state information. Engine trajectories and worker behavior are unchanged. Browser/annual gates await the reviewed display/projection repair. |
+| 30 days × 10 replications, worker <10 s | **Missed.** 33.226 s worker / 34.586 s HTTPS — [measurement](../evidence/cloud-benchmark-30d-10r-2faf.json) |
+| 30 days × 100 replications, worker <60 s | **Missed.** 75.694 s worker / 76.627 s HTTPS — [measurement](../evidence/cloud-benchmark-30d-100r-2faf.json) |
 | 365 days × 100 replications, worker <600 s | **Pending.** Historical e2e65eb measured 622.256 s; this is not evidence for the current release. |
 | Ten viewers, warm bounded endpoint p95 <500 ms | **Pending refresh.** Historical e2e65eb passed 250 reads. |
-| Controlled AGGREGATING process failure/recovery | **Pending.** The tracked harness verifies workhorse identity, child cleanup, the natural 120-second lease and saved input/replication fingerprints. |
+| Controlled AGGREGATING process failure/recovery | **Passed on 2faf.** Only the verified workhorse was killed during AGGREGATING after 30/30 results. All eight children exited in 0.609 s; normal lease recovery completed in 148.392 s, with all 30 unique saved seeds/checksums and the input hash unchanged. Abandoned private inputs were removed — [proof](../evidence/hosted-worker-recovery-aggregating-2faf.json). |
 | Hosted navigation, corrected workflow, timeline and 500-marker Replay | **Pending in a separate browser window.** |
-| Final 20-minute runtime budget | **Pending configuration normalization after recovery.** The temporary diagnostic budget is still 7,200 seconds; it will be set to 1,200 seconds before browser/annual acceptance. |
+| Final 20-minute runtime budget | **Passed.** API and worker both enforce 1,200 seconds; private configuration files remain mode 0600 — [runtime proof](../evidence/hosted-runtime-budget-2faf.json). |
 | Fresh private backup and isolated restore of final state | **Pending after final curation.** Prior operational proof passed; daily backup/retention timers remain enabled. |
 
 The current short forecasts use `demo-v1-1-0-planning_baseline-41021-365`, base seed 20261016 and a 70% ED arrival increase. Dataset, model, seed and calendar settings match the preceding 6feb measurements; generator 1.0.0 historical runs use different input versions. Each compute timing is one completed workload, not a distribution. The current 100-replication result has 4,245 end-state patients, returned as 500 records with exact totals. Warm endpoint maxima across five samples were 38–147 ms; the ten-viewer gate is separate.
@@ -29,7 +30,7 @@ The approved host is native ARM64 OCI A2 Flex with four OCPUs/eight physical cor
 
 Deployment packages committed bytes with `git archive`, excludes private/runtime/evidence paths, and builds in a fresh temporary directory. The private environment travels separately over verified SSH. Full commit image tags, labels, archive checksums and result manifests identify the deployed source. Passwords, SSH keys, database credentials and browser cookies remain outside tracked files.
 
-The current starter is `scenario-demo-v1-1-0-planning_baseline-41021-365`. A completed current result is [Winter surge — 70% additional ED demand](https://hospital-surge.131.186.0.156.sslip.io/?scenario=scenario_8934fa75709f40e1b1f8&run=run_c4b7bc4cd6b942e5851d&view=overview). Old immutable datasets and results remain readable. Final curation will preserve result history and archive only known synthetic verification scenarios.
+The current starter is `scenario-demo-v1-1-0-planning_baseline-41021-365`. A completed current result is [Winter surge — 70% additional ED demand](https://hospital-surge.131.186.0.156.sslip.io/?scenario=scenario_532e015ff4d6419e86b9&run=run_b9fb98023d5b4d75a669&view=overview). Old immutable datasets and results remain readable. Final curation will preserve result history and archive only known synthetic verification scenarios.
 
 ## Recent performance diagnostics
 

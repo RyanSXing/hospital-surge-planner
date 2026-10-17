@@ -104,46 +104,42 @@ export function replayPresence(patient: Entity, at: string) {
     ? "departed"
     : "active";
 }
-export function replayZone(p: Entity) {
+export function replayZone(p: Entity, unitKinds: Record<string, string> = {}) {
   const prior = p.pending_transfer?.prior_state || p.prior_state;
   if (p.state === "in_transit") return "transport";
   if (["discharged", "departed", "transfer_out"].includes(p.state))
     return "exit";
-  if (
-    ["inpatient", "transfer_reserved"].includes(p.state) &&
-    p.facility_type === "ward_overflow"
-  )
-    return "overflow";
-  return p.state === "ed_waiting"
-    ? "arrivals"
-    : p.state === "ed_assessment" ||
-        p.state === "ed_boarding" ||
-        (p.state === "transfer_reserved" && prior === "ed_boarding")
-      ? "ed"
-      : p.state === "direct_waiting" ||
-          (p.state === "transfer_reserved" && prior === "direct_waiting")
-        ? "queue"
-        : p.state === "clinic_assessment"
-          ? "clinic"
-          : p.state === "inpatient" || p.state === "transfer_reserved"
-            ? p.care_level === "icu"
-              ? "icu"
-              : "ward"
-            : "queue";
+  const sourceState = p.state === "transfer_reserved" ? prior : p.state;
+  if (sourceState === "ed_waiting") return "arrivals";
+  if (sourceState === "direct_waiting") return "queue";
+  if (sourceState === "ed_assessment" || sourceState === "ed_boarding")
+    return "ed";
+  if (sourceState === "clinic_assessment") return "clinic";
+  if (p.state === "inpatient" || p.state === "transfer_reserved") {
+    // A stepdown request changes required care before releasing its source
+    // bed. Join the recorded unit, never a reserved destination or target care.
+    // Legacy records without a known unit retain their care-level fallback.
+    const kind = unitKinds[p.unit_id] ?? p.care_level;
+    if (kind === "icu" || kind === "ed" || kind === "clinic") return kind;
+    if (kind === "ward")
+      return p.facility_type === "ward_overflow" ? "overflow" : "ward";
+  }
+  return "queue";
 }
 export function replayCounts(
   patientGroups: Entity[] | undefined,
   patients: Entity[],
   visible: Entity[],
+  unitKinds: Record<string, string> = {},
 ) {
   const totals: Record<string, number> = {};
   for (const p of patientGroups || patients) {
-    const zone = replayZone(p);
+    const zone = replayZone(p, unitKinds);
     totals[zone] = (totals[zone] || 0) + (patientGroups ? Number(p.count) : 1);
   }
   const grouped = { ...totals };
   for (const p of visible) {
-    const zone = replayZone(p);
+    const zone = replayZone(p, unitKinds);
     grouped[zone] = Math.max(0, (grouped[zone] || 0) - 1);
   }
   return { totals, grouped };

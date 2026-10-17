@@ -4,6 +4,10 @@ A planning workspace for configuring hospital surge scenarios, running constrain
 
 The complete initial scope is P0 and P1 in [the build specification](docs/reference/hospital-surge-planner-build-spec.md). Current implementation and verification are tracked separately in [the acceptance ledger](docs/acceptance-tracker.md). Deferred P2 items include live hospital integrations, calibrated prediction, generalized optimization, AI assistance and 3D.
 
+## Hosted application
+
+Open [Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io). Private sign-in details are saved locally in `data/deployment/access.md`, outside version control. [Hosted verification](docs/hosted-verification.md) records the deployed release, completed workloads, measured performance limits, recovery and backup evidence.
+
 ## Start locally
 
 Prerequisites: Python 3.12, `uv`, Node.js 24 and npm. Docker is needed for the PostgreSQL/Redis deployment stack, but the local development path uses SQLite and local artifacts.

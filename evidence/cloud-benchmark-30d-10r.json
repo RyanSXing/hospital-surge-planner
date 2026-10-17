@@ -1,12 +1,12 @@
 {
-  "recorded_at": "2026-10-17T14:36:14.520176+00:00",
+  "recorded_at": "2026-10-17T14:46:41.696953+00:00",
   "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
   "scope": "Actual public HTTPS, OCI A2 ARM8 physical cores/16GiB, PostgreSQL, Redis worker and private ObjectStorage",
-  "scenario_id": "scenario_90f885855d214e44bab5",
-  "run_group_id": "run_7dd9b2f62bdc4d668e94",
+  "scenario_id": "scenario_8f5b3db1f8fa4799aebe",
+  "run_group_id": "run_c78ad697ded4460da79e",
   "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
-  "input_sha256": "2d4c71e9c4017cf2567890d11f2ca7879f6ac1672ab529ab31f299775e40713f",
-  "scenario_revision_id": "revision_ddda64a121114f88a419",
+  "input_sha256": "25f6508b76ceac67d279e9f0a75621838cdb7861c447db5839f0b295a98ed587",
+  "scenario_revision_id": "revision_6ad2b4f96b8f4ca78f90",
   "start_at": "2026-10-16T05:00:00Z",
   "end_at": "2026-11-15T06:00:00Z",
   "horizon_days": 30,
@@ -19,144 +19,144 @@
   },
   "status": "SUCCEEDED",
   "completed": 10,
-  "pipeline_seconds": 33.63369170902297,
+  "pipeline_seconds": 34.58634691708721,
   "pipeline_timing_is_resumed": false,
   "manifest": {
     "schema_version": "1.0",
-    "run_group_id": "run_7dd9b2f62bdc4d668e94",
+    "run_group_id": "run_c78ad697ded4460da79e",
     "workspace_id": "workspace-main",
     "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
-    "scenario_revision_id": "revision_ddda64a121114f88a419",
+    "scenario_revision_id": "revision_6ad2b4f96b8f4ca78f90",
     "model_version": "1.1.0",
-    "code_commit": "7a2dda15bc2ecd9c5ce1e0bbab2cb33ed5751d9b",
-    "input_sha256": "2d4c71e9c4017cf2567890d11f2ca7879f6ac1672ab529ab31f299775e40713f",
+    "code_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+    "input_sha256": "25f6508b76ceac67d279e9f0a75621838cdb7861c447db5839f0b295a98ed587",
     "generator_version": "1.1.0",
     "timezone": "America/Chicago",
     "start_at": "2026-10-16T05:00:00Z",
     "end_at": "2026-11-15T06:00:00Z",
-    "created_at": "2026-10-17T14:36:14.476228Z",
+    "created_at": "2026-10-17T14:46:41.657551Z",
     "replications_requested": 10,
     "replications_completed": 10,
     "seed_policy": "keyed-streams-v1",
     "base_seed": 20261016,
-    "selected_replication_id": "run_7dd9b2f62bdc4d668e94_rep_0004",
+    "selected_replication_id": "run_c78ad697ded4460da79e_rep_0004",
     "selected_replication_index": 4,
     "status": "SUCCEEDED",
     "data_origin": "synthetic",
     "artifacts": [
       {
-        "object_key": "workspace-main/run_7dd9b2f62bdc4d668e94/artifact_7f644cd802164fb3b686/aggregate.json.gz",
-        "sha256": "545c0efd05e694c23ca66cab660da1715bc288e441e80754b758ff81e66f90d3",
-        "byte_size": 152266,
+        "object_key": "workspace-main/run_c78ad697ded4460da79e/artifact_e83a4f95f9eb4dcfae47/aggregate.json.gz",
+        "sha256": "a8da01a98237a07fd95f5ebb89d588444e46ab7ed5e94b2335a45ad9b75db12d",
+        "byte_size": 152267,
         "media_type": "application/gzip",
         "name": "aggregate.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T14:36:39.906742Z"
+        "created_at": "2026-10-17T14:47:08.574718Z"
       },
       {
-        "object_key": "workspace-main/run_7dd9b2f62bdc4d668e94/artifact_144cbb9683104fe6adb7/replications.json.gz",
-        "sha256": "a2bca3a6e532f1993ab817baef79100a17f5a05524c93d2af604feafd6b92289",
-        "byte_size": 296612,
+        "object_key": "workspace-main/run_c78ad697ded4460da79e/artifact_57afa8f1a1d84e7a9d64/replications.json.gz",
+        "sha256": "7e185073898d16282617b02f05982a38de89e2b09ff8ddcbeaaed9a40215de4b",
+        "byte_size": 296619,
         "media_type": "application/gzip",
         "name": "replications.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T14:36:40.156303Z"
+        "created_at": "2026-10-17T14:47:08.841266Z"
       },
       {
-        "object_key": "workspace-main/run_7dd9b2f62bdc4d668e94/artifact_208654e0f9034efe8a99/selected-trace.json.gz",
-        "sha256": "8984efa198e78b36a4d833521ff6254ed1e9bc0d4992586769f402fb5840df8f",
-        "byte_size": 1233046,
+        "object_key": "workspace-main/run_c78ad697ded4460da79e/artifact_ced2edb4be84475a99da/selected-trace.json.gz",
+        "sha256": "3989745397a2c8bab6a25141820a00325bd18888c411313da23fa4258225bee0",
+        "byte_size": 1232827,
         "media_type": "application/gzip",
         "name": "selected-trace.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T14:36:47.474886Z"
+        "created_at": "2026-10-17T14:47:16.145890Z"
       },
       {
-        "object_key": "workspace-main/run_7dd9b2f62bdc4d668e94/artifact_fda98357499e41b6b835/inputs.json.gz",
-        "sha256": "fa60f5e38191502d212d44f3fc44ba3d90007c35f5f17e8129460e0cce5b2992",
-        "byte_size": 889640,
+        "object_key": "workspace-main/run_c78ad697ded4460da79e/artifact_931257a4090b48219e28/inputs.json.gz",
+        "sha256": "51f12e08a977c61fa7e6173c5e41d24df406758e65d6e6925cce7175b6d1dba5",
+        "byte_size": 889641,
         "media_type": "application/gzip",
         "name": "inputs.json.gz",
         "backend": "oci",
         "schema_version": "1.0",
-        "created_at": "2026-10-17T14:36:40.688778Z"
+        "created_at": "2026-10-17T14:47:09.391583Z"
       }
     ],
-    "completed_at": "2026-10-17T14:36:47.479160Z",
+    "completed_at": "2026-10-17T14:47:16.149405Z",
     "warnings": [
       "Synthetic assumptions; simulation ranges are not clinical predictions."
     ]
   },
   "reads": {
     "metrics": {
-      "cold_seconds": 0.7146659999853,
+      "cold_seconds": 0.7262935000471771,
       "warm_seconds": [
-        0.10813158296514302,
-        0.08889587502926588,
-        0.086494917050004,
-        0.08492083405144513,
-        0.08638954197522253
+        0.10598495905287564,
+        0.08005087496712804,
+        0.0802627089433372,
+        0.08044208399951458,
+        0.07676633389201015
       ],
-      "warm_p95_seconds": 0.10813158296514302
+      "warm_p95_seconds": 0.10598495905287564
     },
     "end_state": {
-      "cold_seconds": 1.3491582919377834,
+      "cold_seconds": 1.2948480839841068,
       "warm_seconds": [
-        0.06220245803706348,
-        0.05981854104902595,
-        0.060884083970449865,
-        0.06041783397085965,
-        0.054369250079616904
+        0.06132329208776355,
+        0.06094191700685769,
+        0.06360875000245869,
+        0.06103062501642853,
+        0.06178983300924301
       ],
-      "warm_p95_seconds": 0.06220245803706348,
+      "warm_p95_seconds": 0.06360875000245869,
       "patient_total": 4223,
       "returned_patients": 500
     },
     "census": {
-      "cold_seconds": 0.05437141703441739,
+      "cold_seconds": 0.0588112500263378,
       "warm_seconds": [
-        0.05336612497922033,
-        0.05329358298331499,
-        0.05491045897360891,
-        0.05869262502528727,
-        0.05999066703952849
+        0.05499404203146696,
+        0.05612820899114013,
+        0.05420225008856505,
+        0.05540812504477799,
+        0.057042500004172325
       ],
-      "warm_p95_seconds": 0.05999066703952849
+      "warm_p95_seconds": 0.057042500004172325
     },
     "events": {
-      "cold_seconds": 0.0542269159341231,
+      "cold_seconds": 0.05012608307879418,
       "warm_seconds": [
-        0.04716800001915544,
-        0.04726108303293586,
-        0.049074667040258646,
-        0.048406457994133234,
-        0.05268720898311585
+        0.04645929194521159,
+        0.047628415981307626,
+        0.04900145798455924,
+        0.04598458297550678,
+        0.04650291602592915
       ],
-      "warm_p95_seconds": 0.05268720898311585
+      "warm_p95_seconds": 0.04900145798455924
     },
     "checkpoints": {
-      "cold_seconds": 0.03777104092296213,
+      "cold_seconds": 0.03705570800229907,
       "warm_seconds": [
-        0.03584195801522583,
-        0.036180916940793395,
-        0.036997292074374855,
-        0.22171695798169822,
-        0.03704558394383639
+        0.036575958016328514,
+        0.03706516698002815,
+        0.03774487506598234,
+        0.03668391704559326,
+        0.03825187496840954
       ],
-      "warm_p95_seconds": 0.22171695798169822
+      "warm_p95_seconds": 0.03825187496840954
     }
   },
   "worker_execution_metrics": {
-    "wall_seconds": 32.99455793800007,
-    "cpu_seconds": 11.962445019999999,
-    "terminated_children_cpu_seconds": 116.48670299999999,
-    "process_peak_rss_bytes": 430944256,
-    "largest_terminated_child_peak_rss_bytes": 317173760,
+    "wall_seconds": 33.22606096299933,
+    "cpu_seconds": 11.90415402,
+    "terminated_children_cpu_seconds": 116.540375,
+    "process_peak_rss_bytes": 430559232,
+    "largest_terminated_child_peak_rss_bytes": 316710912,
     "cpu_scope": "current process plus separately reported terminated child CPU",
     "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
   },
-  "worker_started_to_durable_completion_seconds": 32.99455793800007
+  "worker_started_to_durable_completion_seconds": 33.22606096299933
 }

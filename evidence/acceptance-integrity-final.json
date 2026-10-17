@@ -1,0 +1,68 @@
+{
+  "recorded_at": "2026-10-17T14:48:30Z",
+  "reviewed_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+  "scope": "Read-only acceptance-ledger and local-evidence integrity audit. Hosted verification remained under its separate in-progress F26 gate.",
+  "documents_reviewed": [
+    "docs/acceptance-tracker.json",
+    "docs/acceptance-tracker.md",
+    "docs/gap-audit.md",
+    "docs/audits/configured-input-review.md"
+  ],
+  "machine_statuses": {
+    "features": {
+      "total": 31,
+      "verified": 25,
+      "implemented": 1,
+      "deferred": 5,
+      "implemented_ids": [
+        "F26"
+      ]
+    },
+    "workflows": {
+      "total": 15,
+      "verified": 15
+    },
+    "acceptance_scenarios": {
+      "total": 16,
+      "verified": 16
+    },
+    "id_sequences_complete_without_duplicates": true,
+    "markdown_statuses_match_json": true,
+    "markdown_evidence_lists_match_json_item_for_item": true
+  },
+  "reference_integrity": {
+    "unique_path_references_checked": 180,
+    "all_referenced_paths_exist": true,
+    "all_referenced_paths_are_git_tracked": true,
+    "unique_test_function_anchors_checked": 41,
+    "test_function_anchor_occurrences_checked": 269,
+    "all_test_function_anchors_resolve": true,
+    "feature_workflow_acceptance_spec_line_pointers_match": true
+  },
+  "current_local_evidence_reconciled": {
+    "complete_backend_suite": "evidence/backend-pytest-observed-clock-frozen.log: 594 passed",
+    "focused_continuation_snapshot_reset": "evidence/backend-observed-clock-focused-final.log: 73 passed",
+    "frontend_suite": "evidence/frontend-tests-replay-clinical-capacity.log: 87 passed",
+    "frontend_build": "evidence/frontend-build-replay-clinical-capacity.log: production build passed",
+    "observed_clock_browser": "evidence/browser-observed-clock-final-report.json: 3 passed, 3 deliberate project skips, 0 unexpected",
+    "replay_capacity_browser": "evidence/browser-replay-clinical-capacity-report.json: 1 passed, 0 unexpected",
+    "replay_capacity_api_canvas": "evidence/browser-replay-clinical-capacity.json: 108 occupied / 132 staffed ward places; 24 shelter places excluded",
+    "backend_source_identity": "evidence/replay-clinical-capacity-source-review.json records an empty backend diff from 7a2dda15bc2ecd9c5ce1e0bbab2cb33ed5751d9b"
+  },
+  "pending_gate": {
+    "feature_id": "F26",
+    "status": "implemented",
+    "truthful": true,
+    "remaining_checks": [
+      "Repeat the complete hosted 30-day 70% browser-created workflow and export checksums on the reviewed release",
+      "Repeat hosted short and annual performance plus useful-navigation timing",
+      "Refresh the final hosted gallery and UI timing on the reviewed release"
+    ]
+  },
+  "result": "No actionable acceptance-ledger, evidence-reference, status, or source-identity discrepancy found within this audit scope.",
+  "limits": [
+    "docs/hosted-verification.md was excluded because its 2faf hosted refresh was in progress",
+    "No heavy test suite or browser workflow was rerun during this integrity audit",
+    "This record does not claim F26 hosted acceptance"
+  ]
+}

@@ -1,0 +1,515 @@
+{
+  "recorded_at": "2026-10-17T14:45:40.201377+00:00",
+  "code_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+  "old_record_immutability": {
+    "documents": {
+      "checked": 34,
+      "changed": 0,
+      "added": 0
+    },
+    "jobs": {
+      "checked": 39,
+      "changed": 0,
+      "added": 0
+    }
+  },
+  "runtime": {
+    "code_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+    "generator_version": "1.1.0",
+    "model_version": "1.1.0",
+    "machine": "aarch64",
+    "job_timeout_seconds": 1200,
+    "simulation_workers": 8
+  },
+  "fixtures": [
+    {
+      "id": "demo-v1-1-0-planning_baseline-41021-365",
+      "fixture": "planning_baseline",
+      "validation_valid": true,
+      "validation_errors": [],
+      "revision": 1,
+      "generator_version": "1.1.0",
+      "input_sha256": "f48749ad91f051f6f6d642a95c37ca4bc59f11d1f65b50ac69a1b876b3dffac4",
+      "seed_provenance": {
+        "identity": "demo-v1-1-0-planning_baseline-41021-365",
+        "generator_version": "1.1.0",
+        "fixture": "planning_baseline",
+        "seed": 41021,
+        "coverage_days": 365
+      },
+      "manifest": {
+        "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
+        "schema_version": "1.0",
+        "snapshot_at": "2026-10-16T05:00:00Z",
+        "timezone": "America/Chicago",
+        "synthetic": true,
+        "generator_seed": 41021,
+        "generator_version": "1.1.0",
+        "historical_census_linkage": "independent_demo_snapshot",
+        "files": [
+          {
+            "name": "organizations.json",
+            "row_count": 1,
+            "sha256": "d93fc11f85f8f9877685301591b88f19b4b611940815d0df6f9a44783282fbab"
+          },
+          {
+            "name": "facilities.json",
+            "row_count": 6,
+            "sha256": "256ea622f9dc9415f67d92c75ba9239c8bf601af1143eadff42a32873883a247"
+          },
+          {
+            "name": "capacity_policies.json",
+            "row_count": 5,
+            "sha256": "c829809007dc4d6b8f3c37d41c7132f0c805dbe23508c4ec6cabff5059d56f90"
+          },
+          {
+            "name": "units.json",
+            "row_count": 12,
+            "sha256": "f8f4c1735cd1437a3dbae5c7d983c6118687be0ac75bfa5a38247d709a4f29bc"
+          },
+          {
+            "name": "slots.json",
+            "row_count": 274,
+            "sha256": "b529bc68b997faef9a3a79654c40e3bb0c81a012e0adab0d396e5980d6c88fc1"
+          },
+          {
+            "name": "geometry.json",
+            "row_count": 12,
+            "sha256": "1e128eefced7b7a85fff458f12aa48ffbebf6a98fd8a031029c9616c6d6f962b"
+          },
+          {
+            "name": "virtual_locations.json",
+            "row_count": 3,
+            "sha256": "d55621c216fcb78fb29bbb3c70a43851fb3a2ad8eddc749bca49c76a7fc55d5e"
+          },
+          {
+            "name": "staff.json",
+            "row_count": 236,
+            "sha256": "20834530962f252368bc4e72773d805701647697e1646038e059a16cd8518d09"
+          },
+          {
+            "name": "assignments.json",
+            "row_count": 43129,
+            "sha256": "da5114e9b7be31c34db74dd040ee096817be58bf36fa8614f15edd6d05d26b59"
+          },
+          {
+            "name": "equipment_pools.json",
+            "row_count": 9,
+            "sha256": "76bd7a94775537002086b6b42a4fd8e5f21269643db270cf7fe398a3ea1836d1"
+          },
+          {
+            "name": "partner_equipment.json",
+            "row_count": 6,
+            "sha256": "03c313fe75496a93d98177ee17a725eccaa7645c561234a7fe1858ca71881645"
+          },
+          {
+            "name": "los_templates.json",
+            "row_count": 12,
+            "sha256": "9c8c90711af78d0debd1b95553cbd8fd278730c32622b53b4b5d69707fba15b9"
+          },
+          {
+            "name": "cohorts.json",
+            "row_count": 6,
+            "sha256": "f76f7991dc2608e3851a1b0139ff5d54c4e03219bc0b5296b1968a1ecf1d9254"
+          },
+          {
+            "name": "resource_profiles.json",
+            "row_count": 7,
+            "sha256": "ae85ead1fbbf1231989119b2d22fe81438994dc0dee785646441224896df49cd"
+          },
+          {
+            "name": "capabilities.json",
+            "row_count": 21,
+            "sha256": "8ca8c359ef41a136adc3760598f9d2075b6ad000087cc206881c057383b1baa8"
+          },
+          {
+            "name": "entry_streams.json",
+            "row_count": 2,
+            "sha256": "5f17de681c7c81cb48703e871b0240c2fcd4197d02a7f3f5bef343541add062c"
+          },
+          {
+            "name": "clinic_policies.json",
+            "row_count": 1,
+            "sha256": "31113771fbe1e688cfb8215ec2090a1fdfeb24f719b09a984fa864dceb95fdc9"
+          },
+          {
+            "name": "pathway_profiles.json",
+            "row_count": 2,
+            "sha256": "b53c913e49ff6e629dc2b04892e36330ffebbbad9e8137c61f5a5eafa43d3cb1"
+          },
+          {
+            "name": "patients.json",
+            "row_count": 84,
+            "sha256": "33dd75838535300976fbdea78f45bbd9da28c9bec2dbd600ce118cab9f99e684"
+          },
+          {
+            "name": "routes.json",
+            "row_count": 30,
+            "sha256": "5924bbb38df9a40d8ed49ebaa815a4435e5ebbcab74786b351abf5eb68b3df32"
+          },
+          {
+            "name": "vehicles.json",
+            "row_count": 3,
+            "sha256": "d578e5889143394a503e597fa7831c1d2772c7d6128adf07a6decbdbbee740a4"
+          },
+          {
+            "name": "history.json",
+            "row_count": 9360,
+            "sha256": "5bc71514cda6b85e18beae7c0102181c2a4693d0bd95f3dfdbb85dfebff3d87e"
+          },
+          {
+            "name": "historical_daily_summaries.json",
+            "row_count": 90,
+            "sha256": "5995772661087a4bbbca450d9246e5ae07a885595228f6a0d92bff45d9e9ac72"
+          },
+          {
+            "name": "hour_of_day_baseline.json",
+            "row_count": 24,
+            "sha256": "7195155818b2a0bfe4cb1af4f3cf71b0437648c0eb9ae17842b49f101dab466b"
+          },
+          {
+            "name": "weekday_baseline.json",
+            "row_count": 7,
+            "sha256": "39812bb832674814e8ea7b75e91ac76e713d51abbcbf27a29dc0d088c1b856b6"
+          },
+          {
+            "name": "presets.json",
+            "row_count": 6,
+            "sha256": "9f14c7a8b19ee9015efdbbf88a810afb61f47bd7cae4ba5bdfba7cc63744919f"
+          },
+          {
+            "name": "intervention_templates.json",
+            "row_count": 4,
+            "sha256": "605106518546aea3897fde9d711b8f89de763b83ccaebbe00804fee32cd1ff7b"
+          },
+          {
+            "name": "update_fixtures.json",
+            "row_count": 5,
+            "sha256": "0251788f4a56f26fa59698c97794f90276f0502907eb12ba7ebf451bfb72b9d7"
+          },
+          {
+            "name": "assumptions.json",
+            "row_count": 6,
+            "sha256": "87104d17f02346d4d18c77b217bbdb9ae2d094a87d496944ae786fc54e0a1a19"
+          }
+        ],
+        "counts": {
+          "organizations": 1,
+          "facilities": 6,
+          "capacity_policies": 5,
+          "units": 12,
+          "slots": 274,
+          "geometry": 12,
+          "virtual_locations": 3,
+          "staff": 236,
+          "assignments": 43129,
+          "equipment_pools": 9,
+          "partner_equipment": 6,
+          "los_templates": 12,
+          "cohorts": 6,
+          "resource_profiles": 7,
+          "capabilities": 21,
+          "entry_streams": 2,
+          "clinic_policies": 1,
+          "pathway_profiles": 2,
+          "patients": 84,
+          "routes": 30,
+          "vehicles": 3,
+          "history": 9360,
+          "historical_daily_summaries": 90,
+          "hour_of_day_baseline": 24,
+          "weekday_baseline": 7,
+          "presets": 6,
+          "intervention_templates": 4,
+          "update_fixtures": 5,
+          "assumptions": 6
+        },
+        "coverage_days": 365
+      },
+      "counts": {
+        "organizations": 1,
+        "facilities": 6,
+        "capacity_policies": 5,
+        "units": 12,
+        "slots": 274,
+        "geometry": 12,
+        "unit_layouts": 12,
+        "virtual_locations": 3,
+        "staff": 236,
+        "assignments": 43129,
+        "staff_assignments": 43129,
+        "equipment_pools": 9,
+        "partner_equipment": 6,
+        "los_templates": 12,
+        "distributions": 12,
+        "cohorts": 6,
+        "resource_profiles": 7,
+        "capabilities": 21,
+        "entry_streams": 2,
+        "clinic_policies": 1,
+        "pathway_profiles": 2,
+        "patients": 84,
+        "routes": 30,
+        "vehicles": 3,
+        "history": 9360,
+        "historical_daily_summaries": 90,
+        "hour_of_day_baseline": 24,
+        "weekday_baseline": 7,
+        "presets": 6,
+        "intervention_templates": 4,
+        "update_fixtures": 5,
+        "assumptions": 6
+      }
+    },
+    {
+      "id": "demo-v1-1-0-stress_snapshot-41021-365",
+      "fixture": "stress_snapshot",
+      "validation_valid": true,
+      "validation_errors": [],
+      "revision": 1,
+      "generator_version": "1.1.0",
+      "input_sha256": "dafb3b69b428d49f19173423a87ad7d67ca0f984f9ff53b80343d1b0fe984561",
+      "seed_provenance": {
+        "identity": "demo-v1-1-0-stress_snapshot-41021-365",
+        "generator_version": "1.1.0",
+        "fixture": "stress_snapshot",
+        "seed": 41021,
+        "coverage_days": 365
+      },
+      "manifest": {
+        "dataset_version_id": "demo-v1-1-0-stress_snapshot-41021-365",
+        "schema_version": "1.0",
+        "snapshot_at": "2026-10-16T05:00:00Z",
+        "timezone": "America/Chicago",
+        "synthetic": true,
+        "generator_seed": 41021,
+        "generator_version": "1.1.0",
+        "historical_census_linkage": "independent_demo_snapshot",
+        "files": [
+          {
+            "name": "organizations.json",
+            "row_count": 1,
+            "sha256": "d93fc11f85f8f9877685301591b88f19b4b611940815d0df6f9a44783282fbab"
+          },
+          {
+            "name": "facilities.json",
+            "row_count": 6,
+            "sha256": "256ea622f9dc9415f67d92c75ba9239c8bf601af1143eadff42a32873883a247"
+          },
+          {
+            "name": "capacity_policies.json",
+            "row_count": 5,
+            "sha256": "c829809007dc4d6b8f3c37d41c7132f0c805dbe23508c4ec6cabff5059d56f90"
+          },
+          {
+            "name": "units.json",
+            "row_count": 12,
+            "sha256": "f8f4c1735cd1437a3dbae5c7d983c6118687be0ac75bfa5a38247d709a4f29bc"
+          },
+          {
+            "name": "slots.json",
+            "row_count": 274,
+            "sha256": "b529bc68b997faef9a3a79654c40e3bb0c81a012e0adab0d396e5980d6c88fc1"
+          },
+          {
+            "name": "geometry.json",
+            "row_count": 12,
+            "sha256": "1e128eefced7b7a85fff458f12aa48ffbebf6a98fd8a031029c9616c6d6f962b"
+          },
+          {
+            "name": "virtual_locations.json",
+            "row_count": 3,
+            "sha256": "d55621c216fcb78fb29bbb3c70a43851fb3a2ad8eddc749bca49c76a7fc55d5e"
+          },
+          {
+            "name": "staff.json",
+            "row_count": 236,
+            "sha256": "20834530962f252368bc4e72773d805701647697e1646038e059a16cd8518d09"
+          },
+          {
+            "name": "assignments.json",
+            "row_count": 43129,
+            "sha256": "da5114e9b7be31c34db74dd040ee096817be58bf36fa8614f15edd6d05d26b59"
+          },
+          {
+            "name": "equipment_pools.json",
+            "row_count": 9,
+            "sha256": "76bd7a94775537002086b6b42a4fd8e5f21269643db270cf7fe398a3ea1836d1"
+          },
+          {
+            "name": "partner_equipment.json",
+            "row_count": 6,
+            "sha256": "03c313fe75496a93d98177ee17a725eccaa7645c561234a7fe1858ca71881645"
+          },
+          {
+            "name": "los_templates.json",
+            "row_count": 12,
+            "sha256": "9c8c90711af78d0debd1b95553cbd8fd278730c32622b53b4b5d69707fba15b9"
+          },
+          {
+            "name": "cohorts.json",
+            "row_count": 6,
+            "sha256": "f76f7991dc2608e3851a1b0139ff5d54c4e03219bc0b5296b1968a1ecf1d9254"
+          },
+          {
+            "name": "resource_profiles.json",
+            "row_count": 7,
+            "sha256": "ae85ead1fbbf1231989119b2d22fe81438994dc0dee785646441224896df49cd"
+          },
+          {
+            "name": "capabilities.json",
+            "row_count": 21,
+            "sha256": "8ca8c359ef41a136adc3760598f9d2075b6ad000087cc206881c057383b1baa8"
+          },
+          {
+            "name": "entry_streams.json",
+            "row_count": 2,
+            "sha256": "5f17de681c7c81cb48703e871b0240c2fcd4197d02a7f3f5bef343541add062c"
+          },
+          {
+            "name": "clinic_policies.json",
+            "row_count": 1,
+            "sha256": "31113771fbe1e688cfb8215ec2090a1fdfeb24f719b09a984fa864dceb95fdc9"
+          },
+          {
+            "name": "pathway_profiles.json",
+            "row_count": 2,
+            "sha256": "b53c913e49ff6e629dc2b04892e36330ffebbbad9e8137c61f5a5eafa43d3cb1"
+          },
+          {
+            "name": "patients.json",
+            "row_count": 116,
+            "sha256": "aabf398457ddf68c8cb6657a1013db6c57f06a2394aa7a2c68a84540d95ea31c"
+          },
+          {
+            "name": "routes.json",
+            "row_count": 30,
+            "sha256": "5924bbb38df9a40d8ed49ebaa815a4435e5ebbcab74786b351abf5eb68b3df32"
+          },
+          {
+            "name": "vehicles.json",
+            "row_count": 3,
+            "sha256": "d578e5889143394a503e597fa7831c1d2772c7d6128adf07a6decbdbbee740a4"
+          },
+          {
+            "name": "history.json",
+            "row_count": 9360,
+            "sha256": "5bc71514cda6b85e18beae7c0102181c2a4693d0bd95f3dfdbb85dfebff3d87e"
+          },
+          {
+            "name": "historical_daily_summaries.json",
+            "row_count": 90,
+            "sha256": "5995772661087a4bbbca450d9246e5ae07a885595228f6a0d92bff45d9e9ac72"
+          },
+          {
+            "name": "hour_of_day_baseline.json",
+            "row_count": 24,
+            "sha256": "7195155818b2a0bfe4cb1af4f3cf71b0437648c0eb9ae17842b49f101dab466b"
+          },
+          {
+            "name": "weekday_baseline.json",
+            "row_count": 7,
+            "sha256": "39812bb832674814e8ea7b75e91ac76e713d51abbcbf27a29dc0d088c1b856b6"
+          },
+          {
+            "name": "presets.json",
+            "row_count": 6,
+            "sha256": "9f14c7a8b19ee9015efdbbf88a810afb61f47bd7cae4ba5bdfba7cc63744919f"
+          },
+          {
+            "name": "intervention_templates.json",
+            "row_count": 4,
+            "sha256": "605106518546aea3897fde9d711b8f89de763b83ccaebbe00804fee32cd1ff7b"
+          },
+          {
+            "name": "update_fixtures.json",
+            "row_count": 5,
+            "sha256": "0251788f4a56f26fa59698c97794f90276f0502907eb12ba7ebf451bfb72b9d7"
+          },
+          {
+            "name": "assumptions.json",
+            "row_count": 6,
+            "sha256": "87104d17f02346d4d18c77b217bbdb9ae2d094a87d496944ae786fc54e0a1a19"
+          }
+        ],
+        "counts": {
+          "organizations": 1,
+          "facilities": 6,
+          "capacity_policies": 5,
+          "units": 12,
+          "slots": 274,
+          "geometry": 12,
+          "virtual_locations": 3,
+          "staff": 236,
+          "assignments": 43129,
+          "equipment_pools": 9,
+          "partner_equipment": 6,
+          "los_templates": 12,
+          "cohorts": 6,
+          "resource_profiles": 7,
+          "capabilities": 21,
+          "entry_streams": 2,
+          "clinic_policies": 1,
+          "pathway_profiles": 2,
+          "patients": 116,
+          "routes": 30,
+          "vehicles": 3,
+          "history": 9360,
+          "historical_daily_summaries": 90,
+          "hour_of_day_baseline": 24,
+          "weekday_baseline": 7,
+          "presets": 6,
+          "intervention_templates": 4,
+          "update_fixtures": 5,
+          "assumptions": 6
+        },
+        "coverage_days": 365
+      },
+      "counts": {
+        "organizations": 1,
+        "facilities": 6,
+        "capacity_policies": 5,
+        "units": 12,
+        "slots": 274,
+        "geometry": 12,
+        "unit_layouts": 12,
+        "virtual_locations": 3,
+        "staff": 236,
+        "assignments": 43129,
+        "staff_assignments": 43129,
+        "equipment_pools": 9,
+        "partner_equipment": 6,
+        "los_templates": 12,
+        "distributions": 12,
+        "cohorts": 6,
+        "resource_profiles": 7,
+        "capabilities": 21,
+        "entry_streams": 2,
+        "clinic_policies": 1,
+        "pathway_profiles": 2,
+        "patients": 116,
+        "routes": 30,
+        "vehicles": 3,
+        "history": 9360,
+        "historical_daily_summaries": 90,
+        "hour_of_day_baseline": 24,
+        "weekday_baseline": 7,
+        "presets": 6,
+        "intervention_templates": 4,
+        "update_fixtures": 5,
+        "assumptions": 6
+      }
+    }
+  ],
+  "starter": {
+    "id": "scenario-demo-v1-1-0-planning_baseline-41021-365",
+    "dataset_version_id": "demo-v1-1-0-planning_baseline-41021-365",
+    "seed_provenance": {
+      "identity": "demo-v1-1-0-planning_baseline-41021-365",
+      "generator_version": "1.1.0",
+      "fixture": "planning_baseline",
+      "seed": 41021,
+      "coverage_days": 365
+    }
+  }
+}

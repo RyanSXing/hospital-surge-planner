@@ -110,7 +110,7 @@
       "id": "F05",
       "name": "Scenario creation",
       "stage": "P0",
-      "requirement": "Named versioned scenario; input snapshot; start; 1\u2013365 local calendar days; arrival and resource changes; no hidden assumptions.",
+      "requirement": "Named versioned scenario; input snapshot; start; 1–365 local calendar days; arrival and resource changes; no hidden assumptions.",
       "status": "verified",
       "implementation": [
         "apps/web/src/pages/Scenarios.tsx",
@@ -486,11 +486,11 @@
         "apps/web/e2e/replay-resources.spec.ts: actual API capacity/equipment inventory and selected transport mission to patient, desktop/mobile",
         "evidence/browser-replay-resources-report.json: 2 passed",
         "apps/web/src/pages/replayAnnotations.test.ts: control-point curve domains follow engine precedence",
-        "evidence/browser-replay-500-local.json: exactly 500 rendered patient markers, 55.4\u201355.7 FPS active transitions, 2.2 ms paint p95; no concurrent load, errors, mutations or source changes",
+        "evidence/browser-replay-500-local.json: exactly 500 rendered patient markers, 55.4–55.7 FPS active transitions, 2.2 ms paint p95; no concurrent load, errors, mutations or source changes",
         "evidence/browser-replay-final-report.json: final desktop/mobile controls, UTC jump, reduced-motion snapped playback, exact canvas aspect ratio, complete evidence and resource inspection; 5 passed, 1 deliberate mobile control skip",
         "evidence/backend-pytest-final.log: 184 Python tests passed; final frontend suite36 passed and production build passed",
         "evidence/browser-combined-candidate-initial-report.json: mobile readable panorama/zone focus, exact event/resource/transfer inspection passed; desktop dock/aspect repeat separately recorded",
-        "apps/web/e2e/shared-panels.spec.ts: independent collapsible inspectors and keyboard resizing of180\u2013260px time docks",
+        "apps/web/e2e/shared-panels.spec.ts: independent collapsible inspectors and keyboard resizing of180–260px time docks",
         "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance",
         "tests/test_observed_stage_clock.py:26 actual fractional/whole-time ED/inpatient/clinic and reserved/transit snapshots; exact expected-end residuals, completion-before/equal-pickup cancellation/resource release and optional stage_status compatibility",
         "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
@@ -500,7 +500,14 @@
         "apps/web/src/pages/patientProjection.test.ts:canonical132-place clinical ward inventory and44 background occupants; shelter/unknown excluded, ICU precedes overflow location",
         "evidence/frontend-tests-replay-clinical-capacity.log:87frontendtests; evidence/frontend-build-replay-clinical-capacity.log:productionbuild",
         "evidence/browser-replay-clinical-capacity.json:actualAPI108occupied/132staffed,rendered108/132,shelter24excluded",
-        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean"
+        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean",
+        "tests/test_api.py::test_bounded_state_groups_retain_actual_reserved_source_before_pickup: complete bounded groups retain actual reserved ED/direct/inpatient source states beyond the visible 500 patients",
+        "apps/web/src/pages/patientProjection.test.ts: actual held unit precedes requested care and overflow location; reserved waiting/assessment sources and grouped counts stay in their source zone",
+        "evidence/frontend-tests-replay-held-unit.log: 90 frontend tests passed; evidence/frontend-build-replay-held-unit.log: production build passed",
+        "evidence/backend-replay-held-unit-groups.log: two bounded-state API regressions passed",
+        "evidence/browser-replay-held-unit-report.json: two browser cases passed; evidence/browser-replay-held-unit.json: actual imported ICU-stepdown snapshot remains in ICU until recorded ward entry, with the same care path",
+        "evidence/backend-pytest-replay-location-frozen.log: 595 complete backend tests passed; evidence/backend-replay-location-frozen-source.json: all 84 frozen Python source/test files unchanged during the suite",
+        "evidence/replay-held-location-source-review.json: independent review clean; engine and worker bytes identical to the 2faf hosted short/recovery release"
       ],
       "spec_line": 107,
       "current_reaudit": "Closed final Replay inventory gate:explicit clinical unit-kind mapping excludes24 nonclinical shelter places;87frontendtests/build,actual132-place browserproofandindependentreviewpass.Backendunchangedfrom594-testsource."
@@ -699,7 +706,7 @@
   "workflows": [
     {
       "id": "W01",
-      "flow": "First visit \u2192 Load synthetic demo \u2192 inspect dataset summary \u2192 accept default scenario \u2192 Run \u2192 open Overview",
+      "flow": "First visit → Load synthetic demo → inspect dataset summary → accept default scenario → Run → open Overview",
       "pass_condition": "Valid dataset and a completed run group; obvious synthetic badge",
       "status": "verified",
       "evidence": [
@@ -711,7 +718,7 @@
     },
     {
       "id": "W02",
-      "flow": "Data & setup \u2192 import files \u2192 preview/map \u2192 validate \u2192 repair errors \u2192 save dataset version",
+      "flow": "Data & setup → import files → preview/map → validate → repair errors → save dataset version",
       "pass_condition": "New reusable baseline with traceable assumptions",
       "status": "verified",
       "evidence": [
@@ -723,7 +730,7 @@
     },
     {
       "id": "W03",
-      "flow": "Scenarios \u2192 New \u2192 select dataset/start/horizon \u2192 add arrival condition \u2192 edit percent/pattern \u2192 choose run preset \u2192 Run",
+      "flow": "Scenarios → New → select dataset/start/horizon → add arrival condition → edit percent/pattern → choose run preset → Run",
       "pass_condition": "Immutable scenario version and results",
       "status": "verified",
       "evidence": [
@@ -736,7 +743,7 @@
     },
     {
       "id": "W04",
-      "flow": "Overview \u2192 select heatmap shortage day \u2192 inspect queue \u2192 choose ward/ICU \u2192 inspect limiting resource",
+      "flow": "Overview → select heatmap shortage day → inspect queue → choose ward/ICU → inspect limiting resource",
       "pass_condition": "Identified bottleneck linked to modeled evidence",
       "status": "verified",
       "evidence": [
@@ -748,7 +755,7 @@
     },
     {
       "id": "W05",
-      "flow": "Patients \u2192 filter waiting \u2192 choose patient \u2192 inspect required care and rejection reasons \u2192 View unit",
+      "flow": "Patients → filter waiting → choose patient → inspect required care and rejection reasons → View unit",
       "pass_condition": "Clear explanation of why the patient cannot be placed",
       "status": "verified",
       "evidence": [
@@ -759,7 +766,7 @@
     },
     {
       "id": "W06",
-      "flow": "Compare \u2192 add available interventions \u2192 validate prerequisites \u2192 run alternatives \u2192 inspect paired outcomes \u2192 save preferred plan",
+      "flow": "Compare → add available interventions → validate prerequisites → run alternatives → inspect paired outcomes → save preferred plan",
       "pass_condition": "Saved proposed plan with resource requirements and uncertainty",
       "status": "verified",
       "evidence": [
@@ -769,7 +776,7 @@
     },
     {
       "id": "W07",
-      "flow": "Resources \u2192 select candidate clinic/overflow site \u2192 inspect capabilities \u2192 assign available resources \u2192 schedule activation \u2192 compare",
+      "flow": "Resources → select candidate clinic/overflow site → inspect capabilities → assign available resources → schedule activation → compare",
       "pass_condition": "Site contributes only its modeled capabilities after activation",
       "status": "verified",
       "evidence": [
@@ -783,7 +790,7 @@
     },
     {
       "id": "W08",
-      "flow": "Resources \u2192 select eligible patient group \u2192 choose receiving site \u2192 inspect capacity/transport \u2192 add transfer plan \u2192 simulate",
+      "flow": "Resources → select eligible patient group → choose receiving site → inspect capacity/transport → add transfer plan → simulate",
       "pass_condition": "Feasible simulated transfer schedule or explicit unmet constraints",
       "status": "verified",
       "evidence": [
@@ -797,7 +804,7 @@
     },
     {
       "id": "W09",
-      "flow": "Any inspector \u2192 Record update \u2192 enter effective time/state \u2192 review delta \u2192 save and rerun \u2192 compare versions",
+      "flow": "Any inspector → Record update → enter effective time/state → review delta → save and rerun → compare versions",
       "pass_condition": "Traceable update and new forecast branch; old result preserved",
       "status": "verified",
       "evidence": [
@@ -817,7 +824,7 @@
     },
     {
       "id": "W10",
-      "flow": "Replay \u2192 select example run \u2192 play \u2192 pause on queue \u2192 inspect patient/unit \u2192 step event \u2192 scrub earlier",
+      "flow": "Replay → select example run → play → pause on queue → inspect patient/unit → step event → scrub earlier",
       "pass_condition": "Exact logged state explained visually",
       "status": "verified",
       "evidence": [
@@ -835,14 +842,21 @@
         "apps/web/src/pages/patientProjection.test.ts:canonical132-place clinical ward inventory and44 background occupants; shelter/unknown excluded, ICU precedes overflow location",
         "evidence/frontend-tests-replay-clinical-capacity.log:87frontendtests; evidence/frontend-build-replay-clinical-capacity.log:productionbuild",
         "evidence/browser-replay-clinical-capacity.json:actualAPI108occupied/132staffed,rendered108/132,shelter24excluded",
-        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean"
+        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean",
+        "tests/test_api.py::test_bounded_state_groups_retain_actual_reserved_source_before_pickup: complete bounded groups retain actual reserved ED/direct/inpatient source states beyond the visible 500 patients",
+        "apps/web/src/pages/patientProjection.test.ts: actual held unit precedes requested care and overflow location; reserved waiting/assessment sources and grouped counts stay in their source zone",
+        "evidence/frontend-tests-replay-held-unit.log: 90 frontend tests passed; evidence/frontend-build-replay-held-unit.log: production build passed",
+        "evidence/backend-replay-held-unit-groups.log: two bounded-state API regressions passed",
+        "evidence/browser-replay-held-unit-report.json: two browser cases passed; evidence/browser-replay-held-unit.json: actual imported ICU-stepdown snapshot remains in ICU until recorded ward entry, with the same care path",
+        "evidence/backend-pytest-replay-location-frozen.log: 595 complete backend tests passed; evidence/backend-replay-location-frozen-source.json: all 84 frozen Python source/test files unchanged during the suite",
+        "evidence/replay-held-location-source-review.json: independent review clean; engine and worker bytes identical to the 2faf hosted short/recovery release"
       ],
       "spec_line": 1302,
       "current_reaudit": "Closed final Replay inventory gate:explicit clinical unit-kind mapping excludes24 nonclinical shelter places;87frontendtests/build,actual132-place browserproofandindependentreviewpass.Backendunchangedfrom594-testsource."
     },
     {
       "id": "W11",
-      "flow": "Overview \u2192 switch month/week \u2192 select interval \u2192 drill to day \u2192 set hour \u2192 inspect",
+      "flow": "Overview → switch month/week → select interval → drill to day → set hour → inspect",
       "pass_condition": "Same simulation, finer presentation, consistent time context",
       "status": "verified",
       "evidence": [
@@ -853,7 +867,7 @@
     },
     {
       "id": "W12",
-      "flow": "Results \u2192 Export \u2192 choose scenario/metrics/comparison \u2192 include assumptions and synthetic label \u2192 download",
+      "flow": "Results → Export → choose scenario/metrics/comparison → include assumptions and synthetic label → download",
       "pass_condition": "Reproducible planning artifact with IDs, units, dates, model version",
       "status": "verified",
       "evidence": [
@@ -863,7 +877,7 @@
     },
     {
       "id": "W13",
-      "flow": "Scenarios \u2192 duplicate saved scenario \u2192 edit surge duration/care mix \u2192 Run \u2192 compare versions",
+      "flow": "Scenarios → duplicate saved scenario → edit surge duration/care mix → Run → compare versions",
       "pass_condition": "Original intact; differences explicitly listed",
       "status": "verified",
       "evidence": [
@@ -876,7 +890,7 @@
     },
     {
       "id": "W14",
-      "flow": "A run fails/cancels \u2192 inspect error \u2192 fix offending input or retry same snapshot \u2192 resume navigation",
+      "flow": "A run fails/cancels → inspect error → fix offending input or retry same snapshot → resume navigation",
       "pass_condition": "Clear run status; no partial output misrepresented as complete",
       "status": "verified",
       "evidence": [
@@ -887,7 +901,7 @@
     },
     {
       "id": "W15",
-      "flow": "Overview \u2192 open planning alerts \u2192 inspect threshold/context \u2192 click affected site/time \u2192 acknowledge",
+      "flow": "Overview → open planning alerts → inspect threshold/context → click affected site/time → acknowledge",
       "pass_condition": "Reviewed alert with unchanged model state and a traceable acknowledgment",
       "status": "verified",
       "evidence": [
@@ -899,7 +913,7 @@
   "acceptance": [
     {
       "id": "E01",
-      "flow": "Load planning demo \u2192 run baseline",
+      "flow": "Load planning demo → run baseline",
       "pass_condition": "Valid manifest; correct initial census; actual results render.",
       "status": "verified",
       "evidence": [
@@ -924,7 +938,7 @@
     },
     {
       "id": "E03",
-      "flow": "Select stressed day \u2192 inspect ward",
+      "flow": "Select stressed day → inspect ward",
       "pass_condition": "Chart/day/table/inspector context matches; blockers reference actual resources.",
       "status": "verified",
       "evidence": [
@@ -1033,7 +1047,14 @@
         "apps/web/src/pages/patientProjection.test.ts:canonical132-place clinical ward inventory and44 background occupants; shelter/unknown excluded, ICU precedes overflow location",
         "evidence/frontend-tests-replay-clinical-capacity.log:87frontendtests; evidence/frontend-build-replay-clinical-capacity.log:productionbuild",
         "evidence/browser-replay-clinical-capacity.json:actualAPI108occupied/132staffed,rendered108/132,shelter24excluded",
-        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean"
+        "evidence/replay-clinical-capacity-source-review.json:backendbyte-identicalto594-test7a2source;independentfrontendreviewclean",
+        "tests/test_api.py::test_bounded_state_groups_retain_actual_reserved_source_before_pickup: complete bounded groups retain actual reserved ED/direct/inpatient source states beyond the visible 500 patients",
+        "apps/web/src/pages/patientProjection.test.ts: actual held unit precedes requested care and overflow location; reserved waiting/assessment sources and grouped counts stay in their source zone",
+        "evidence/frontend-tests-replay-held-unit.log: 90 frontend tests passed; evidence/frontend-build-replay-held-unit.log: production build passed",
+        "evidence/backend-replay-held-unit-groups.log: two bounded-state API regressions passed",
+        "evidence/browser-replay-held-unit-report.json: two browser cases passed; evidence/browser-replay-held-unit.json: actual imported ICU-stepdown snapshot remains in ICU until recorded ward entry, with the same care path",
+        "evidence/backend-pytest-replay-location-frozen.log: 595 complete backend tests passed; evidence/backend-replay-location-frozen-source.json: all 84 frozen Python source/test files unchanged during the suite",
+        "evidence/replay-held-location-source-review.json: independent review clean; engine and worker bytes identical to the 2faf hosted short/recovery release"
       ],
       "spec_line": 1832,
       "current_reaudit": "Closed final Replay inventory gate:explicit clinical unit-kind mapping excludes24 nonclinical shelter places;87frontendtests/build,actual132-place browserproofandindependentreviewpass.Backendunchangedfrom594-testsource."
@@ -1112,5 +1133,5 @@
     }
   ],
   "last_reviewed_at": "2026-10-17",
-  "verification_scope": "All P0/P1 local functional gates closed. Backend remains byte-identical to reviewed7a2 source with594fulltests and73focusedchecks;frontendpasses87tests/build andactualReplay132-placebrowserproof.The preceding17-case desktop/mobile matrix and3precise-reset/Replay/full30-day post-clock cases retain scoped evidence. Final immutable hosted deployment/recovery/annual/browser/backup gates remain underF26; measured target misses retained, P2deferred."
+  "verification_scope": "All local functional repairs independently reviewed and verified: 595 complete backend tests on frozen source, 90 frontend tests/build, two focused API regressions and two actual browser cases for final held-unit Replay projection. Engine/worker bytes remain identical to 2faf. F26 final hosted browser/annual/load/backup checks remain pending. P2 is deferred and measured performance misses are explicit."
 }

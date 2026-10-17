@@ -679,6 +679,89 @@ def test_bounded_state_keeps_exact_counts_and_paginated_filters(client):
     assert waiting["total"] == 1250
 
 
+def test_bounded_state_groups_retain_actual_reserved_source_before_pickup(client):
+    from surge_api.artifacts import ArtifactStore
+
+    setup_context(client)
+    identity = "reserved-source-group-rep"
+    sources = [
+        ("ed_waiting", "ambulatory", None, "clinic"),
+        ("direct_waiting", "ward", None, "ward"),
+        ("ed_boarding", "ward", "SOURCE-ED", "ward"),
+        ("inpatient", "ward", "SOURCE-ICU", "ward"),
+    ]
+    trace = {
+        "replication_id": identity,
+        "start_at": "2026-10-16T05:00:00Z",
+        "horizon_elapsed_minutes": 60,
+        "unit_history": {
+            "SOURCE-ED": [
+                {"elapsed_minutes": 0, "unit_id": "SOURCE-ED", "facility_id": "FAC-MAIN", "kind": "ed"}
+            ],
+            "SOURCE-ICU": [
+                {"elapsed_minutes": 0, "unit_id": "SOURCE-ICU", "facility_id": "FAC-MAIN", "kind": "icu"}
+            ],
+        },
+        "patients": [
+            {
+                "patient_id": f"ZZ-{source}-{index}",
+                "state_intervals": [
+                    {
+                        "start_elapsed_minutes": 0,
+                        "state": "transfer_reserved",
+                        "care_level": care,
+                        "facility_id": "FAC-MAIN",
+                        "unit_id": unit,
+                        "target_unit_kind": target,
+                        "admission_pending": source != "ed_waiting",
+                        "pending_transfer": {"prior_state": source, "status": "reserved"},
+                    }
+                ],
+            }
+            for source, care, unit, target in sources
+            for index in range(2)
+        ]
+        + [
+            {
+                "patient_id": f"WAIT-{index:04}",
+                "state_intervals": [
+                    {
+                        "start_elapsed_minutes": 0,
+                        "state": "ed_waiting",
+                        "care_level": "ambulatory",
+                        "facility_id": "FAC-MAIN",
+                    }
+                ],
+            }
+            for index in range(600)
+        ],
+    }
+    artifact = ArtifactStore().put_json("workspace-main", "group-source-test", "trace", trace)
+    with client.app.state.Session.begin() as session:
+        session.add(
+            Document(
+                id=identity,
+                workspace_id="workspace-main",
+                kind="replication",
+                data={"id": identity, "run_group_id": "source-group-run", "trace_artifact": artifact},
+            )
+        )
+    response = client.get(f"/api/runs/{identity}/state").json()
+    assert len(response["patients"]) == 500 and response["patient_total"] == 608
+    assert not any(patient["state"] == "transfer_reserved" for patient in response["patients"])
+    groups = {
+        group["prior_state"]: group
+        for group in response["patient_groups"]
+        if group["state"] == "transfer_reserved"
+    }
+    assert set(groups) == {source[0] for source in sources}
+    for source, care, unit, target in sources:
+        assert groups[source]["count"] == 2
+        assert groups[source]["unit_id"] == unit
+        assert groups[source]["care_level"] == care
+        assert groups[source]["target_unit_kind"] == target
+
+
 def test_export_preserves_explicit_run_when_comparison_reference_is_separate(client):
     context = setup_context(client)
     scenario = create_short_scenario(client, context, replications=1)

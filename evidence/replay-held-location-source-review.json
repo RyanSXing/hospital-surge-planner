@@ -1,0 +1,22 @@
+{
+  "reviewed_base_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+  "scope": "Final Replay held-location projection repair; simulation model and worker unchanged",
+  "changed_api_paths": [
+    "apps/api/surge_api/replay.py"
+  ],
+  "engine_worker_identical": true,
+  "independent_review": "next_release_review: no actionable findings; independently reran projection/API tests and build; inspected actual snapshot/browser proof",
+  "source_sha256": {
+    "apps/api/surge_api/replay.py": "0ab5dccc83413619a9d8f33f31b75a5e3cd9433195084825788443b516fc7bd3",
+    "apps/web/src/pages/Replay.tsx": "b59ba3199badc495fc93b0acac049523dcbe03c2543dfd8ad1c1eaf32df0be32",
+    "apps/web/src/pages/patientProjection.ts": "b6c4351d74efd5e10a661c1540409ffec96446b593a3f7b6bd4c614e3ecbc231",
+    "tests/test_api.py": "f48a274939c1edd8c4874dbcbe2f0e9f90c40920a44c58a52508468c0cb9be69"
+  },
+  "evidence": [
+    "evidence/frontend-tests-replay-held-unit.log",
+    "evidence/frontend-build-replay-held-unit.log",
+    "evidence/backend-replay-held-unit-groups.log",
+    "evidence/browser-replay-held-unit-report.json",
+    "evidence/browser-replay-held-unit.json"
+  ]
+}

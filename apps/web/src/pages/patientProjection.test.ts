@@ -8,6 +8,110 @@ import {
 } from "./patientProjection";
 import { patientPageQuery } from "./usePatientPage";
 describe("bounded census presentation", () => {
+  const heldUnits = {
+    "source-icu": "icu",
+    "ward-destination": "ward",
+    "ed-source": "ed",
+  };
+  it("keeps completed ICU stepdown requests and reservations in their occupied ICU", () => {
+    const held = {
+      state: "inpatient",
+      unit_id: "source-icu",
+      care_level: "ward",
+      target_unit_kind: "ward",
+      stage_status: "ready_to_exit",
+      admission_pending: true,
+    };
+    expect(replayZone(held, heldUnits)).toBe("icu");
+    expect(
+      replayZone(
+        {
+          ...held,
+          state: "transfer_reserved",
+          pending_transfer: {
+            prior_state: "inpatient",
+            destination_unit_id: "ward-destination",
+          },
+        },
+        heldUnits,
+      ),
+    ).toBe("icu");
+    const counts = replayCounts(
+      [{ ...held, count: 7 }],
+      [held],
+      [held],
+      heldUnits,
+    );
+    expect(counts).toEqual({ totals: { icu: 7 }, grouped: { icu: 6 } });
+    expect(
+      replayZone({ ...held, facility_type: "ward_overflow" }, heldUnits),
+    ).toBe("icu");
+  });
+  it("keeps recorded source and destination care paths in their actual units until movement", () => {
+    const path = [
+      { state: "inpatient", care_level: "icu", unit_id: "source-icu" },
+      {
+        state: "inpatient",
+        care_level: "ward",
+        unit_id: "source-icu",
+        stage_status: "ready_to_exit",
+      },
+      {
+        state: "transfer_reserved",
+        care_level: "ward",
+        unit_id: "source-icu",
+        pending_transfer: {
+          prior_state: "inpatient",
+          destination_unit_id: "ward-destination",
+        },
+      },
+      { state: "in_transit", care_level: "ward", unit_id: null },
+      { state: "inpatient", care_level: "ward", unit_id: "ward-destination" },
+      { state: "discharged", care_level: "ward", unit_id: null },
+    ];
+    expect(path.map((interval) => replayZone(interval, heldUnits))).toEqual([
+      "icu",
+      "icu",
+      "icu",
+      "transport",
+      "ward",
+      "exit",
+    ]);
+  });
+  it("preserves occupied ED and unoccupied reservation sources instead of their target care", () => {
+    const sources = [
+      ["ed_boarding", "ed"],
+      ["ed_assessment", "ed"],
+      ["ed_waiting", "arrivals"],
+      ["direct_waiting", "queue"],
+      ["clinic_assessment", "clinic"],
+    ];
+    for (const [prior, zone] of sources) {
+      const patient = {
+        state: "transfer_reserved",
+        care_level: "ward",
+        unit_id: prior.startsWith("ed_") ? "ed-source" : null,
+        prior_state: prior,
+        facility_type: "ward_overflow",
+      };
+      expect(replayZone(patient, heldUnits)).toBe(zone);
+      expect(
+        replayCounts([{ ...patient, count: 3 }], [], [], heldUnits).totals,
+      ).toEqual({ [zone]: 3 });
+    }
+    expect(
+      replayZone(
+        { state: "inpatient", care_level: "icu", unit_id: "legacy-unknown" },
+        heldUnits,
+      ),
+    ).toBe("icu");
+    expect(
+      replayZone(
+        { state: "inpatient", care_level: "ward", unit_id: "nonclinical" },
+        { nonclinical: "shelter" },
+      ),
+    ).toBe("queue");
+  });
   it("excludes nonclinical shelter places from the canonical ward inventory", () => {
     const values = replayClinicalInventory(
       [

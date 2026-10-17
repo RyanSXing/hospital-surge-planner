@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-10-17T14:51:52.468761+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "run_group_id": "run_b8b31d1f0e0548269315",
+  "scenario_id": "scenario_115865fac05246b48276",
+  "code_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+  "status": "passed",
+  "requested_phase": "AGGREGATING",
+  "process": {
+    "signal": "SIGKILL",
+    "target": "RQ job process only",
+    "job_process_pid": 331,
+    "supervisor_preserved": true,
+    "pool_children_before": 8,
+    "pool_children_after": 0,
+    "orphan_exit_seconds": 0.6094480469982955,
+    "private_input_directories_before": [
+      "hsp-pool-331-a1-k4g_myx8"
+    ],
+    "phase_at_signal": "AGGREGATING",
+    "completed_at_signal": 30,
+    "attempt_at_signal": 1,
+    "lease_seconds_remaining_at_signal": 115.06471300125122,
+    "database_phase_locked_during_signal": true,
+    "abandoned_private_inputs_remaining": []
+  },
+  "completed_before_kill": 30,
+  "preserved_replications_checked": 30,
+  "completed_after_recovery": 30,
+  "unique_replication_records": 30,
+  "recovery_seconds": 148.39166449999902,
+  "lease_expiry_accelerated": false,
+  "incomplete_metrics_status": 409,
+  "input_sha256": "7dc893bb9ad2766711019c42c5d24202da775aa76edd5d417b2c3da9f988fcc0",
+  "saved_replication_seeds_and_checksums_preserved": true
+}

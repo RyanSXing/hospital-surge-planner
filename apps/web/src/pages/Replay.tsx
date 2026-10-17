@@ -81,9 +81,13 @@ const zones = [
 function layoutZone(z: (typeof zones)[number], height: number) {
   return { ...z, y: (z.y * height) / 620, h: (z.h * height) / 620 };
 }
-function position(p: Entity, height = 620) {
+function position(
+  p: Entity,
+  height = 620,
+  unitKinds: Record<string, string> = {},
+) {
   const z = layoutZone(
-    zones.find((z) => z.id === zoneFor(p))!,
+    zones.find((z) => z.id === zoneFor(p, unitKinds))!,
     height,
   );
   let hash = 2166136261;
@@ -146,6 +150,16 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         ]),
       ),
     [ctx.dataset?.facilities],
+  );
+  const unitKinds = useMemo<Record<string, string>>(
+    () =>
+      Object.fromEntries(
+        unitsOf(ctx).map((unit: Entity) => [
+          unit.unit_id || unit.id,
+          unit.kind,
+        ]),
+      ),
+    [ctx.dataset?.units, ctx.state?.units],
   );
   const patients = useMemo<Entity[]>(
     () =>
@@ -267,8 +281,15 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         })),
         patients,
         visiblePatients,
+        unitKinds,
       ),
-    [ctx.state?.patient_groups, patients, visiblePatients, facilityTypes],
+    [
+      ctx.state?.patient_groups,
+      patients,
+      visiblePatients,
+      facilityTypes,
+      unitKinds,
+    ],
   );
   const zoneInventory = useMemo(
     () => replayClinicalInventory(unitsOf(ctx), facilityTypes),
@@ -410,7 +431,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     const targetPoints = new Map(
       visiblePatients.map((patient) => [
         patientId(patient),
-        position(patient, H),
+        position(patient, H, unitKinds),
       ]),
     );
     const recordedTime = Date.parse(ctx.state?.at || ctx.selectedTime);
@@ -434,6 +455,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                   : "ed_waiting",
             },
             H,
+            unitKinds,
           ),
         );
     }
@@ -546,7 +568,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       if (recordedPath.length) {
         const path = recordedPath
           .filter((value: { at: number }) => value.at <= recordedTime)
-          .map((value: { patient: Entity }) => position(value.patient, H));
+          .map((value: { patient: Entity }) =>
+            position(value.patient, H, unitKinds),
+          );
         g.beginPath();
         for (let i = 0; i < path.length; i++) {
           if (i === 0) g.moveTo(path[i].x, path[i].y);
@@ -641,6 +665,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     ctx.selectedTime,
     canvasHeight,
     zoneInventory,
+    unitKinds,
   ]);
   async function chooseReplication(id: string) {
     setPlaying(false);
@@ -896,7 +921,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                   for (const p of visiblePatients) {
                     const pos =
                         drawnPoints.current.get(patientId(p)) ||
-                        position(p, canvasHeight),
+                        position(p, canvasHeight, unitKinds),
                       d = Math.hypot(pos.x - x, pos.y - y);
                     if (d < distance) {
                       best = p;

@@ -64,7 +64,7 @@ def exact_state(trace, at):
                     care,
                     site,
                     patient.get("unit_id"),
-                    patient.get("prior_state"),
+                    (patient.get("pending_transfer") or {}).get("prior_state") or patient.get("prior_state"),
                     patient.get("target_unit_kind"),
                     bool(patient.get("admission_pending")),
                     patient.get("eligible_for_transfer"),
@@ -72,10 +72,9 @@ def exact_state(trace, at):
             ] += 1
             transfer = patient.get("pending_transfer") or {}
             transfer_status = transfer.get("status")
-            destination = (
-                transfer.get("destination_facility_id")
-                or units.get(transfer.get("destination_unit_id"), {}).get("facility_id")
-            )
+            destination = transfer.get("destination_facility_id") or units.get(
+                transfer.get("destination_unit_id"), {}
+            ).get("facility_id")
             if transfer_status in {"requested", "reserved", "departed"} and destination:
                 transfers[(site, destination)][transfer_status] += 1
             if patient.get("admission_pending"):

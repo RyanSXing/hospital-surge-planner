@@ -1,6 +1,6 @@
 {
-  "recorded_at": "2026-10-17T14:34:39.609898+00:00",
-  "code_commit": "7a2dda15bc2ecd9c5ce1e0bbab2cb33ed5751d9b",
+  "recorded_at": "2026-10-17T14:45:40.415573+00:00",
+  "code_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
   "https_status": 200,
   "readiness": {
     "status": "ready",
@@ -8,5 +8,6 @@
     "queue": "available",
     "schema_version": "1.0"
   },
-  "unauthenticated_workspace_status": 401
+  "unauthenticated_workspace_status": 401,
+  "runtime_budget_seconds": 1200
 }

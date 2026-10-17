@@ -1,0 +1,21 @@
+{
+  "runtime": {
+    "api": {
+      "CODE_COMMIT": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+      "JOB_TIMEOUT_SECONDS": "1200",
+      "SIMULATION_WORKERS": "8"
+    },
+    "worker": {
+      "CODE_COMMIT": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+      "JOB_TIMEOUT_SECONDS": "1200",
+      "SIMULATION_WORKERS": "8"
+    }
+  },
+  "remote_env_mode": "0o600",
+  "recorded_at": "2026-10-17T14:45:41.677809+00:00",
+  "code_commit": "2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+  "job_timeout_seconds": 1200,
+  "previous_diagnostic_timeout_seconds": 7200,
+  "local_env_mode": "0600",
+  "scope": "Final API and worker runtime configuration after immutable release deployment; no secret values returned"
+}

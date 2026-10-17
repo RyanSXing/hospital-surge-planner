@@ -4,6 +4,8 @@ Reviewed on 2026-10-17 against the complete P0/P1 specification. The initial imp
 
 ## Closed Replay clinical-inventory display gate
 
+The final location audit also found that requested ward care could place an ICU-held stepdown patient in the Ward zone before movement. Replay now joins actual unit kinds for individual markers, grouped counts and recorded care paths, and keeps reserved waiting/assessment patients in their source state. The bounded API group projection preserves `pending_transfer.prior_state`. Ninety frontend tests, the production build, two API regressions and two browser cases pass. An actual imported stepdown snapshot remains in ICU until recorded ward entry. The complete frozen-source backend suite passes 595 tests, and independent review is clean. Final hosted checks remain separate gates.
+
 A final numeric cross-check found Replay's fallback included24 nonclinical shelter places in ward capacity. The explicit clinical inventory helper now aggregates ward/ICU/ED/clinic by declared kind, maps only ward overflow and excludes shelter/unknown from every clinical total. Actual browser evidence matches state108occupied/132staffed/44background and excludes the invalid108/156 label.87frontendtests and the production build pass; independent review is clean. Overview and Compare were already correct. Backend bytes remain identical to the594-test7a2source; F20/W10/E10 are verified again. The final hosted gallery and gates use the next immutable frontend release.
 
 ## Closed observed-clock gate

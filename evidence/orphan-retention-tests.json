@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-10-17T09:59:02.560147+00:00",
+  "command": ".venv/bin/pytest -q tests/test_orphan_retention.py tests/test_retention.py",
+  "result": "12 passed in5.24s",
+  "scope": "Isolated local SQLite/filesystem and mocked OCI metadata adapter; no hosted deletion performed",
+  "coverage": [
+    "24-hour grace and missing age preservation",
+    "all nested persisted references, including cross-workspace references",
+    "active run and trace owners",
+    "strict generated keys and symlink exclusion",
+    "dry-run does not write cursor or delete",
+    "bounded scan/delete with cursor continuation and failed-delete retry",
+    "global workspace rotation",
+    "reference committed after listing",
+    "OCI prefix/fields/inclusive pagination/max1000",
+    "shared daily deletion budget",
+    "listing outage does not hide completed category cleanup",
+    "Real uploaded basenames containing spaces and Unicode"
+  ]
+}

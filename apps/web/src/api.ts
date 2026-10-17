@@ -4,6 +4,7 @@ import {
   confirmWrite,
   writeIdentity,
 } from "./writeIdentity";
+const inFlightWrites = new Map<string, Promise<unknown>>();
 export class ApiError extends Error {
   code: string;
   details: Entity[];
@@ -35,6 +36,25 @@ export async function api<T = Entity>(
       ? await writeIdentity(path, options, headers)
       : null;
   if (identity) headers.set("Idempotency-Key", identity.key);
+  const command = identity ? `${identity.fingerprint}:${identity.key}` : null;
+  if (command && inFlightWrites.has(command))
+    return inFlightWrites.get(command) as Promise<T>;
+  const request = performRequest<T>(path, options, headers, identity, mutating);
+  if (!command) return request;
+  inFlightWrites.set(command, request);
+  try {
+    return await request;
+  } finally {
+    if (inFlightWrites.get(command) === request) inFlightWrites.delete(command);
+  }
+}
+async function performRequest<T>(
+  path: string,
+  options: RequestInit,
+  headers: Headers,
+  identity: Awaited<ReturnType<typeof writeIdentity>> | null,
+  mutating: boolean,
+): Promise<T> {
   const response = await fetch(`/api${path}`, {
     credentials: "include",
     ...options,
@@ -45,7 +65,8 @@ export async function api<T = Entity>(
       identity &&
       response.status >= 400 &&
       response.status < 500 &&
-      response.status !== 408
+      response.status !== 408 &&
+      response.status !== 409
     )
       confirmWrite(identity.fingerprint, identity.key);
     let data: Entity = {};

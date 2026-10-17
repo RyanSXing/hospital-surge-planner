@@ -46,7 +46,7 @@ def test_job_success_failure_and_precancel_persist_safe_metrics(tmp_path, monkey
                 )
             )
 
-    def succeed(identity, factory):
+    def succeed(identity, factory, token, uploads):
         with factory.begin() as session:
             job = session.get(Job, identity)
             job.status = "SUCCEEDED"

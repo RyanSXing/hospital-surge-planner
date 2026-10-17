@@ -12,7 +12,7 @@ import {
 test("configure, compute, inspect, compare, update, replay and export", async ({
   page,
 }, info) => {
-  test.setTimeout(process.env.E2E_BASE_URL ? 600000 : 180000);
+  test.setTimeout(process.env.E2E_BASE_URL ? 900000 : 180000);
   test.skip(
     info.project.name === "mobile",
     "Full computational workflow runs on desktop; every screen is audited on mobile separately.",

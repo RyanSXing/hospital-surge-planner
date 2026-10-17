@@ -76,4 +76,60 @@ describe("unknown mutation outcomes", () => {
     expect(rejected).not.toBe(unknown);
     expect(revised).not.toBe(rejected);
   });
+
+  it("reuses the identity after a concurrent commit conflict", async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ error: { code: "CONFLICT" } }), {
+          status: 409,
+        }),
+      )
+      .mockImplementation(async () => ok());
+    vi.stubGlobal("fetch", fetcher);
+    const { post } = await import("./api");
+    await expect(post("/scenarios", { name: "Winter plan" })).rejects.toThrow();
+    await post("/scenarios", { name: "Winter plan" });
+    await post("/scenarios", { name: "Winter plan" });
+    const [conflict, retry, next] = keys(fetcher);
+    expect(retry).toBe(conflict);
+    expect(next).not.toBe(retry);
+  });
+
+  it.each([false, true])(
+    "coalesces concurrent identical writes and preserves a lost outcome (%s)",
+    async (lost) => {
+      let finish!: (response: Response) => void;
+      let fail!: (error: Error) => void;
+      const fetcher = vi
+        .fn()
+        .mockImplementationOnce(
+          () =>
+            new Promise<Response>((resolve, reject) => {
+              finish = resolve;
+              fail = reject;
+            }),
+        )
+        .mockImplementation(async () => ok());
+      vi.stubGlobal("fetch", fetcher);
+      const { post } = await import("./api");
+      const first = post("/scenarios", { name: "Winter plan" });
+      const second = post("/scenarios", { name: "Winter plan" });
+      const outcomes = Promise.allSettled([first, second]);
+      await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
+      // Allow both SHA256 fingerprints to resolve before finishing the response.
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      if (lost) fail(new TypeError("response lost"));
+      else finish(ok());
+      expect((await outcomes).map((value) => value.status)).toEqual([
+        lost ? "rejected" : "fulfilled",
+        lost ? "rejected" : "fulfilled",
+      ]);
+      await post("/scenarios", { name: "Winter plan" });
+      const [original, next] = keys(fetcher);
+      if (lost) expect(next).toBe(original);
+      else expect(next).not.toBe(original);
+    },
+  );
 });

@@ -7,32 +7,32 @@ transforming...
 ✓ 2227 modules transformed.
 rendering chunks...
 computing gzip size...
-dist/index.html                                 0.66 kB │ gzip:   0.39 kB
+dist/index.html                                 0.66 kB │ gzip:   0.38 kB
 dist/assets/maplibre-gl-worker-DhKPqT7d.js    506.24 kB
 dist/assets/Replay-wpK95XPD.css                 1.51 kB │ gzip:   0.51 kB
 dist/assets/Patients-B-9tQTdv.css               1.72 kB │ gzip:   0.64 kB
 dist/assets/Scenarios-CTAy6qVO.css              1.78 kB │ gzip:   0.71 kB
 dist/assets/Resources-BrSSt7PH.css              2.65 kB │ gzip:   0.83 kB
 dist/assets/CampusMap-CEya5O3P.css             83.10 kB │ gzip:  10.53 kB
-dist/assets/index-Hm9KMb2J.css                103.59 kB │ gzip:  21.09 kB
-dist/assets/minus-DCg6QQ7z.js                   0.11 kB │ gzip:   0.13 kB
-dist/assets/chevron-left-Z65dUPp6.js            0.13 kB │ gzip:   0.14 kB
-dist/assets/clock-3-Ci5a2ha5.js                 0.18 kB │ gzip:   0.17 kB
-dist/assets/usePatientPage-CV3fjq9C.js          1.16 kB │ gzip:   0.69 kB
-dist/assets/model-BWIb5VYH.js                   3.20 kB │ gzip:   1.40 kB
-dist/assets/Overview-BGJv5BzX.js               10.25 kB │ gzip:   3.59 kB
-dist/assets/Replay-XsBL3DdP.js                 19.50 kB │ gzip:   7.02 kB
-dist/assets/Compare-BItebJr-.js                26.20 kB │ gzip:   8.45 kB
-dist/assets/DataSetup-8AEJU4VD.js              28.27 kB │ gzip:   9.84 kB
-dist/assets/Patients-B0vlH3t8.js               29.60 kB │ gzip:   8.59 kB
-dist/assets/Scenarios-CS7CBQX9.js              31.63 kB │ gzip:  10.59 kB
-dist/assets/Resources-DyPJLQ0C.js              44.64 kB │ gzip:  13.31 kB
-dist/assets/Charts-ppXIHYL3.js                 71.08 kB │ gzip:  24.31 kB
-dist/assets/index-XWOxI1__.js                 304.96 kB │ gzip:  94.59 kB
-dist/assets/CampusMap-DhgevhPt.js           1,054.93 kB │ gzip: 289.11 kB
+dist/assets/index-B9XIRDIP.css                103.59 kB │ gzip:  21.09 kB
+dist/assets/minus-DFSuu5DP.js                   0.11 kB │ gzip:   0.13 kB
+dist/assets/chevron-left-DtRL1BAl.js            0.13 kB │ gzip:   0.14 kB
+dist/assets/clock-3-DM_OWaJA.js                 0.18 kB │ gzip:   0.17 kB
+dist/assets/usePatientPage-Bx8AXTP8.js          1.16 kB │ gzip:   0.69 kB
+dist/assets/model-Dc80ri9N.js                   3.20 kB │ gzip:   1.40 kB
+dist/assets/Overview-i0DEBIFE.js               10.25 kB │ gzip:   3.59 kB
+dist/assets/Replay-9gSfNk9d.js                 19.50 kB │ gzip:   7.02 kB
+dist/assets/Compare-6NRDqUB2.js                26.20 kB │ gzip:   8.44 kB
+dist/assets/DataSetup-MoHks1Bj.js              28.27 kB │ gzip:   9.84 kB
+dist/assets/Patients-D2XERMA2.js               29.60 kB │ gzip:   8.58 kB
+dist/assets/Scenarios-i9858Q2e.js              31.63 kB │ gzip:  10.59 kB
+dist/assets/Resources-DUkIsJEs.js              44.64 kB │ gzip:  13.31 kB
+dist/assets/Charts-DV8RJ4ua.js                 71.08 kB │ gzip:  24.30 kB
+dist/assets/index-C9ntCEz2.js                 305.20 kB │ gzip:  94.70 kB
+dist/assets/CampusMap-C6gHQSHN.js           1,054.93 kB │ gzip: 289.11 kB
 
 (!) Some chunks are larger than 800 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 2.52s
+✓ built in 2.31s

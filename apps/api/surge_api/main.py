@@ -324,6 +324,8 @@ DATASET_CARD_FIELDS = (
 )
 _dataset_card_caches = WeakKeyDictionary()
 _dataset_card_lock = threading.RLock()
+_dataset_snapshot_caches = WeakKeyDictionary()
+_dataset_snapshot_lock = threading.RLock()
 
 
 def dataset_cards(session, workspace_id, limit=50, cursor=None):
@@ -413,6 +415,37 @@ def dataset_snapshot(row):
         full_dataset_url=f"/api/datasets/{row.id}",
     )
     return value
+
+
+def cached_dataset_snapshot(session, identity, user):
+    """Cache only the immutable dataset portion; workspace runs/scenarios stay live."""
+    metadata = session.execute(
+        select(Document.id, Document.revision, Document.updated_at).where(
+            Document.id == identity,
+            Document.kind == "dataset",
+            Document.workspace_id == user["workspace_id"],
+        )
+    ).one_or_none()
+    if metadata is None:
+        fail(404, "Resource not found", "not_found")
+    key = (user["workspace_id"], *metadata)
+    with _dataset_snapshot_lock:
+        cache = _dataset_snapshot_caches.setdefault(session.get_bind(), {"items": OrderedDict(), "bytes": 0})
+        encoded = cache["items"].get(key)
+        if encoded is None:
+            value = dataset_snapshot(owned(session, identity, "dataset", user))
+            encoded = json.dumps(value, separators=(",", ":"), allow_nan=False).encode()
+            budget = 16 * 1024 * 1024
+            if len(encoded) <= budget:
+                cache["items"][key] = encoded
+                cache["bytes"] += len(encoded)
+                while cache["bytes"] > budget:
+                    _, removed = cache["items"].popitem(last=False)
+                    cache["bytes"] -= len(removed)
+        else:
+            cache["items"].move_to_end(key)
+    # Each response receives a separate object; callers cannot mutate cached state.
+    return json.loads(encoded)
 
 
 def freeze(session, user, scenario):
@@ -730,10 +763,18 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
 
     @router.post("/workspaces/{identity}/members", status_code=201)
     def add_member(
-        identity: str, payload: MemberCreate = Body(...), user=Depends(admin), session=Depends(db)
+        identity: str,
+        payload: MemberCreate = Body(...),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(admin),
+        session=Depends(db),
     ):
         payload = command_dict(payload)
         workspace_access(identity, user)
+        request_payload = {"workspace_id": identity, "payload": payload}
+        previous = idempotent(session, user, "members", key, request_payload)
+        if previous:
+            return member_view(owned(session, previous, "member", user))
         role = payload.get("role", "viewer")
         username = str(payload.get("username", "")).strip()
         password = str(payload.get("password", ""))
@@ -755,6 +796,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "password_hash": hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 600000).hex(),
         }
         row = add_document(session, user["workspace_id"], "member", value)
+        remember(session, user, "members", key, request_payload, row.id)
         audit(session, user, "member.created", row.id, {"role": role})
         session.commit()
         return member_view(row)
@@ -897,7 +939,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             if datasets["items"]
             else None
         )
-        dataset = owned(session, dataset_id, "dataset", user) if dataset_id else None
+        dataset = cached_dataset_snapshot(session, dataset_id, user) if dataset_id else None
         comparison_runs = {
             p["run_group_id"]
             for comparison in documents(session, user, "comparison")
@@ -920,7 +962,11 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             if scenario
             else None
         )
-        inventory = {key: len(dataset.data.get(key, [])) for key in COLLECTIONS} if dataset else {}
+        inventory = (
+            {key: dataset["collection_counts"].get(key, len(dataset.get(key, []))) for key in COLLECTIONS}
+            if dataset
+            else {}
+        )
         return {
             "workspace": {"id": workspace_id, "name": "Hospital operations"},
             "datasets": datasets["items"],
@@ -928,7 +974,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "datasets_next_cursor": datasets["next_cursor"],
             "scenarios": [serialize(x) for x in scenarios],
             "runs": [job_view(x) for x in runs],
-            "dataset": dataset_snapshot(dataset) if dataset else None,
+            "dataset": dataset,
             "scenario": serialize(scenario) if scenario else None,
             "run": job_view(run) if run else None,
             "run_group": job_view(run) if run else None,
@@ -1075,7 +1121,16 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         }
 
     @router.post("/dataset-drafts", status_code=201)
-    def create_dataset_draft(payload: dict = Body(...), user=Depends(writer), session=Depends(db)):
+    def create_dataset_draft(
+        payload: dict = Body(...),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
+    ):
+        previous = idempotent(session, user, "dataset-drafts", key, payload)
+        if previous:
+            row = owned(session, previous, "dataset_draft", user)
+            return {**serialize(row), "draft_id": row.id, "dataset": row.data}
         source = owned(
             session,
             payload.get("dataset_version_id", payload.get("source_dataset_version_id")),
@@ -1085,6 +1140,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         data = copy.deepcopy(source.data)
         data.update(id=uid("draft"), source_dataset_version_id=source.id, dirty_fields=[], validation=None)
         row = add_document(session, user["workspace_id"], "dataset_draft", data)
+        remember(session, user, "dataset-drafts", key, payload, row.id)
         audit(session, user, "dataset.draft_created", row.id)
         session.commit()
         return {**serialize(row), "draft_id": row.id, "dataset": row.data}
@@ -1217,11 +1273,16 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
     def commit_dataset_draft(
         identity: str,
         match: str | None = Header(default=None, alias="If-Match"),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
         user=Depends(writer),
         session=Depends(db),
     ):
         from surge_engine import validate_dataset
 
+        request_payload = {"draft_id": identity, "if_match": match}
+        previous = idempotent(session, user, "dataset-draft-commits", key, request_payload)
+        if previous:
+            return serialize(owned(session, previous, "dataset", user))
         row = owned(session, identity, "dataset_draft", user)
         etag(row, match)
         report = validate_dataset(row.data)
@@ -1230,6 +1291,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         value = normalize_dataset(row.data)
         value["validation"] = report
         committed = add_document(session, user["workspace_id"], "dataset", value)
+        remember(session, user, "dataset-draft-commits", key, request_payload, committed.id)
         audit(session, user, "dataset.committed", committed.id, {"source_draft_id": row.id})
         session.commit()
         return serialize(committed)
@@ -1267,21 +1329,55 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
 
     @router.post("/imports/{identity}/files")
     async def import_file(
-        identity: str, file: UploadFile = File(...), user=Depends(writer), session=Depends(db)
+        identity: str,
+        file: UploadFile = File(...),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
     ):
         row = owned(session, identity, "import", user)
+        maximum = int(os.getenv("MAX_UPLOAD_BYTES", "104857600"))
+        content = await file.read(maximum + 1)
+        if len(content) > maximum:
+            fail(413, "File exceeds upload limit")
+        request_payload = {
+            "import_id": identity,
+            "name": Path(file.filename or "").name,
+            "media_type": file.content_type or "application/octet-stream",
+            "byte_size": len(content),
+            "sha256": hashlib.sha256(content).hexdigest(),
+        }
+        previous = idempotent(session, user, "import-files", key, request_payload)
+        if previous:
+            return serialize(owned(session, previous, "import", user))
+        # Reserve the key before an external write, then serialize changes to
+        # this import. Different keys must append to the latest files list and
+        # enforce the combined byte limit against already committed uploads.
+        remember(session, user, "import-files", key, request_payload, row.id)
+        session.flush()
+        if session.bind.dialect.name == "sqlite":
+            session.execute(
+                update(Document)
+                .where(Document.id == row.id)
+                .values(revision=Document.revision)
+                .execution_options(synchronize_session=False)
+            )
+            session.refresh(row)
+        else:
+            row = session.scalar(
+                select(Document)
+                .where(Document.id == row.id)
+                .with_for_update()
+                .execution_options(populate_existing=True)
+            )
         if row.data.get("status") == "EXPIRED":
             fail(410, "Temporary upload expired; start a new import", "artifact_expired")
         if row.data.get("status") == "COMMITTED":
             fail(409, "Committed import is immutable")
-        maximum = int(os.getenv("MAX_UPLOAD_BYTES", "104857600"))
-        used = sum(x.get("byte_size", 0) for x in row.data.get("files", []))
-        content = await file.read(maximum + 1)
-        if len(content) > maximum:
-            fail(413, "File exceeds upload limit")
         suffix = Path(file.filename or "").suffix.lower()
         if suffix not in {".json", ".zip", ".csv"}:
             fail(422, "Supported formats are JSON, ZIP, and CSV")
+        used = sum(x.get("byte_size", 0) for x in row.data.get("files", []))
         if used + len(content) > maximum:
             fail(413, "Import session exceeds its combined upload limit")
         if suffix == ".csv" and len(content) > 25 * 1024 * 1024:
@@ -1462,12 +1558,24 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         return report
 
     @router.post("/imports/{identity}/commit", status_code=201)
-    def commit_import(identity: str, user=Depends(writer), session=Depends(db)):
+    def commit_import(
+        identity: str,
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
+    ):
         from surge_engine import validate_dataset
 
+        request_payload = {"import_id": identity}
+        previous = idempotent(session, user, "import-commits", key, request_payload)
+        if previous:
+            return serialize(owned(session, previous, "dataset", user))
         row = owned(session, identity, "import", user)
         if row.data.get("committed_dataset_id"):
-            return serialize(owned(session, row.data["committed_dataset_id"], "dataset", user))
+            committed = owned(session, row.data["committed_dataset_id"], "dataset", user)
+            remember(session, user, "import-commits", key, request_payload, committed.id)
+            session.commit()
+            return serialize(committed)
         if row.data.get("status") != "VALIDATED" or not row.data.get("validation", {}).get("valid"):
             fail(
                 422,
@@ -1486,14 +1594,23 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         value = normalize_dataset(value)
         value.update(validation=report, import_id=row.id)
         committed = add_document(session, user["workspace_id"], "dataset", value)
+        remember(session, user, "import-commits", key, request_payload, committed.id)
         row.data = {**row.data, "status": "COMMITTED", "committed_dataset_id": committed.id}
         audit(session, user, "import.committed", committed.id, {"import_id": identity})
         session.commit()
         return serialize(committed)
 
     @router.post("/scenarios", status_code=201)
-    def create_scenario(payload: ScenarioCreate = Body(...), user=Depends(writer), session=Depends(db)):
+    def create_scenario(
+        payload: ScenarioCreate = Body(...),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
+    ):
         payload = command_dict(payload)
+        previous = idempotent(session, user, "scenarios", key, payload)
+        if previous:
+            return serialize(owned(session, previous, "scenario", user))
         dataset = owned(session, payload.get("dataset_version_id"), "dataset", user)
         value = normalize_conditions(scenario_defaults(payload, dataset.data), dataset.data)
         value["id"] = uid("scenario")
@@ -1502,6 +1619,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         if not report["valid"]:
             fail(422, "Invalid scenario", "validation_failed", report["errors"])
         row = add_document(session, user["workspace_id"], "scenario", value)
+        remember(session, user, "scenarios", key, payload, row.id)
         audit(session, user, "scenario.created", row.id)
         session.commit()
         return serialize(row)
@@ -1642,19 +1760,36 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
 
     @router.post("/scenarios/{identity}/revisions", status_code=201)
     def freeze_scenario(
-        identity: str, payload: dict = Body(default={}), user=Depends(writer), session=Depends(db)
+        identity: str,
+        payload: dict = Body(default={}),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
     ):
+        request_payload = {"scenario_id": identity, "payload": payload}
+        previous = idempotent(session, user, "scenario-revisions", key, request_payload)
+        if previous:
+            return serialize(owned(session, previous, "scenario_revision", user))
         row = owned(session, identity, "scenario", user)
         revision = freeze(session, user, row)
         revision.data = {**revision.data, "revision_name": payload.get("name", f"Revision {row.revision}")}
+        remember(session, user, "scenario-revisions", key, request_payload, revision.id)
         audit(session, user, "scenario.frozen", revision.id)
         session.commit()
         return serialize(revision)
 
     @router.post("/scenarios/{identity}/clone", status_code=201)
     def clone_scenario(
-        identity: str, payload: dict = Body(default={}), user=Depends(writer), session=Depends(db)
+        identity: str,
+        payload: dict = Body(default={}),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
     ):
+        request_payload = {"scenario_id": identity, "payload": payload}
+        previous = idempotent(session, user, "scenario-clones", key, request_payload)
+        if previous:
+            return serialize(owned(session, previous, "scenario", user))
         parent = owned(session, identity, "scenario", user)
         value = {
             **copy.deepcopy(parent.data),
@@ -1665,6 +1800,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "created_by": user["id"],
         }
         row = add_document(session, user["workspace_id"], "scenario", value)
+        remember(session, user, "scenario-clones", key, request_payload, row.id)
         audit(session, user, "scenario.cloned", row.id, {"parent": identity})
         session.commit()
         return serialize(row)
@@ -1718,17 +1854,43 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         return job_view(row)
 
     @router.post("/run-groups/{identity}/retry", status_code=202)
-    def retry_run(identity: str, user=Depends(writer), session=Depends(db)):
+    def retry_run(
+        identity: str,
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
+    ):
         row = owned_job(session, identity, user, "run")
-        if row.status not in {"FAILED", "CANCELLED"}:
+        request_payload = {"run_group_id": identity}
+        previous = idempotent(session, user, "run-retries", key, request_payload)
+        if previous:
+            return job_view(owned_job(session, previous, user, "run"))
+        claimed = session.execute(
+            update(Job)
+            .where(Job.id == row.id, Job.status.in_(["FAILED", "CANCELLED"]))
+            .values(
+                status="QUEUED",
+                cancelled=False,
+                dispatched=False,
+                error=None,
+                completed_at=None,
+                lease_until=0,
+            )
+            .execution_options(synchronize_session=False)
+        )
+        if claimed.rowcount != 1:
             fail(409, "Only failed or cancelled work can be retried")
-        row.status = "QUEUED"
-        row.cancelled = False
-        row.dispatched = False
-        row.error = None
-        row.completed_at = None
-        row.lease_until = 0
-        audit(session, user, "run.retried", row.id)
+        session.refresh(row)
+        # A new retry budget must never reuse an old worker's fencing number.
+        # The generation also invalidates its late finalizer before next claim.
+        generation = row.result.get("retry_generation", {"number": 0, "attempt_base": 0})
+        row.result = {
+            **row.result,
+            "retry_generation": {"number": generation["number"] + 1, "attempt_base": row.attempts},
+        }
+        row.result.pop("retry", None)
+        remember(session, user, "run-retries", key, request_payload, row.id)
+        audit(session, user, "run.retried", row.id, {"retry_generation": generation["number"] + 1})
         session.commit()
         return job_view(row)
 
@@ -2310,7 +2472,17 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         return json_response(comparison_value(row, session, user, max_points), key)
 
     @router.post("/comparisons/{identity}/save-plan", status_code=201)
-    def save_plan(identity: str, payload: dict = Body(...), user=Depends(writer), session=Depends(db)):
+    def save_plan(
+        identity: str,
+        payload: dict = Body(...),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
+    ):
+        request_payload = {"comparison_id": identity, "payload": payload}
+        previous = idempotent(session, user, "comparison-save-plan", key, request_payload)
+        if previous:
+            return serialize(owned(session, previous, "scenario", user))
         row = owned(session, identity, "comparison", user)
         plan = next(
             (x for x in comparison_value(row, session, user)["plans"] if x["id"] == payload.get("plan_id")),
@@ -2333,6 +2505,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "comparison_id": identity,
         }
         result = add_document(session, user["workspace_id"], "scenario", value)
+        remember(session, user, "comparison-save-plan", key, request_payload, result.id)
         audit(session, user, "plan.saved", result.id)
         session.commit()
         return serialize(result)
@@ -2764,6 +2937,8 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         session=Depends(db),
     ):
         payload = command_dict(payload)
+        request_payload = {"update_id": identity, "payload": payload, "if_match": match}
+        previous = idempotent(session, user, "update-applications", key, request_payload)
         event = owned(session, identity, "update", user)
         if event.data.get("applied_scenario_id"):
             child = owned(session, event.data["applied_scenario_id"], "scenario", user)
@@ -2772,6 +2947,9 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                 if event.data.get("run_group_id")
                 else None
             )
+            if key and not previous:
+                remember(session, user, "update-applications", key, request_payload, event.id)
+                session.commit()
             return {
                 "update": serialize(event),
                 "scenario": serialize(child),
@@ -3019,6 +3197,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             event.id,
             {"child_scenario_id": child.id, "state_origin": origin, "source": branch_source},
         )
+        remember(session, user, "update-applications", key, request_payload, event.id)
         session.commit()
         return {
             "update": serialize(event),
@@ -3036,7 +3215,17 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         }
 
     @router.post("/updates/{identity}/correct", status_code=201)
-    def correct_update(identity: str, payload: dict = Body(...), user=Depends(writer), session=Depends(db)):
+    def correct_update(
+        identity: str,
+        payload: dict = Body(...),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
+    ):
+        request_payload = {"update_id": identity, "payload": payload}
+        previous = idempotent(session, user, "update-corrections", key, request_payload)
+        if previous:
+            return serialize(owned(session, previous, "update", user))
         original = owned(session, identity, "update", user)
         value = {
             **copy.deepcopy(original.data),
@@ -3053,6 +3242,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             value.pop(field, None)
         check_update(value, session, user)
         row = add_document(session, user["workspace_id"], "update", value)
+        remember(session, user, "update-corrections", key, request_payload, row.id)
         audit(session, user, "update.corrected", row.id, {"supersedes_update_id": identity})
         session.commit()
         return serialize(row)
@@ -3071,8 +3261,16 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             fail(422, "Alert rule validation failed", "validation_failed", errors)
 
     @router.post("/alert-rules", status_code=201)
-    def create_rule(payload: AlertRule = Body(...), user=Depends(writer), session=Depends(db)):
+    def create_rule(
+        payload: AlertRule = Body(...),
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(writer),
+        session=Depends(db),
+    ):
         payload = command_dict(payload)
+        previous = idempotent(session, user, "alert-rules", key, payload)
+        if previous:
+            return serialize(owned(session, previous, "alert_rule", user))
         validate_rule(payload)
         row = add_document(
             session,
@@ -3087,6 +3285,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                 **payload,
             },
         )
+        remember(session, user, "alert-rules", key, payload, row.id)
         audit(session, user, "alert_rule.created", row.id)
         session.commit()
         return serialize(row)
@@ -3308,7 +3507,16 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         )
 
     @router.post("/exports/{identity}/regenerate", status_code=202)
-    def regenerate_export(identity: str, user=Depends(current_user), session=Depends(db)):
+    def regenerate_export(
+        identity: str,
+        key: str | None = Header(default=None, alias="Idempotency-Key"),
+        user=Depends(current_user),
+        session=Depends(db),
+    ):
+        request_payload = {"export_id": identity}
+        previous = idempotent(session, user, "export-regeneration", key, request_payload)
+        if previous:
+            return export_view(owned_job(session, previous, user, "export"))
         original = owned_job(session, identity, user, "export")
         enforce_job_quota(session, user)
         row = Job(
@@ -3320,6 +3528,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             result={},
         )
         session.add(row)
+        remember(session, user, "export-regeneration", key, request_payload, row.id)
         audit(session, user, "export.regenerated", row.id, {"original_export_id": identity})
         session.commit()
         return export_view(row)

@@ -24,7 +24,8 @@
         "tests/test_api.py::test_boot_seeded_sessions_and_census",
         "evidence/browser-desktop-screens.json",
         "evidence/browser-mobile-screens.json",
-        "evidence/browser-screens-patch-final.json: all7 desktop/mobile screens, final responsive chart and inspector layouts"
+        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
+        "evidence/browser-overview-outlook.json: desktop/mobile actual operational counts, full-horizon queue bands and conditional first-unmet timing"
       ],
       "spec_line": 88
     },
@@ -41,7 +42,9 @@
       "evidence": [
         "tests/test_data_workflows.py",
         "tests/test_review_api.py::test_dataset_zip_round_trip_manifest",
-        "evidence/browser-data-workflow.json"
+        "evidence/browser-data-workflow.json",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409",
+        "tests/test_creation_idempotency.py: concurrent same-key upload writes one object; distinct uploads preserve both entries and enforce combined quota under a parent-row lock"
       ],
       "spec_line": 89
     },
@@ -58,7 +61,8 @@
       "evidence": [
         "tests/test_data_workflows.py::test_draft_typed_values_validate_and_commit_preserves_source",
         "apps/web/e2e/data-roles.spec.ts",
-        "evidence/browser-matrix-final.json"
+        "evidence/browser-matrix-final.json",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
       ],
       "spec_line": 90
     },
@@ -81,7 +85,8 @@
         "tests/test_patient_queries.py: exact complete-census filters, conditional residual summaries, waiting time and unit staff/occupancy/capacity evidence",
         "evidence/browser-patient-unit-details.json",
         "evidence/browser-scenario-library-lifecycle.json: complete source-patient search pagination",
-        "evidence/browser-screens-patch-final.json: all7 desktop/mobile screens, final responsive chart and inspector layouts"
+        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
+        "evidence/browser-unit-inspector-final.json: exact filters and unit evidence with independent inspector scrolling"
       ],
       "spec_line": 91
     },
@@ -101,7 +106,8 @@
         "tests/test_review_api.py::test_scenario_cannot_shift_snapshot_without_new_observation",
         "evidence/browser-workflow.json",
         "apps/web/src/pages/scenarioEditor.test.ts: calendar week/month horizon dates, month-end clamping and leap-year exposure",
-        "evidence/browser-scenario-library-lifecycle.json: calendar weeks/months exact day totals"
+        "evidence/browser-scenario-library-lifecycle.json: calendar weeks/months exact day totals",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
       ],
       "spec_line": 92
     },
@@ -119,7 +125,7 @@
         "apps/web/src/pages/scenarioEditor.test.ts",
         "apps/web/e2e/context-editor.spec.ts",
         "evidence/browser-condition-editor.json",
-        "evidence/browser-screens-patch-final.json: all7 desktop/mobile screens, final responsive chart and inspector layouts"
+        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts"
       ],
       "spec_line": 93
     },
@@ -151,7 +157,9 @@
         "packages/engine/surge_engine/validation.py"
       ],
       "evidence": [
-        "tests/test_engine.py: 27 deterministic tests passed; conservation, bundles, turnover, staffing, transfer, clinic, update, reconstruction and DST fixtures"
+        "tests/test_engine.py: 27 deterministic tests passed; conservation, bundles, turnover, staffing, transfer, clinic, update, reconstruction and DST fixtures",
+        "tests/test_snapshot_cache.py: exact cached versus uncached event ledger, resource mutations and blocker states",
+        "evidence/engine-snapshot-cache-optimization.json: exact committed-reference output hashes before/after snapshot caching"
       ],
       "spec_line": 95
     },
@@ -193,7 +201,8 @@
         "apps/web/e2e/workflows.spec.ts",
         "evidence/browser-keyboard.json",
         "evidence/browser-docked-panels.json: independent inspector/timeline collapse, resize and keyboard controls",
-        "evidence/browser-screens-patch-final.json: all7 desktop/mobile screens, final responsive chart and inspector layouts"
+        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
+        "evidence/browser-overview-outlook.json: desktop/mobile actual operational counts, full-horizon queue bands and conditional first-unmet timing"
       ],
       "spec_line": 97
     },
@@ -228,7 +237,8 @@
         "apps/web/e2e/keyboard-alerts.spec.ts",
         "evidence/browser-keyboard.json",
         "tests/test_patient_queries.py: exact complete-census filters, conditional residual summaries, waiting time and unit staff/occupancy/capacity evidence",
-        "evidence/browser-patient-unit-details.json"
+        "evidence/browser-patient-unit-details.json",
+        "evidence/browser-unit-inspector-final.json: exact filters and unit evidence with independent inspector scrolling"
       ],
       "spec_line": 99
     },
@@ -264,7 +274,8 @@
         "tests/test_comparisons.py",
         "tests/test_api.py::test_comparison_and_alert_evidence",
         "apps/web/e2e/workflows.spec.ts",
-        "evidence/browser-workflow.json"
+        "evidence/browser-workflow.json",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
       ],
       "spec_line": 101
     },
@@ -287,7 +298,7 @@
         "evidence/browser-candidate-resource-response.json",
         "evidence/browser-resource-replay-final.json: candidate inventory, missing team rejection, explicit staff/equipment, saved response and actual eight supported places at custom site",
         "evidence/browser-docked-panels.json: independent inspector/timeline collapse, resize and keyboard controls",
-        "evidence/browser-screens-patch-final.json: all7 desktop/mobile screens, final responsive chart and inspector layouts"
+        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts"
       ],
       "spec_line": 102
     },
@@ -346,8 +357,9 @@
         "tests/test_api.py::test_update_idempotency_and_branch_preservation",
         "tests/test_engine.py::test_update_idempotency_and_branch_preservation",
         "evidence/browser-workflow.json",
-        "tests/test_reset_reconciliation.py: complete1250-patient observed reset, immutable source hash and read-only preview",
-        "evidence/browser-reset-reconciliation.json: actual10-rep observed reset branch completed, prior100-run result unchanged"
+        "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
+        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
       ],
       "spec_line": 105
     },
@@ -367,8 +379,9 @@
         "tests/test_engine.py::test_selected_replication_branch_preserves_history_and_splits_future",
         "tests/test_engine.py::test_observed_reset_preserves_explicit_end",
         "tests/test_engine.py::test_observed_reset_partial_day_uses_partial_arrival_exposure",
-        "tests/test_reset_reconciliation.py: complete1250-patient observed reset, immutable source hash and read-only preview",
-        "evidence/browser-reset-reconciliation.json: actual10-rep observed reset branch completed, prior100-run result unchanged"
+        "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
+        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
       ],
       "spec_line": 106
     },
@@ -377,7 +390,7 @@
       "name": "2D replay",
       "stage": "P1",
       "requirement": "Play/pause, speeds, seek, token selection, unit detail, event feed; render the stored event log from one replication.",
-      "status": "verified",
+      "status": "implemented",
       "implementation": [
         "apps/web/src/pages/Replay.tsx",
         "apps/web/src/pages/patientProjection.ts",
@@ -392,9 +405,16 @@
         "apps/web/e2e/replay-controls.spec.ts",
         "evidence/browser-replay-controls.json",
         "evidence/browser-resource-replay-final.json: play/pause/speeds, end seek, keyboard seek, exact forward/backward event sequences, reduced motion, unchanged input hash",
-        "evidence/browser-screens-patch-final.json: all7 desktop/mobile screens, final responsive chart and inspector layouts"
+        "evidence/browser-screens-patch-final.json: all seven desktop/mobile screens, final responsive chart and inspector layouts",
+        "docs/gap-audit.md: focused Replay completion remains pending; existing control/recovery tests cover only their stated behaviors"
       ],
-      "spec_line": 107
+      "spec_line": 107,
+      "remaining_checks": [
+        "Event-type filtering and pagination of every event in the selected window",
+        "Selected-patient preceding/next events and care-path highlighting",
+        "Condition/intervention timeline annotations and state-derived bed/staff capacity context",
+        "Actual canvas redraw FPS and measured 500-visible-patient budget; rAF cadence alone does not prove rendering FPS"
+      ]
     },
     {
       "id": "F21",
@@ -411,7 +431,8 @@
         "tests/test_api.py::test_idempotency_and_frozen_run_inputs",
         "evidence/compose-recovery.json",
         "evidence/browser-run-reload-cancel.json",
-        "evidence/browser-read-recovery.json"
+        "evidence/browser-read-recovery.json",
+        "tests/test_creation_idempotency.py::test_manual_retry_replay_preserves_current_generation_and_status"
       ],
       "spec_line": 108
     },
@@ -429,7 +450,8 @@
         "tests/test_api.py::test_immutable_revision_and_optimistic_conflict",
         "apps/web/e2e/release-workflows.spec.ts",
         "evidence/browser-scenario-library-lifecycle.json",
-        "evidence/browser-release-workflows.json: 51-scenario library and global search pagination, week/month horizons, clone/archive with unchanged source revision"
+        "evidence/browser-release-workflows.json: 51-scenario library and global search pagination, week/month horizons, clone/archive with unchanged source revision",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
       ],
       "spec_line": 109
     },
@@ -448,7 +470,8 @@
         "tests/test_api.py::test_run_replay_export_import_roundtrip",
         "tests/test_review_api.py::test_export_archive_checksum_tampering_rejected",
         "tests/test_api.py::test_export_preserves_explicit_run_when_comparison_reference_is_separate",
-        "evidence/browser-workflow.json"
+        "evidence/browser-workflow.json",
+        "tests/test_creation_idempotency.py::test_export_regeneration_retry_reuses_completed_artifact"
       ],
       "spec_line": 110
     },
@@ -465,7 +488,8 @@
       "evidence": [
         "tests/test_api.py::test_comparison_and_alert_evidence",
         "apps/web/e2e/keyboard-alerts.spec.ts",
-        "evidence/browser-alerts.json"
+        "evidence/browser-alerts.json",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
       ],
       "spec_line": 111
     },
@@ -486,7 +510,8 @@
         "tests/test_review_observability.py",
         "tests/test_review_worker_metrics.py",
         "tests/test_retention.py",
-        "evidence/browser-condition-editor.json"
+        "evidence/browser-condition-editor.json",
+        "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409"
       ],
       "spec_line": 112
     },
@@ -505,11 +530,12 @@
         "evidence/oci-provisioning.json",
         "evidence/oci-host-key-verification.json",
         "evidence/cloud-acceptance.json: actual HTTPS authentication, OCI backend/worker SUCCEEDED run_210c7ffa966c4b22a4cb, private Object Storage artifacts and authenticated export with every checksum verified",
-        "evidence/oci-private-storage.json: instance-principal write/read/checksum and unauthenticated404",
+        "evidence/oci-private-storage.json: instance-principal write/read/checksum and unauthenticated 404",
         "evidence/hosted-backup-restore.json: authenticated backup download and isolated restore",
         "evidence/credential-rotation.json",
-        "docs/hosted-verification.md: final runtime scans0HIGH/CRITICAL and daily maintenance timers",
-        "Final hosted performance and compound browser workflow remain pending; initial30day10rep51.70s and30day100rep150.08s missed targets"
+        "docs/hosted-verification.md: final runtime scans: zero HIGH/CRITICAL and daily maintenance timers",
+        "Final hosted performance and compound browser workflow remain pending; initial 30-day/10-rep run 51.70 s and 30-day/100-rep run 150.08 s missed targets",
+        "docs/hosted-verification.md: e4c54e2 optimized 30-day/10-rep 45.237 s and 30-day/100-rep 93.523 s still exceed targets; final initializer patch measurements pending"
       ],
       "spec_line": 113
     },
@@ -652,7 +678,6 @@
       "status": "verified",
       "evidence": [
         "F17: tests/test_engine.py::test_transfer_reservations_transport_and_resources; tests/test_engine.py::test_imported_transport_continues_commitments; tests/test_api.py::test_eligibility_uses_patient_profile_and_comparison_does_not_replace_main_run",
-        "Engine/API transfer and capability checks pass. Full transfer-planner browser lifecycle remains unexercised.",
         "apps/web/e2e/release-workflows.spec.ts",
         "evidence/browser-bounded-transfer.json"
       ],
@@ -666,8 +691,8 @@
       "evidence": [
         "F18: tests/test_api.py::test_update_idempotency_and_branch_preservation; tests/test_engine.py::test_update_idempotency_and_branch_preservation; evidence/browser-workflow.json",
         "F19: tests/test_api.py::test_selected_branch_preserves_history_and_varies_future; tests/test_review_api.py::test_branch_uses_frozen_run_when_draft_was_edited; tests/test_engine.py::test_selected_replication_branch_preserves_history_and_splits_future; tests/test_engine.py::test_observed_reset_preserves_explicit_end; tests/test_engine.py::test_observed_reset_partial_day_uses_partial_arrival_exposure",
-        "tests/test_reset_reconciliation.py: complete1250-patient observed reset, immutable source hash and read-only preview",
-        "evidence/browser-reset-reconciliation.json: actual10-rep observed reset branch completed, prior100-run result unchanged"
+        "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
+        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged"
       ],
       "spec_line": 1301
     },
@@ -681,8 +706,8 @@
         "apps/web/e2e/replay-controls.spec.ts",
         "evidence/browser-replay-controls.json",
         "evidence/browser-resource-replay-final.json: play/pause/speeds, end seek, keyboard seek, exact forward/backward event sequences, reduced motion, unchanged input hash",
-        "tests/test_reset_reconciliation.py: complete1250-patient observed reset, immutable source hash and read-only preview",
-        "evidence/browser-reset-reconciliation.json: actual10-rep observed reset branch completed, prior100-run result unchanged"
+        "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
+        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged"
       ],
       "spec_line": 1302
     },
@@ -832,7 +857,6 @@
       "evidence": [
         "F16: tests/test_engine.py::test_clinic_distinct_from_inpatient_capacity; tests/test_engine.py::test_custom_clinic_target_and_quantity; tests/test_engine.py::test_site_ready_exact_staff_and_equipment; tests/test_compute.py::test_clinic_preflight_distinguishes_missing_minimum_team_and_partial_coverage",
         "F17: tests/test_engine.py::test_transfer_reservations_transport_and_resources; tests/test_engine.py::test_imported_transport_continues_commitments; tests/test_api.py::test_eligibility_uses_patient_profile_and_comparison_does_not_replace_main_run",
-        "tests/test_engine.py::test_clinic_distinct_from_inpatient_capacity; targeted ICU-to-clinic UI rejection remains unexercised",
         "apps/web/e2e/release-workflows.spec.ts",
         "evidence/browser-bounded-transfer.json: ICU-to-clinic rejected; ward-to-East acquires reservation and transport, retains source until pickup, then arrives"
       ],
@@ -847,8 +871,8 @@
         "F18: tests/test_api.py::test_update_idempotency_and_branch_preservation; tests/test_engine.py::test_update_idempotency_and_branch_preservation; evidence/browser-workflow.json",
         "F19: tests/test_api.py::test_selected_branch_preserves_history_and_varies_future; tests/test_review_api.py::test_branch_uses_frozen_run_when_draft_was_edited; tests/test_engine.py::test_selected_replication_branch_preserves_history_and_splits_future; tests/test_engine.py::test_observed_reset_preserves_explicit_end; tests/test_engine.py::test_observed_reset_partial_day_uses_partial_arrival_exposure",
         "tests/test_engine.py::test_update_idempotency_and_branch_preservation: exactly 20 patients, duplicate report unchanged",
-        "tests/test_reset_reconciliation.py: complete1250-patient observed reset, immutable source hash and read-only preview",
-        "evidence/browser-reset-reconciliation.json: actual10-rep observed reset branch completed, prior100-run result unchanged"
+        "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
+        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged"
       ],
       "spec_line": 1831
     },

@@ -1,0 +1,137 @@
+{
+  "scope": "Actual saved per-replication execution metrics and durable record timestamps; initialization/import/spawn time precedes replication metrics",
+  "runs": [
+    {
+      "run_group_id": "run_e2f7c4e4d575427eb3bd",
+      "code_commit": "26c3122490b3f8ba9b69347dc8a7a8d94a05a16d",
+      "replications": [
+        {
+          "index": 0,
+          "durable_after_submission_seconds": 20.71311,
+          "replication_wall_seconds": 5.064775266999959,
+          "replication_cpu_seconds": 5.07088916
+        },
+        {
+          "index": 1,
+          "durable_after_submission_seconds": 23.28937,
+          "replication_wall_seconds": 4.880404645999988,
+          "replication_cpu_seconds": 4.891958880000001
+        },
+        {
+          "index": 2,
+          "durable_after_submission_seconds": 26.022138,
+          "replication_wall_seconds": 4.523435063999841,
+          "replication_cpu_seconds": 4.536852519999999
+        },
+        {
+          "index": 3,
+          "durable_after_submission_seconds": 25.021909,
+          "replication_wall_seconds": 4.372510363999936,
+          "replication_cpu_seconds": 4.383669619999999
+        },
+        {
+          "index": 4,
+          "durable_after_submission_seconds": 28.418829,
+          "replication_wall_seconds": 4.017507538000018,
+          "replication_cpu_seconds": 4.02728262
+        },
+        {
+          "index": 5,
+          "durable_after_submission_seconds": 27.656131,
+          "replication_wall_seconds": 4.2802106600001935,
+          "replication_cpu_seconds": 4.290758640000002
+        },
+        {
+          "index": 6,
+          "durable_after_submission_seconds": 29.107377,
+          "replication_wall_seconds": 4.005909820999932,
+          "replication_cpu_seconds": 4.01601612
+        },
+        {
+          "index": 7,
+          "durable_after_submission_seconds": 30.14439,
+          "replication_wall_seconds": 4.041399733999924,
+          "replication_cpu_seconds": 4.05211624
+        },
+        {
+          "index": 8,
+          "durable_after_submission_seconds": 31.762982,
+          "replication_wall_seconds": 4.018525557999965,
+          "replication_cpu_seconds": 4.0302103
+        },
+        {
+          "index": 9,
+          "durable_after_submission_seconds": 32.665277,
+          "replication_wall_seconds": 3.8991902350001055,
+          "replication_cpu_seconds": 3.9060521799999997
+        }
+      ]
+    },
+    {
+      "run_group_id": "run_16008dbc93fd4c86be88",
+      "code_commit": "e4c54e2bdd8f0ad1322574256df7b1932430ffb2",
+      "replications": [
+        {
+          "index": 0,
+          "durable_after_submission_seconds": 26.804837,
+          "replication_wall_seconds": 4.741357222000261,
+          "replication_cpu_seconds": 4.75024676
+        },
+        {
+          "index": 1,
+          "durable_after_submission_seconds": 26.870571,
+          "replication_wall_seconds": 4.70425999400004,
+          "replication_cpu_seconds": 4.71654462
+        },
+        {
+          "index": 2,
+          "durable_after_submission_seconds": 26.957854,
+          "replication_wall_seconds": 4.7566331029997855,
+          "replication_cpu_seconds": 4.7588064999999995
+        },
+        {
+          "index": 3,
+          "durable_after_submission_seconds": 26.720891,
+          "replication_wall_seconds": 4.644893013000001,
+          "replication_cpu_seconds": 4.65065734
+        },
+        {
+          "index": 4,
+          "durable_after_submission_seconds": 28.75227,
+          "replication_wall_seconds": 4.396249795999665,
+          "replication_cpu_seconds": 4.401566539999999
+        },
+        {
+          "index": 5,
+          "durable_after_submission_seconds": 27.335794,
+          "replication_wall_seconds": 4.507397504999972,
+          "replication_cpu_seconds": 4.50303194
+        },
+        {
+          "index": 6,
+          "durable_after_submission_seconds": 31.483034,
+          "replication_wall_seconds": 4.0067844629998035,
+          "replication_cpu_seconds": 4.01901744
+        },
+        {
+          "index": 7,
+          "durable_after_submission_seconds": 29.138081,
+          "replication_wall_seconds": 4.478895757999908,
+          "replication_cpu_seconds": 4.438892920000001
+        },
+        {
+          "index": 8,
+          "durable_after_submission_seconds": 30.819316,
+          "replication_wall_seconds": 4.0003867600003105,
+          "replication_cpu_seconds": 3.998826659999999
+        },
+        {
+          "index": 9,
+          "durable_after_submission_seconds": 34.193798,
+          "replication_wall_seconds": 3.520218275999923,
+          "replication_cpu_seconds": 3.5301983999999997
+        }
+      ]
+    }
+  ]
+}

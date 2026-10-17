@@ -7,8 +7,10 @@ import gzip
 import hashlib
 import json
 import os
+import re
 import threading
 from collections import OrderedDict
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .db import canonical, now, uid
@@ -132,6 +134,75 @@ class ArtifactStore:
         if hashlib.sha256(data).hexdigest() != metadata["sha256"]:
             raise ValueError("Artifact checksum does not match committed manifest")
         return data
+
+    def list_page(self, workspace, *, cursor=None, limit=100):
+        """List one workspace's metadata only; cursor is the next inclusive key.
+
+        This does not inspect content or delete files. The caller must decide
+        age, reference ownership and eligibility before using delete().
+        """
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,95}", workspace):
+            raise ValueError("Invalid workspace prefix")
+        prefix = workspace + "/"
+        if cursor is not None and not cursor.startswith(prefix):
+            raise ValueError("Cursor is outside the workspace")
+        limit = max(1, min(1000, limit))
+        if self.backend == "oci":
+            options = {"prefix": prefix, "limit": limit, "fields": "name,size,timeCreated"}
+            if cursor:
+                options["start"] = cursor
+            page = self.client.list_objects(self.namespace, self.bucket, **options).data
+            return {
+                "items": [
+                    {
+                        "object_key": item.name,
+                        "byte_size": item.size,
+                        "created_at": item.time_created.isoformat() if item.time_created else None,
+                    }
+                    for item in page.objects
+                ],
+                "next_cursor": page.next_start_with,
+            }
+        root = self.root / workspace
+        if root.is_symlink() or not root.exists():
+            return {"items": [], "next_cursor": None}
+        items = []
+        # Service-generated keys have a fixed four-segment layout. Sorting
+        # those directory levels keeps inclusive cursors stable without
+        # following arbitrary nested directories or symlinks.
+        for owner in sorted(root.iterdir()):
+            if (
+                owner.is_symlink()
+                or not owner.is_dir()
+                or not re.fullmatch(r"(?:run|export|import)_[0-9a-f]{20}", owner.name)
+            ):
+                continue
+            if cursor and owner.name < cursor.split("/")[1]:
+                continue
+            for artifact in sorted(owner.iterdir()):
+                if (
+                    artifact.is_symlink()
+                    or not artifact.is_dir()
+                    or not re.fullmatch(r"artifact_[0-9a-f]{20}", artifact.name)
+                ):
+                    continue
+                for path in sorted(artifact.iterdir()):
+                    if not path.is_file() or path.is_symlink():
+                        continue
+                    key = path.relative_to(self.root).as_posix()
+                    if cursor is not None and key < cursor:
+                        continue
+                    if len(items) == limit:
+                        return {"items": items, "next_cursor": key}
+                    metadata = path.stat()
+                    items.append(
+                        {
+                            "object_key": key,
+                            "byte_size": metadata.st_size,
+                            "created_at": datetime.fromtimestamp(metadata.st_mtime, UTC).isoformat(),
+                        }
+                    )
+        return {"items": items, "next_cursor": None}
 
     def delete(self, metadata):
         """Idempotently remove a generated private object by committed metadata."""

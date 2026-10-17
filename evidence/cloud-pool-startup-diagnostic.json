@@ -1,0 +1,58 @@
+{
+  "scope": "Read-only frozen-input startup diagnostic; no simulations, jobs or artifacts written",
+  "source_job": "run_16008dbc93fd4c86be88",
+  "code_commit": "e4c54e2bdd8f0ad1322574256df7b1932430ffb2",
+  "timings": {
+    "artifact_store_cold_init_seconds": 2.0472414099999696,
+    "database_load_seconds": 0.7997810599999866,
+    "deepcopy_seconds": 0.8058320029999777,
+    "digest_seconds": 0.32579924299989216,
+    "private_pickle_write_seconds": 0.2563683029998174
+  },
+  "trials": [
+    {
+      "method": "spawn",
+      "inputs": "inline",
+      "workers": 8,
+      "ready_seconds": 24.07131310099976,
+      "parent_cpu_seconds": 2.2004979999999996,
+      "including_shutdown_seconds": 24.307230507999975,
+      "distinct_children": 8
+    },
+    {
+      "method": "spawn",
+      "inputs": "file",
+      "workers": 8,
+      "ready_seconds": 3.78382196199982,
+      "parent_cpu_seconds": 0.011313219999999902,
+      "including_shutdown_seconds": 4.027664686999742,
+      "distinct_children": 8
+    },
+    {
+      "method": "forkserver",
+      "inputs": "inline",
+      "workers": 8,
+      "ready_seconds": 21.247150675000285,
+      "parent_cpu_seconds": 2.211424319999999,
+      "including_shutdown_seconds": 21.292873705000147,
+      "distinct_children": 8
+    },
+    {
+      "method": "forkserver",
+      "inputs": "file",
+      "workers": 8,
+      "ready_seconds": 2.340085385000293,
+      "parent_cpu_seconds": 0.011023620000001344,
+      "including_shutdown_seconds": 2.3938778130000173,
+      "distinct_children": 8
+    }
+  ],
+  "pickle_bytes": 15229582,
+  "recorded_at": "2026-10-17T09:34:51.642270+00:00",
+  "notes": [
+    "Single diagnostic trial per method; actual simulation behavior not executed or benchmarked by this probe.",
+    "File inputs are own-generated trusted pickle in a private temporary directory with0600 mode, removed after pools shut down.",
+    "forkserver preloaded surge_engine and numpy; BLAS/OMP/MKL threads fixed1. No ordinary fork was used.",
+    "Database, deepcopy and digest costs measured separately. Process count proved by eight distinct child PIDs at barrier."
+  ]
+}

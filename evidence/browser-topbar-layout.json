@@ -1,0 +1,45 @@
+{
+  "recorded_at": "2026-10-17T09:58:01.937Z",
+  "scope": "Read-only local desktop layout at the specification 56px topbar height",
+  "screens": [
+    {
+      "height": 900,
+      "file": "evidence/screens/local-final/desktop-overview-900px.png",
+      "topbar_height": 56,
+      "grid_rows": "56px 844px",
+      "document_width": 1600,
+      "viewport_width": 1600,
+      "main_rect": {
+        "x": 178,
+        "y": 99,
+        "width": 1422,
+        "height": 776,
+        "top": 99,
+        "right": 1600,
+        "bottom": 875,
+        "left": 178
+      },
+      "markers": 6
+    },
+    {
+      "height": 1000,
+      "file": "evidence/screens/local-final/desktop-overview-1000px.png",
+      "topbar_height": 56,
+      "grid_rows": "56px 944px",
+      "document_width": 1600,
+      "viewport_width": 1600,
+      "main_rect": {
+        "x": 178,
+        "y": 99,
+        "width": 1422,
+        "height": 876,
+        "top": 99,
+        "right": 1600,
+        "bottom": 975,
+        "left": 178
+      },
+      "markers": 6
+    }
+  ],
+  "page_errors": []
+}

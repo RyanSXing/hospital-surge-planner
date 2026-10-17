@@ -13,19 +13,25 @@ import json
 import logging
 import multiprocessing
 import os
+import pickle
+import re
 import resource
 import sqlite3
+import stat
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import zipfile
 from collections import defaultdict
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
+from contextlib import contextmanager
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from sqlalchemy import and_, or_, select, update
+from sqlalchemy import and_, func, or_, select, update
 from sqlalchemy.exc import DBAPIError
 
 from .artifacts import ArtifactStore
@@ -88,6 +94,190 @@ class Cancelled(Exception):
     pass
 
 
+class LeaseLost(Exception):
+    """This attempt may compute but may never publish another durable change."""
+
+
+def artifact_keys(value):
+    if isinstance(value, dict):
+        if isinstance(value.get("object_key"), str):
+            yield value["object_key"]
+        for item in value.values():
+            yield from artifact_keys(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from artifact_keys(item)
+
+
+class AttemptArtifactStore(ArtifactStore):
+    def __init__(self, uploads):
+        super().__init__()
+        self.uploads = uploads
+
+    def write(self, workspace, owner, name, data, media_type="application/json"):
+        artifact = super().write(workspace, owner, name, data, media_type)
+        self.uploads.pending[artifact["object_key"]] = (workspace, owner, artifact)
+        return artifact
+
+
+class PendingUploads:
+    """Track this attempt's new objects until their fenced transaction commits.
+
+    Unknown upload outcomes, process death and cleanup outages are handled by
+    the age-based orphan collector. Never delete on an unavailable DB check:
+    a commit may have succeeded even when its acknowledgment was lost.
+    """
+
+    def __init__(self, Session, identity):
+        self.Session = Session
+        self.identity = identity
+        self.pending = {}
+        self._store = None
+
+    @property
+    def store(self):
+        if self._store is None:
+            self._store = AttemptArtifactStore(self)
+        return self._store
+
+    def retain(self, *artifacts):
+        # Call only after exiting the publishing Session.begin() successfully.
+        for artifact in artifacts:
+            self.pending.pop(artifact["object_key"], None)
+
+    def cleanup(self):
+        if not self.pending:
+            return
+        try:
+            workspaces = {entry[0] for entry in self.pending.values()}
+            owners = {entry[1] for entry in self.pending.values()}
+            with self.Session.begin() as session:
+                # Serialize with a commit whose network acknowledgment was
+                # lost. A plain SELECT could observe its pre-commit snapshot
+                # while the server is still finishing the publication.
+                resolved = session.execute(
+                    update(Job)
+                    .where(Job.id == self.identity)
+                    .values(lease_until=Job.lease_until)
+                    .execution_options(synchronize_session=False)
+                )
+                if resolved.rowcount != 1:
+                    raise LeaseLost()
+                # Worker outputs are published only in their owning job result
+                # or replication documents. Include the trace job itself and
+                # its parent run, without loading dataset JSON or other jobs.
+                values = list(
+                    session.scalars(
+                        select(Job.result).where(
+                            Job.workspace_id.in_(workspaces), Job.id.in_(owners | {self.identity})
+                        )
+                    )
+                )
+                values.extend(
+                    session.scalars(
+                        select(Document.data).where(
+                            Document.workspace_id.in_(workspaces),
+                            Document.kind == "replication",
+                            Document.data["run_group_id"].as_string().in_(owners),
+                        )
+                    )
+                )
+                referenced = set(artifact_keys(values))
+        except Exception as exc:  # noqa: BLE001 - failed verification must preserve uncertain commits.
+            self._deferred(exc)
+            return
+        for key, (_, _, artifact) in list(self.pending.items()):
+            if key not in referenced:
+                try:
+                    self.store.delete(artifact)
+                except Exception as exc:  # noqa: BLE001 - age-based collection retries storage outages.
+                    self._deferred(exc)
+                    continue
+            self.pending.pop(key, None)
+
+    def _deferred(self, exc):
+        logging.getLogger("surge_api.requests").warning(
+            json.dumps(
+                {
+                    "event": "artifact_cleanup_deferred",
+                    "job_id": self.identity,
+                    "pending_count": len(self.pending),
+                    "error_category": type(exc).__name__,
+                }
+            )
+        )
+
+
+@dataclass(frozen=True)
+class AttemptToken:
+    attempt: int
+    generation: int
+    attempt_base: int
+
+    @property
+    def generation_attempt(self):
+        return self.attempt - self.attempt_base
+
+
+def retry_generation(job):
+    return job.result.get("retry_generation", {"number": 0, "attempt_base": 0})
+
+
+def attempt_predicate(identity, token):
+    return and_(
+        Job.id == identity,
+        Job.attempts == token.attempt,
+        func.coalesce(Job.result["retry_generation"]["number"].as_integer(), 0) == token.generation,
+    )
+
+
+def lock_attempt(session, identity, token, *, active=True, allow_cancelled=False):
+    """Fence and lock the job before any document/job mutation in this transaction.
+
+    The conditional no-op UPDATE is a real write lock on both PostgreSQL and
+    SQLite (where SELECT FOR UPDATE is ignored). A takeover cannot commit until
+    this transaction finishes, and a previous owner cannot pass the predicate.
+    External objects have unique immutable keys; only a fenced transaction may
+    publish their references. Attempt cleanup removes unpublished uploads.
+    """
+    predicate = attempt_predicate(identity, token)
+    if active:
+        predicate = and_(
+            predicate,
+            Job.status.in_(["RUNNING", "AGGREGATING", "CANCEL_REQUESTED"]),
+            Job.lease_until > time.time(),
+        )
+    locked = session.execute(
+        update(Job)
+        .where(predicate)
+        .values(lease_until=Job.lease_until)
+        .execution_options(synchronize_session=False)
+    )
+    if locked.rowcount != 1:
+        raise LeaseLost()
+    job = session.get(Job, identity, populate_existing=True)
+    if job.cancelled and not allow_cancelled:
+        raise Cancelled()
+    return job
+
+
+def check_attempt(job, token):
+    generation = retry_generation(job)
+    if (
+        job.attempts != token.attempt
+        or generation["number"] != token.generation
+        or job.status not in {"RUNNING", "AGGREGATING", "CANCEL_REQUESTED"}
+        or job.lease_until <= time.time()
+    ):
+        raise LeaseLost()
+    if job.cancelled:
+        raise Cancelled()
+
+
+def result_with_generation(job, result):
+    return {**result, "retry_generation": retry_generation(job)}
+
+
 def transient_failure(exc):
     """Classify dependency failures, never arbitrary model/programming errors.
 
@@ -146,21 +336,18 @@ def log_persistence_failure(identity, exc):
     )
 
 
-def job_control(Session, identity):
+def job_control(Session, identity, token):
     deadline = time.monotonic() + int(os.getenv("JOB_TIMEOUT_SECONDS", "7200"))
     last = 0.0
-    cancelled = False
 
     def check():
-        nonlocal last, cancelled
+        nonlocal last
         if time.monotonic() > deadline:
             raise TimeoutError("Job exceeded the configured timeout")
         if time.monotonic() - last > 0.25:
             with Session() as session:
-                cancelled = bool(session.get(Job, identity).cancelled)
+                check_attempt(session.get(Job, identity), token)
             last = time.monotonic()
-        if cancelled:
-            raise Cancelled()
         return False
 
     return check
@@ -187,8 +374,97 @@ def _replication_task(index):
     return timed_replication(_pool_dataset, _pool_scenario, index, cancel_check=_pool_stop.is_set)
 
 
+def _replication_file_initializer(input_path, stop):
+    # This path is produced only by private_replication_pool, never by an API
+    # payload. Refuse symlinks, other owners, and group/world-readable files.
+    descriptor = os.open(input_path, os.O_RDONLY | os.O_NOFOLLOW)
+    with os.fdopen(descriptor, "rb") as stream:
+        metadata = os.fstat(stream.fileno())
+        if not stat.S_ISREG(metadata.st_mode) or metadata.st_uid != os.getuid() or metadata.st_mode & 0o077:
+            raise ValueError("Pool inputs must be an owned private regular file")
+        dataset, scenario = pickle.load(stream)  # Trusted, service-created data in a private directory.
+    _replication_initializer(dataset, scenario, stop)
+
+
+def scavenge_private_inputs(*, root=None, max_entries=512, max_deletions=32):
+    """Remove only our private pool inputs belonging to demonstrably dead PIDs.
+
+    SIGKILL bypasses the normal context-manager cleanup. Worker entry retries
+    this bounded scan; live/reused PIDs, symlinks, unexpected files, permissions
+    and owners are left alone. No user-provided paths reach this operation.
+    """
+    deleted = 0
+    root = Path(root or tempfile.gettempdir())
+    try:
+        with os.scandir(root) as entries:
+            for number, entry in enumerate(entries):
+                if number >= max_entries or deleted >= max_deletions:
+                    break
+                match = re.fullmatch(r"hsp-pool-([1-9][0-9]*)-a[1-9][0-9]*-[a-z0-9_]+", entry.name)
+                if not match:
+                    continue
+                try:
+                    try:
+                        os.kill(int(match[1]), 0)
+                    except ProcessLookupError:
+                        pass
+                    else:
+                        continue
+                    descriptor = os.open(entry.path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+                    try:
+                        metadata = os.fstat(descriptor)
+                        if metadata.st_uid != os.getuid() or stat.S_IMODE(metadata.st_mode) != 0o700:
+                            continue
+                        names = os.listdir(descriptor)
+                        if names not in ([], ["inputs.pickle"]):
+                            continue
+                        if names:
+                            inputs = os.stat("inputs.pickle", dir_fd=descriptor, follow_symlinks=False)
+                            if (
+                                not stat.S_ISREG(inputs.st_mode)
+                                or inputs.st_uid != os.getuid()
+                                or stat.S_IMODE(inputs.st_mode) != 0o600
+                                or inputs.st_nlink != 1
+                            ):
+                                continue
+                            os.unlink("inputs.pickle", dir_fd=descriptor)
+                        os.rmdir(entry.path)
+                        deleted += 1
+                    finally:
+                        os.close(descriptor)
+                except (OSError, OverflowError):
+                    continue  # Permission failures or another scavenger are harmless.
+    except OSError:
+        pass
+    return deleted
+
+
+@contextmanager
+def private_replication_pool(dataset, scenario, workers, token):
+    """Serialize frozen inputs once; spawn children read their own exact copy."""
+    spawn = multiprocessing.get_context("spawn")
+    halt = spawn.Event()
+    with tempfile.TemporaryDirectory(prefix=f"hsp-pool-{os.getpid()}-a{token.attempt}-") as folder:
+        input_path = Path(folder) / "inputs.pickle"
+        descriptor = os.open(input_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, "wb") as stream:
+            pickle.dump((dataset, scenario), stream, protocol=pickle.HIGHEST_PROTOCOL)
+        pool = ProcessPoolExecutor(
+            max_workers=workers,
+            mp_context=spawn,
+            initializer=_replication_file_initializer,
+            initargs=(str(input_path), halt),
+        )
+        try:
+            yield pool
+        finally:
+            halt.set()
+            pool.shutdown(wait=True, cancel_futures=True)
+
+
 def execute_job(identity, database_url=None):
     started = execution_started()
+    scavenge_private_inputs()
     engine, Session = make_database(database_url)
     with Session.begin() as session:
         claimed = session.execute(
@@ -200,7 +476,9 @@ def execute_job(identity, database_url=None):
                     and_(
                         Job.status.in_(["RUNNING", "AGGREGATING"]),
                         Job.lease_until < time.time(),
-                        Job.attempts < 3,
+                        Job.attempts
+                        - func.coalesce(Job.result["retry_generation"]["attempt_base"].as_integer(), 0)
+                        < 3,
                     ),
                 ),
             )
@@ -227,6 +505,9 @@ def execute_job(identity, database_url=None):
             return
         kind = job.kind
         attempt = job.attempts
+        generation = retry_generation(job)
+        job.result = {**job.result, "retry_generation": generation}
+        token = AttemptToken(attempt, generation["number"], generation["attempt_base"])
         attempt_history = list(job.result.get("attempt_history", []))
     stopped = threading.Event()
 
@@ -237,9 +518,9 @@ def execute_job(identity, database_url=None):
                     session.execute(
                         update(Job)
                         .where(
-                            Job.id == identity,
-                            Job.attempts == attempt,
+                            attempt_predicate(identity, token),
                             Job.status.in_(["RUNNING", "AGGREGATING", "CANCEL_REQUESTED"]),
+                            Job.lease_until > time.time(),
                         )
                         .values(lease_until=time.time() + 120)
                     )
@@ -249,31 +530,36 @@ def execute_job(identity, database_url=None):
     beat = threading.Thread(target=heartbeat, daemon=True)
     beat.start()
     failure_category = None
+    outcome_committed = False
+    uploads = PendingUploads(Session, identity)
     try:
         if kind == "run":
-            run_job(identity, Session)
+            run_job(identity, Session, token, uploads)
         elif kind == "export":
-            export_job(identity, Session)
+            export_job(identity, Session, token, uploads)
         elif kind == "trace":
-            trace_job(identity, Session)
+            trace_job(identity, Session, token, uploads)
         else:
             raise ValueError("Unknown job kind")
+        outcome_committed = True
+    except LeaseLost:
+        pass  # The current owner or expired-lease recovery controls this job.
     except Exception as exc:  # noqa: BLE001 - classify failures at the isolated durable job boundary.
         cancelled = isinstance(exc, Cancelled) or type(exc).__name__ == "SimulationCancelled"
         failure_category = transient_failure(exc)
         try:
             with Session.begin() as session:
-                job = session.get(Job, identity)
-                if job.attempts == attempt and job.status != "SUCCEEDED":
+                job = lock_attempt(session, identity, token, allow_cancelled=True)
+                if job.status != "SUCCEEDED":
                     cancelled = cancelled or job.cancelled
-                    retry = bool(failure_category and not cancelled and attempt < 3)
-                    delay = 5 * 2 ** (attempt - 1) if retry else 0
+                    retry = bool(failure_category and not cancelled and token.generation_attempt < 3)
+                    delay = 5 * 2 ** (token.generation_attempt - 1) if retry else 0
                     job.status = "CANCELLED" if cancelled else "QUEUED" if retry else "FAILED"
                     job.error = (
                         None
                         if cancelled
                         else (
-                            f"{failure_category}: attempt {attempt} of 3 failed; "
+                            f"{failure_category}: attempt {token.generation_attempt} of 3 failed; "
                             + (f"retrying in {delay} seconds" if retry else "automatic retries exhausted")
                             if failure_category
                             else f"{type(exc).__name__}: {str(exc)[:1000]}"
@@ -286,21 +572,26 @@ def execute_job(identity, database_url=None):
                         **(job.result or {}),
                         "retry": {
                             "automatic": retry,
-                            "attempt": attempt,
+                            "attempt": token.generation_attempt,
+                            "fence_attempt": attempt,
+                            "generation": token.generation,
                             "max_attempts": 3,
                             "not_before": job.lease_until if retry else None,
                             "error_category": failure_category or type(exc).__name__,
                         },
                     }
+                outcome_committed = True
+        except LeaseLost:
+            pass
         except DBAPIError as persistence_error:
             log_persistence_failure(identity, persistence_error)
     finally:
         stopped.set()
         measured = execution_metrics(started)
         try:
-            with Session.begin() as session:
-                job = session.get(Job, identity)
-                if job and job.attempts == attempt:
+            if outcome_committed:
+                with Session.begin() as session:
+                    job = lock_attempt(session, identity, token, active=False, allow_cancelled=True)
                     if job.cancelled:
                         job.status = "CANCELLED"
                         job.error = None
@@ -313,6 +604,8 @@ def execute_job(identity, database_url=None):
                         *attempt_history,
                         {
                             "attempt": attempt,
+                            "generation": token.generation,
+                            "generation_attempt": token.generation_attempt,
                             "status": job.status,
                             "finished_at": now(),
                             "error_category": failure_category,
@@ -323,23 +616,30 @@ def execute_job(identity, database_url=None):
                         **(job.result or {}),
                         "execution_metrics": measured,
                         "attempt_history": history[-3:],
+                        "retry_generation": generation,
                     }
                     if job.status == "SUCCEEDED":
                         job.error = None
                         job.result.pop("retry", None)
                     log_job_metrics(identity, kind, job.status, measured)
+        except LeaseLost:
+            pass
         except DBAPIError as persistence_error:
             log_persistence_failure(identity, persistence_error)
         finally:
-            engine.dispose()
+            try:
+                uploads.cleanup()
+            finally:
+                engine.dispose()
 
 
-def run_job(identity, Session):
+def run_job(identity, Session, token, uploads):
     from surge_engine import aggregate_results
 
-    store = ArtifactStore()
+    store = uploads.store
     with Session() as session:
         job = session.get(Job, identity)
+        check_attempt(job, token)
         payload = copy.deepcopy(job.payload)
         workspace = job.workspace_id
         created_at = job.created_at
@@ -347,19 +647,7 @@ def run_job(identity, Session):
         scenario = payload["scenario"]
         if digest({"dataset": dataset, "scenario": scenario}) != payload["input_sha256"]:
             raise ValueError("Frozen input checksum mismatch")
-    last_check = 0.0
-    is_cancelled = False
-    deadline = time.monotonic() + int(os.getenv("JOB_TIMEOUT_SECONDS", "7200"))
-
-    def cancel_check():
-        nonlocal last_check, is_cancelled
-        if time.monotonic() > deadline:
-            raise TimeoutError("Simulation exceeded the configured job timeout")
-        if time.monotonic() - last_check > 0.25:
-            with Session() as session:
-                is_cancelled = bool(session.get(Job, identity).cancelled)
-            last_check = time.monotonic()
-        return is_cancelled
+    cancel_check = job_control(Session, identity, token)
 
     results_by_index = {}
     with Session() as session:
@@ -379,6 +667,7 @@ def run_job(identity, Session):
                 )
 
     def persist_result(index, result):
+        cancel_check()
         replication_id = f"{identity}_rep_{index:04d}"
         result.update(replication_id=replication_id, replication_index=index)
         for key in ("events", "checkpoints", "patients", "ledger_snapshots"):
@@ -386,6 +675,7 @@ def run_job(identity, Session):
         artifact = store.put_json(workspace, identity, f"replication-{index}", result)
         results_by_index[index] = result
         with Session.begin() as session:
+            job = lock_attempt(session, identity, token)
             existing = session.get(Document, replication_id)
             value = {
                 "id": replication_id,
@@ -404,15 +694,16 @@ def run_job(identity, Session):
                 session.add(
                     Document(id=replication_id, workspace_id=workspace, kind="replication", data=value)
                 )
-            job = session.get(Job, identity)
             job.completed = len(results_by_index)
-            if job.cancelled:
-                raise Cancelled()
+        uploads.retain(artifact)
 
     def persist_failure(index, error):
         replication_id = f"{identity}_rep_{index:04d}"
         with Session.begin() as session:
+            lock_attempt(session, identity, token, allow_cancelled=True)
             row = session.get(Document, replication_id)
+            if row and row.data.get("status") == "SUCCEEDED":
+                return  # A committed result is never demoted by a late failure.
             value = {
                 "id": replication_id,
                 "replication_id": replication_id,
@@ -444,23 +735,15 @@ def run_job(identity, Session):
                 raise
             persist_result(index, result)
     else:
-        spawn = multiprocessing.get_context("spawn")
-        halt = spawn.Event()
-        pool = ProcessPoolExecutor(
-            max_workers=workers,
-            mp_context=spawn,
-            initializer=_replication_initializer,
-            initargs=(dataset, scenario, halt),
-        )
-        pending = {}
-        indices = iter(pending_indices)
+        with private_replication_pool(dataset, scenario, workers, token) as pool:
+            pending = {}
+            indices = iter(pending_indices)
 
-        def submit_next():
-            index = next(indices, None)
-            if index is not None:
-                pending[pool.submit(_replication_task, index)] = index
+            def submit_next():
+                index = next(indices, None)
+                if index is not None:
+                    pending[pool.submit(_replication_task, index)] = index
 
-        try:
             for _ in range(workers):
                 submit_next()
             while pending:
@@ -476,12 +759,9 @@ def run_job(identity, Session):
                         raise
                     persist_result(index, result)
                     submit_next()
-        finally:
-            halt.set()
-            pool.shutdown(wait=True, cancel_futures=True)
     results = [results_by_index[i] for i in range(scenario["replications"])]
     with Session.begin() as session:
-        job = session.get(Job, identity)
+        job = lock_attempt(session, identity, token)
         job.status = "AGGREGATING"
     aggregate = aggregate_results(results, scenario=scenario)
     selected = aggregate.get("selected_replication_index", 0)
@@ -534,6 +814,7 @@ def run_job(identity, Session):
         "warnings": aggregate.get("warnings", []),
     }
     with Session.begin() as session:
+        job = lock_attempt(session, identity, token)
         rep = session.get(Document, selected_id)
         rep.data = {
             **rep.data,
@@ -541,20 +822,21 @@ def run_job(identity, Session):
             "selected": True,
             "trace_execution_metrics": trace.get("execution_metrics", {}),
         }
-        job = session.get(Job, identity)
-        if job.cancelled:
-            raise Cancelled()
-        job.result = {
-            "aggregate_artifact": aggregate_artifact,
-            "replications_artifact": replications_artifact,
-            "inputs_artifact": inputs_artifact,
-            "selected_replication_id": selected_id,
-            "manifest": manifest,
-            "warnings": aggregate.get("warnings", []),
-        }
+        job.result = result_with_generation(
+            job,
+            {
+                "aggregate_artifact": aggregate_artifact,
+                "replications_artifact": replications_artifact,
+                "inputs_artifact": inputs_artifact,
+                "selected_replication_id": selected_id,
+                "manifest": manifest,
+                "warnings": aggregate.get("warnings", []),
+            },
+        )
         job.status = "SUCCEEDED"
         job.completed_at = now()
         job.lease_until = 0
+    uploads.retain(trace_artifact, aggregate_artifact, replications_artifact, inputs_artifact)
 
 
 def csv_bytes(rows):
@@ -576,10 +858,11 @@ def csv_bytes(rows):
     return output.getvalue().encode()
 
 
-def trace_job(identity, Session):
-    store = ArtifactStore()
+def trace_job(identity, Session, token, uploads):
+    store = uploads.store
     with Session() as session:
         job = session.get(Job, identity)
+        check_attempt(job, token)
         replication = session.get(Document, job.payload["replication_id"])
         run = session.get(Job, job.payload["run_group_id"])
         if not replication or not run or run.workspace_id != job.workspace_id or run.status != "SUCCEEDED":
@@ -590,7 +873,7 @@ def trace_job(identity, Session):
         replication_id = replication.id
         workspace = job.workspace_id
         run_id = run.id
-    check = job_control(Session, identity)
+    check = job_control(Session, identity, token)
     check()
     trace = timed_replication(dataset, scenario, index, keep_trace=True, cancel_check=check)
     trace.update(
@@ -604,6 +887,7 @@ def trace_job(identity, Session):
     artifact = store.put_json(workspace, run_id, f"trace-{index}", trace)
     check()
     with Session.begin() as session:
+        job = lock_attempt(session, identity, token)
         replication = session.get(Document, replication_id)
         refreshed = {
             **replication.data,
@@ -614,20 +898,21 @@ def trace_job(identity, Session):
         refreshed.pop("trace_expired_at", None)
         refreshed.pop("retention_purged_at", None)
         replication.data = refreshed
-        job = session.get(Job, identity)
         job.status = "SUCCEEDED"
         job.completed = 1
         job.completed_at = now()
-        job.result = {"trace_artifact": artifact}
+        job.result = result_with_generation(job, {"trace_artifact": artifact})
         job.lease_until = 0
+    uploads.retain(artifact)
 
 
-def export_job(identity, Session):
-    store = ArtifactStore()
-    check = job_control(Session, identity)
+def export_job(identity, Session, token, uploads):
+    store = uploads.store
+    check = job_control(Session, identity, token)
     check()
     with Session() as session:
         job = session.get(Job, identity)
+        check_attempt(job, token)
         payload = copy.deepcopy(job.payload)
         workspace = job.workspace_id
         data = {}
@@ -756,12 +1041,13 @@ def export_job(identity, Session):
     artifact = store.write(workspace, identity, name, raw, media)
     check()
     with Session.begin() as session:
-        job = session.get(Job, identity)
-        job.result = {"artifact": artifact}
+        job = lock_attempt(session, identity, token)
+        job.result = result_with_generation(job, {"artifact": artifact})
         job.completed = 1
         job.status = "SUCCEEDED"
         job.completed_at = now()
         job.lease_until = 0
+    uploads.retain(artifact)
 
 
 def period_aggregation(replications, grain):
@@ -873,22 +1159,35 @@ def dispatch_loop(Session, stop, database_url):
                     )
                 )
                 for job in expired:
+                    locked = session.execute(
+                        update(Job)
+                        .where(
+                            Job.id == job.id,
+                            Job.attempts == job.attempts,
+                            Job.status.in_(["RUNNING", "AGGREGATING", "CANCEL_REQUESTED"]),
+                            Job.lease_until < time.time(),
+                        )
+                        .values(lease_until=Job.lease_until)
+                        .execution_options(synchronize_session=False)
+                    )
+                    if locked.rowcount != 1:
+                        continue
+                    session.refresh(job)
                     if job.cancelled:
                         job.status = "CANCELLED"
                         job.completed_at = now()
-                    elif job.attempts >= 3:
+                    elif job.attempts - retry_generation(job)["attempt_base"] >= 3:
                         job.status = "FAILED"
                         job.error = "Worker lease expired after two recovery attempts"
                         job.completed_at = now()
                     else:
                         job.status = "QUEUED"
                         job.dispatched = False
-                for waiting in session.scalars(
-                    select(Job).where(
-                        Job.status == "QUEUED", Job.dispatched == True, Job.lease_until < time.time()
-                    )
-                ):
-                    waiting.dispatched = False
+                session.execute(
+                    update(Job)
+                    .where(Job.status == "QUEUED", Job.dispatched == True, Job.lease_until < time.time())
+                    .values(dispatched=False)
+                )
                 jobs = list(
                     session.scalars(
                         select(Job)
@@ -900,6 +1199,20 @@ def dispatch_loop(Session, stop, database_url):
                     )
                 )
                 for job in jobs:
+                    locked = session.execute(
+                        update(Job)
+                        .where(
+                            Job.id == job.id,
+                            Job.status == "QUEUED",
+                            Job.dispatched == False,
+                            Job.lease_until <= time.time(),
+                        )
+                        .values(lease_until=Job.lease_until)
+                        .execution_options(synchronize_session=False)
+                    )
+                    if locked.rowcount != 1:
+                        continue
+                    session.refresh(job)
                     if job.cancelled:
                         job.status = "CANCELLED"
                         job.completed_at = now()

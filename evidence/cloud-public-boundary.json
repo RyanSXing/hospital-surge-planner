@@ -1,0 +1,7 @@
+{
+  "recorded_at": "2026-10-17T09:23:31.237658+00:00",
+  "scope": "Actual public HTTPS request boundary; default certificate validation enabled",
+  "unauthenticated_dataset_read_status": 401,
+  "foreign_origin_mutation_status": 403,
+  "result": "passed"
+}

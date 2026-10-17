@@ -1,0 +1,22 @@
+{
+  "scope": "Isolated SQLite/FastAPI integration; response-loss retry regression",
+  "before": "Same scenario creation request with same Idempotency-Key returned distinct scenario IDs",
+  "after": "18 cases covered: 15 passed in the full-file check; the three newly added concurrency tests then passed with the manual-retry case (4 passed, 14 deselected in 9.48 seconds) after correcting test multipart size limits. Full release suite is run independently.",
+  "test_file": "tests/test_creation_idempotency.py",
+  "checks": [
+    "Same key and request yields one entity and one audit event",
+    "Changed body, source identity or If-Match with same key yields idempotency_conflict 409",
+    "Dataset commit replay preserves immutable result after later draft editing",
+    "Scenario clone and frozen revision replay preserve original result after source editing",
+    "Actual evaluated comparison plan saves exactly one scenario",
+    "Update correction and application preserve lineage without duplicate branches",
+    "Import commit key is bound to its source import",
+    "Upload key includes sanitized filename, MIME type, size and content hash; repeated uploads write one object",
+    "Forced simultaneous same-key requests write one object and recover the winner after a 409",
+    "Different-key and unkeyed simultaneous uploads append to refreshed locked metadata; combined size quota rejects before storage",
+    "Export regeneration replays the same completed artifact and job",
+    "Member creation replay returns one public member without password hash or salt",
+    "Manual retry replay preserves current status, fencing attempt and retry generation"
+  ],
+  "existing_boundary": "Uses the existing workspace-scoped idempotency registry and database uniqueness constraint; no schema migration"
+}

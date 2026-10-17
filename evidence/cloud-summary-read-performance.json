@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-10-17T09:25:11.265792+00:00",
+  "code_commit": "e4c54e2bdd8f0ad1322574256df7b1932430ffb2",
+  "scope": "actual public HTTPS workspace summary, no concurrent workloads",
+  "response_bytes": 328466,
+  "cold_seconds": 3.3916428749798797,
+  "warm_seconds": [
+    0.5395134999998845,
+    0.5187793339719065,
+    0.5215738340048119,
+    0.5189217499573715,
+    0.5180509999627247
+  ],
+  "warm_p95_seconds": 0.5395134999998845
+}

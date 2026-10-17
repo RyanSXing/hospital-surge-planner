@@ -44,7 +44,7 @@ def test_retry_preserves_inputs_completed_replications_and_attempt_history(jobs,
     url, Session = jobs
     inputs = []
 
-    def run(identity, factory):
+    def run(identity, factory, token, uploads):
         with factory.begin() as session:
             job = session.get(Job, identity)
             inputs.append(copy.deepcopy(job.payload))
@@ -148,7 +148,7 @@ def test_deterministic_failures_are_not_automatically_retried(jobs, monkeypatch,
 def test_cancellation_wins_over_retry_or_late_success(jobs, monkeypatch, finish_successfully):
     url, Session = jobs
 
-    def cancel(identity, factory):
+    def cancel(identity, factory, token, uploads):
         with factory.begin() as session:
             job = session.get(Job, identity)
             job.cancelled = True

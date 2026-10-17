@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
@@ -94,10 +95,13 @@ export default function TransferPlanner({
           </div>
           <label>
             Patient group
-            <select value={care} onChange={(e) => setCare(e.target.value)}>
+            <NativeSelect aria-label="Patient group"
+              value={care}
+              onChange={(e) => setCare(e.target.value)}
+            >
               <option value="ward">Ward-level placement requests</option>
               <option value="icu">ICU-level placement requests</option>
-            </select>
+            </NativeSelect>
           </label>
           <label className="checkbox-label">
             <input
@@ -109,7 +113,7 @@ export default function TransferPlanner({
           </label>
           <label>
             Receiving facility
-            <select
+            <NativeSelect aria-label="Receiving facility"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
             >
@@ -123,7 +127,7 @@ export default function TransferPlanner({
                     {f.name}
                   </option>
                 ))}
-            </select>
+            </NativeSelect>
           </label>
           <div className="two-fields">
             <label>

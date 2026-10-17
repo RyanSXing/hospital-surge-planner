@@ -1,0 +1,9 @@
+{
+  "recorded_at": "2026-10-17T23:18:04.971279+00:00",
+  "backup_created_before_deployment": true,
+  "private_storage_object": "backups/hospital-white-ui-20261017T223548Z.dump",
+  "sha256": "83d34d3f61241c332a7b19d4cd9a35dee12bbed86e584646ee3709e32f8b6905",
+  "protected_full_records": 8,
+  "snapshot_and_backup_credentials_kept_outside_version_control": true,
+  "scope": "New predeployment PostgreSQL dump uploaded to existing private OCI storage. Earlier restore acceptance remains attributed to its measured release."
+}

@@ -67,6 +67,9 @@ export interface PlanningContext {
   resultScenario?: Scenario | null;
   run: RunGroup | null;
   metrics: Metrics | null;
+  metricsLoading?: boolean;
+  metricsError?: string | null;
+  retryMetrics?: () => void;
   state: Entity | null;
   selectedTime: string;
   selectedDay: number;

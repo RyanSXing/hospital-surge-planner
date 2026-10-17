@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useState } from "react";
 import {
   ArrowDownToLine,
@@ -345,7 +346,7 @@ export default function ImportWizard({
             <>
               <label className="collection-select">
                 Target collection
-                <select
+                <NativeSelect aria-label="Target collection"
                   value={collection}
                   onChange={(e) =>
                     setMapping((v: Entity) => ({
@@ -361,7 +362,7 @@ export default function ImportWizard({
                         {n.replaceAll("_", " ")}
                       </option>
                     ))}
-                </select>
+                </NativeSelect>
               </label>
               <div className="mapping-grid">
                 <div className="eyebrow">SOURCE COLUMN</div>
@@ -370,7 +371,7 @@ export default function ImportWizard({
                 {preview[0]?.map((h, i) => (
                   <div className="mapping-row" key={h}>
                     <span>{h}</span>
-                    <select
+                    <NativeSelect
                       aria-label={`Map ${h}`}
                       value={
                         mapping[active]?.ignore?.includes(h)
@@ -387,7 +388,7 @@ export default function ImportWizard({
                       <option value="__ignore">
                         Explicitly ignore this column
                       </option>
-                    </select>
+                    </NativeSelect>
                     <code>{preview[1]?.[i] || "—"}</code>
                   </div>
                 ))}

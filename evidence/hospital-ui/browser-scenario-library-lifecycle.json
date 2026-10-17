@@ -1,0 +1,13 @@
+{
+  "scenario_id": "scenario_436f62d712894a56b8a4",
+  "clone_id": "scenario_a29d8307dc1b46f68b0e",
+  "searched_scenarios": 51,
+  "library_page_size": 50,
+  "global_search_pages": [
+    10,
+    20
+  ],
+  "weeks_calendar_days": 14,
+  "month_calendar_days": 31,
+  "source_revision": 3
+}

@@ -67,11 +67,11 @@ test("replay clinical capacity excludes nonclinical shelter inventory", async ({
   );
   await expect
     .poll(() => page.evaluate(() => (window as any).__clinicalCapacityPaints))
-    .toContain("108/132");
+    .toContain("108/132 occupied / staffed");
   const paints: string[] = await page.evaluate(
     () => (window as any).__clinicalCapacityPaints,
   );
-  expect(paints).not.toContain("108/156");
+  expect(paints.some((text) => text.includes("108/156"))).toBe(false);
   await capture(page, "replay-clinical-capacity", info);
   record("replay-clinical-capacity", {
     run_id: run.id,
@@ -209,7 +209,7 @@ print(json.dumps(data))
     proto.arc = function (...args: Parameters<typeof arc>) {
       if (
         this.canvas.classList.contains("replay-canvas") &&
-        (args[2] === 3.6 || args[2] === 6)
+        (args[2] === 3 || args[2] === 5.5)
       )
         (window as any).__heldPaint.dots.push({ x: args[0], y: args[1] });
       return arc.apply(this, args);
@@ -217,7 +217,7 @@ print(json.dumps(data))
     proto.stroke = function (...args: Parameters<typeof stroke>) {
       if (
         this.canvas.classList.contains("replay-canvas") &&
-        this.strokeStyle === "#49dddf"
+        this.strokeStyle === "#0e849a"
       )
         (window as any).__heldPaint.path = [...path];
       return stroke.apply(this, args);

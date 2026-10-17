@@ -1,0 +1,6 @@
+{
+  "project": "mobile",
+  "delayed_prior_responses": 2,
+  "selected_destination": "FAC-CLINIC-NORTH",
+  "incompatible_icu_rejected": true
+}

@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
@@ -291,7 +292,7 @@ export default function AddSiteDialog({
           </label>
           <label>
             Capability
-            <select
+            <NativeSelect aria-label="Capability"
               disabled={!!draft}
               value={type}
               onChange={(e) => setType(e.target.value)}
@@ -299,7 +300,7 @@ export default function AddSiteDialog({
               <option value="clinic">Outpatient clinic</option>
               <option value="ward">Inpatient ward overflow</option>
               <option value="shelter">Nonclinical shelter</option>
-            </select>
+            </NativeSelect>
           </label>
         </div>
         <div className="two-fields">

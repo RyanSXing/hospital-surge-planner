@@ -1,3 +1,4 @@
+import { expandScenarioDetails } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import { api, open, record, scenario } from "./helpers";
 
@@ -9,6 +10,7 @@ test("scenario fields preserve the second repeated Chicago hour and reject the s
     horizon_calendar_days: 30,
   });
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await page
     .getByRole("button", { name: "Add equipment availability", exact: true })
     .click();
@@ -44,6 +46,7 @@ test("scenario fields preserve the second repeated Chicago hour and reject the s
     Date.parse("2026-11-01T07:30:00Z"),
   );
   await page.reload();
+  await expandScenarioDetails(page);
   await expect(
     page.getByLabel("Arrival starts (America/Chicago)", { exact: true }),
   ).toHaveValue("2026-11-01T01:30");

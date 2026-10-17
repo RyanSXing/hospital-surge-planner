@@ -30,11 +30,13 @@ test("cancelled runs explain their state and retry the same frozen input snapsho
   await expect(
     page.getByText(/No completed forecast is available/),
   ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Workspace options", exact: true })
+    .click();
   await expect(
-    page
-      .locator(".context-actions")
-      .getByRole("button", { name: "Export", exact: true }),
+    page.getByRole("menuitem", { name: "Export results", exact: true }),
   ).toBeDisabled();
+  await page.keyboard.press("Escape");
   const response = page.waitForResponse(
     (r) =>
       r.url().endsWith(`/run-groups/${run.id}/retry`) &&

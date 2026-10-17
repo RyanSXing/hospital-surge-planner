@@ -1,11 +1,12 @@
-import { useEffect, useId, useMemo, useRef } from "react";
+import { NativeSelect } from "@mantine/core";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { area, line, scaleLinear } from "d3";
 import { Activity, ChevronLeft, ChevronRight, Info } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { fmt, localDate, num } from "../api";
 import { Badge, EmptyState } from "./ui";
 import DayDetailDialog from "./DayDetailDialog";
-const COLORS = ["#55c8f4", "#ff6c79", "#f1be5a", "#55d9bf"];
+const COLORS = ["#2684cc", "#ce5266", "#a87614", "#1a9b87"];
 export function ForecastChart({
   rows,
   keys = ["ward_occupied", "ward_staffed", "icu_occupied", "icu_staffed"],
@@ -18,6 +19,7 @@ export function ForecastChart({
   colors,
   bandKey,
   lineDashes,
+  timeZone,
 }: {
   rows: Entity[];
   keys?: string[];
@@ -30,7 +32,12 @@ export function ForecastChart({
   colors?: string[];
   bandKey?: string;
   lineDashes?: (string | undefined)[];
+  timeZone?: string;
 }) {
+  const dateLabel = (
+    at: string,
+    options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" },
+  ) => localDate(at, { ...options, ...(timeZone ? { timeZone } : {}) });
   const fillId = `chart-fill-${useId().replaceAll(":", "")}`;
   const valid = (v: any) =>
     typeof v === "number"
@@ -49,11 +56,11 @@ export function ForecastChart({
   const colorFor = (k: string, i: number) =>
     colors?.[i] ||
     (k.startsWith("ward_")
-      ? "#55c8f4"
+      ? "#2684cc"
       : k.startsWith("icu_")
-        ? "#ff6c79"
+        ? "#ce5266"
         : k.startsWith("ed_")
-          ? "#55d9bf"
+          ? "#1a9b87"
           : COLORS[i % 4]);
   const [tableOpen, setTableOpen] = useState(false),
     [hover, setHover] = useState<number | null>(null);
@@ -131,7 +138,7 @@ export function ForecastChart({
                 x2={W - pad.right}
                 y1={y(t)}
                 y2={y(t)}
-                stroke="#29404e"
+                stroke="#e2e8f0"
                 strokeDasharray="2 4"
               />
               <text x={pad.left - 10} y={y(t) + 4} textAnchor="end">
@@ -188,7 +195,7 @@ export function ForecastChart({
               x2={x(Math.min(selected, rows.length - 1))}
               y1={pad.top}
               y2={H - pad.bottom}
-              stroke="#42dcec"
+              stroke="#1976c9"
               strokeDasharray="4 4"
             />
           ) : null}
@@ -197,7 +204,7 @@ export function ForecastChart({
           ).map((j, i) => (
             <text key={i} x={x(j)} y={H - 6} textAnchor="middle">
               {rows[j]?.at || rows[j]?.start_at
-                ? localDate(
+                ? dateLabel(
                     rows[j].at || rows[j].start_at,
                     intraday
                       ? { hour: "numeric", minute: "2-digit" }
@@ -205,7 +212,7 @@ export function ForecastChart({
                   )
                 : rows[j]?.local_date?.slice(5) || `Day ${j + 1}`}
               <title>
-                {localDate(rows[j]?.at || rows[j]?.start_at, {
+                {dateLabel(rows[j]?.at || rows[j]?.start_at, {
                   month: "short",
                   day: "numeric",
                   hour: "2-digit",
@@ -273,7 +280,7 @@ export function ForecastChart({
       {hover !== null && rows[hover] ? (
         <div className="chart-tooltip">
           <strong>
-            {localDate(rows[hover].at || rows[hover].start_at, {
+            {dateLabel(rows[hover].at || rows[hover].start_at, {
               month: "short",
               day: "numeric",
               hour: "2-digit",
@@ -339,7 +346,7 @@ export function ForecastChart({
                   {rows.map((r, i) => (
                     <tr key={i} onClick={() => onSelect?.(i)}>
                       <td>
-                        {localDate(r.at || r.start_at, {
+                        {dateLabel(r.at || r.start_at, {
                           month: "short",
                           day: "numeric",
                           hour: "2-digit",
@@ -377,6 +384,12 @@ export function Timeline({
   const rows =
     ctx.grain === "day" ? ctx.metrics?.series || [] : ctx.metrics?.data || [];
   const displayedScenario = ctx.resultScenario || ctx.scenario;
+  const timeZone =
+    displayedScenario?.timezone || ctx.dataset?.timezone || "America/Chicago";
+  const dateLabel = (
+    at: string,
+    options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" },
+  ) => localDate(at, { ...options, timeZone });
   const n = displayedScenario?.horizon_calendar_days || 30;
   const selectedIndex = rows.length
     ? rows.reduce(
@@ -445,9 +458,9 @@ export function Timeline({
             <ChevronLeft size={15} />
           </button>
           <span>
-            Day {ctx.selectedDay + 1} <b>·</b> {localDate(ctx.selectedTime)}
+            Day {ctx.selectedDay + 1} <b>·</b> {dateLabel(ctx.selectedTime)}
           </span>
-          <select
+          <NativeSelect
             aria-label="Select hour within day"
             className="hour-select"
             value={selectedIso}
@@ -455,7 +468,7 @@ export function Timeline({
           >
             {hours.sort().map((at) => (
               <option key={at} value={at}>
-                {localDate(at, {
+                {dateLabel(at, {
                   hour: "2-digit",
                   minute: "2-digit",
                   timeZoneName: "short",
@@ -465,7 +478,7 @@ export function Timeline({
             {!ctx.metrics ? (
               <option value={ctx.selectedTime}>00:00</option>
             ) : null}
-          </select>
+          </NativeSelect>
           <button
             onClick={() => ctx.setDay(Math.min(n - 1, ctx.selectedDay + 1))}
             aria-label="Next day"
@@ -481,7 +494,7 @@ export function Timeline({
           </strong>
           <span>
             {rows[selectedIndex]
-              ? `${localDate(rows[selectedIndex].start_at || rows[selectedIndex].at)} · ${fmt(num(rows[selectedIndex].arrivals))} arrivals · ${fmt(num(rows[selectedIndex].discharges))} discharges · ${fmt(num(rows[selectedIndex].inpatient_waiting_patient_hours))} patient-hours waiting`
+              ? `${dateLabel(rows[selectedIndex].start_at || rows[selectedIndex].at)} · ${fmt(num(rows[selectedIndex].arrivals))} arrivals · ${fmt(num(rows[selectedIndex].discharges))} discharges · ${fmt(num(rows[selectedIndex].inpatient_waiting_patient_hours))} patient-hours waiting`
               : "Select an interval in the forecast"}
           </span>
           <button onClick={() => ctx.setGrain("day")}>
@@ -492,6 +505,7 @@ export function Timeline({
       {!heatmapOnly ? (
         <ForecastChart
           rows={rows}
+          timeZone={timeZone}
           selected={selectedIndex}
           onSelect={(i) => {
             if (rows[i]?.at || rows[i]?.start_at)
@@ -502,7 +516,7 @@ export function Timeline({
       ) : null}
       <div className="heatmap-heading">
         <label htmlFor="heatmetric">Calendar view</label>
-        <select
+        <NativeSelect
           id="heatmetric"
           value={metric}
           onChange={(e) => setMetric(e.target.value)}
@@ -517,7 +531,7 @@ export function Timeline({
           <option value="capacity_shortfall_hours">
             Capacity shortfall hours
           </option>
-        </select>
+        </NativeSelect>
         <div className="heat-legend">
           {metric === "peak_inpatient_queue" ? (
             <>
@@ -544,7 +558,7 @@ export function Timeline({
       >
         <div className="heatmap-month">
           {ctx.selectedTime
-            ? localDate(ctx.selectedTime, { month: "short" }).toUpperCase()
+            ? dateLabel(ctx.selectedTime, { month: "short" }).toUpperCase()
             : "OCT"}
         </div>
         {Array.from({ length: Math.min(365, n) }, (_, i) => {
@@ -586,7 +600,7 @@ export function Timeline({
             <button
               role="gridcell"
               key={i}
-              aria-label={`${d?.start_at ? localDate(d.start_at, { month: "long", day: "numeric", year: "numeric" }) : `Day ${i + 1}`}: ${metric.replaceAll("_", " ")} ${value === null ? "unavailable" : fmt(metric === "peak_staffed_utilization" ? value * 100 : value, 1)} ${metric === "peak_inpatient_queue" ? "patients" : metric === "peak_staffed_utilization" ? "percent" : metric === "capacity_shortfall_hours" ? "hours" : "patient-hours"}`}
+              aria-label={`${d?.start_at ? dateLabel(d.start_at, { month: "long", day: "numeric", year: "numeric" }) : `Day ${i + 1}`}: ${metric.replaceAll("_", " ")} ${value === null ? "unavailable" : fmt(metric === "peak_staffed_utilization" ? value * 100 : value, 1)} ${metric === "peak_inpatient_queue" ? "patients" : metric === "peak_staffed_utilization" ? "percent" : metric === "capacity_shortfall_hours" ? "hours" : "patient-hours"}`}
               aria-selected={ctx.selectedDay === i}
               className={`heat-cell heat-${tone} ${ctx.selectedDay === i ? "selected" : ""}`}
               onClick={() => ctx.setDay(i)}
@@ -639,7 +653,6 @@ export function Timeline({
     </section>
   );
 }
-import { useState } from "react";
 function ReactUseMetric() {
   return useState("peak_inpatient_queue");
 }

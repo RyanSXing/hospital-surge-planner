@@ -1,3 +1,4 @@
+import { expandScenarioDetails, expandScenarioSection } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import {
   api,
@@ -21,6 +22,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
   page.on("pageerror", (e) => errors.push(e.message));
   const context = await scenario(page, "all editable assumption families");
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await page.getByLabel("Increase in ED arrivals").fill("70");
   await expect(page.getByLabel("Scenario preset")).toHaveValue("sustained");
   const openFamily = async (name: string) => {
@@ -81,9 +83,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
     "Use an integer from 0 to 12",
   );
   await expect(
-    page
-      .locator(".scenarios-page .heading-actions")
-      .getByRole("button", { name: "Run scenario", exact: true }),
+    page.getByRole("button", { name: "Run simulation", exact: true }),
   ).toBeDisabled();
   await page
     .getByRole("button", {
@@ -229,7 +229,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
   await page.locator("main").evaluate((element) => {
     element.scrollTop = 0;
   });
-  await page.locator(".plan-family-track").last().scrollIntoViewIfNeeded();
+  await page.locator(".scenario-plan-tracks").scrollIntoViewIfNeeded();
   const railBounds = await page
     .locator(".plan-family-track")
     .evaluateAll((elements) =>
@@ -254,8 +254,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
       r.url().endsWith("/api/run-groups") && r.request().method() === "POST",
   );
   await page
-    .locator(".scenarios-page .heading-actions")
-    .getByRole("button", { name: "Run scenario", exact: true })
+    .getByRole("button", { name: "Run simulation", exact: true })
     .click();
   const queued = await (await submitted).json();
   const run = await waitRun(page, queued.id);
@@ -307,6 +306,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
   ).toBe(40);
   const immutable = JSON.stringify(frozen);
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await page
     .getByLabel("Scenario name", { exact: true })
     .fill("Later draft edits preserve completed forecast");
@@ -335,18 +335,23 @@ test("all visual scenario families save canonical inputs and compute actual effe
   });
 });
 
-test("scenario resource forms and independent inspector remain keyboard accessible on mobile", async ({
+test("scenario resource forms and independent detail sections remain keyboard accessible on mobile", async ({
   page,
 }, info) => {
   test.skip(info.project.name !== "mobile");
   const context = await scenario(page, "mobile exact scenario controls");
   await open(page, context.scenario.id, "overview");
-  await page.getByRole("button", { name: "Hide scenario inspector" }).click();
+  await expandScenarioDetails(page);
+  const demandControl = await expandScenarioSection(page, "demand");
+  await demandControl.focus();
+  await page.keyboard.press("Enter");
   await expect(page.locator("#scenario-inspector-dock")).toBeHidden();
   await expect(
     page.getByRole("heading", { name: "Planning timeline" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Show scenario inspector" }).click();
+  await demandControl.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#scenario-inspector-dock")).toBeVisible();
   await page
     .getByRole("button", { name: "Add equipment availability", exact: true })
     .click();

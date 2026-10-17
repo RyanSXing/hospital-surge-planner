@@ -24,17 +24,17 @@ test("playback speed, pause, seek and exact event stepping preserve frozen resul
   await expect(page.getByLabel("Play replay", { exact: true })).toBeEnabled();
   const at = () => new URL(page.url()).searchParams.get("at");
   const originalAt = at();
-  await page.getByRole("button", { name: "1×", exact: true }).click();
+  await page.getByLabel("Replay speed", { exact: true }).selectOption("1");
   await page.getByLabel("Play replay", { exact: true }).click();
   await expect.poll(at).not.toBe(originalAt);
   await page.getByLabel("Pause replay", { exact: true }).click();
   const paused = at();
   await page.waitForTimeout(1300);
   expect(at()).toBe(paused);
-  await page.getByRole("button", { name: "16×", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "16×", exact: true }),
-  ).toHaveClass(/active/);
+  await page.getByLabel("Replay speed", { exact: true }).selectOption("16");
+  await expect(page.getByLabel("Replay speed", { exact: true })).toHaveValue(
+    "16",
+  );
   await page.getByLabel("Go to run horizon", { exact: true }).click();
   await expect.poll(at).toBe(run.end_at);
   await expect(page.getByLabel("Play replay", { exact: true })).toBeDisabled();
@@ -50,12 +50,20 @@ test("playback speed, pause, seek and exact event stepping preserve frozen resul
     page.getByLabel("Next recorded event", { exact: true }),
   ).toBeEnabled();
   await page.getByLabel("Next recorded event", { exact: true }).click();
+  await page
+    .getByRole("button", { name: "Inspect replay", exact: true })
+    .click();
+  await page.getByRole("tab", { name: "Events", exact: true }).click();
   await expect(page.locator(".event-feed .info-note")).toContainText("Event");
   const first = (await page.locator(".event-feed .info-note").textContent())!;
+  await page.keyboard.press("Escape");
   await page.getByLabel("Next recorded event", { exact: true }).click();
   await expect(page.locator(".event-feed .info-note")).not.toHaveText(first);
   await page.getByLabel("Previous recorded event", { exact: true }).click();
   await expect(page.locator(".event-feed .info-note")).toHaveText(first);
+  await page
+    .getByRole("button", { name: "Advanced replay tools", exact: true })
+    .click();
   await page.getByLabel("Reduced motion", { exact: true }).check();
   await expect(page.getByLabel("Play replay", { exact: true })).toBeEnabled();
   const reducedAt = at();

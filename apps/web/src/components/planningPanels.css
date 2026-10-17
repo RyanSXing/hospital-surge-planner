@@ -6,7 +6,7 @@
 .planning-panel-controls .icon-button {
   width: 32px;
   height: 32px;
-  border: 1px solid #315265;
+  border: 1px solid #dce4ed;
 }
 .planning-panels [hidden],
 .planning-panel-page [hidden] {
@@ -15,8 +15,8 @@
 .planning-timeline-dock {
   flex: 0 0 auto;
   min-height: 0;
-  border-top: 1px solid #315265;
-  background: #0b202e;
+  border-top: 1px solid #dce4ed;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -34,10 +34,10 @@
   width: 42px;
   height: 3px;
   border-radius: 3px;
-  background: #6b94ac;
+  background: #2684cc;
 }
 .planning-timeline-resizer:focus-visible {
-  outline: 2px solid #65d3e5;
+  outline: 2px solid #b9d5ec;
   outline-offset: -2px;
 }
 .planning-timeline-content {

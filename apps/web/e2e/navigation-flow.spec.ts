@@ -3,6 +3,9 @@ import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 import {
   api,
+  exportResults,
+  revealSummaryTimeline,
+  revealOutcomeMetrics,
   assertPageHealthy,
   capture,
   open,
@@ -149,8 +152,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
       r.url().endsWith("/api/run-groups") && r.request().method() === "POST",
   );
   await page
-    .locator(".scenarios-page .heading-actions")
-    .getByRole("button", { name: "Run scenario", exact: true })
+    .getByRole("button", { name: "Run simulation", exact: true })
     .click();
   const response = await submitted;
   expect(response.ok(), await response.text()).toBeTruthy();
@@ -169,9 +171,12 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
         c.kind === "arrival_multiplier" && c.entry_stream_id === "ED_MAIN",
     ),
   ).toMatchObject({ surge_percent: 70 });
-  await expect(page.locator(".overview-page:visible .kpi-strip")).toBeVisible();
+  await expect(
+    page.locator(".summary-dashboard:visible .summary-metrics"),
+  ).toBeVisible();
+  await revealSummaryTimeline(page);
   await page
-    .locator(".overview-page:visible")
+    .locator(".summary-dashboard:visible")
     .getByLabel("Next day", { exact: true })
     .click();
   await expect
@@ -180,7 +185,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   const selectedAt = new URL(page.url()).searchParams.get("at")!;
   await primary(page, "Overview");
   expect(await baseline(page)).toEqual(source);
-  await page.getByRole("button", { name: "Export", exact: true }).click();
+  await exportResults(page);
   await expect(
     page.getByRole("button", { name: "Generate export", exact: true }),
   ).toBeEnabled();
@@ -245,8 +250,8 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   for (const key of contextKeys.filter((k) => k !== "comparison"))
     expect(held[key], key).toBeTruthy();
   await page
-    .getByRole("navigation", { name: "Analytics sections" })
-    .getByRole("button", { name: "Resources", exact: true })
+    .getByRole("tablist", { name: "Analytics sections" })
+    .getByRole("tab", { name: "Resources", exact: true })
     .click();
   await expectRoute(page, "analysis", "analytics", "resources");
   expect(selection(page)).toEqual(held);
@@ -310,6 +315,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   expect(comparisonContext.comparison).toBe(comparison.id);
   const plan = evaluated.plans.at(-1);
   await page.locator(".comparison-metrics > summary").click();
+  await page.locator(".comparison-plan-resources > summary").last().click();
   await page
     .getByRole("button", { name: "Open in summary", exact: true })
     .last()
@@ -424,7 +430,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   await analysis(page, "Summary");
 
   await page
-    .locator(".overview-page:visible")
+    .locator(".summary-dashboard:visible")
     .getByRole("button", { name: /Record update$/ })
     .click();
   const dialog = page.getByRole("dialog");
@@ -456,13 +462,20 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
     page.getByLabel("Next recorded event", { exact: true }),
   ).toBeEnabled();
   await page.getByLabel("Next recorded event", { exact: true }).click();
+  await page
+    .getByRole("button", { name: "Inspect replay", exact: true })
+    .click();
+  await page.getByRole("tab", { name: "Events", exact: true }).click();
   await expect(page.locator(".event-feed .info-note")).toContainText("Event");
+  await page
+    .getByRole("button", { name: "Close replay details", exact: true })
+    .click();
   const branchContext = selection(page);
   await page.reload();
   await expectRoute(page, "analysis", "replay");
   await expect(page.locator(".replay-canvas")).toBeVisible();
   expect(selection(page)).toEqual(branchContext);
-  await page.getByRole("button", { name: "Export", exact: true }).click();
+  await exportResults(page);
   await page
     .getByRole("button", { name: "Generate export", exact: true })
     .click();
@@ -542,17 +555,17 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
   await expectRoute(page, "analysis", "summary");
   const retained = selection(page);
   await analysis(page, "Analytics", true);
-  const sections = page.getByRole("navigation", { name: "Analytics sections" });
-  await sections.getByRole("button", { name: "Resources", exact: true }).tap();
+  const sections = page.getByRole("tablist", { name: "Analytics sections" });
+  await sections.getByRole("tab", { name: "Resources", exact: true }).tap();
   await expectRoute(page, "analysis", "analytics", "resources");
   await expect(page.locator(".resources-page:visible")).toBeVisible();
   expect(selection(page)).toEqual(retained);
   await sections
-    .getByRole("button", { name: "Patients & units", exact: true })
+    .getByRole("tab", { name: "Patients & units", exact: true })
     .tap();
   await expectRoute(page, "analysis", "analytics", "patients");
   await expect(page.locator(".patients-page:visible")).toBeVisible();
-  for (const button of await sections.getByRole("button").all())
+  for (const button of await sections.getByRole("tab").all())
     expect((await button.boundingBox())?.height).toBeGreaterThanOrEqual(44);
   await analysis(page, "Replay", true);
   await expectRoute(page, "analysis", "replay");
@@ -594,7 +607,7 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
         ["Patients & units", "patients"],
         ["Resources", "resources"],
       ]) {
-        await sections.getByRole("button", { name: label, exact: true }).tap();
+        await sections.getByRole("tab", { name: label, exact: true }).tap();
         await expectRoute(page, "analysis", "analytics", section);
         await expectNarrowWidth();
       }
@@ -695,6 +708,7 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   await expect(
     outcomes.getByRole("heading", { name: "Simulation outcomes", exact: true }),
   ).toBeVisible();
+  await revealOutcomeMetrics(page);
   await expect(outcomes.locator(".outcome-scalars")).toBeVisible();
   const format = (value: number) =>
     new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value);
@@ -753,8 +767,8 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
     );
   }
   await page
-    .getByRole("navigation", { name: "Analytics sections" })
-    .getByRole("button", { name: "Patients & units", exact: true })
+    .getByRole("tablist", { name: "Analytics sections" })
+    .getByRole("tab", { name: "Patients & units", exact: true })
     .click();
   await expectRoute(page, "analysis", "analytics", "patients");
   expect(new URL(page.url()).searchParams.get("at")).toBe(selectedAt);
@@ -764,8 +778,8 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   await expect.poll(() => selection(page).patient).toBeTruthy();
   const patientContext = selection(page);
   await page
-    .getByRole("navigation", { name: "Analytics sections" })
-    .getByRole("button", { name: "Outcomes", exact: true })
+    .getByRole("tablist", { name: "Analytics sections" })
+    .getByRole("tab", { name: "Outcomes", exact: true })
     .click();
   await expectRoute(page, "analysis", "analytics", "outcomes");
   expect(selection(page)).toEqual(patientContext);
@@ -814,9 +828,12 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
     quietMetrics.scalar_metrics.time_to_first_shortage_hours?.p50 ?? null,
   ).toBeNull();
   await open(page, quiet.id, "analytics-outcomes", quietRun.id);
+  await revealOutcomeMetrics(page);
   await expect(row("New arrivals").getByRole("cell").nth(2)).toHaveText("0");
   await expect(
-    row("First unmet placement demand").getByRole("cell").nth(2),
+    row("First unmet placement demand (observed runs)")
+      .getByRole("cell")
+      .nth(2),
   ).toHaveText("—");
   await expect(outcomes).toContainText(
     "— means unavailable or undefined; zero remains 0.",
@@ -862,8 +879,11 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   );
   const branch = await waitRun(page, (applied.run_group || applied.run).id);
   await open(page, applied.scenario.id, "analytics-outcomes", branch.id);
+  await revealOutcomeMetrics(page);
   await expect(outcomes.locator(".outcome-scalars")).toBeVisible();
-  await expect(outcomes).toContainText("Measured from update cutoff");
+  await expect(outcomes.locator(".outcome-context")).toContainText(
+    "From update cutoff",
+  );
   await expect(row("Expected exogenous arrivals")).toHaveCount(0);
   const daySelect = outcomes.getByRole("combobox", {
     name: "Selected outcome day",
@@ -888,6 +908,7 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   expect(Date.parse(availableTimes[0])).toBe(Date.parse(cutoff));
   await metric.selectOption("ward");
   await outcomes
+    .locator(".outcome-primary-chart")
     .getByRole("button", { name: "View chart data table", exact: true })
     .click();
   const cutoffProjections: Record<string, number> = {};
@@ -914,13 +935,18 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
         exact: true,
       })
       .click();
+    await revealOutcomeMetrics(page);
     await expect(outcomes.locator(".outcome-scalars")).toBeVisible();
-    const showTable = outcomes.getByRole("button", {
-      name: "View chart data table",
-      exact: true,
-    });
+    const showTable = outcomes
+      .locator(".outcome-primary-chart")
+      .getByRole("button", {
+        name: "View chart data table",
+        exact: true,
+      });
     if (await showTable.isVisible()) await showTable.click();
-    const plotted = outcomes.locator(".chart-data-table tbody tr");
+    const plotted = outcomes.locator(
+      ".outcome-primary-chart .chart-data-table tbody tr",
+    );
     await expect(plotted).toHaveCount(rows.length);
     await expect(plotted.first().getByRole("cell").nth(1)).toHaveText(
       new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(

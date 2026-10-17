@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
@@ -409,14 +410,14 @@ export default function CampusMap({
             {
               id: "background",
               type: "background",
-              paint: { "background-color": "#101e29" },
+              paint: { "background-color": "#f3f6f9" },
             },
             {
               id: "green",
               type: "fill",
               source: "campus",
               filter: ["==", "kind", "green"],
-              paint: { "fill-color": "#173830", "fill-opacity": 0.65 },
+              paint: { "fill-color": "#dcece2", "fill-opacity": 0.65 },
             },
             {
               id: "buildings",
@@ -428,14 +429,14 @@ export default function CampusMap({
                   "match",
                   ["get", "shade"],
                   0,
-                  "#1b303d",
+                  "#e6ebf0",
                   1,
-                  "#213542",
+                  "#dde5ed",
                   2,
-                  "#273a46",
-                  "#182c38",
+                  "#e0e7ed",
+                  "#e9eef3",
                 ],
-                "fill-outline-color": "#31414b",
+                "fill-outline-color": "#c9d4df",
               },
             },
             {
@@ -443,21 +444,21 @@ export default function CampusMap({
               type: "line",
               source: "campus",
               filter: ["==", "kind", "road"],
-              paint: { "line-color": "#0a1720", "line-width": 14 },
+              paint: { "line-color": "#ffffff", "line-width": 14 },
             },
             {
               id: "roads",
               type: "line",
               source: "campus",
               filter: ["==", "kind", "road"],
-              paint: { "line-color": "#32424e", "line-width": 5 },
+              paint: { "line-color": "#d7e0e8", "line-width": 5 },
             },
             {
               id: "highway",
               type: "line",
               source: "campus",
               filter: ["==", "kind", "highway"],
-              paint: { "line-color": "#40515b", "line-width": 6 },
+              paint: { "line-color": "#c5d0dc", "line-width": 6 },
             },
             {
               id: "transfer-paths",
@@ -468,8 +469,8 @@ export default function CampusMap({
                   "match",
                   ["get", "route_type"],
                   "recorded",
-                  "#65d9eb",
-                  "#647987",
+                  "#2684cc",
+                  "#91a0af",
                 ],
                 "line-width": [
                   "match",
@@ -491,12 +492,12 @@ export default function CampusMap({
                   "match",
                   ["get", "kind"],
                   "shelter",
-                  "#44375e",
+                  "#e9e0f8",
                   "clinic",
-                  "#1c5148",
+                  "#d6efe6",
                   "ward_overflow",
-                  "#4d4632",
-                  "#164254",
+                  "#f7ebd2",
+                  "#daebf9",
                 ],
                 "fill-opacity": 0.95,
               },
@@ -510,12 +511,12 @@ export default function CampusMap({
                   "match",
                   ["get", "kind"],
                   "shelter",
-                  "#a28bdb",
+                  "#8060b6",
                   "clinic",
-                  "#62c7aa",
+                  "#168976",
                   "ward_overflow",
-                  "#dfbf74",
-                  "#59d8ef",
+                  "#c29024",
+                  "#2684cc",
                 ],
                 "line-width": 2,
               },
@@ -534,8 +535,8 @@ export default function CampusMap({
                   100,
                   23,
                 ],
-                "circle-color": "#0c2732",
-                "circle-stroke-color": "#65d9eb",
+                "circle-color": "#eaf4fc",
+                "circle-stroke-color": "#2684cc",
                 "circle-stroke-width": 1.5,
                 "circle-opacity": 0.9,
               },
@@ -846,7 +847,7 @@ export default function CampusMap({
           </p>
           <label>
             All dataset sites
-            <select
+            <NativeSelect
               aria-label="Select facility from map"
               value={ctx.selectedFacility}
               onChange={(event) => selectFacility(event.target.value)}
@@ -857,7 +858,7 @@ export default function CampusMap({
                   {!site.position ? " · no coordinates" : ""}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
         </div>
       ) : null}

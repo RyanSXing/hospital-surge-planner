@@ -1,4 +1,4 @@
-/* Primary workflow: prepare in Overview, inspect results in Analysis. */
+/* Primary workflow:prepare in Overview, inspect results in Analysis. */
 .workspace-view[hidden] {
   display: none !important;
 }
@@ -39,7 +39,7 @@
   align-items: center;
   flex-shrink: 0;
   min-height: 51px;
-  background: #0c1c28;
+  background: #ffffff;
   border-bottom: 1px solid var(--border);
   padding: 0 24px;
 }
@@ -57,17 +57,17 @@
   justify-content: center;
   gap: 8px;
   padding: 13px 15px;
-  color: #9fb8c8;
+  color: #607287;
   border-bottom: 2px solid transparent;
   font-size: 13px;
 }
 .analysis-bar nav > button.active {
-  color: #8bdcf1;
+  color: #176caf;
   border-bottom-color: var(--cyan);
-  background: #14304477;
+  background: #f1f6fa;
 }
 .analysis-bar nav > button:hover {
-  background: #14304477;
+  background: #f1f6fa;
 }
 .analysis-run-context {
   display: flex;
@@ -81,7 +81,7 @@
 .analysis-run-context small {
   padding: 2px 6px;
   font-size: 10px;
-  background: #173040;
+  background: #f1f6fa;
   border: 1px solid var(--border);
 }
 .status-dot.running {
@@ -112,7 +112,7 @@
 .history-loading {
   position: absolute;
   inset: 0;
-  background: #08141de8;
+  background: #ffffff;
   z-index: 15;
   display: grid;
   place-items: center;

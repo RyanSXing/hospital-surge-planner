@@ -59,7 +59,7 @@ test("the two-page workspace and analysis sections render actual run context", a
         "84 active patients",
       );
     if (view === "comparison") {
-      const caption = page.locator(".comparison-chart .chart-empty small");
+      const caption = page.locator(".comparison-chart .chart-empty");
       await expect(caption).toBeVisible();
       const captionBox = await caption.boundingBox();
       const chartBox = await page.locator(".comparison-chart").boundingBox();
@@ -68,6 +68,43 @@ test("the two-page workspace and analysis sections render actual run context", a
       expect(captionBox!.y + captionBox!.height).toBeLessThanOrEqual(
         chartBox!.y + chartBox!.height,
       );
+      const assertComparisonWidth = async () => {
+        const pageWidth = (await page.locator(".compare-page").boundingBox())!
+          .width;
+        for (const selector of [
+          ".comparison-main",
+          ".comparison-chart",
+          ".comparison-outcomes",
+          ".comparison-capacity-details",
+          ".comparison-metrics",
+        ]) {
+          const box = await page.locator(selector).boundingBox();
+          expect(box, selector).not.toBeNull();
+          expect(
+            box!.width,
+            `${selector} should use the readable content width`,
+          ).toBeGreaterThanOrEqual(pageWidth - 64);
+        }
+      };
+      await assertComparisonWidth();
+      if (info.project.name === "mobile") {
+        const originalViewport = page.viewportSize()!;
+        for (const width of [320, 820]) {
+          await page.setViewportSize({ ...originalViewport, width });
+          await assertComparisonWidth();
+          if (width === 320) {
+            const nav = await page
+              .getByRole("navigation", { name: "Analysis navigation" })
+              .evaluate((element) => ({
+                available: element.clientWidth,
+                needed: element.scrollWidth,
+              }));
+            expect(nav.needed).toBeLessThanOrEqual(nav.available + 1);
+          }
+          await capture(page, `comparison-width-${width}`, info);
+        }
+        await page.setViewportSize(originalViewport);
+      }
     }
     if (view === "data")
       await expect(

@@ -12,7 +12,13 @@ export default defineConfig({
   outputDir: "../../output/playwright/results",
   reporter: [
     ["list"],
-    ["json", { outputFile: "../../evidence/browser-tests.json" }],
+    [
+      "json",
+      {
+        outputFile:
+          process.env.E2E_REPORT_FILE || "../../evidence/browser-tests.json",
+      },
+    ],
     ["html", { outputFolder: "../../output/playwright/report", open: "never" }],
   ],
   use: {

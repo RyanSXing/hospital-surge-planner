@@ -9,7 +9,7 @@
   margin: 0;
 }
 .zoned-date-time > label > span {
-  color: #b4c8d5;
+  color: #243449;
   font-size: 12px;
 }
 .zoned-date-time > input,
@@ -18,7 +18,7 @@
   min-width: 0;
 }
 .zoned-date-time > small {
-  color: #ffb9ad;
+  color: #bb3547;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -26,6 +26,6 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #f2d094;
+  color: #946108;
   font-size: 12px;
 }

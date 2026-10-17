@@ -1,3 +1,4 @@
+import { expandScenarioDetails } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import { api, open, record, scenario, waitRun } from "./helpers";
 
@@ -31,6 +32,7 @@ test("short arrival pulse is editable, undoable and frozen as one additive batch
     ],
   });
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await page.getByLabel("Scenario preset").selectOption("pulse");
   const pulse = page.getByRole("button", {
     name: "Short arrival pulse Planning assumption",
@@ -62,8 +64,7 @@ test("short arrival pulse is editable, undoable and frozen as one additive batch
       response.request().method() === "POST",
   );
   await page
-    .locator(".heading-actions")
-    .getByRole("button", { name: "Run scenario", exact: true })
+    .getByRole("button", { name: "Run simulation", exact: true })
     .click();
   const queued = await (await submitted).json();
   const saved = await api(page.request, "/scenarios/" + context.scenario.id);
@@ -128,6 +129,7 @@ test("short arrival pulse rejects a horizon ending before day-two noon", async (
     horizon_calendar_days: 1,
   });
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await page.getByLabel("Scenario preset").selectOption("pulse");
   await expect(page.getByRole("alert")).toContainText(
     "local day 2 from 12:00 to 13:00",

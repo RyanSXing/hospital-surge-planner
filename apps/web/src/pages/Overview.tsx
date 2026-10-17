@@ -1,38 +1,52 @@
+import { lazy, Suspense, useState } from "react";
 import {
+  Activity,
   ArrowRight,
   ArrowUpRight,
-  ChevronRight,
+  BedDouble,
+  Building2,
+  CalendarRange,
   Clock3,
-  Hospital,
   Info,
-  PanelBottomClose,
-  PanelBottomOpen,
-  PanelRightClose,
-  PanelRightOpen,
+  Map,
   ShieldCheck,
-  Users,
 } from "lucide-react";
-import { useRef, useState, type CSSProperties } from "react";
-import type { PlanningContext } from "../types";
-import CampusMap from "../components/CampusMap";
+import type { Entity, PlanningContext } from "../types";
 import {
   Badge,
   BedGrid,
   BedLegend,
   Button,
   CapacityBar,
-  LinkButton,
-  Stat,
 } from "../components/ui";
-import { Timeline } from "../components/Charts";
-import { fmt, localDate, num } from "../api";
+import { ForecastChart, Timeline } from "../components/Charts";
+import { fmt, localDate } from "../api";
 import {
   nameOf,
   patientsOf,
   queueStats,
   selectedRunNumber,
+  stateUnavailable,
   statsFor,
 } from "../model";
+import { finiteStatistic } from "./resultsMetrics";
+import "./summaryDashboard.css";
+
+const CampusMap = lazy(() => import("../components/CampusMap"));
+
+function selectedRow(rows: Entity[], at: string) {
+  if (!rows.length) return 0;
+  const target = Date.parse(at);
+  if (!Number.isFinite(target)) return 0;
+  let closest = 0;
+  for (let index = 1; index < rows.length; index += 1) {
+    const current = Date.parse(rows[index].at || rows[index].start_at);
+    const prior = Date.parse(rows[closest].at || rows[closest].start_at);
+    if (Math.abs(current - target) < Math.abs(prior - target)) closest = index;
+  }
+  return closest;
+}
+
 export default function Overview({
   ctx,
   onUpdate,
@@ -40,416 +54,370 @@ export default function Overview({
   ctx: PlanningContext;
   onUpdate: () => void;
 }) {
-  const [inspectorCollapsed, setInspectorCollapsed] = useState(false),
-    [timelineCollapsed, setTimelineCollapsed] = useState(false),
-    [timelineHeight, setTimelineHeight] = useState(260);
-  const timelineDrag = useRef<{ y: number; height: number } | null>(null);
-  const resizeTimeline = (height: number) =>
-    setTimelineHeight(Math.max(180, Math.min(420, height)));
-  const ward = statsFor(ctx, "ward"),
-    icu = statsFor(ctx, "icu"),
-    ed = statsFor(ctx, "ed"),
-    q = queueStats(ctx);
-  const facility = ctx.dataset?.facilities?.find(
-    (f) => (f.id || f.facility_id) === ctx.selectedFacility,
-  );
+  const [operationsOpen, setOperationsOpen] = useState(false);
+  const ward = statsFor(ctx, "ward");
+  const icu = statsFor(ctx, "icu");
+  const ed = statsFor(ctx, "ed");
+  const queue = queueStats(ctx);
+  const selectedStateUnavailable = stateUnavailable(ctx);
   const metric = ctx.metrics?.scalar_metrics || {};
-  const peakQueue = metric.peak_inpatient_queue;
+  const rows: Entity[] = ctx.metrics?.series || ctx.metrics?.daily || [];
+  const rowIndex = selectedRow(rows, ctx.selectedTime);
   const firstShortage = metric.time_to_first_shortage_hours;
-  const wardIds = new Set(ward.units.map((u) => u.unit_id || u.id)),
-    wardSlots = (ctx.state?.slots || ctx.dataset?.slots || [])
-      .filter(
-        (s: any) =>
-          wardIds.has(s.unit_id) && s.installation_status === "installed",
-      )
-      .map((s: any) => ({
-        ...s,
-        patient_id:
-          s.patient_id ||
-          patientsOf(ctx).find((p) => p.slot_id === s.slot_id)?.patient_id,
+  const peakQueue = metric.peak_inpatient_queue;
+  const predictedShortage = finiteStatistic(firstShortage);
+  const noRecordedQueue = finiteStatistic(peakQueue, "max") === 0;
+  const forecastWaiting = finiteStatistic(
+    metric.inpatient_waiting_patient_hours,
+  );
+  const hasPressure = !queue.unavailable && queue.total > 0;
+  const facility = ctx.dataset?.facilities?.find(
+    (item) => (item.id || item.facility_id) === ctx.selectedFacility,
+  );
+  const wardIds = new Set(ward.units.map((unit) => unit.unit_id || unit.id));
+  const patients = patientsOf(ctx);
+  const wardSlots = (selectedStateUnavailable
+    ? []
+    : ctx.state?.slots || ctx.dataset?.slots || [])
+    .filter(
+      (slot: Entity) =>
+        wardIds.has(slot.unit_id) && slot.installation_status === "installed",
+    )
+    .map((slot: Entity) => {
+      const patient = patients.find((item) => item.slot_id === slot.slot_id);
+      return {
+        ...slot,
+        patient_id: slot.patient_id || patient?.patient_id,
         status:
-          s.status ||
-          (patientsOf(ctx).some((p) => p.slot_id === s.slot_id)
-            ? "occupied"
-            : s.enabled
-              ? "ready"
-              : "disabled"),
-      }));
-  const main = ctx.selectedFacility === "FAC-MAIN";
-  return (
-    <div
-      className={`overview-page${inspectorCollapsed ? " inspector-collapsed" : ""}${timelineCollapsed ? " timeline-collapsed" : ""}`}
-      style={
-        {
-          "--overview-timeline-height": `${timelineCollapsed ? 0 : timelineHeight}px`,
-        } as CSSProperties
+          slot.status ||
+          (patient ? "occupied" : slot.enabled ? "ready" : "disabled"),
+      };
+    });
+  const insight = hasPressure
+    ? {
+        tone: "warning" as const,
+        title: `${queue.total} patients need an inpatient place now`,
+        body: `${queue.ward} need ward care and ${queue.icu} need intensive care. Review patients first, then compare response options.`,
       }
-    >
-      <div className="page-heading">
+    : predictedShortage !== null
+      ? {
+          tone: "warning" as const,
+          title: `Patients may start waiting for beds after ${fmt(predictedShortage, 1)} hours`,
+          body: "Timing includes only runs with a bed queue. Compare staffing and overflow options.",
+        }
+      : {
+          tone: noRecordedQueue ? "success" as const : "neutral" as const,
+          title: noRecordedQueue
+            ? "No inpatient bed queue in these results"
+            : "Review the queue charts for bed pressure",
+          body: noRecordedQueue
+            ? "Try higher demand or fewer staff to test the plan's limits."
+            : "The first waiting time was not recorded. Inspect the queue and capacity charts before choosing a response.",
+        };
+
+  return (
+    <div className="summary-dashboard">
+      <header className="page-heading summary-heading">
         <div>
-          <div className="eyebrow">
-            ANALYSIS <span className="eyebrow-divider">/</span>{" "}
-            SUMMARY
-          </div>
           <h1>Results summary</h1>
-          <p>See the forecast, locate pressure, and explore your next response.</p>
+          <p>
+            A clear view of occupancy, waiting, and where action may be needed.
+          </p>
         </div>
         <div className="heading-actions">
-          <button
-            className="icon-button overview-layout-control"
-            onClick={() => setInspectorCollapsed(!inspectorCollapsed)}
-            aria-label={
-              inspectorCollapsed
-                ? "Show facility inspector"
-                : "Hide facility inspector"
-            }
-            aria-expanded={!inspectorCollapsed}
-            aria-controls="overview-facility-inspector"
-            title={
-              inspectorCollapsed
-                ? "Show facility inspector"
-                : "Hide facility inspector"
-            }
-          >
-            {inspectorCollapsed ? (
-              <PanelRightOpen size={18} />
-            ) : (
-              <PanelRightClose size={18} />
-            )}
-          </button>
-          <button
-            className="icon-button overview-layout-control"
-            onClick={() => setTimelineCollapsed(!timelineCollapsed)}
-            aria-label={
-              timelineCollapsed
-                ? "Show forecast timeline"
-                : "Hide forecast timeline"
-            }
-            aria-expanded={!timelineCollapsed}
-            aria-controls="overview-timeline-dock"
-            title={
-              timelineCollapsed
-                ? "Show forecast timeline"
-                : "Hide forecast timeline"
-            }
-          >
-            {timelineCollapsed ? (
-              <PanelBottomOpen size={18} />
-            ) : (
-              <PanelBottomClose size={18} />
-            )}
-          </button>
-          <span className="as-of">
-            <Clock3 size={13} />{" "}
-            {ctx.run?.status === "SUCCEEDED"
-              ? "Selected simulated state"
-              : "Dataset as of"}{" "}
-            <strong>
-              {localDate(ctx.selectedTime, {
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </strong>
+          <span className="summary-as-of">
+            <Clock3 size={15} aria-hidden="true" />
+            <span>
+              Selected time
+              <strong>
+                {localDate(ctx.selectedTime, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </strong>
+            </span>
           </span>
           <Button disabled={ctx.canWrite === false} onClick={onUpdate}>
-            <span>+</span> Record update
+            Record update
           </Button>
         </div>
-      </div>
-      <div className="kpi-strip">
-        <Stat
-          label="Ward occupancy"
-          value={ward.unavailable ? "—" : `${ward.occupied} / ${ward.staffed}`}
-          unit="beds"
-          change={`${ward.physical} physical · ${ward.physical - ward.staffed} unstaffed`}
-          tone="cyan"
-        />
-        <Stat
-          label="ICU occupancy"
-          value={icu.unavailable ? "—" : `${icu.occupied} / ${icu.staffed}`}
-          unit="beds"
-          change={
-            icu.occupied >= icu.staffed && icu.staffed
-              ? "At staffing-supported capacity"
-              : `${icu.available} available suitable places`
-          }
-          tone={icu.occupied >= icu.staffed ? "red" : ""}
-        />
-        <Stat
-          label="Awaiting inpatient placement"
-          value={q.unavailable ? "—" : q.total}
-          unit="patients"
-          change={`${q.ward} awaiting ward · ${q.icu} awaiting ICU`}
-          tone={q.total ? "amber" : ""}
-        />
-        <Stat
-          label="System-wide waiting burden"
-          value={
-            ctx.metrics ? fmt(num(metric.inpatient_waiting_patient_hours)) : "—"
-          }
-          unit="patient-hours"
-          change={
-            ctx.metrics
-              ? (ctx.resultScenario || ctx.scenario)?.measurement_start_at
-                ? "From update cutoff · Median across runs"
-                : "Full horizon · Median across runs"
-              : "Run a scenario to calculate"
-          }
-        />
-      </div>
-      <div className="overview-workspace">
-        <div className="overview-center">
-          <CampusMap ctx={ctx} />
-          <div className="map-caption">
-            <span>
-              <ShieldCheck size={13} /> Source:{" "}
-              {ctx.state
-                ? "selected simulation run"
-                : "synthetic planning dataset"}
-            </span>
-            <span>
-              {ctx.run?.status === "SUCCEEDED"
-                ? `Example run ${selectedRunNumber(ctx) || "—"}`
-                : "Initial census"}{" "}
-              <b>·</b> {ctx.dataset?.fixture?.replaceAll("_", " ")}
-            </span>
-          </div>
+      </header>
+
+      <section className="summary-metrics" aria-label="Hospital summary">
+        <article className="stat">
+          <span>Ward occupancy</span>
+          <strong>
+            {ward.unavailable ? "—" : `${ward.occupied} / ${ward.staffed}`}
+          </strong>
+          <small>
+            {selectedStateUnavailable
+              ? "Selected-time state unavailable"
+              : `${ward.available} suitable places available now`}
+          </small>
+        </article>
+        <article className="stat">
+          <span>ICU occupancy</span>
+          <strong>
+            {icu.unavailable ? "—" : `${icu.occupied} / ${icu.staffed}`}
+          </strong>
+          <small>
+            {selectedStateUnavailable
+              ? "Selected-time state unavailable"
+              : `${icu.available} suitable places available now`}
+          </small>
+        </article>
+        <article className={`stat${hasPressure ? " needs-attention" : ""}`}>
+          <span>Awaiting inpatient placement</span>
+          <strong>{queue.unavailable ? "—" : queue.total}</strong>
+          <small>
+            {selectedStateUnavailable
+              ? "Selected-time state unavailable"
+              : `${queue.ward} ward · ${queue.icu} ICU`}
+          </small>
+        </article>
+        <article className="stat">
+          <span>Forecast waiting</span>
+          <strong>
+            {ctx.metrics && forecastWaiting !== null
+              ? fmt(forecastWaiting, 1)
+              : "—"}
+          </strong>
+          <small>patient-hours · median across runs</small>
+        </article>
+      </section>
+
+      <section className={`summary-insight ${insight.tone}`}>
+        <div className="summary-insight-icon">
+          {insight.tone === "warning" ? (
+            <Activity size={22} aria-hidden="true" />
+          ) : insight.tone === "success" ? (
+            <ShieldCheck size={22} aria-hidden="true" />
+          ) : <Info size={22} aria-hidden="true" />}
         </div>
-        <aside
-          className="inspector"
-          id="overview-facility-inspector"
-          hidden={inspectorCollapsed}
-        >
-          <div className="inspector-header">
-            <div className="inspector-icon">
-              <Hospital size={21} />
-            </div>
-            <div>
-              <span className="eyebrow">SELECTED FACILITY</span>
-              <h2>{nameOf(facility || {}) || "Central Hospital"}</h2>
-            </div>
-            <Badge tone={main ? "success" : "neutral"}>
-              {main ? "Active" : facility?.status || "Planning"}
-            </Badge>
-          </div>
-          <div className="inspector-section">
-            <div className="spread">
-              <h3>Ward bed availability</h3>
-              <span className="numeric muted">{ward.physical} places</span>
-            </div>
-            <BedGrid
-              physical={ward.physical}
-              staffed={ward.staffed}
-              occupied={ward.occupied}
-              cleaning={ward.cleaning}
-              slots={wardSlots}
-              onSelectSlot={(slot) => {
-                ctx.setPatient(
-                  patientsOf(ctx).find((p) => p.slot_id === slot.slot_id) ||
-                    (slot.patient_id ? { patient_id: slot.patient_id } : null),
-                );
-                ctx.setPage("patients");
-              }}
-            />
-            <BedLegend />
-            {ward.physical > ward.staffed ? (
-              <div className="constraint-callout">
-                <Info size={15} />
-                <div>
-                  <strong>
-                    {ward.physical - ward.staffed} beds need staffing
-                  </strong>
-                  <p>
-                    Physical space is available. Qualified staff determine
-                    usable capacity.
-                  </p>
-                </div>
-              </div>
-            ) : null}
-          </div>
-          <div className="inspector-section">
-            <div className="spread">
-              <h3>Operational capacity</h3>
-              <span className="micro-label">
-                {ctx.state ? "SELECTED RUN" : "INITIAL STATE"}
-              </span>
-            </div>
-            <CapacityBar
-              label="General ward"
-              {...ward}
-              capacity={ward.staffed}
-            />
-            <p className="capacity-ledger-summary">
-              {ward.unavailable
-                ? "Selected-time state unavailable"
-                : `${ward.ready} ready · ${ward.reserved} reserved · ${ward.cleaning} in turnover · ${ward.available} suitable available`}
-            </p>
-            <CapacityBar
-              label="Intensive care"
-              {...icu}
-              capacity={icu.staffed}
-              color={icu.occupied >= icu.staffed ? "red" : "cyan"}
-            />
-            <p className="capacity-ledger-summary">
-              {icu.unavailable
-                ? "Selected-time state unavailable"
-                : `${icu.ready} ready · ${icu.reserved} reserved · ${icu.cleaning} in turnover · ${icu.available} suitable available`}
-            </p>
-            {main ? (
-              <CapacityBar
-                label="Emergency department"
-                {...ed}
-                capacity={ed.staffed}
-                color="green"
-              />
-            ) : null}
-          </div>
-          <div className="inspector-section forecast-outlook">
-            <div className="spread">
-              <h3>Forecast outlook</h3>
-              <span className="micro-label">SYSTEM-WIDE</span>
-            </div>
-            <dl>
-              <div>
-                <dt>Peak inpatient queue · P10–P90</dt>
-                <dd>
-                  {peakQueue?.p10 != null
-                    ? `${fmt(peakQueue.p10, 1)}–${fmt(peakQueue.p90, 1)} patients`
-                    : "Awaiting simulation"}
-                </dd>
-              </div>
-              <div>
-                <dt>First unmet demand · median</dt>
-                <dd>
-                  {firstShortage?.p50 != null
-                    ? `${fmt(firstShortage.p50, 1)} hours`
-                    : ctx.metrics
-                      ? "None in completed runs"
-                      : "Awaiting simulation"}
-                </dd>
-              </div>
-            </dl>
-            <p>
-              Full forecast interval. First-unmet time is measured from the
-              forecast start or update cutoff, among runs with unmet demand.
-            </p>
-          </div>
-          <div className="inspector-section bottleneck-section">
-            <div className="spread">
-              <h3>Placement constraints</h3>
-              <Badge tone={q.total ? "warning" : "success"}>
-                {q.unavailable
-                  ? "State loading"
-                  : q.total
-                    ? "Unmet demand"
-                    : "Within capacity"}
-              </Badge>
-            </div>
-            {q.unavailable ? (
-              <p className="small-copy muted">
-                Loading the exact patient and resource state for the selected
-                time.
-              </p>
-            ) : q.total ? (
-              <>
-                <button
-                  className="bottleneck-row"
-                  onClick={() => ctx.setPage("patients")}
-                >
-                  <span className="amber-dot" />
-                  <span>Ward placement</span>
-                  <strong>{q.ward} waiting</strong>
-                  <ChevronRight size={15} />
-                </button>
-                <button
-                  className="bottleneck-row"
-                  onClick={() => ctx.setPage("patients")}
-                >
-                  <span className="red-dot" />
-                  <span>ICU placement</span>
-                  <strong>{q.icu} waiting</strong>
-                  <ChevronRight size={15} />
-                </button>
-              </>
-            ) : (
-              <div className="no-pressure">
-                <ShieldCheck size={19} />
-                <p>
-                  No inpatient queue at this time.
-                  <small>
-                    Future pressure depends on the selected scenario.
-                  </small>
-                </p>
-              </div>
-            )}
-            <Button
-              primary
-              className="full-width"
-              onClick={() => ctx.setPage("compare")}
-            >
-              Compare responses <ArrowUpRight size={16} />
+        <div>
+          <span>What needs attention</span>
+          <h2>{insight.title}</h2>
+          <p>{insight.body}</p>
+        </div>
+        <div className="summary-insight-actions">
+          {hasPressure ? (
+            <Button onClick={() => ctx.setPage("patients")}>
+              Review patients <ArrowRight size={14} />
             </Button>
-            <LinkButton onClick={() => ctx.setPage("patients")}>
-              Inspect patients and units
-            </LinkButton>
-          </div>
-          <div className="inspector-foot">
-            <span className="tiny-square" /> Planning outputs · Proposed actions
-          </div>
-        </aside>
-      </div>
-      <div
-        className="overview-timeline-dock"
-        id="overview-timeline-dock"
-        hidden={timelineCollapsed}
-      >
-        <div
-          className="timeline-resize-handle"
-          role="separator"
-          aria-label="Resize forecast timeline"
-          aria-orientation="horizontal"
-          aria-valuemin={180}
-          aria-valuemax={420}
-          aria-valuenow={timelineHeight}
-          aria-valuetext={`${timelineHeight} pixels high`}
-          title="Drag to resize timeline. Arrow keys resize by 10 pixels."
-          tabIndex={0}
-          onPointerDown={(event) => {
-            if (event.button !== 0) return;
-            timelineDrag.current = { y: event.clientY, height: timelineHeight };
-            event.currentTarget.setPointerCapture(event.pointerId);
-          }}
-          onPointerMove={(event) => {
-            const drag = timelineDrag.current;
-            if (drag) resizeTimeline(drag.height + drag.y - event.clientY);
-          }}
-          onPointerUp={(event) => {
-            timelineDrag.current = null;
-            if (event.currentTarget.hasPointerCapture(event.pointerId))
-              event.currentTarget.releasePointerCapture(event.pointerId);
-          }}
-          onLostPointerCapture={() => {
-            timelineDrag.current = null;
-          }}
-          onKeyDown={(event) => {
-            if (["ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) {
-              event.preventDefault();
-              resizeTimeline(
-                event.key === "Home"
-                  ? 180
-                  : event.key === "End"
-                    ? 420
-                    : timelineHeight + (event.key === "ArrowUp" ? 10 : -10),
-              );
-            }
-          }}
-        >
-          <span />
+          ) : null}
+          <Button primary onClick={() => ctx.setPage(noRecordedQueue ? "overview" : "compare")}>
+            {noRecordedQueue ? "Test another scenario" : "Compare responses"} <ArrowUpRight size={14} />
+          </Button>
         </div>
+      </section>
+
+      <section className="summary-chart-grid" aria-label="Forecast charts">
+        <article className="summary-chart-card summary-chart-card-wide">
+          <div className="summary-card-heading">
+            <div>
+              <span className="eyebrow">OCCUPANCY FORECAST</span>
+              <h2>Occupied and staffed beds</h2>
+            </div>
+            <Badge>{ctx.metrics ? "Median forecast" : "Awaiting run"}</Badge>
+          </div>
+          <ForecastChart
+            rows={rows}
+            keys={[
+              "ward_occupied",
+              "ward_staffed",
+              "icu_occupied",
+              "icu_staffed",
+            ]}
+            labels={[
+              "Ward occupied",
+              "Ward staffed",
+              "ICU occupied",
+              "ICU staffed",
+            ]}
+            height={220}
+            selected={rowIndex}
+            onSelect={(index) =>
+              ctx.setTime(rows[index].at || rows[index].start_at)
+            }
+            yLabel="Patients and staffed beds"
+          />
+          <p>
+            Solid lines show occupied beds. Dashed lines show staffing-supported
+            capacity. Select any point to update the rest of the workspace.
+          </p>
+        </article>
+        <article className="summary-chart-card">
+          <div className="summary-card-heading">
+            <div>
+              <span className="eyebrow">WAITING PRESSURE</span>
+              <h2>Patients in queue</h2>
+            </div>
+          </div>
+          <ForecastChart
+            rows={rows}
+            keys={["inpatient_queue", "ed_queue"]}
+            labels={["Inpatient placement", "ED assessment"]}
+            height={220}
+            selected={rowIndex}
+            onSelect={(index) =>
+              ctx.setTime(rows[index].at || rows[index].start_at)
+            }
+            showBand={false}
+            yLabel="Patients waiting"
+          />
+          <p>Inpatient placement and ED assessment are separate queues.</p>
+        </article>
+      </section>
+
+      <details
+        className="summary-details"
+        open={operationsOpen}
+        onToggle={(event) => setOperationsOpen(event.currentTarget.open)}
+      >
+        <summary>
+          <span className="summary-details-icon">
+            <Building2 size={18} />
+          </span>
+          <span>
+            <strong>Explore facilities and exact bed status</strong>
+            <small>
+              Campus map, ward places, patient links, and source details
+            </small>
+          </span>
+          <span>{operationsOpen ? "Hide" : "Show"}</span>
+        </summary>
+        {operationsOpen ? (
+          selectedStateUnavailable ? (
+            <div className="summary-state-unavailable" role="status">
+              <Info size={18} aria-hidden="true" />
+              <div>
+                <strong>Selected-time details are unavailable</strong>
+                <span>
+                  {ctx.stateLoading
+                    ? "Loading the recorded simulation state for this time…"
+                    : "The recorded simulation state could not be loaded. Choose another time or try again."}
+                </span>
+              </div>
+            </div>
+          ) : (
+          <>
+            <section
+              className="summary-current-state"
+              aria-labelledby="current-state-title"
+            >
+              <div className="summary-section-heading">
+                <div>
+                  <span className="eyebrow">AT THE SELECTED TIME</span>
+                  <h2 id="current-state-title">Capacity at a glance</h2>
+                </div>
+                <span>
+                  {ctx.run?.status === "SUCCEEDED"
+                    ? `Example run ${selectedRunNumber(ctx) || "—"}`
+                    : "Initial census"}
+                </span>
+              </div>
+              <div className="summary-capacity-grid">
+                <CapacityBar label="General ward" {...ward} capacity={ward.staffed} />
+                <CapacityBar
+                  label="Intensive care"
+                  {...icu}
+                  capacity={icu.staffed}
+                  color="red"
+                />
+                <CapacityBar
+                  label="Emergency department"
+                  {...ed}
+                  capacity={ed.staffed}
+                  color="green"
+                />
+              </div>
+            </section>
+          <div className="summary-operations-grid">
+            <section className="summary-map-panel" aria-label="Campus map">
+              <Suspense
+                fallback={
+                  <div className="summary-map-loading">Loading campus map…</div>
+                }
+              >
+                <CampusMap ctx={ctx} />
+              </Suspense>
+              <div className="summary-source-line">
+                <Map size={14} aria-hidden="true" />
+                <span>
+                  Source:{" "}
+                  {ctx.state ? "selected simulation run" : "planning dataset"}
+                </span>
+                <span>{ctx.dataset?.fixture?.replaceAll("_", " ")}</span>
+              </div>
+            </section>
+            <section className="summary-bed-panel">
+              <div className="summary-card-heading">
+                <div>
+                  <span className="eyebrow">SELECTED FACILITY</span>
+                  <h2>{nameOf(facility || {}) || "Central Hospital"}</h2>
+                </div>
+                <Badge>{facility?.status || "Active"}</Badge>
+              </div>
+              <div className="summary-bed-heading">
+                <span>
+                  <BedDouble size={16} /> Ward places
+                </span>
+                <strong>
+                  {ward.physical} physical · {ward.staffed} staffed
+                </strong>
+              </div>
+              <BedGrid
+                physical={ward.physical}
+                staffed={ward.staffed}
+                occupied={ward.occupied}
+                cleaning={ward.cleaning}
+                slots={wardSlots}
+                onSelectSlot={(slot) => {
+                  ctx.setPatient(
+                    patients.find(
+                      (patient) => patient.slot_id === slot.slot_id,
+                    ) ||
+                      (slot.patient_id
+                        ? { patient_id: slot.patient_id }
+                        : null),
+                  );
+                  ctx.setPage("patients");
+                }}
+              />
+              <BedLegend />
+              {ward.physical > ward.staffed ? (
+                <div className="summary-detail-note">
+                  <Info size={15} />
+                  <span>
+                    {ward.physical - ward.staffed} physical places do not have
+                    enough qualified staff to count as usable capacity.
+                  </span>
+                </div>
+              ) : null}
+            </section>
+          </div>
+          </>
+          )
+        ) : null}
+      </details>
+
+      <details className="summary-details summary-timeline-details">
+        <summary>
+          <span className="summary-details-icon">
+            <CalendarRange size={18} />
+          </span>
+          <span>
+            <strong>Open exact forecast timeline</strong>
+            <small>
+              Review interventions, updates, and choose a precise time
+            </small>
+          </span>
+          <span>Show</span>
+        </summary>
         <Timeline ctx={ctx} />
-      </div>
+      </details>
     </div>
   );
 }

@@ -63,9 +63,12 @@ test("historical results retain frozen dates and assumptions beside an edited dr
     "Oct 16 – Oct 16",
   );
   await expect(page.locator(".statusbar")).toContainText("America/Chicago");
-  await expect(page.locator(".top-context")).toContainText(
+  await expect(page.locator(".breadcrumb")).toContainText(
     context.scenario.name,
   );
+  await page
+    .getByRole("button", { name: "Advanced replay tools", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Go to run horizon", exact: true })
     .click();
@@ -92,7 +95,7 @@ test("historical results retain frozen dates and assumptions beside an edited dr
   await expect(
     page
       .locator(".context-actions")
-      .getByRole("button", { name: "Run scenario", exact: true }),
+      .getByRole("button", { name: "Run simulation", exact: true }),
   ).toHaveCount(0);
   const frozen = await api(page.request, `/run-groups/${run.id}`);
   expect(frozen.input_sha256).toBe(run.input_sha256);
@@ -158,6 +161,7 @@ test("completed comparisons and source search preserve distinct frozen and rebas
       headers: { "If-Match": String(context.scenario.revision) },
       data: {
         name: "Rebased live draft",
+        timezone: "America/New_York",
         dataset_version_id: rebased.dataset.id,
         horizon_calendar_days: 3,
         base_seed: 99,
@@ -172,6 +176,7 @@ test("completed comparisons and source search preserve distinct frozen and rebas
     context.scenario.name,
   );
   await expect(page.locator(".comparison-context")).toContainText("1 days");
+  await page.locator("details.comparison-tools > summary").click();
   await page.getByRole("button", { name: "Assumptions", exact: true }).click();
   const assumptions = page.getByRole("dialog", {
     name: "Comparison assumptions",
@@ -182,6 +187,19 @@ test("completed comparisons and source search preserve distinct frozen and rebas
   await expect(assumptions).toContainText(String(context.scenario.base_seed));
   await expect(assumptions).not.toContainText("Rebased live draft");
   await assumptions.getByRole("button", { name: "Close dialog" }).click();
+  await page
+    .getByRole("button", { name: "Show compare timeline", exact: true })
+    .click();
+  const calendar = page.locator("#compare-timeline-dock");
+  await expect(
+    calendar.getByLabel("Select hour within day").locator("option").first(),
+  ).toHaveText("12:00 AM CDT");
+  await calendar
+    .getByRole("button", { name: "Day details", exact: true })
+    .click();
+  const dayDetails = page.getByRole("dialog", { name: /^Day 1/ });
+  await expect(dayDetails).toContainText("12:00 AM CDT");
+  await dayDetails.getByRole("button", { name: "Close dialog" }).click();
   await open(page, context.scenario.id, "analytics-patients", reference.id);
   await page.locator(".patient-table tbody .link-button").first().click();
   const checked = page.waitForResponse(
@@ -206,7 +224,10 @@ test("completed comparisons and source search preserve distinct frozen and rebas
   await expect(page.getByLabel("Scenario name", { exact: true })).toHaveValue(
     "Rebased live draft",
   );
-  await expect(page.locator(".contextbar")).toContainText("stress snapshot");
+  await expect(page.locator(".planning-baseline")).toHaveAttribute(
+    "data-baseline-dataset",
+    rebased.dataset.id,
+  );
   await expect
     .poll(() => new URL(page.url()).searchParams.get("dataset"))
     .toBe(rebased.dataset.id);

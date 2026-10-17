@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowDownToLine,
@@ -228,7 +229,7 @@ function Field({
         {nullable ? <small className="muted"> · not specified</small> : null}
       </span>
       {typeof value === "boolean" ? (
-        <select
+        <NativeSelect
           aria-label={inputLabel}
           value={String(value)}
           disabled={readOnly}
@@ -236,9 +237,9 @@ function Field({
         >
           <option value="true">Yes</option>
           <option value="false">No</option>
-        </select>
+        </NativeSelect>
       ) : choices?.length && !isId ? (
-        <select
+        <NativeSelect
           aria-label={inputLabel}
           value={value ?? ""}
           disabled={readOnly}
@@ -255,7 +256,7 @@ function Field({
               </option>
             ),
           )}
-        </select>
+        </NativeSelect>
       ) : typeof value === "number" ? (
         <input
           aria-label={inputLabel}
@@ -477,11 +478,8 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
       <div className="page-heading">
         <div>
           <div className="eyebrow">DATA & SETUP</div>
-          <h1>A clear foundation for every forecast.</h1>
-          <p>
-            Review source data, validate assumptions, and manage immutable
-            versions.
-          </p>
+          <h1>Data & setup</h1>
+          <p>Manage hospital data, assumptions, and saved versions.</p>
         </div>
         <div className="heading-actions">
           <Button
@@ -555,11 +553,14 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
             })}{" "}
             · {dataset?.timezone || "Timezone unspecified"}
           </p>
-          <span className="mono muted">
-            {draft?.id || ctx.dataset?.id} <b>·</b> Schema{" "}
-            {dataset?.schema_version || "—"} <b>·</b> Generator seed{" "}
-            {dataset?.generator_seed ?? dataset?.seed ?? "—"}
-          </span>
+          <details className="dataset-technical-details">
+            <summary>Version details</summary>
+            <span className="mono muted">
+              {draft?.id || ctx.dataset?.id} <b>·</b> Schema{" "}
+              {dataset?.schema_version || "—"} <b>·</b> Generator seed{" "}
+              {dataset?.generator_seed ?? dataset?.seed ?? "—"}
+            </span>
+          </details>
         </div>
         <Button
           onClick={validate}

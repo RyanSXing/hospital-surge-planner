@@ -183,8 +183,8 @@ export default function ComparisonDetails({
         </p>
       ) : null}
       {plans.map((p) => (
-        <section key={p.id} className="comparison-plan-resources">
-          <div className="spread">
+        <details key={p.id} className="comparison-plan-resources">
+          <summary>
             <h3>{p.name}</h3>
             <Badge
               tone={
@@ -201,103 +201,111 @@ export default function ComparisonDetails({
                   ? "Simulated feasible"
                   : "Awaiting evaluation"}
             </Badge>
+          </summary>
+          <div className="comparison-plan-resource-body">
+            {p.interventions?.length ? (
+              p.interventions.map((v: Entity, index: number) => (
+                <dl key={v.id || index}>
+                  <div>
+                    <dt>Proposed action</dt>
+                    <dd>
+                      {(v.name || v.kind || "Resource allocation").replaceAll(
+                        "_",
+                        " ",
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Scheduled start</dt>
+                    <dd>
+                      {localDate(v.start_at || ctx.scenario?.start_at || "", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZoneName: "short",
+                        timeZone:
+                          (ctx.resultScenario || ctx.scenario)?.timezone ||
+                          ctx.dataset?.timezone ||
+                          "America/Chicago",
+                      })}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Activation lead time</dt>
+                    <dd>
+                      {v.activation_minutes === undefined
+                        ? "Modeled site / template assumption"
+                        : `${v.activation_minutes} minutes`}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Target</dt>
+                    <dd>
+                      {v.unit_id ||
+                        v.facility_id ||
+                        "Template target from dataset"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Staff allocation</dt>
+                    <dd>
+                      {v.assigned_staff_ids?.join(", ") ||
+                        [
+                          v.nurses === undefined ? null : `${v.nurses} nurses`,
+                          v.providers === undefined
+                            ? null
+                            : `${v.providers} providers`,
+                          v.support === undefined
+                            ? null
+                            : `${v.support} support`,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ") ||
+                        "Qualified template allocation from available reserve"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Physical places</dt>
+                    <dd>
+                      {v.enabled_slots ??
+                        v.beds ??
+                        v.quantity ??
+                        "Template quantity from dataset"}
+                    </dd>
+                  </div>
+                </dl>
+              ))
+            ) : (
+              <p className="muted small-copy">
+                Current scenario resource allocations, without an additional
+                response.
+              </p>
+            )}
+            {p.feasibility?.reasons?.length ? (
+              <p className="amber small-copy">
+                {p.feasibility.reasons.join(" · ")}
+              </p>
+            ) : null}
+            {p.status === "SUCCEEDED" && p.run_group_id ? (
+              <div className="plan-actions">
+                <Button
+                  small
+                  onClick={() => ctx.openRun(p.run_group_id, "summary")}
+                >
+                  Open in summary <ArrowUpRight size={13} />
+                </Button>
+                <Button
+                  small
+                  onClick={() => ctx.openRun(p.run_group_id, "replay")}
+                >
+                  <Play size={13} />
+                  Replay example run
+                </Button>
+              </div>
+            ) : null}
           </div>
-          {p.interventions?.length ? (
-            p.interventions.map((v: Entity, index: number) => (
-              <dl key={v.id || index}>
-                <div>
-                  <dt>Proposed action</dt>
-                  <dd>
-                    {(v.name || v.kind || "Resource allocation").replaceAll(
-                      "_",
-                      " ",
-                    )}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Scheduled start</dt>
-                  <dd>
-                    {localDate(v.start_at || ctx.scenario?.start_at || "", {
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      timeZoneName: "short",
-                    })}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Activation lead time</dt>
-                  <dd>
-                    {v.activation_minutes === undefined
-                      ? "Modeled site / template assumption"
-                      : `${v.activation_minutes} minutes`}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Target</dt>
-                  <dd>
-                    {v.unit_id ||
-                      v.facility_id ||
-                      "Template target from dataset"}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Staff allocation</dt>
-                  <dd>
-                    {v.assigned_staff_ids?.join(", ") ||
-                      [
-                        v.nurses === undefined ? null : `${v.nurses} nurses`,
-                        v.providers === undefined
-                          ? null
-                          : `${v.providers} providers`,
-                        v.support === undefined ? null : `${v.support} support`,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ") ||
-                      "Qualified template allocation from available reserve"}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Physical places</dt>
-                  <dd>
-                    {v.enabled_slots ??
-                      v.beds ??
-                      v.quantity ??
-                      "Template quantity from dataset"}
-                  </dd>
-                </div>
-              </dl>
-            ))
-          ) : (
-            <p className="muted small-copy">
-              Current scenario resource allocations, without an additional
-              response.
-            </p>
-          )}
-          {p.feasibility?.reasons?.length ? (
-            <p className="amber small-copy">
-              {p.feasibility.reasons.join(" · ")}
-            </p>
-          ) : null}
-          {p.status === "SUCCEEDED" && p.run_group_id ? (
-            <div className="plan-actions">
-              <Button
-                small
-                onClick={() => ctx.openRun(p.run_group_id, "summary")}
-              >
-                Open in summary <ArrowUpRight size={13} />
-              </Button>
-              <Button
-                small
-                onClick={() => ctx.openRun(p.run_group_id, "replay")}
-              >
-                <Play size={13} />
-                Replay example run
-              </Button>
-            </div>
-          ) : null}
-        </section>
+        </details>
       ))}
     </details>
   );

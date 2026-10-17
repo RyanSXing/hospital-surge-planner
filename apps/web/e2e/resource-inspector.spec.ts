@@ -52,7 +52,10 @@ test("resource tables use persistent selected-time inspectors and reloadable lin
     const at = new URL(page.url()).searchParams.get("at");
     await page.getByLabel("Hide resources inspector", { exact: true }).click();
     await expect(inspector).toBeHidden();
+    await expect(page.locator("#resources-timeline-dock")).toBeHidden();
+    await page.getByLabel("Show resources timeline", { exact: true }).click();
     await expect(page.locator("#resources-timeline-dock")).toBeVisible();
+    await page.getByLabel("Hide resources timeline", { exact: true }).click();
     await page.getByLabel("Show resources inspector", { exact: true }).click();
     await page.reload();
     await expect(inspector).toBeVisible();

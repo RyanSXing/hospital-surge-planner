@@ -8,7 +8,7 @@ The complete initial scope is P0 and P1 in [the build specification](docs/refere
 
 Open [Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io). Private sign-in details are saved locally in `data/deployment/access.md`, outside version control. [Hosted verification](docs/hosted-verification.md) records the deployed release, completed workloads, measured performance limits, recovery and backup evidence.
 
-The app has two primary pages: **Overview** for the current hospital baseline and simulation setup, and **Analysis** with **Summary**, **Replay**, **Analytics**, and **Comparison**. Analytics includes ensemble outcomes, patient/unit inspection, and resources. The [workflow guide](docs/overview-analysis-flow.md) describes navigation, saved result context, and compatibility with older shared links.
+The app has two primary pages: **Overview** for the current hospital baseline and simulation setup, and **Analysis** with **Summary**, **Replay**, **Analytics**, and **Comparison**. Analytics includes ensemble outcomes, patient/unit inspection, and resources. The [interface guide](docs/hospital-management-interface.md) describes the compact light layout, guided setup, optional details, and Vanderbilt replay context. The [workflow guide](docs/overview-analysis-flow.md) covers saved result context and compatibility with older shared links.
 
 ## Start locally
 
@@ -23,7 +23,7 @@ make dev
 
 Open [http://localhost:5173](http://localhost:5173). The API is [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api); OpenAPI is available at `/openapi.json`. Local development uses a visibly marked seeded session. `make setup` creates private `.env` settings with unique generated secrets and preserves an existing `.env`.
 
-The frontend is React/TypeScript/Vite; the API is FastAPI; the model uses Python/NumPy/SimPy; durable deployment uses PostgreSQL, Redis/RQ, private OCI Object Storage and separate API/worker containers. Locked Python dependencies are in `uv.lock`; locked frontend dependencies are in `apps/web/package-lock.json`.
+The frontend is React/TypeScript/Vite with Mantine components; the API is FastAPI; the model uses Python/NumPy/SimPy; durable deployment uses PostgreSQL, Redis/RQ, private OCI Object Storage and separate API/worker containers. Locked Python dependencies are in `uv.lock`; locked frontend dependencies are in `apps/web/package-lock.json`.
 
 ## Data and visual assets
 
@@ -31,7 +31,7 @@ The frontend is React/TypeScript/Vite; the API is FastAPI; the model uses Python
 
 Generator 1.1.0 includes the required historical admission timestamps. Its fixture IDs include the generator version, fixture, seed and coverage days (for example, `demo-v1-1-0-planning_baseline-41021-365`). Startup adds the current 365-day planning and stress fixtures and one current starter scenario if absent. Upgrades preserve every older dataset, scenario and run; repeated startup also preserves edits to the starter. Default navigation selects the newest scenario, so the newly added starter provides valid current input immediately after upgrade. Explicit historical links keep their original context.
 
-The campus geometry, product mark, charts, capacity grids and Replay floor plan are original code-native assets. `apps/web/public/assets/campus.geojson` contains synthetic local geographic context; `apps/web/src/pages/replayBackdrop.ts` draws and caches the architectural schematic. Resource symbols and patient markers are drawn from the selected recorded state. The six supplied images remain design references under `docs/reference/`; their illustrative counts do not replace computed results. Locally served Barlow Condensed and IBM Plex Sans include their Open Font License notices in `apps/web/public/fonts/`; interface icons use the locked Lucide dependency.
+The campus geometry, product mark, charts, capacity grids, and Replay schematic are original code-native assets. `apps/web/public/assets/campus.geojson` contains synthetic local geographic context; `apps/web/src/pages/replayBackdrop.ts` draws and caches the care-flow schematic. The optional local reference is centered on Vanderbilt University Medical Center using official location and visitor-map sources; care zones and patient positions remain synthetic. Resource symbols and patient markers use the selected recorded state. The original six supplied images remain references under `docs/reference/`; the subsequent user-supplied white hospital-management references govern the current visual style. Illustrative reference counts never replace computed results. Locally served Barlow Condensed and IBM Plex Sans include their Open Font License notices in `apps/web/public/fonts/`; interface icons use the locked Lucide dependency.
 
 ## Developer commands
 

@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./patients.css";
 import { usePatientPage } from "./usePatientPage";
@@ -163,9 +164,7 @@ export default function Patients({
   const panels = usePlanningPanels(180);
   const placementRequest = useRef(0);
   const inspectorRef = useRef<HTMLElement>(null);
-  const [schematicExpanded, setSchematicExpanded] = useState(
-    () => window.innerWidth >= 768,
-  );
+  const [schematicExpanded, setSchematicExpanded] = useState(false);
   const unit = ctx.selectedUnit,
     setUnit = ctx.setUnit;
   const [tab, setTab] = useState("patients"),
@@ -339,8 +338,8 @@ export default function Patients({
       <div className="page-heading">
         <div>
           <div className="eyebrow">PATIENTS & UNITS</div>
-          <h1>Hospital capacity</h1>
-          <p>Follow each patient. Understand every placement constraint.</p>
+          <h1>Patients & units</h1>
+          <p>Find a patient, review their care, or inspect a unit.</p>
         </div>
         <div className="heading-actions">
           <PlanningPanelControls panels={panels} name="patients" />
@@ -601,7 +600,7 @@ export default function Patients({
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </label>
-                <select
+                <NativeSelect
                   aria-label="Patient state filter"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
@@ -611,7 +610,7 @@ export default function Patients({
                   <option value="inpatient">Inpatients</option>
                   <option value="ed_assessment">ED assessment</option>
                   <option value="in_transit">In transport</option>
-                </select>
+                </NativeSelect>
                 {unit ? (
                   <Button small onClick={() => setUnit("")}>
                     Clear unit <X size={12} />
@@ -627,7 +626,7 @@ export default function Patients({
                 <div className="patient-filter-grid">
                   <label>
                     Required care
-                    <select
+                    <NativeSelect aria-label="Required care"
                       value={care}
                       onChange={(e) => setCare(e.target.value)}
                     >
@@ -635,11 +634,11 @@ export default function Patients({
                       <option value="ward">Ward</option>
                       <option value="icu">ICU</option>
                       <option value="ambulatory">Ambulatory</option>
-                    </select>
+                    </NativeSelect>
                   </label>
                   <label>
                     Current unit
-                    <select
+                    <NativeSelect aria-label="Current unit"
                       value={unit}
                       onChange={(e) => setUnit(e.target.value)}
                     >
@@ -649,11 +648,11 @@ export default function Patients({
                           {nameOf(u)}
                         </option>
                       ))}
-                    </select>
+                    </NativeSelect>
                   </label>
                   <label>
                     Waiting reason
-                    <select
+                    <NativeSelect aria-label="Waiting reason"
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       disabled={!rep}
@@ -684,18 +683,18 @@ export default function Patients({
                             {value.replaceAll("_", " ")}
                           </option>
                         ))}
-                    </select>
+                    </NativeSelect>
                   </label>
                   <label>
                     Transfer eligibility
-                    <select
+                    <NativeSelect aria-label="Transfer eligibility"
                       value={transfer}
                       onChange={(e) => setTransfer(e.target.value)}
                     >
                       <option value="">All declarations</option>
                       <option value="true">Declared eligible</option>
                       <option value="false">Declared ineligible</option>
-                    </select>
+                    </NativeSelect>
                   </label>
                   <ZonedDateTimeInput
                     label="Arrived from"

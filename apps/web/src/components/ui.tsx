@@ -1,4 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  Button as MantineButton,
+  Badge as MantineBadge,
+  Modal as MantineModal,
+  Alert,
+} from "@mantine/core";
 import type { ReactNode } from "react";
 import {
   AlertTriangle,
@@ -17,11 +23,26 @@ export function Badge({
   children: ReactNode;
   tone?: string;
 }) {
+  const colors: Record<string, string> = {
+    success: "teal",
+    warning: "yellow",
+    amber: "yellow",
+    danger: "red",
+    red: "red",
+    cyan: "blue",
+    violet: "violet",
+  };
   return (
-    <span className={`badge ${tone}`}>
-      {tone === "success" ? <span className="status-dot" /> : null}
+    <MantineBadge
+      className={`badge ${tone}`}
+      color={colors[tone] || "gray"}
+      variant="light"
+      size="sm"
+      tt="none"
+      fw={500}
+    >
       {children}
-    </span>
+    </MantineBadge>
   );
 }
 export function Button({
@@ -35,12 +56,14 @@ export function Button({
   small?: boolean;
 }) {
   return (
-    <button
+    <MantineButton
+      variant={primary ? "filled" : "default"}
+      size={small ? "xs" : "sm"}
       className={`button ${primary ? "primary" : ""} ${small ? "small" : ""} ${className}`}
       {...props}
     >
       {children}
-    </button>
+    </MantineButton>
   );
 }
 export function PanelTitle({
@@ -238,15 +261,18 @@ export function ErrorBox({
   onDismiss?: () => void;
 }) {
   return (
-    <div className="error-box" role="alert">
-      <AlertTriangle size={18} />
-      <span>{error}</span>
-      {onDismiss ? (
-        <button onClick={onDismiss} aria-label="Dismiss error">
-          <X size={16} />
-        </button>
-      ) : null}
-    </div>
+    <Alert
+      className="error-box"
+      color="red"
+      variant="light"
+      role="alert"
+      icon={<AlertTriangle size={18} />}
+      withCloseButton={!!onDismiss}
+      onClose={onDismiss}
+      closeButtonLabel="Dismiss error"
+    >
+      {error}
+    </Alert>
   );
 }
 export function Modal({
@@ -260,91 +286,66 @@ export function Modal({
   onClose: () => void;
   wide?: boolean;
 }) {
-  const ref = useRef<HTMLDivElement>(null),
-    close = useRef(onClose),
-    returnFocus = useRef<HTMLElement | null>(
-      document.activeElement as HTMLElement,
-    );
-  close.current = onClose;
+  const anchor = useRef<HTMLDivElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(
+    document.activeElement as HTMLElement,
+  );
+  const [visible, setVisible] = useState(true);
+  // Editors remain mounted between pages. A hidden editor's dialog must stay
+  // hidden too, including its portal and keyboard focus trap.
   useEffect(() => {
-    const node = ref.current;
-    const focusable = () =>
-      Array.from(
-        node?.querySelectorAll<HTMLElement>(
-          'button:not(:disabled),input:not(:disabled):not([type="hidden"]),select:not(:disabled),textarea:not(:disabled),a[href],[tabindex="0"]',
-        ) || [],
-      ).filter((e) => e.tabIndex !== -1 && e.getClientRects().length > 0);
-    if (!node?.contains(document.activeElement)) focusable()[0]?.focus();
-    function key(e: KeyboardEvent) {
-      // Page-level editors stay mounted to retain drafts. Their hidden dialogs
-      // must not intercept keyboard input in the active workspace.
-      if (!node?.getClientRects().length) return;
-      const dialogs = Array.from(
-        document.querySelectorAll('[role="dialog"][aria-modal="true"]'),
-      ).filter((dialog) => dialog.getClientRects().length > 0);
-      if (dialogs[dialogs.length - 1] !== node) return;
-      if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        close.current();
-      }
-      if (e.key === "Tab") {
-        const targets = focusable(),
-          first = targets[0],
-          last = targets.at(-1);
-        if (!targets.length) {
-          e.preventDefault();
-          node?.focus();
-        } else if (
-          e.shiftKey &&
-          (document.activeElement === first ||
-            !node?.contains(document.activeElement))
-        ) {
-          e.preventDefault();
-          last?.focus();
-        } else if (
-          !e.shiftKey &&
-          (document.activeElement === last ||
-            !node?.contains(document.activeElement))
-        ) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
+    const ancestors: Element[] = [];
+    let node: Element | null = anchor.current;
+    while (node) {
+      ancestors.push(node);
+      node = node.parentElement;
     }
-    document.addEventListener("keydown", key);
+    const sync = () => setVisible(!anchor.current?.closest("[hidden]"));
+    const observer = new MutationObserver(sync);
+    ancestors.forEach((element) =>
+      observer.observe(element, {
+        attributes: true,
+        attributeFilter: ["hidden"],
+      }),
+    );
+    sync();
     return () => {
-      document.removeEventListener("keydown", key);
-      if (
-        returnFocus.current?.isConnected &&
-        returnFocus.current.getClientRects().length
-      )
-        returnFocus.current.focus();
+      observer.disconnect();
+      // These dialogs are conditionally mounted, so restore focus after the
+      // Mantine subtree has unmounted instead of waiting for a close transition.
+      queueMicrotask(() => {
+        const target = returnFocus.current;
+        const other = Array.from(
+          document.querySelectorAll<HTMLElement>('[role="dialog"]'),
+        ).find((dialog) => dialog.getClientRects().length > 0);
+        if (
+          target?.isConnected &&
+          target.getClientRects().length &&
+          !target.closest("[hidden]") &&
+          (!other || other.contains(target))
+        )
+          target.focus();
+      });
     };
   }, []);
   return (
-    <div
-      className="modal-backdrop"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div
-        ref={ref}
-        tabIndex={-1}
-        className={`modal ${wide ? "wide" : ""}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
+    <div ref={anchor} className="dialog-anchor">
+      <MantineModal
+        opened={visible}
+        onClose={onClose}
+        title={title}
+        size={wide ? 860 : 520}
+        withinPortal={false}
+        returnFocus={false}
+        classNames={{
+          content: `hospital-dialog ${wide ? "wide" : ""}`,
+          header: "modal-header",
+          body: "modal-body",
+        }}
+        closeButtonProps={{ "aria-label": "Close dialog" }}
       >
-        <div className="modal-header">
-          <h2>{title}</h2>
-          <button aria-label="Close dialog" onClick={onClose}>
-            <X size={20} />
-          </button>
-        </div>
-        <div className="modal-body">{children}</div>
-      </div>
+        {children}
+      </MantineModal>
     </div>
   );
 }

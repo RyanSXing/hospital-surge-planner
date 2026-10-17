@@ -3,6 +3,9 @@ import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 import {
   api,
+  exportResults,
+  revealSummaryTimeline,
+  revealOutcomeMetrics,
   assertPageHealthy,
   capture,
   open,
@@ -44,8 +47,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
     { timeout: 30000 },
   );
   await page
-    .locator(".scenarios-page .heading-actions")
-    .getByRole("button", { name: "Run scenario", exact: true })
+    .getByRole("button", { name: "Run simulation", exact: true })
     .click();
   console.log("workflow: submit clicked");
   const queued = await (await submitted).json();
@@ -106,6 +108,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
       },
     )
     .toBe("SUCCEEDED");
+  await page.locator(".comparison-capacity-details > summary").click();
   for (const [index, plan] of result.plans.entries()) {
     const last = plan.metrics.series.at(-1);
     const card = page.locator(".capacity-plan-cards .plan-card").nth(index);
@@ -136,6 +139,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
   await expect(page.locator(".comparison-metrics")).toContainText(
     "Interfacility transfers",
   );
+  await page.locator(".comparison-plan-resources > summary").last().click();
   await page
     .getByRole("button", { name: "Open in summary", exact: true })
     .last()
@@ -190,16 +194,24 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
   await open(page, context.scenario.id, "replay", run.id);
   await expect(page.getByLabel("Next recorded event")).toBeEnabled();
   await page.getByLabel("Next recorded event").click();
+  await page
+    .getByRole("button", { name: "Inspect replay", exact: true })
+    .click();
+  await page.getByRole("tab", { name: "Events", exact: true }).click();
   await expect(page.locator(".event-feed .info-note")).toContainText("Event");
+  await page
+    .getByRole("button", { name: "Close replay details", exact: true })
+    .click();
   await page.getByLabel("Return to run start").click();
   await page.getByLabel("Play replay", { exact: true }).click();
   await expect(page.getByLabel("Pause replay")).toBeVisible();
   await page.getByLabel("Pause replay").click();
+  await page.getByText("View patient census", { exact: true }).click();
   await expect(
     page.getByRole("heading", { name: /Accessible replay census/ }),
   ).toBeVisible();
   await capture(page, "workflow-replay", info);
-  await page.getByRole("button", { name: "Export", exact: true }).click();
+  await exportResults(page);
   await page
     .getByRole("button", { name: "Generate export", exact: true })
     .click();

@@ -11,7 +11,7 @@ import "./planningPanels.css";
 
 export function usePlanningPanels(initialHeight = 220) {
   const [inspectorHidden, setInspectorHidden] = useState(false);
-  const [timelineHidden, setTimelineHidden] = useState(false);
+  const [timelineHidden, setTimelineHidden] = useState(true);
   const [height, setHeight] = useState(initialHeight);
   return {
     inspectorHidden,
@@ -61,7 +61,16 @@ export function PlanningPanelControls({
           aria-expanded={!panels.timelineHidden}
           aria-controls={`${name}-timeline-dock`}
           title={`${panels.timelineHidden ? "Show" : "Hide"} timeline`}
-          onClick={() => panels.setTimelineHidden(!panels.timelineHidden)}
+          onClick={() => {
+            const opening = panels.timelineHidden;
+            panels.setTimelineHidden(!opening);
+            if (opening)
+              requestAnimationFrame(() => {
+                document
+                  .getElementById(`${name}-timeline-dock`)
+                  ?.scrollIntoView({ block: "nearest", behavior: "instant" });
+              });
+          }}
         >
           {panels.timelineHidden ? (
             <PanelBottomOpen size={17} />

@@ -1,0 +1,15 @@
+{
+  "project": "mobile",
+  "parent_run_id": "run_d84a37b548754d2ba249",
+  "update_id": "update_a5a89838073740898d21",
+  "branch_scenario_id": "scenario_ede7d2172009486ca643",
+  "selected_unit": "UNIT-WARD-B",
+  "exact_effective_at": "2026-10-16T06:01:01.250Z",
+  "resource_types": [
+    "equipment_pool",
+    "staff",
+    "route"
+  ],
+  "parent_preserved": true,
+  "viewer_disabled_and_api_403": true
+}

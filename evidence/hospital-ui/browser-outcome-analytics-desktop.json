@@ -1,0 +1,37 @@
+{
+  "run_id": "run_bc04dccfcec4454e9e43",
+  "medians_match_actual_api": {
+    "arrivals": 280.5,
+    "inpatient_waiting_patient_hours": 34.52333387719768,
+    "ed_waiting_patient_hours": 1.0231956028452696
+  },
+  "charts_checked": [
+    "demand",
+    "ward",
+    "icu",
+    "ed",
+    "queues",
+    "waiting",
+    "utilization",
+    "staffing",
+    "equipment"
+  ],
+  "grains_checked": [
+    "day",
+    "week",
+    "month"
+  ],
+  "selected_time_preserved": true,
+  "patient_inspector_context_preserved": true,
+  "null_zero_run_id": "run_9d645ac2fefe488797a8",
+  "null_and_zero_distinguished": true,
+  "cutoff_branch_run_id": "run_50d2e5d11550429d951c",
+  "cutoff": "2026-10-17T13:00:15.250Z",
+  "cutoff_projection_matches_recorded_integrals": {
+    "day": 72.18969394805089,
+    "week": 74.363066398579,
+    "month": 74.363066398579
+  },
+  "pre_cutoff_controls_excluded": true,
+  "page_errors": []
+}

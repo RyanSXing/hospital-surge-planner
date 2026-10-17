@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
@@ -290,7 +291,7 @@ export default function Resources({
           <div className="resource-filters">
             <label>
               Site type
-              <select
+              <NativeSelect aria-label="Site type"
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
               >
@@ -302,11 +303,11 @@ export default function Resources({
                     </option>
                   ),
                 )}
-              </select>
+              </NativeSelect>
             </label>
             <label>
               Capability
-              <select
+              <NativeSelect aria-label="Capability"
                 value={capabilityFilter}
                 onChange={(e) => setCapabilityFilter(e.target.value)}
               >
@@ -318,29 +319,29 @@ export default function Resources({
                     {String(cap).replaceAll("_", " ")}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
             <label>
               Readiness
-              <select
+              <NativeSelect aria-label="Readiness"
                 value={readinessFilter}
                 onChange={(e) => setReadinessFilter(e.target.value)}
               >
                 <option value="all">All readiness</option>
                 <option value="active">Active in selected state</option>
                 <option value="candidate">Inactive / candidate</option>
-              </select>
+              </NativeSelect>
             </label>
             <label>
               Receiving availability
-              <select
+              <NativeSelect aria-label="Receiving availability"
                 value={availabilityFilter}
                 onChange={(e) => setAvailabilityFilter(e.target.value)}
               >
                 <option value="all">All availability</option>
                 <option value="receiving">Headroom available</option>
                 <option value="unavailable">No current headroom</option>
-              </select>
+              </NativeSelect>
             </label>
             <span className="small-copy muted">
               {ctx.state

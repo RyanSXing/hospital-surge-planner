@@ -1,0 +1,102 @@
+{
+  "tested_at": "2026-10-17T23:17:29.470Z",
+  "screens": [
+    {
+      "view": "overview",
+      "scenario": "scenario_139481dd915d4c939239",
+      "run": "run_320e9d2ce5c54b5a81a6",
+      "title": [
+        "Hospital overview"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "summary",
+      "scenario": "scenario_139481dd915d4c939239",
+      "run": "run_320e9d2ce5c54b5a81a6",
+      "title": [
+        "Results summary"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "replay",
+      "scenario": "scenario_139481dd915d4c939239",
+      "run": "run_320e9d2ce5c54b5a81a6",
+      "title": [
+        "Patient flow replay"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "analytics-outcomes",
+      "scenario": "scenario_139481dd915d4c939239",
+      "run": "run_320e9d2ce5c54b5a81a6",
+      "title": [
+        "Simulation outcomes"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "analytics-patients",
+      "scenario": "scenario_139481dd915d4c939239",
+      "run": "run_320e9d2ce5c54b5a81a6",
+      "title": [
+        "Patients & units"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "analytics-resources",
+      "scenario": "scenario_139481dd915d4c939239",
+      "run": "run_320e9d2ce5c54b5a81a6",
+      "title": [
+        "Resource planning"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "comparison",
+      "scenario": "scenario_139481dd915d4c939239",
+      "run": "run_320e9d2ce5c54b5a81a6",
+      "title": [
+        "Compare response plans"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "data",
+      "scenario": "scenario_139481dd915d4c939239",
+      "run": "run_320e9d2ce5c54b5a81a6",
+      "title": [
+        "Data & setup"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ],
+  "page_errors": []
+}

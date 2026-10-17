@@ -45,6 +45,10 @@ test("replay resource inspection follows exact reservations, inventory and trans
   const url = new URL(page.url());
   url.searchParams.set("at", at);
   await page.goto(url.toString());
+  await page
+    .getByRole("button", { name: "Inspect replay", exact: true })
+    .click();
+  await page.getByRole("tab", { name: "Capacity", exact: true }).click();
   const resources = page.locator(".replay-recorded-capacity");
   await resources.getByLabel("Replay resource unit").selectOption(unit.unit_id);
   const capacity = resources.getByRole("group", {
@@ -110,9 +114,11 @@ test("replay resource inspection follows exact reservations, inventory and trans
   await expect
     .poll(() => new URL(page.url()).searchParams.get("patient"))
     .toBe(vehicle.mission);
+  await page.getByRole("tab", { name: "Patient", exact: true }).click();
   await expect(page.locator(".replay-patient-history")).toContainText(
     "Recorded patient path",
   );
+  await page.getByRole("tab", { name: "Capacity", exact: true }).click();
   const otherVehicle = state.vehicles.find((value: any) => !value.mission);
   if (otherVehicle) {
     await resources

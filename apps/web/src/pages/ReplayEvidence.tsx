@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Users } from "lucide-react";
@@ -82,7 +83,7 @@ export function ReplayEventWindow({
       </p>
       <label className="replay-evidence-label">
         Event type
-        <select
+        <NativeSelect
           aria-label="Replay event type filter"
           value={type}
           onChange={(e) => setType(e.target.value)}
@@ -96,7 +97,7 @@ export function ReplayEventWindow({
               {eventName(value)} ({query.data?.event_type_counts?.[value] || 0})
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </label>
       <label className="replay-patient-only">
         <input
@@ -325,7 +326,7 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
       <h3>Recorded unit resources</h3>
       <label className="replay-evidence-label">
         Unit
-        <select
+        <NativeSelect
           aria-label="Replay resource unit"
           value={unitId(unit)}
           onChange={(e) => {
@@ -339,7 +340,7 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
               {value.name || value.unit_name || unitId(value)}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </label>
       <div className="spread small-copy">
         <span>Occupied / supported / physical</span>
@@ -433,7 +434,7 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
         <>
           <label className="replay-evidence-label">
             Equipment capability
-            <select
+            <NativeSelect
               aria-label="Replay equipment capability"
               value={equipmentChoice[0]}
               onChange={(event) => setChosenEquipment(event.target.value)}
@@ -443,7 +444,7 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
                   {eventName(capability)}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
           <div role="group" aria-label="Selected equipment inventory">
             {[
@@ -473,7 +474,7 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
         <>
           <label className="replay-evidence-label">
             Transport resource
-            <select
+            <NativeSelect
               aria-label="Replay transport vehicle"
               value={vehicle.vehicle_id}
               onChange={(event) => setChosenVehicle(event.target.value)}
@@ -483,7 +484,7 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
                   {value.vehicle_id}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
           <div
             role="group"

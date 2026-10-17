@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Activity, ArrowRight, BarChart3, Info } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  BarChart3,
+  CalendarRange,
+  ClipboardList,
+  Info,
+  ShieldCheck,
+} from "lucide-react";
+import { Accordion, NativeSelect } from "@mantine/core";
 import type { Entity, PlanningContext } from "../types";
 import { fmt, localDate } from "../api";
 import { Badge, Button } from "../components/ui";
@@ -13,6 +22,7 @@ import {
   projectOutcomeSamples,
   scaleOutcomeStatistics,
 } from "./outcomeProjection";
+import { finiteStatistic } from "./resultsMetrics";
 import "./outcomeAnalytics.css";
 
 type MetricField = {
@@ -76,7 +86,7 @@ const scalarFields: MetricField[] = [
   },
   {
     key: "time_to_first_shortage_hours",
-    label: "First unmet placement demand",
+    label: "First unmet placement demand (observed runs)",
     unit: "hours after measurement start",
   },
   {
@@ -203,20 +213,8 @@ const plots = {
 };
 type Plot = keyof typeof plots;
 
-function percentile(
-  value: unknown,
-  stat: "p10" | "p50" | "p90",
-): number | null {
-  const result =
-    typeof value === "number"
-      ? value
-      : value && typeof value === "object"
-        ? (value as Entity)[stat]
-        : null;
-  return typeof result === "number" && Number.isFinite(result) ? result : null;
-}
 function display(value: unknown, stat: "p10" | "p50" | "p90", percent = false) {
-  const result = percentile(value, stat);
+  const result = finiteStatistic(value, stat);
   return result === null
     ? "—"
     : `${fmt(result * (percent ? 100 : 1), 1)}${percent ? "%" : ""}`;
@@ -313,30 +311,71 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
       timeZoneName: "short",
     });
 
+  const waitingMedian = finiteStatistic(
+    scalar.inpatient_waiting_patient_hours,
+    "p50",
+  );
+  const shortageMedian = finiteStatistic(
+    scalar.time_to_first_shortage_hours,
+    "p50",
+  );
+  const wardUtilization = finiteStatistic(scalar.ward_utilization, "p50");
+  const noRecordedQueue =
+    finiteStatistic(scalar.peak_inpatient_queue, "max") === 0;
+  const insight =
+    shortageMedian !== null
+      ? {
+          tone: "warning",
+          title: `Unmet placement demand begins around ${fmt(shortageMedian, 1)} hours into the measured forecast`,
+          body: `Timing is the median among runs with a bed queue. Inpatient waiting is ${waitingMedian === null ? "unavailable" : `${fmt(waitingMedian, 1)} patient-hours`}. Review the queue and capacity charts before choosing a response.`,
+        }
+      : {
+          tone: noRecordedQueue ? "success" : "neutral",
+          title: noRecordedQueue
+            ? "No inpatient bed queue in these results"
+            : "Review the queue charts for bed pressure",
+          body: noRecordedQueue
+            ? "Try higher demand or fewer staff to test the plan's limits."
+            : `The first waiting time was not recorded. Ward utilization is ${wardUtilization === null ? "unavailable" : `${fmt(wardUtilization * 100, 1)}%`}. Inspect the charts for pressure.`,
+        };
+
   return (
-    <div className="outcome-analytics" data-testid="outcome-analytics">
-      <header className="page-heading">
+    <section className="outcome-analytics" data-testid="outcome-analytics">
+      <header className="page-heading outcome-heading">
         <div>
-          <div className="eyebrow">ANALYSIS · OUTCOMES</div>
+          <div className="eyebrow">ANALYSIS / OUTCOMES</div>
           <h1>Simulation outcomes</h1>
-          <p>Understand demand, waiting, throughput, and resource pressure.</p>
+          <p>See what changes over time, then open details only when needed.</p>
         </div>
         {metrics ? (
           <Badge>{completed} simulation runs · ensemble forecast</Badge>
         ) : null}
       </header>
       {!metrics ? (
-        <div className="outcome-empty">
+        <div
+          className="outcome-empty"
+          role={ctx.metricsError ? "alert" : "status"}
+        >
           <BarChart3 size={30} aria-hidden="true" />
           <h2>
-            {ctx.run?.status === "SUCCEEDED"
-              ? "Loading completed outcomes"
-              : "Complete a simulation to explore outcomes"}
+            {ctx.metricsError
+              ? "Forecast results unavailable"
+              : ctx.run?.status === "SUCCEEDED"
+                ? "Loading completed outcomes"
+                : "Complete a simulation to explore outcomes"}
           </h2>
           <p>
-            Configure the hospital scenario in Overview. Completed results
-            appear here with their recorded inputs and uncertainty.
+            {ctx.metricsError
+              ? "The completed simulation is saved, but its outcome data could not be loaded. Retry to retrieve the recorded results."
+              : ctx.run?.status === "SUCCEEDED"
+                ? "Retrieving recorded outcomes and their possible range."
+                : "Configure the hospital scenario in Overview to see its outcomes."}
           </p>
+          {ctx.metricsError && ctx.retryMetrics ? (
+            <Button primary onClick={ctx.retryMetrics}>
+              Retry results
+            </Button>
+          ) : null}
           <Button onClick={() => ctx.setPage("overview")}>
             Open Overview <ArrowRight size={15} />
           </Button>
@@ -344,23 +383,30 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
       ) : (
         <>
           <div className="outcome-context">
-            <strong>
-              {scenario?.name ||
-                ctx.run?.scenario_name ||
-                "Completed simulation"}
-            </strong>
-            <span>
-              {dateText(measurementStart || "")} — {dateText(end || "")}{" "}
-              (exclusive end)
-            </span>
-            <span>
-              {measuredAfterStart
-                ? "Measured from update cutoff"
-                : "Full simulation horizon"}{" "}
-              · System-wide outcomes
-            </span>
+            <div>
+              <span>Scenario</span>
+              <strong>
+                {scenario?.name ||
+                  ctx.run?.scenario_name ||
+                  "Completed simulation"}
+              </strong>
+            </div>
+            <div>
+              <span>Measured period</span>
+              <strong>
+                {dateText(measurementStart || "")} — {dateText(end || "")}
+              </strong>
+            </div>
+            <div>
+              <span>Scope</span>
+              <strong>
+                {measuredAfterStart ? "From update cutoff" : "Full horizon"} ·
+                System-wide
+              </strong>
+            </div>
           </div>
-          <div className="outcome-highlights">
+
+          <section className="outcome-highlights" aria-label="Key outcomes">
             {[
               { key: "arrivals", label: "New arrivals", unit: "patients" },
               {
@@ -376,214 +422,293 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
               {
                 key: "ward_utilization",
                 label: "Ward utilization",
-                unit: "staffed place-hours",
+                unit: "of staffed capacity",
                 percent: true,
               },
             ].map((field) => (
-              <div key={field.key}>
+              <article key={field.key}>
                 <span>{field.label}</span>
                 <strong>
                   {display(scalar[field.key], "p50", field.percent)}
                 </strong>
+                <small>{field.unit} · median</small>
                 <span>
-                  {field.percent ? "% of " : ""}
-                  {field.unit} · median
-                </span>
-                <small>
                   P10–P90 {display(scalar[field.key], "p10", field.percent)}–
                   {display(scalar[field.key], "p90", field.percent)}
-                </small>
-              </div>
+                </span>
+              </article>
             ))}
-          </div>
-          <section className="outcome-chart" aria-label="Outcome forecast">
-            <div className="outcome-chart-controls">
-              <label>
-                Outcome metric
-                <select
+          </section>
+
+          <section className={`outcome-insight ${insight.tone}`}>
+            <span className="outcome-insight-icon">
+              {insight.tone === "warning" ? (
+                <Activity size={20} />
+              ) : insight.tone === "neutral" ? (
+                <Info size={20} />
+              ) : (
+                <ShieldCheck size={20} />
+              )}
+            </span>
+            <div>
+              <span>Key finding</span>
+              <h2>{insight.title}</h2>
+              <p>{insight.body}</p>
+            </div>
+            <Button onClick={() => ctx.setPage("compare")}>
+              Compare responses <ArrowRight size={14} />
+            </Button>
+          </section>
+
+          <section className="outcome-chart-layout" aria-label="Outcome charts">
+            <article className="outcome-chart outcome-primary-chart">
+              <div className="outcome-chart-heading">
+                <div>
+                  <span className="eyebrow">EXPLORE THE FORECAST</span>
+                  <h2>{definition.title}</h2>
+                </div>
+                <NativeSelect
+                  label="Outcome metric"
                   value={plot}
-                  onChange={(event) => setPlot(event.target.value as Plot)}
-                >
-                  {Object.entries(plots).map(([key, value]) => (
-                    <option key={key} value={key}>
-                      {value.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  onChange={(event) =>
+                    setPlot(event.currentTarget.value as Plot)
+                  }
+                  data={Object.entries(plots).map(([value, item]) => ({
+                    value,
+                    label: item.title,
+                  }))}
+                />
+              </div>
+              <p>
+                {definition.basis} Lines show the median across {completed}{" "}
+                runs. Calendar intervals use their actual elapsed hours.
+              </p>
+              <ForecastChart
+                rows={rows}
+                keys={definition.keys}
+                labels={definition.labels}
+                height={250}
+                selected={selectedIndex}
+                onSelect={(index) =>
+                  selectTime(rows[index].at || rows[index].start_at)
+                }
+                showBand={band}
+                bandKey={definition.keys[0]}
+                yLabel={definition.unit}
+              />
               <label className="outcome-band">
                 <input
                   type="checkbox"
                   checked={band}
                   onChange={(event) => setBand(event.target.checked)}
                 />
-                P10–P90 band for {definition.labels[0]}
+                Show P10–P90 range for {definition.labels[0]}
               </label>
+            </article>
+
+            <div className="outcome-supporting-charts">
+              <article className="outcome-chart">
+                <div className="outcome-chart-heading">
+                  <div>
+                    <span className="eyebrow">QUEUE PRESSURE</span>
+                    <h2>Peak inpatient queue</h2>
+                  </div>
+                </div>
+                <ForecastChart
+                  rows={dailyRows}
+                  keys={["peak_inpatient_queue"]}
+                  labels={["Peak inpatient queue"]}
+                  height={156}
+                  selected={outcomeRowIndex(dailyRows, selectedTime)}
+                  onSelect={(index) => selectTime(dailyRows[index].start_at)}
+                  showBand={false}
+                  yLabel="Patients"
+                />
+              </article>
+              <article className="outcome-chart">
+                <div className="outcome-chart-heading">
+                  <div>
+                    <span className="eyebrow">WARD CAPACITY</span>
+                    <h2>Occupancy and staffed beds</h2>
+                  </div>
+                </div>
+                <ForecastChart
+                  rows={dailyRows}
+                  keys={["ward_occupied", "ward_staffed"]}
+                  labels={["Ward occupied", "Ward staffed"]}
+                  height={156}
+                  selected={outcomeRowIndex(dailyRows, selectedTime)}
+                  onSelect={(index) => selectTime(dailyRows[index].start_at)}
+                  showBand={false}
+                  yLabel="Beds"
+                />
+              </article>
             </div>
-            <p>
-              {definition.basis} Lines show the median across {completed} runs.{" "}
-              Calendar intervals are limited to the measurement window; averages
-              use the actual elapsed hours within that window.
-            </p>
-            <ForecastChart
-              rows={rows}
-              keys={definition.keys}
-              labels={definition.labels}
-              height={220}
-              selected={selectedIndex}
-              onSelect={(index) =>
-                selectTime(rows[index].at || rows[index].start_at)
-              }
-              showBand={band}
-              bandKey={definition.keys[0]}
-              yLabel={definition.unit}
-            />
-            <p className="outcome-note">
-              <Info size={14} aria-hidden="true" />
-              {plot === "utilization"
-                ? "Peak utilization covers individual main-hospital clinical units."
-                : "Occupancy and staffed capacity cover clinical units with staffing-derived capacity, including activated overflow. Advertised partner capacity and nonclinical shelter places are excluded."}{" "}
-              Queues, throughput and resource deficits are system-wide.
-            </p>
           </section>
-          <section
-            className="outcome-time-controls"
-            aria-label="Outcome interval controls"
+
+          <p className="outcome-note outcome-scope-note">
+            <Info size={14} aria-hidden="true" />
+            {plot === "utilization"
+              ? "Peak utilization covers individual main-hospital clinical units."
+              : "Occupancy and staffed capacity include clinical units with staffing-derived capacity and activated overflow."}{" "}
+            Partner capacity and nonclinical shelter places are excluded.
+            Queues, throughput, and deficits are system-wide.
+          </p>
+
+          <Accordion
+            className="outcome-details"
+            variant="separated"
+            multiple
+            defaultValue={["time"]}
+            aria-label="Outcome details"
           >
-            <div className="segmented" aria-label="Outcome aggregation grain">
-              {(["day", "week", "month"] as const).map((grain) => (
-                <button
-                  type="button"
-                  key={grain}
-                  className={ctx.grain === grain ? "active" : ""}
-                  aria-pressed={ctx.grain === grain}
-                  onClick={() => ctx.setGrain(grain)}
+            <Accordion.Item value="time">
+              <Accordion.Control icon={<CalendarRange size={18} />}>
+                Choose an exact outcome interval
+              </Accordion.Control>
+              <Accordion.Panel>
+                <section
+                  className="outcome-time-controls"
+                  aria-label="Outcome interval controls"
                 >
-                  {grain[0].toUpperCase() + grain.slice(1)}
-                </button>
-              ))}
-            </div>
-            <label>
-              Selected outcome day
-              <select
-                value={selectedDailyIndex}
-                onChange={(event) =>
-                  selectTime(dailyRows[Number(event.target.value)].start_at)
-                }
-                disabled={!dailyRows.length}
-              >
-                {dailyRows.map((row, index) => (
-                  <option key={row.start_at} value={index}>
-                    Day {row.source_index + 1} ·{" "}
-                    {localDate(row.start_at, {
-                      timeZone,
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Selected outcome time
-              <select
-                value={selectedTime}
-                onChange={(event) => selectTime(event.target.value)}
-                disabled={!hourOptions.length}
-              >
-                {hourOptions.map((at) => (
-                  <option key={at} value={at}>
-                    {localDate(at, {
-                      timeZone,
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      timeZoneName: "short",
-                    })}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <p>
-              Selection is shared with Summary, Replay and patient/resource
-              inspection. Only times within this result’s measurement window are
-              offered.
-            </p>
-          </section>
-          <section
-            className="outcome-scalars"
-            aria-labelledby="outcome-scalars-title"
-          >
-            <div className="outcome-scalars-heading">
-              <Activity size={18} aria-hidden="true" />
-              <div>
-                <h2 id="outcome-scalars-title">
-                  Measurement-interval outcomes
-                </h2>
-                <p>
-                  Per-run metrics summarized across the ensemble. Changing the
-                  chart grain or selected day does not change these totals.
-                </p>
-              </div>
-            </div>
-            <div className="table-scroll">
-              <table className="data-table">
-                <caption>
-                  Median and simulation range across {completed} completed runs.
-                  P10 and P90 are simulation percentiles, not confidence bounds.
-                </caption>
-                <thead>
-                  <tr>
-                    <th>Metric</th>
-                    <th>Unit</th>
-                    <th>P10</th>
-                    <th>Median · P50</th>
-                    <th>P90</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {fields.map((field) => (
-                    <tr key={field.key}>
-                      <th scope="row">{field.label}</th>
-                      <td>{field.unit}</td>
-                      {(["p10", "p50", "p90"] as const).map((stat) => (
-                        <td key={stat}>
-                          {display(
-                            scalar[field.key],
-                            stat,
-                            "percent" in field && field.percent === true,
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {measuredAfterStart && scalar.expected_arrivals ? (
-              <p className="outcome-note">
-                Input context outside the measurement totals: expected exogenous
-                arrivals over the full simulation horizon (
-                {dateText(metrics.start_at)} — {dateText(end || "")}) are{" "}
-                {display(scalar.expected_arrivals, "p50")} patients, median.
-                This expectation includes time before the update cutoff.
-              </p>
-            ) : null}
-            <p className="outcome-note">
-              — means unavailable or undefined; zero remains 0. First-shortage
-              and completed-wait percentiles include only runs where that
-              outcome was observed. Completed admission waits count only waiting
-              after the measurement start. Utilization is occupied place-hours
-              divided by staffed place-hours, displayed as a percentage; zero
-              staffed hours is undefined.
-            </p>
-            <p className="outcome-note">
-              These charts summarize multiple simulations. Patients &amp; units,
-              Resources, and Replay display one selected trajectory; its patient
-              counts need not equal the ensemble median.
-            </p>
-          </section>
+                  <div
+                    className="segmented"
+                    aria-label="Outcome aggregation grain"
+                  >
+                    {(["day", "week", "month"] as const).map((grain) => (
+                      <button
+                        type="button"
+                        key={grain}
+                        className={ctx.grain === grain ? "active" : ""}
+                        aria-pressed={ctx.grain === grain}
+                        onClick={() => ctx.setGrain(grain)}
+                      >
+                        {grain[0].toUpperCase() + grain.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                  <NativeSelect
+                    label="Selected outcome day"
+                    value={String(selectedDailyIndex)}
+                    onChange={(event) =>
+                      selectTime(
+                        dailyRows[Number(event.currentTarget.value)].start_at,
+                      )
+                    }
+                    disabled={!dailyRows.length}
+                    data={dailyRows.map((row, index) => ({
+                      value: String(index),
+                      label: `Day ${row.source_index + 1} · ${localDate(
+                        row.start_at,
+                        {
+                          timeZone,
+                          month: "short",
+                          day: "numeric",
+                        },
+                      )}`,
+                    }))}
+                  />
+                  <NativeSelect
+                    label="Selected outcome time"
+                    value={selectedTime}
+                    onChange={(event) => selectTime(event.currentTarget.value)}
+                    disabled={!hourOptions.length}
+                    data={hourOptions.map((at) => ({
+                      value: at,
+                      label: localDate(at, {
+                        timeZone,
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZoneName: "short",
+                      }),
+                    }))}
+                  />
+                  <p>
+                    This selection is shared with Summary, Replay, and patient
+                    and resource inspection. Only times in this result are
+                    offered.
+                  </p>
+                </section>
+              </Accordion.Panel>
+            </Accordion.Item>
+
+            <Accordion.Item value="metrics">
+              <Accordion.Control icon={<ClipboardList size={18} />}>
+                View all outcome metrics and uncertainty
+              </Accordion.Control>
+              <Accordion.Panel>
+                <section
+                  className="outcome-scalars"
+                  aria-labelledby="outcome-scalars-title"
+                >
+                  <div className="outcome-scalars-heading">
+                    <Activity size={18} aria-hidden="true" />
+                    <div>
+                      <h2 id="outcome-scalars-title">
+                        Measurement-interval outcomes
+                      </h2>
+                      <p>
+                        Per-run metrics summarized across the ensemble. Chart
+                        grain and selected day do not change these totals.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="table-scroll">
+                    <table className="data-table">
+                      <caption>
+                        Median and simulation range across {completed} completed
+                        runs. P10 and P90 are percentiles, not confidence
+                        bounds. First-shortage percentiles use observed runs
+                        only.
+                      </caption>
+                      <thead>
+                        <tr>
+                          <th>Metric</th>
+                          <th>Unit</th>
+                          <th>P10</th>
+                          <th>Median · P50</th>
+                          <th>P90</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {fields.map((field) => (
+                          <tr key={field.key}>
+                            <th scope="row">{field.label}</th>
+                            <td>{field.unit}</td>
+                            {(["p10", "p50", "p90"] as const).map((stat) => (
+                              <td key={stat}>
+                                {display(
+                                  scalar[field.key],
+                                  stat,
+                                  "percent" in field && field.percent === true,
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {measuredAfterStart && scalar.expected_arrivals ? (
+                    <p className="outcome-note">
+                      Expected exogenous arrivals over the full simulation
+                      horizon ({dateText(metrics.start_at)} —{" "}
+                      {dateText(end || "")}) are{" "}
+                      {display(scalar.expected_arrivals, "p50")} patients,
+                      median. This includes time before the update cutoff.
+                    </p>
+                  ) : null}
+                  <p className="outcome-note">
+                    — means unavailable or undefined; zero remains 0.
+                    First-shortage and completed-wait percentiles include only
+                    runs where that outcome was observed.
+                  </p>
+                </section>
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
         </>
       )}
-    </div>
+    </section>
   );
 }

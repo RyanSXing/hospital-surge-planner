@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { NativeSelect } from "@mantine/core";
 import type { Dataset, Entity } from "../types";
 import { api, atDay, fmt } from "../api";
 import { Button, ErrorBox, Modal } from "../components/ui";
@@ -76,6 +77,7 @@ export default function ScenarioTracks({
   request,
   timeZone = dataset.timezone,
   onChange,
+  onRequestHandled,
 }: {
   dataset: Dataset;
   draft: PlanDraft;
@@ -85,6 +87,7 @@ export default function ScenarioTracks({
   request: PlanEditorRequest | null;
   timeZone?: string;
   onChange: (next: PlanDraft) => void;
+  onRequestHandled?: () => void;
 }) {
   const [editing, setEditing] = useState<{
     family: PlanFamily;
@@ -92,7 +95,10 @@ export default function ScenarioTracks({
     value?: Entity;
   } | null>(null);
   useEffect(() => {
-    if (request) setEditing({ family: request.family, selection: null });
+    if (request) {
+      setEditing({ family: request.family, selection: null });
+      onRequestHandled?.();
+    }
   }, [request]);
   const rows = (Object.keys(draft) as PlanCollection[]).flatMap((collection) =>
     draft[collection].map((value, index) => ({
@@ -724,7 +730,8 @@ function PlanForm({
   const unitField = (
     <label>
       Target unit
-      <select
+      <NativeSelect
+        aria-label="Target unit"
         value={unit}
         onChange={(e) => {
           setUnit(e.target.value);
@@ -746,7 +753,7 @@ function PlanForm({
               {u.name} · {u.unit_id}
             </option>
           ))}
-      </select>
+      </NativeSelect>
     </label>
   );
   const mixFields = (
@@ -757,7 +764,8 @@ function PlanForm({
       {family === "cohort" && (
         <label>
           Mix basis
-          <select
+          <NativeSelect
+            aria-label="Mix basis"
             value={mixKind}
             onChange={(e) => {
               setMixKind(e.target.value as typeof mixKind);
@@ -772,7 +780,7 @@ function PlanForm({
                 Imported mixed care/profile/cohort keys
               </option>
             )}
-          </select>
+          </NativeSelect>
         </label>
       )}
       {Object.keys(mix).map((key) => (
@@ -816,7 +824,11 @@ function PlanForm({
           {family === "capacity" && (
             <label>
               Capacity driver
-              <select value={kind} onChange={(e) => changeKind(e.target.value)}>
+              <NativeSelect
+                aria-label="Capacity driver"
+                value={kind}
+                onChange={(e) => changeKind(e.target.value)}
+              >
                 <option value="capacity_change">Enabled physical slots</option>
                 <option value="physical_overflow">
                   Install planned physical overflow
@@ -827,13 +839,17 @@ function PlanForm({
                 <option value="advertised_capacity_change">
                   Advertised partner staffing
                 </option>
-              </select>
+              </NativeSelect>
             </label>
           )}
           {family === "sites" && (
             <label>
               Intervention template
-              <select value={kind} onChange={(e) => changeKind(e.target.value)}>
+              <NativeSelect
+                aria-label="Intervention template"
+                value={kind}
+                onChange={(e) => changeKind(e.target.value)}
+              >
                 <option value="clinic">Activate clinic</option>
                 <option value="staffed_overflow">
                   Activate staffed overflow
@@ -842,7 +858,7 @@ function PlanForm({
                 <option value="route_change">
                   Route travel / availability
                 </option>
-              </select>
+              </NativeSelect>
             </label>
           )}
           {timeFields}
@@ -853,7 +869,8 @@ function PlanForm({
             <>
               <label>
                 Staff role
-                <select
+                <NativeSelect
+                  aria-label="Staff role"
                   value={role}
                   onChange={(e) => {
                     setRole(e.target.value);
@@ -863,11 +880,12 @@ function PlanForm({
                   <option value="rn">Registered nurse</option>
                   <option value="provider">Provider</option>
                   <option value="support">Support</option>
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Availability input
-                <select
+                <NativeSelect
+                  aria-label="Availability input"
                   value={staffMode}
                   onChange={(e) => setStaffMode(e.target.value)}
                 >
@@ -881,7 +899,7 @@ function PlanForm({
                   <option value="available">
                     Available headcount in a declared shift
                   </option>
-                </select>
+                </NativeSelect>
               </label>
               {scheduleLoading ? (
                 <p role="status">Loading the declared shift roster…</p>
@@ -892,7 +910,8 @@ function PlanForm({
                 <>
                   <label>
                     Declared shift
-                    <select
+                    <NativeSelect
+                      aria-label="Declared shift"
                       value={shift}
                       onChange={(e) => setShift(e.target.value)}
                     >
@@ -917,7 +936,7 @@ function PlanForm({
                           }).format(new Date(s.end))}
                         </option>
                       ))}
-                    </select>
+                    </NativeSelect>
                   </label>
                   <label>
                     {staffMode === "percentage"
@@ -1014,7 +1033,11 @@ function PlanForm({
             <>
               <label>
                 Equipment pool
-                <select value={pool} onChange={(e) => setPool(e.target.value)}>
+                <NativeSelect
+                  aria-label="Equipment pool"
+                  value={pool}
+                  onChange={(e) => setPool(e.target.value)}
+                >
                   {dataset.equipment_pools.map((p) => (
                     <option
                       key={p.equipment_pool_id}
@@ -1024,11 +1047,12 @@ function PlanForm({
                       {p.portable ? "portable" : "fixed"}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Equipment operation
-                <select
+                <NativeSelect
+                  aria-label="Equipment operation"
                   value={operation}
                   onChange={(e) => setOperation(e.target.value)}
                 >
@@ -1036,7 +1060,7 @@ function PlanForm({
                   <option value="repair">Return to service</option>
                   <option value="add">Add units to this pool</option>
                   <option value="decommission">Decommission units</option>
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Equipment quantity
@@ -1068,7 +1092,8 @@ function PlanForm({
             <>
               <label>
                 Incident or cohort entry stream
-                <select
+                <NativeSelect
+                  aria-label="Incident or cohort entry stream"
                   value={stream}
                   onChange={(e) => {
                     setStream(e.target.value);
@@ -1081,7 +1106,7 @@ function PlanForm({
                       {s.entry_stream_id} · {s.entry_type}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
               {family === "incident" && (
                 <>
@@ -1117,7 +1142,8 @@ function PlanForm({
             <>
               <label>
                 Directed route
-                <select
+                <NativeSelect
+                  aria-label="Directed route"
                   value={route}
                   onChange={(e) => {
                     setRoute(e.target.value);
@@ -1133,7 +1159,7 @@ function PlanForm({
                       {r.route_id} · {r.from_facility_id} → {r.to_facility_id}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Travel minutes
@@ -1158,7 +1184,8 @@ function PlanForm({
             <>
               <label>
                 Transfer care level
-                <select
+                <NativeSelect
+                  aria-label="Transfer care level"
                   value={care}
                   onChange={(e) => {
                     setCare(e.target.value);
@@ -1173,7 +1200,7 @@ function PlanForm({
                 >
                   <option value="ward">Ward</option>
                   <option value="icu">ICU</option>
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Maximum transferred patients
@@ -1239,7 +1266,8 @@ function PlanForm({
                 <>
                   <label>
                     Staff source
-                    <select
+                    <NativeSelect
+                      aria-label="Staff source"
                       value={staffSource}
                       onChange={(e) => {
                         setStaffSource(e.target.value);
@@ -1250,7 +1278,7 @@ function PlanForm({
                         Rotating qualified reserve pool
                       </option>
                       <option value="named">Exact reserve staff IDs</option>
-                    </select>
+                    </NativeSelect>
                   </label>
                   {staffSource === "named" ? (
                     <fieldset className="staff-picks">

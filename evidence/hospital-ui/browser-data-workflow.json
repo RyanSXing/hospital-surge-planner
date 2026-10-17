@@ -1,0 +1,10 @@
+{
+  "original_dataset_id": "demo-v1-1-0-planning_baseline-41021-365",
+  "edited_dataset_id": "dataset_c0a9e58808074e9eba75",
+  "imported_dataset_id": "dataset_dbe0c794ad254d81a299",
+  "field_mapping": {
+    "site_key": "facility_id",
+    "unit_key": "unit_id",
+    "operator_note": "explicitly ignored"
+  }
+}

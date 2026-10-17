@@ -1,0 +1,10 @@
+{
+  "project": "mobile",
+  "original_dataset_id": "dataset_5fba66ed24e341039e1f",
+  "draft_id": "draft_ee79e4978f1e41079101",
+  "committed_dataset_id": "dataset_c4a4c3fec9b145d78956",
+  "ed_arrivals_per_local_day": 120,
+  "single_authoritative_edit": true,
+  "baseline_read_only": true,
+  "original_unchanged": true
+}

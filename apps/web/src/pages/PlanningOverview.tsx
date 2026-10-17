@@ -78,24 +78,12 @@ export default function PlanningOverview({
       })
     : "Source timestamp unavailable";
   const run = ctx.run;
-  const runStatus = run?.status?.replaceAll("_", " ").toLowerCase();
-  const running =
-    run &&
-    [
-      "VALIDATING",
-      "QUEUED",
-      "RUNNING",
-      "AGGREGATING",
-      "CANCEL_REQUESTED",
-    ].includes(run.status);
 
   return (
     <div className="planning-overview-page">
       <header className="page-heading planning-overview-heading">
         <div>
-          <div className="eyebrow">OVERVIEW · BASELINE &amp; SIMULATION</div>
           <h1>Hospital overview</h1>
-          <p>Review the starting hospital, then configure your simulation.</p>
         </div>
         <div className="heading-actions">
           <Button onClick={onInspectBaseline} disabled={!dataset}>
@@ -120,12 +108,13 @@ export default function PlanningOverview({
             <Hospital size={22} aria-hidden="true" />
             <div>
               <h2 id="planning-baseline-title">
-                {hospital ? nameOf(hospital) : "Hospital baseline"}
+                {hospital
+                  ? nameOf(hospital).replace(/^Demo /, "")
+                  : "Hospital baseline"}
               </h2>
               <span>
                 {fmt(census.length)} modeled patients
                 {background ? ` · ${fmt(background)} background occupants` : ""}
-                {" · "}Source census
               </span>
             </div>
           </div>
@@ -140,31 +129,73 @@ export default function PlanningOverview({
         </div>
 
         <div className="planning-baseline-metrics">
-          {[
-            { label: "Ward", value: ward, unit: "beds" },
-            { label: "ICU", value: icu, unit: "beds" },
-            { label: "Emergency department", value: ed, unit: "places" },
-          ].map(({ label, value, unit }) => (
-            <div className="planning-baseline-metric" key={label}>
-              <span>{label} occupied / staffed</span>
-              <strong>
-                {fmt(value.occupied)} <span>/ {fmt(value.staffed)}</span>
-                <small>{unit}</small>
+          <div
+            className="baseline-capacity-chart"
+            aria-label="Hospital baseline occupancy"
+          >
+            <div className="baseline-chart-heading">
+              <h3>Capacity at a glance</h3>
+              <div className="baseline-chart-legend">
+                <span>
+                  <i />
+                  Occupied
+                </span>
+                <span>
+                  <i />
+                  Staffed capacity
+                </span>
+              </div>
+            </div>
+            {[
+              { label: "Ward", value: ward, unit: "beds" },
+              { label: "ICU", value: icu, unit: "beds" },
+              { label: "Emergency department", value: ed, unit: "places" },
+            ].map(({ label, value, unit }) => (
+              <div className="baseline-capacity-row" key={label}>
+                <div className="baseline-capacity-label">
+                  <strong>{label}</strong>
+                  <span>
+                    {fmt(value.occupied)} / {fmt(value.staffed)}{" "}
+                    <small>{unit}</small>
+                  </span>
+                </div>
+                <div
+                  className="baseline-capacity-bar"
+                  role="meter"
+                  aria-label={`${label} occupied places`}
+                  aria-valuemin={0}
+                  aria-valuemax={Math.max(1, value.staffed, value.occupied)}
+                  aria-valuenow={value.occupied}
+                  aria-valuetext={`${fmt(value.occupied)} occupied of ${fmt(value.staffed)} staffed ${unit}`}
+                >
+                  <span
+                    style={{
+                      width: `${value.staffed > 0 ? Math.min(100, (100 * value.occupied) / value.staffed) : value.occupied ? 100 : 0}%`,
+                    }}
+                    className={
+                      value.occupied > value.staffed
+                        ? "capacity-above-staffing"
+                        : undefined
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="baseline-queue-summary">
+            <div className="planning-baseline-metric">
+              <span>Patients awaiting a bed</span>
+              <strong className={queue.total ? "baseline-pressure" : ""}>
+                {fmt(queue.total)}
               </strong>
               <span>
-                {fmt(value.physical)} installed · {fmt(value.enabled)} enabled
+                {fmt(queue.ward)} ward · {fmt(queue.icu)} ICU
               </span>
             </div>
-          ))}
-          <div className="planning-baseline-metric">
-            <span>Awaiting inpatient placement</span>
-            <strong className={queue.total ? "amber" : ""}>
-              {fmt(queue.total)} <small>patients</small>
-            </strong>
-            <span>
-              {fmt(queue.ward)} ward · {fmt(queue.icu)} ICU · {fmt(queue.ed)}{" "}
-              awaiting ED assessment
-            </span>
+            <div className="baseline-assessment">
+              <span>Awaiting ED assessment</span>
+              <strong>{fmt(queue.ed)}</strong>
+            </div>
           </div>
         </div>
 
@@ -216,36 +247,8 @@ export default function PlanningOverview({
               </table>
             </div>
           </details>
-          <p>
-            {dataset?.name ||
-              dataset?.label ||
-              dataset?.fixture?.replaceAll("_", " ") ||
-              "Planning dataset"}
-            {" · "}Baseline stays fixed while you explore simulation results.
-          </p>
         </div>
       </section>
-
-      {run ? (
-        <div className="planning-overview-result" role="status">
-          <span>
-            Selected simulation:{" "}
-            <strong>
-              {run.scenario_name || ctx.scenario?.name || "Planning scenario"}
-            </strong>
-            {" · "}
-            {runStatus}
-            {running
-              ? ` · ${fmt(run.replications_completed)} of ${fmt(run.replications_requested)} runs completed`
-              : run.status === "SUCCEEDED"
-                ? ` · ${fmt(run.replications_completed)} completed runs`
-                : ""}
-          </span>
-          <span>
-            Configure inputs below. Explore completed results in Analysis.
-          </span>
-        </div>
-      ) : null}
 
       <section
         className="planning-overview-configuration"

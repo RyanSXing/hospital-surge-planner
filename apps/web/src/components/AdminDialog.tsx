@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Plus, Save, ShieldCheck, Users } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
@@ -291,7 +292,7 @@ export default function AdminDialog({
                             {member.environment_managed ? (
                               <Badge>Administrator · deployment</Badge>
                             ) : (
-                              <select
+                              <NativeSelect
                                 aria-label={`Role for ${member.name}`}
                                 value={member.role}
                                 disabled={saving}
@@ -302,7 +303,7 @@ export default function AdminDialog({
                                 <option value="viewer">Viewer</option>
                                 <option value="planner">Planner</option>
                                 <option value="admin">Administrator</option>
-                              </select>
+                              </NativeSelect>
                             )}
                           </td>
                           <td>
@@ -366,7 +367,7 @@ export default function AdminDialog({
                     </label>
                     <label>
                       Role
-                      <select
+                      <NativeSelect aria-label="Role"
                         value={role}
                         onChange={(e) =>
                           setRole(
@@ -383,7 +384,7 @@ export default function AdminDialog({
                         <option value="admin">
                           Administrator · manage access
                         </option>
-                      </select>
+                      </NativeSelect>
                     </label>
                     <label>
                       Initial password

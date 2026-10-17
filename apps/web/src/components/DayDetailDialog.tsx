@@ -39,6 +39,14 @@ export default function DayDetailDialog({
   ctx: PlanningContext;
   onClose: () => void;
 }) {
+  const timeZone =
+    (ctx.resultScenario || ctx.scenario)?.timezone ||
+    ctx.dataset?.timezone ||
+    "America/Chicago";
+  const dateLabel = (
+    at: string,
+    options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" },
+  ) => localDate(at, { ...options, timeZone });
   const day = ctx.metrics?.daily?.[ctx.selectedDay],
     rep = ctx.activeReplicationId || ctx.run?.selected_replication_id;
   const [state, setState] = useState<Entity | null>(null),
@@ -95,7 +103,7 @@ export default function DayDetailDialog({
         blockers.set(reason, (blockers.get(reason) || 0) + 1);
   return (
     <Modal
-      title={`Day ${ctx.selectedDay + 1} · ${localDate(day?.start_at || ctx.selectedTime, { month: "long", day: "numeric", year: "numeric" })}`}
+      title={`Day ${ctx.selectedDay + 1} · ${dateLabel(day?.start_at || ctx.selectedTime, { month: "long", day: "numeric", year: "numeric" })}`}
       wide
       onClose={onClose}
     >
@@ -112,13 +120,13 @@ export default function DayDetailDialog({
             </div>
             <div className="spread small-copy muted">
               <span>
-                {localDate(day.start_at, {
+                {dateLabel(day.start_at, {
                   hour: "2-digit",
                   minute: "2-digit",
                   timeZoneName: "short",
                 })}{" "}
                 to{" "}
-                {localDate(day.end_at, {
+                {dateLabel(day.end_at, {
                   month: "short",
                   day: "numeric",
                   hour: "2-digit",
@@ -184,7 +192,7 @@ export default function DayDetailDialog({
                 Selected instant · example run {selectedRunNumber(ctx) || ""}
               </h3>
               <Badge>
-                {localDate(ctx.selectedTime, {
+                {dateLabel(ctx.selectedTime, {
                   month: "short",
                   day: "numeric",
                   hour: "2-digit",
@@ -285,7 +293,7 @@ export default function DayDetailDialog({
                   }}
                 >
                   <span>
-                    {localDate(e.occurred_at, {
+                    {dateLabel(e.occurred_at, {
                       hour: "2-digit",
                       minute: "2-digit",
                       timeZoneName: "short",

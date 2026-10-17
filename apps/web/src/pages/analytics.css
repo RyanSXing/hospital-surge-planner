@@ -1,71 +1,80 @@
+.analytics-page,
+.analytics-content {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
 .analytics-page {
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  min-height: 100%;
+  overflow: hidden;
+  background: var(--surface-app, #f5f7fa);
 }
+
 .analytics-sections {
-  overflow-x: auto;
-  scrollbar-width: thin;
   display: flex;
   flex: 0 0 auto;
   gap: 4px;
-  padding: 0 24px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
+  min-height: 48px;
+  padding: 8px 24px 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border, #dfe4ea);
+  background: var(--surface, #fff);
 }
+
 .analytics-sections button {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 10px 14px;
+  gap: 7px;
+  flex: 0 0 auto;
+  min-height: 39px;
+  padding: 8px 13px;
+  border: 0;
   border-bottom: 2px solid transparent;
-  color: var(--muted);
+  border-radius: 7px 7px 0 0;
+  color: var(--muted, #667085);
+  font: inherit;
   font-size: 13px;
   font-weight: 600;
-  white-space: nowrap;
 }
-.analytics-sections button[aria-current="page"] {
-  border-bottom-color: var(--cyan);
-  color: #e2edf4;
-}
+
 .analytics-sections button:hover {
-  color: #e2edf4;
-  background: #173443;
+  background: #f5f7fa;
+  color: var(--text, #172033);
 }
-.analytics-sections button:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: -4px;
+
+.analytics-sections button[aria-current="page"] {
+  border-bottom-color: var(--accent, #2864dc);
+  background: #eef4ff;
+  color: var(--accent, #2864dc);
 }
+
 .analytics-content {
-  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
+
 .analytics-loading {
-  padding: 28px 24px;
-  color: var(--muted);
-  font-size: 14px;
+  display: grid;
+  min-height: 240px;
+  place-items: center;
+  color: var(--muted, #667085);
+  font-size: 13px;
 }
-@media (min-width: 1024px) {
-  .analytics-page {
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-  }
-  .analytics-content {
-    flex: 1 1 0;
-    min-height: 0;
-  }
-}
+
 @media (max-width: 767px) {
-  .analytics-sections {
-    gap: 0;
-    padding: 0 12px;
+  .analytics-page,
+  .analytics-content {
+    height: auto;
+    min-height: 100%;
   }
-  .analytics-sections button {
-    flex: 0 0 auto;
-    min-width: 90px;
-    padding-inline: 10px;
+  .analytics-page,
+  .analytics-content {
+    overflow: visible;
+  }
+  .analytics-sections {
+    padding-inline: 12px;
+    scrollbar-width: thin;
   }
 }

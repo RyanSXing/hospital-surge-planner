@@ -1,0 +1,7 @@
+{
+  "scenario_id": "scenario_68a56fe8a8414fc9bb9e",
+  "over_failure_rejected": true,
+  "over_repair_rejected": true,
+  "over_retirement_rejected": true,
+  "same_time_prior_failure_enables_exact_repair": true
+}

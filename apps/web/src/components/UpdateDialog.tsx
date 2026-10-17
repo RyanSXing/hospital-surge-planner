@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, History, Save } from "lucide-react";
 import type { Dataset, Entity, PlanningContext, UpdateTarget } from "../types";
@@ -689,7 +690,7 @@ export default function UpdateDialog({
             >
               <label>
                 Starting state
-                <select
+                <NativeSelect aria-label="Starting state"
                   value={sourceMode}
                   onChange={(e) => changeSource(e.target.value as SourceMode)}
                   disabled={!!savedEvent}
@@ -703,12 +704,12 @@ export default function UpdateDialog({
                   <option value="observed_reset">
                     Complete census/resource snapshot → observed-state reset
                   </option>
-                </select>
+                </NativeSelect>
               </label>
               {sourceMode === "selected_replication" ? (
                 <label>
                   Parent simulation
-                  <select
+                  <NativeSelect
                     aria-label="Parent simulation"
                     value={selectedReplica}
                     onChange={(e) => setSelectedReplica(e.target.value)}
@@ -723,7 +724,7 @@ export default function UpdateDialog({
                           : ""}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
                   <small className="muted">
                     Every future shares this exact inherited history and samples
                     independent uncertainty after the cutoff.
@@ -738,7 +739,7 @@ export default function UpdateDialog({
                 <>
                   <label>
                     Complete replacement snapshot
-                    <select
+                    <NativeSelect aria-label="Complete replacement snapshot"
                       value={observedId}
                       onChange={(e) => setObservedId(e.target.value)}
                       disabled={!!savedEvent}
@@ -751,7 +752,7 @@ export default function UpdateDialog({
                           {d.name || d.label || d.fixture} · {d.snapshot_at}
                         </option>
                       ))}
-                    </select>
+                    </NativeSelect>
                   </label>
                   <p className="muted">
                     Import a complete snapshot through Data & setup if the
@@ -879,7 +880,7 @@ export default function UpdateDialog({
                 <>
                   <label>
                     Change to record
-                    <select
+                    <NativeSelect aria-label="Change to record"
                       value={type}
                       onChange={(e) => {
                         setType(e.target.value as UpdateCreate["type"]);
@@ -905,12 +906,12 @@ export default function UpdateDialog({
                           {label}
                         </option>
                       ))}
-                    </select>
+                    </NativeSelect>
                   </label>
                   {["arrival_batch", "site_ready"].includes(type) ? (
                     <label>
                       Facility
-                      <select
+                      <NativeSelect aria-label="Facility"
                         value={facility}
                         onChange={(e) => {
                           const id = e.target.value;
@@ -935,7 +936,7 @@ export default function UpdateDialog({
                             {f.name}
                           </option>
                         ))}
-                      </select>
+                      </NativeSelect>
                     </label>
                   ) : null}
                   {[
@@ -945,7 +946,7 @@ export default function UpdateDialog({
                   ].includes(type) ? (
                     <label>
                       Unit
-                      <select
+                      <NativeSelect aria-label="Unit"
                         value={unit}
                         onChange={(e) => setUnit(e.target.value)}
                       >
@@ -960,14 +961,14 @@ export default function UpdateDialog({
                               {u.name} · {u.facility_id}
                             </option>
                           ))}
-                      </select>
+                      </NativeSelect>
                     </label>
                   ) : null}
                   {type === "arrival_batch" ? (
                     <>
                       <label>
                         Entry pathway
-                        <select
+                        <NativeSelect aria-label="Entry pathway"
                           value={entry}
                           onChange={(e) => {
                             const id = e.target.value;
@@ -1000,7 +1001,7 @@ export default function UpdateDialog({
                               </option>
                             ),
                           )}
-                        </select>
+                        </NativeSelect>
                       </label>
                       <div
                         style={{
@@ -1083,7 +1084,7 @@ export default function UpdateDialog({
                   ) : type === "patient_departure" ? (
                     <label>
                       Patient
-                      <select
+                      <NativeSelect aria-label="Patient"
                         value={person}
                         onChange={(e) => setPerson(e.target.value)}
                       >
@@ -1095,7 +1096,7 @@ export default function UpdateDialog({
                             {patientId(p)} · {p.unit_id || p.state}
                           </option>
                         ))}
-                      </select>
+                      </NativeSelect>
                     </label>
                   ) : (
                     <label>
@@ -1135,7 +1136,7 @@ export default function UpdateDialog({
                     <>
                       <label>
                         Equipment pool
-                        <select
+                        <NativeSelect aria-label="Equipment pool"
                           value={equipment}
                           onChange={(e) => setEquipment(e.target.value)}
                         >
@@ -1147,11 +1148,11 @@ export default function UpdateDialog({
                               {p.equipment_pool_id} · {p.capability_code}
                             </option>
                           ))}
-                        </select>
+                        </NativeSelect>
                       </label>
                       <label>
                         Operation
-                        <select
+                        <NativeSelect aria-label="Operation"
                           value={operation}
                           onChange={(e) => setOperation(e.target.value)}
                         >
@@ -1163,7 +1164,7 @@ export default function UpdateDialog({
                           <option value="repair">
                             Repair failed equipment
                           </option>
-                        </select>
+                        </NativeSelect>
                       </label>
                     </>
                   ) : null}
@@ -1171,7 +1172,7 @@ export default function UpdateDialog({
                     <>
                       <label>
                         Directed route
-                        <select
+                        <NativeSelect aria-label="Directed route"
                           value={route}
                           onChange={(e) => setRoute(e.target.value)}
                         >
@@ -1182,7 +1183,7 @@ export default function UpdateDialog({
                               {r.route_id}
                             </option>
                           ))}
-                        </select>
+                        </NativeSelect>
                       </label>
                       <label style={{ display: "flex", gap: 8 }}>
                         <input
@@ -1281,7 +1282,7 @@ export default function UpdateDialog({
               {enqueue ? (
                 <label>
                   Future repetitions
-                  <select
+                  <NativeSelect aria-label="Future repetitions"
                     value={
                       sourceMode === "paired_ensemble"
                         ? ctx.run?.replications_requested || 10
@@ -1311,7 +1312,7 @@ export default function UpdateDialog({
                               : ""}
                         </option>
                       ))}
-                  </select>
+                  </NativeSelect>
                 </label>
               ) : null}
             </fieldset>

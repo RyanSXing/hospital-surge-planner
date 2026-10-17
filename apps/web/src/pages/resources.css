@@ -155,18 +155,31 @@
     margin: 8px 0 0;
     line-height: 1.35;
   }
-  .resources-page.planning-panel-page .candidate-dependency-overlay .dependency-nodes {
+  .resources-page.planning-panel-page
+    .candidate-dependency-overlay
+    .dependency-nodes {
     gap: 6px;
   }
-  .resources-page.planning-panel-page .candidate-dependency-overlay .dependency-nodes button {
+  .resources-page.planning-panel-page
+    .candidate-dependency-overlay
+    .dependency-nodes
+    button {
     min-height: 72px;
     padding: 7px 5px;
   }
-  .resources-page.planning-panel-page .candidate-dependency-overlay .dependency-nodes button svg {
+  .resources-page.planning-panel-page
+    .candidate-dependency-overlay
+    .dependency-nodes
+    button
+    svg {
     width: 16px;
     height: 16px;
   }
-  .resources-page.planning-panel-page .candidate-dependency-overlay .dependency-nodes button strong {
+  .resources-page.planning-panel-page
+    .candidate-dependency-overlay
+    .dependency-nodes
+    button
+    strong {
     font-size: 14px;
   }
 }

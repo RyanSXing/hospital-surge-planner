@@ -1,3 +1,4 @@
+import { expandScenarioDetails } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import { api, open, record, scenario } from "./helpers";
 
@@ -7,6 +8,7 @@ test("planned equipment quantities use prior exact inventory and reject saturati
   test.skip(info.project.name !== "desktop");
   const context = await scenario(page, "exact equipment quantities");
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   const add = async () => {
     await page
       .getByRole("button", { name: "Add equipment availability", exact: true })
@@ -108,6 +110,7 @@ test("inherited observed equipment failures bound future planned repairs and fai
     { run: false },
   );
   await open(page, branch.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await page
     .getByRole("button", { name: "Add equipment availability", exact: true })
     .click();

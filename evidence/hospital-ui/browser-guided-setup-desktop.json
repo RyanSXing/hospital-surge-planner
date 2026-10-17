@@ -1,0 +1,10 @@
+{
+  "scenario_id": "scenario_d5ba603ae6ba4243bbe7",
+  "run_id": "run_465fc8eeb30648788b01",
+  "replications": 2,
+  "baseline_height": 273.15625,
+  "advanced_draft_preserved": true,
+  "resource_request_consumed_once": true,
+  "exact_saved_conditions_frozen": true,
+  "page_errors": []
+}

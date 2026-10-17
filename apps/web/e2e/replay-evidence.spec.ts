@@ -54,8 +54,8 @@ test("replay exposes complete filtered events, patient history and recorded reso
     const geometry = await page
       .locator(".replay-canvas")
       .evaluate((element) => element.getBoundingClientRect().toJSON());
-    expect(geometry.width).toBeGreaterThanOrEqual(1000);
-    expect(geometry.height).toBeCloseTo(620, 0);
+    expect(geometry.width).toBeGreaterThanOrEqual(900);
+    expect(geometry.height / geometry.width).toBeCloseTo(620 / 1000, 2);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -63,6 +63,10 @@ test("replay exposes complete filtered events, patient history and recorded reso
     ).toBeTruthy();
     await capture(page, "replay-mobile-readable-zones", info);
   }
+  await page
+    .getByRole("button", { name: "Inspect replay", exact: true })
+    .click();
+  await page.getByRole("tab", { name: "Events", exact: true }).click();
   const feed = page.locator(".event-feed");
   const events = await api(
     page.request,
@@ -105,6 +109,7 @@ test("replay exposes complete filtered events, patient history and recorded reso
     (value: any) => value.state === "ed_assessment",
   );
   expect(patient).toBeTruthy();
+  await page.getByRole("tab", { name: "Capacity", exact: true }).click();
   const resources = page.locator(".replay-recorded-capacity");
   await resources
     .getByLabel("Replay resource unit")
@@ -130,6 +135,7 @@ test("replay exposes complete filtered events, patient history and recorded reso
     page.request,
     `/runs/${rep}/patients/${patient.patient_id}?at=${encodeURIComponent(at)}`,
   );
+  await page.getByRole("tab", { name: "Patient", exact: true }).click();
   const history = page.locator(".replay-patient-history");
   await expect(history.locator("summary")).toHaveText(
     `${detail.events.length} recorded patient events`,
@@ -154,6 +160,10 @@ test("replay exposes complete filtered events, patient history and recorded reso
     `Event ${next.sequence_number}`,
   );
 
+  await page.keyboard.press("Escape");
+  await page
+    .getByRole("button", { name: "Advanced replay tools", exact: true })
+    .click();
   const bands = page.getByRole("region", {
     name: "Recorded replay timeline annotations",
   });
@@ -192,58 +202,28 @@ test("replay exposes complete filtered events, patient history and recorded reso
   await page.locator("main").evaluate((node) => {
     node.scrollTop = 0;
   });
-  await page.locator(".replay-inspector").evaluate((node) => {
-    node.scrollTop = 0;
-  });
   if (info.project.name === "desktop") {
     await page.setViewportSize({ width: 1600, height: 900 });
-    await expect
-      .poll(async () =>
-        page
-          .locator(".replay-annotations")
-          .evaluate((node) => node.getBoundingClientRect().bottom),
-      )
-      .toBeLessThanOrEqual(877);
-    const docked = await page.evaluate(() =>
-      Object.fromEntries(
-        [
-          ".replay-canvas",
-          ".replay-inspector",
-          ".replay-controls",
-          ".replay-scrubber",
-        ].map((selector) => {
-          const box = document.querySelector(selector)!.getBoundingClientRect();
-          return [
-            selector,
-            {
-              top: box.top,
-              bottom: box.bottom,
-              width: box.width,
-              height: box.height,
-            },
-          ];
-        }),
-      ),
+    const geometry = await page
+      .locator(".replay-canvas")
+      .evaluate((node: HTMLCanvasElement) => {
+        const bounds = node.getBoundingClientRect();
+        return {
+          width: bounds.width,
+          height: bounds.height,
+          rasterRatio: node.height / node.width,
+        };
+      });
+    expect(geometry.width).toBeGreaterThan(700);
+    expect(geometry.height / geometry.width).toBeCloseTo(
+      geometry.rasterRatio,
+      3,
     );
-    for (const box of Object.values(docked)) {
-      expect(box.top).toBeGreaterThanOrEqual(98);
-      expect(box.bottom).toBeLessThanOrEqual(877);
-      expect(box.height).toBeGreaterThan(20);
-    }
-    expect(docked[".replay-canvas"].width).toBeGreaterThan(900);
-    // ResizeObserver and the canvas effect settle after the viewport resize.
-    await expect
-      .poll(() =>
-        page.locator(".replay-canvas").evaluate((node: HTMLCanvasElement) => {
-          const bounds = node.getBoundingClientRect();
-          // Raster dimensions are integers. Verify the aspect within one
-          // backing pixel even when the new navigation makes the scene short.
-          return Math.abs(
-            node.height - (node.width * bounds.height) / bounds.width,
-          );
-        }),
-      )
-      .toBeLessThanOrEqual(1);
+    // Complete annotations remain reachable through ordinary page scrolling.
+    await page
+      .getByRole("region", { name: "Recorded replay timeline annotations" })
+      .scrollIntoViewIfNeeded();
+    await expect(page.locator(".replay-annotations")).toBeVisible();
   }
   await capture(page, "replay-complete-evidence", info);
   const later = new Date(Date.parse(run.start_at) + 24 * 3600000).toISOString();
@@ -268,6 +248,9 @@ test("replay exposes complete filtered events, patient history and recorded reso
   futureURL.searchParams.set("patient", future.patient_id);
   futureURL.searchParams.set("at", run.start_at);
   await page.goto(futureURL.toString());
+  await page
+    .getByRole("button", { name: "Inspect replay", exact: true })
+    .click();
   await expect(
     page.locator(".replay-patient-history .info-note"),
   ).toContainText("Not yet arrived");
@@ -288,6 +271,9 @@ test("replay exposes complete filtered events, patient history and recorded reso
   futureURL.searchParams.set("patient", departed.patient_id);
   futureURL.searchParams.set("at", run.end_at);
   await page.goto(futureURL.toString());
+  await page
+    .getByRole("button", { name: "Inspect replay", exact: true })
+    .click();
   await expect(
     page.locator(".replay-patient-history .info-note"),
   ).toContainText("Discharged at");
@@ -299,6 +285,10 @@ test("replay exposes complete filtered events, patient history and recorded reso
     "data-visible-markers",
     String(last.patients.length),
   );
+  await page.keyboard.press("Escape");
+  await page
+    .getByRole("button", { name: "Advanced replay tools", exact: true })
+    .click();
   const jumped = new Date(Date.parse(run.start_at) + 3 * 3600000).toISOString();
   await page
     .getByLabel("Jump replay date and time", { exact: false })

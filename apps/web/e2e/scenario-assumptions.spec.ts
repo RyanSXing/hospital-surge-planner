@@ -1,3 +1,4 @@
+import { expandScenarioDetails } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import { api, open, record, scenario } from "./helpers";
 
@@ -7,6 +8,7 @@ test("advanced assumptions save preserves unsaved visual conditions", async ({
   test.skip(info.project.name !== "desktop");
   const context = await scenario(page, "visual draft to assumptions");
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await page.getByLabel("Increase in ED arrivals").fill("70");
   await page
     .getByRole("button", { name: "Add one-time incident batches", exact: true })

@@ -2,7 +2,7 @@
 
 This user-requested rework supersedes the original specification's six-item primary navigation. The simulation model, generated data, constraints, frozen input contracts, and underlying planning capabilities remain governed by the build specification.
 
-The application has two primary pages:
+The application has two primary pages. The subsequent [light hospital-management redesign](hospital-management-interface.md) further simplifies the layout and progressively discloses detailed tools:
 
 - **Overview** shows the editable scenario's source hospital baseline, snapshot timestamp, occupied/staffed/installed/enabled capacity, waiting census, and expandable unit inventory. The complete simulation editor follows: demand, staffing, equipment, capacity, sites, transfers, incident batches, horizon, repetitions, seeds, revisions, scenario library, and saved-input differences. Running saves the current editor inputs and opens Analysis/Summary.
 - **Analysis** contains **Summary**, **Replay**, **Analytics**, and **Comparison**. Summary brings together computed outcomes, the campus map, selected-time capacity, placement constraints, forecast, and calendar. Replay retains the patient-flow timeline and evidence tools. Analytics includes detailed ensemble outcomes plus patient/unit and resource inspection. Comparison evaluates matched response plans and opens a completed plan in Summary or Replay.
@@ -25,10 +25,10 @@ The browser suite includes the existing configuration, import, role, resource, f
 
 Release-specific results and hosted commit identity are recorded in the rework evidence and the hosted verification log after deployment.
 
-### Local release verification — 2026-10-17
+### Previous navigation release — local verification, 2026-10-17
 
 The full existing and new browser suite passed 62 checks with 28 intentional device-specific skips and zero failures on the frozen production bundle. After the narrow saved-count restoration and mobile chart-caption repairs, 10 focused desktop/mobile checks passed with two device-specific skips. All 103 frontend unit tests and the production TypeScript/Vite build passed. The final source and bundle stayed unchanged during the focused suite. See [local verification](../evidence/overview-analysis-local-verification.json), [full report](../evidence/browser-overview-analysis-local-full.json), and [final follow-up](../evidence/browser-overview-analysis-final-local.json).
 
-### Hosted release verification
+### Previous navigation release — hosted verification
 
-The live app runs `072118d81f3b67bb97f771c5ef4ed52ea49bc3b0`. All 10 hosted workflow checks passed with two device-specific skips; all 44 deployed frontend files match the tested build. Actual computation, private OCI artifacts, and ZIP checksums passed. Existing default scenario/run and source data stayed unchanged after verification curation. See [hosted release proof](../evidence/overview-analysis-hosted-verification.json).
+That navigation release ran `072118d81f3b67bb97f771c5ef4ed52ea49bc3b0`. All 10 hosted workflow checks passed with two device-specific skips; all 44 deployed frontend files match the tested build. Actual computation, private OCI artifacts, and ZIP checksums passed. Existing default scenario/run and source data stayed unchanged after verification curation. See [hosted release proof](../evidence/overview-analysis-hosted-verification.json).

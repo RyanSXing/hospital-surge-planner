@@ -1,0 +1,13 @@
+{
+  "project": "mobile",
+  "scenario_id": "scenario_7f73cfbbb66248f591a7",
+  "run_id": "run_28043808199d41b1b31c",
+  "at": "2026-10-16T05:10:01.000Z",
+  "unit_id": "UNIT-ICU",
+  "equipment_capabilities": [
+    "ICU_MONITOR",
+    "VENTILATOR"
+  ],
+  "selected_mission": "PAT-STRESS-000106",
+  "actual_api_values_match": true
+}

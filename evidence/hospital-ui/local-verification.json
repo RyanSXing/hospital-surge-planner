@@ -1,0 +1,22 @@
+{
+  "verified_at": "2026-10-17T23:18:04.845202+00:00",
+  "unit": {
+    "passed": 111,
+    "files": 19
+  },
+  "browser": {
+    "startTime": "2026-10-17T23:05:08.732Z",
+    "duration": 745584.879,
+    "expected": 71,
+    "skipped": 29,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "source_and_bundle_frozen_through_final_suite": true,
+  "production_build_passed": true,
+  "source_files_checked": 106,
+  "bundle_files_checked": 50,
+  "browser_command": "E2E_SKIP_SERVER=1 node scripts/check-browser.mjs --workers=1 --max-failures=6",
+  "viewport_scope": "1280\u00d7800 desktop; 390\u00d7844 touch mobile; comparison checked at 320px and 820px too",
+  "new_performance_claim": "Canvas animation compositing only; no new annual-workload or 500-marker FPS claim"
+}

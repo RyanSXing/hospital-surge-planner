@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { Tabs } from "@mantine/core";
 import { BarChart3, Boxes, Users } from "lucide-react";
 import type { PlanningContext, UpdateTarget } from "../types";
 import type { AnalyticsSection } from "../navigation";
@@ -22,55 +23,54 @@ export default function Analytics({
 }) {
   return (
     <section className="analytics-page" aria-label="Analytics">
-      <nav className="analytics-sections" aria-label="Analytics sections">
-        <button
-          type="button"
-          aria-current={section === "outcomes" ? "page" : undefined}
-          onClick={() => onSectionChange("outcomes")}
+      <Tabs
+        className="analytics-tabs"
+        value={section}
+        onChange={(value) =>
+          value && onSectionChange(value as AnalyticsSection)
+        }
+        keepMounted={false}
+      >
+        <Tabs.List
+          className="analytics-sections"
+          aria-label="Analytics sections"
         >
-          <BarChart3 size={16} aria-hidden="true" />
-          Outcomes
-        </button>
-        <button
-          type="button"
-          aria-current={section === "patients" ? "page" : undefined}
-          onClick={() => onSectionChange("patients")}
-        >
-          <Users size={16} aria-hidden="true" />
-          Patients & units
-        </button>
-        <button
-          type="button"
-          aria-current={section === "resources" ? "page" : undefined}
-          onClick={() => onSectionChange("resources")}
-        >
-          <Boxes size={16} aria-hidden="true" />
-          Resources
-        </button>
-      </nav>
-      <div className="analytics-content">
-        <Suspense
-          fallback={
-            <div className="analytics-loading" role="status">
-              Loading{" "}
-              {section === "outcomes"
-                ? "outcomes"
-                : section === "patients"
-                  ? "census and units"
-                  : "resources"}
-              …
-            </div>
-          }
-        >
-          {section === "outcomes" ? (
-            <Outcomes ctx={ctx} />
-          ) : section === "patients" ? (
-            <Patients ctx={ctx} onUpdate={onUpdate} />
-          ) : (
-            <Resources ctx={ctx} onUpdate={onUpdate} />
-          )}
-        </Suspense>
-      </div>
+          <Tabs.Tab value="outcomes" leftSection={<BarChart3 size={16} />}>
+            Outcomes
+          </Tabs.Tab>
+          <Tabs.Tab value="patients" leftSection={<Users size={16} />}>
+            Patients &amp; units
+          </Tabs.Tab>
+          <Tabs.Tab value="resources" leftSection={<Boxes size={16} />}>
+            Resources
+          </Tabs.Tab>
+        </Tabs.List>
+        <div className="analytics-content">
+          <Suspense
+            fallback={
+              <div className="analytics-loading" role="status">
+                Loading{" "}
+                {section === "outcomes"
+                  ? "outcomes"
+                  : section === "patients"
+                    ? "patients and units"
+                    : "resources"}
+                …
+              </div>
+            }
+          >
+            <Tabs.Panel value="outcomes">
+              <Outcomes ctx={ctx} />
+            </Tabs.Panel>
+            <Tabs.Panel value="patients">
+              <Patients ctx={ctx} onUpdate={onUpdate} />
+            </Tabs.Panel>
+            <Tabs.Panel value="resources">
+              <Resources ctx={ctx} onUpdate={onUpdate} />
+            </Tabs.Panel>
+          </Suspense>
+        </div>
+      </Tabs>
     </section>
   );
 }

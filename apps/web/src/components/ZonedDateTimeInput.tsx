@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useId, useState } from "react";
 import {
   occurrenceLabel,
@@ -69,7 +70,7 @@ export function ZonedDateTimeInput({
       {candidates.length > 1 && (
         <label className="zoned-occurrence">
           Repeated hour
-          <select
+          <NativeSelect aria-label="Repeated hour"
             value={selected}
             disabled={disabled}
             onChange={(event) => {
@@ -83,7 +84,7 @@ export function ZonedDateTimeInput({
                 {occurrenceLabel(candidate, timeZone)}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </label>
       )}
     </div>

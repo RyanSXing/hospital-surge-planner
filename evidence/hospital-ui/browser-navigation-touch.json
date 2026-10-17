@@ -1,0 +1,14 @@
+{
+  "scenario_id": "scenario_02f242946b0f44878dd4",
+  "source_baseline_unchanged": true,
+  "unsaved_inputs_retained": true,
+  "touch_targets_min_height": 44,
+  "viewport_widths": [
+    390,
+    320
+  ],
+  "all_analysis_and_analytics_tabs_accessible_at_320": true,
+  "document_width_at_320": 320,
+  "history_preserved": true,
+  "page_errors": []
+}

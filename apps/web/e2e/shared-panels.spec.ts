@@ -9,7 +9,7 @@ import {
   type WorkspaceView,
 } from "./helpers";
 
-test("linked workspaces keep time docks visible and collapse panels without changing the run", async ({
+test("detailed workspaces reveal optional time docks without changing the run", async ({
   page,
 }, info) => {
   test.skip(
@@ -42,7 +42,6 @@ test("linked workspaces keep time docks visible and collapse panels without chan
     ["analytics-patients", "patients"],
     ["analytics-resources", "resources"],
     ["comparison", "compare"],
-    ["replay", "replay"],
   ];
   for (const [view, panel] of views) {
     await page.setViewportSize({ width: 1600, height: 900 });
@@ -50,7 +49,17 @@ test("linked workspaces keep time docks visible and collapse panels without chan
     await expect(page.locator(".state-banner")).toHaveCount(0);
     const dock = page.locator(`#${panel}-timeline-dock`),
       inspector = page.locator(`#${panel}-inspector-dock`);
+    if (panel === "compare")
+      await page.locator(".comparison-tools > summary").click();
+    await expect(dock).toBeHidden();
+    await page.getByLabel(`Show ${panel} timeline`, { exact: true }).click();
     await expect(dock).toBeVisible();
+    if (
+      await page
+        .getByLabel(`Show ${panel} inspector`, { exact: true })
+        .isVisible()
+    )
+      await page.getByLabel(`Show ${panel} inspector`, { exact: true }).click();
     await expect(inspector).toBeVisible();
     const bounds = await dock.boundingBox();
     expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(877);

@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Boxes, Building2, Clock3, Users } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
@@ -389,7 +390,7 @@ export default function SiteActivationDialog({
           ) : null}
           <label>
             Receiving unit
-            <select
+            <NativeSelect aria-label="Receiving unit"
               value={unitId}
               onChange={(e) => {
                 setUnitId(e.target.value);
@@ -402,7 +403,7 @@ export default function SiteActivationDialog({
                   {u.name} · {u.kind}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
           {!existing && !clinic ? (
             <label className="checkbox-label">
@@ -468,7 +469,7 @@ export default function SiteActivationDialog({
             <>
               <label>
                 Staff allocation
-                <select
+                <NativeSelect aria-label="Staff allocation"
                   value={named ? "named" : "rotating"}
                   onChange={(e) => {
                     setNamed(e.target.value === "named");
@@ -481,7 +482,7 @@ export default function SiteActivationDialog({
                   <option value="named">
                     Named reserve staff · available throughout interval
                   </option>
-                </select>
+                </NativeSelect>
               </label>
               {named ? (
                 <div className="staff-checklist">

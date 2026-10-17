@@ -1,3 +1,4 @@
+import { expandScenarioDetails } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import { api, open, record, scenario } from "./helpers";
 
@@ -21,6 +22,7 @@ test("cohort edit and stream changes retain compatible visible mix semantics", a
     conditions: [original],
   });
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   const block = page.getByRole("button", {
     name: "Declared ward cohort Planning assumption",
     exact: true,
@@ -100,6 +102,7 @@ test("custom imported curves, multiple windows and timeline moves retain exact i
     conditions: [curve],
   });
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await expect(page.getByLabel("Scenario preset")).toHaveValue("custom");
   await page
     .getByLabel("Scenario name", { exact: true })

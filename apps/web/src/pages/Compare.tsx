@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { NativeSelect } from "@mantine/core";
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -19,6 +20,7 @@ import { api, atDay, fmt, items, localDayIndex, num, post } from "../api";
 import { Badge, Button, Modal } from "../components/ui";
 import { ForecastChart, Timeline } from "../components/Charts";
 import { comparisonWardInventory } from "./comparisonCapacity";
+import { comparisonResultPlan } from "./resultsMetrics";
 import ComparisonDetails from "../components/ComparisonDetails";
 import {
   PlanningPanelControls,
@@ -63,7 +65,7 @@ const choices = [
     icon: ArrowUpRight,
   },
 ];
-const palette = ["#ff6c79", "#efbd60", "#57d8eb", "#55d9bf"];
+const palette = ["#65758b", "#a87614", "#1976c9", "#168976", "#8060b6"];
 export default function Compare({
   ctx,
   comparisonId,
@@ -388,6 +390,26 @@ export default function Compare({
   const running =
     !!comparison &&
     !["SUCCEEDED", "FAILED", "CANCELLED"].includes(comparison.status);
+  const rankedPlan =
+    comparison?.status === "SUCCEEDED"
+      ? [...plans].sort(
+          (a, b) =>
+            (a.rank ?? Number.MAX_SAFE_INTEGER) -
+            (b.rank ?? Number.MAX_SAFE_INTEGER),
+        )[0]
+      : null;
+  // The API's rank may use a secondary tie-breaker. If no response improved
+  // the paired objective, the result banner must still name the reference.
+  const leadingPlan = comparisonResultPlan(
+    plans,
+    comparison?.no_plan_improves,
+    rankedPlan,
+  );
+  const leadingIndex = leadingPlan
+    ? plans.findIndex((plan) => plan.id === leadingPlan.id)
+    : -1;
+  const leadingWait =
+    leadingPlan?.metrics?.scalar_metrics?.inpatient_waiting_patient_hours;
   async function exportComparison() {
     await ctx.action("Exporting comparison", async () => {
       const exp = await post("/exports", {
@@ -404,47 +426,32 @@ export default function Compare({
     <div className="compare-page page-scroll planning-panel-page">
       <div className="page-heading">
         <div>
-          <div className="eyebrow">DECISION WORKSPACE</div>
-          <h1>Compare responses</h1>
+          <div className="eyebrow">ANALYSIS / COMPARISON</div>
+          <h1>Compare response plans</h1>
           <p>
-            Same demand assumptions. Feasible resources. Measured differences.
+            Choose practical options and see which one improves patient flow.
           </p>
         </div>
         <div className="heading-actions">
-          <PlanningPanelControls panels={panels} name="compare" />
-          <Button
-            onClick={() =>
-              ctx.action("Loading saved comparisons", async () => {
-                setHistory(
-                  items(
-                    await api(`/comparisons?scenario_id=${ctx.scenario?.id}`),
-                  ),
-                );
-                setHistoryOpen(true);
-              })
-            }
-          >
-            <Layers size={14} />
-            History
-          </Button>
-          <Button onClick={() => setAssumptions(true)}>
-            <Info size={15} />
-            Assumptions
-          </Button>
-          <select
+          <NativeSelect
+            label="Simulation runs"
             aria-label="Comparison simulation runs"
-            value={replications}
-            onChange={(e) => setReplications(+e.target.value)}
-          >
-            {![10, 100, 500].includes(replications) && (
-              <option value={replications}>
-                {replications} runs · Saved count
-              </option>
-            )}
-            <option value="10">10 runs · Preview</option>
-            <option value="100">100 runs · Standard</option>
-            <option value="500">500 runs</option>
-          </select>
+            value={String(replications)}
+            onChange={(e) => setReplications(+e.currentTarget.value)}
+            data={[
+              ...(![10, 100, 500].includes(replications)
+                ? [
+                    {
+                      value: String(replications),
+                      label: `${replications} runs · Saved count`,
+                    },
+                  ]
+                : []),
+              { value: "10", label: "10 runs · Preview" },
+              { value: "100", label: "100 runs · Standard" },
+              { value: "500", label: "500 runs" },
+            ]}
+          />
           <Button
             primary
             disabled={
@@ -460,6 +467,33 @@ export default function Compare({
             <Play size={14} />
             {running ? "Evaluating plans…" : "Evaluate responses"}
           </Button>
+          <details className="comparison-tools">
+            <summary>More tools</summary>
+            <div className="comparison-tools-menu">
+              <Button
+                onClick={() =>
+                  ctx.action("Loading saved comparisons", async () => {
+                    setHistory(
+                      items(
+                        await api(
+                          `/comparisons?scenario_id=${ctx.scenario?.id}`,
+                        ),
+                      ),
+                    );
+                    setHistoryOpen(true);
+                  })
+                }
+              >
+                <Layers size={14} />
+                History
+              </Button>
+              <Button onClick={() => setAssumptions(true)}>
+                <Info size={15} />
+                Assumptions
+              </Button>
+              <PlanningPanelControls panels={panels} name="compare" />
+            </div>
+          </details>
         </div>
       </div>
       <div className="comparison-context">
@@ -565,146 +599,194 @@ export default function Compare({
           </p>
         </div>
       ) : null}
+      {leadingPlan ? (
+        <section
+          className={`comparison-result-summary${comparison?.no_plan_improves ? " neutral" : ""}`}
+          aria-label="Comparison result"
+        >
+          <div className="comparison-result-icon">
+            {comparison?.no_plan_improves ? (
+              <Info size={20} aria-hidden="true" />
+            ) : (
+              <Check size={20} aria-hidden="true" />
+            )}
+          </div>
+          <div>
+            <span>Best result in this comparison</span>
+            <h2>{leadingPlan.name}</h2>
+            <p>
+              {comparison?.no_plan_improves
+                ? "None of the tested responses improved the selected objective. The current plan remains the reference result."
+                : `${fmt(num(leadingWait), 1)} median patient-hours of inpatient waiting across the full horizon.`}
+            </p>
+          </div>
+          {leadingIndex > 0 ? (
+            <Button
+              primary={chosen === leadingPlan.id}
+              disabled={
+                ctx.canWrite === false ||
+                leadingPlan.feasibility?.feasible === false
+              }
+              onClick={() => setChosen(leadingPlan.id)}
+            >
+              {chosen === leadingPlan.id
+                ? "Response selected"
+                : "Select this response"}
+            </Button>
+          ) : null}
+        </section>
+      ) : null}
       <div className="comparison-body">
         <div className="comparison-main">
-          <div
-            className="plan-cards capacity-plan-cards"
-            style={{
-              gridTemplateColumns: `repeat(${plans.length},minmax(0,1fr))`,
-            }}
-          >
-            {plans.map((p, i) => {
-              const kind =
-                  p.kind || p.interventions?.at(-1)?.kind || selected[i - 1],
-                last = p.metrics?.series?.at(-1),
-                fullHorizonWait =
-                  p.metrics?.scalar_metrics?.inpatient_waiting_patient_hours,
-                inventory = comparisonWardInventory(
-                  ctx.dataset,
-                  comparison?.source_scenario_snapshot?.dataset_version_id,
-                  last,
-                ),
-                physical = inventory?.physical ?? 0,
-                staffed = inventory?.staffed ?? 0,
-                tileSize = Math.max(1, Math.ceil(physical / 120));
-              return (
-                <div
-                  key={p.id}
-                  className={`plan-card ${p.rank === 1 ? "best-plan" : ""}`}
-                >
-                  <div className="plan-card-header">
-                    <span className="eyebrow">
-                      {i === 0
-                        ? "REFERENCE PLAN"
-                        : `RESPONSE ${String(i).padStart(2, "0")}`}
-                    </span>
-                    {p.rank === 1 && p.feasibility?.feasible !== false ? (
-                      <Badge tone="success">Lowest waiting</Badge>
-                    ) : null}
-                    <h2>{p.name}</h2>
-                  </div>
-                  <div className="plan-grid">
-                    <span className="micro-label">
-                      MODELED WARD INVENTORY ·{" "}
-                      {inventory?.basis || "SAVED BASELINE PENDING"}
-                    </span>
-                    <div
-                      className="capacity-diagram"
-                      role="img"
-                      aria-label={
-                        inventory
-                          ? `${physical} physical ward places; ${staffed} staffing-supported; capacity diagram without patient assignments`
-                          : "Capacity pending for the saved baseline"
-                      }
-                    >
-                      {Array.from(
-                        { length: Math.ceil(physical / tileSize) },
-                        (_, j) => {
-                          const begin = j * tileSize,
-                            count = Math.min(tileSize, physical - begin),
-                            supported = Math.max(
-                              0,
-                              Math.min(count, staffed - begin),
-                            );
-                          return (
-                            <span
-                              key={j}
-                              className={
-                                supported === count
-                                  ? "supported"
-                                  : "unsupported"
-                              }
-                              style={
-                                supported > 0 && supported < count
-                                  ? {
-                                      background: `linear-gradient(to right,#65b8df ${(supported / count) * 100}%,transparent ${(supported / count) * 100}%)`,
-                                      opacity: 1,
-                                    }
-                                  : undefined
-                              }
-                              title={`${tileSize === 1 ? "Place" : "Places"} ${begin + 1}${count > 1 ? `–${begin + count}` : ""}: ${supported} staffing-supported, ${count - supported} unsupported`}
-                            />
-                          );
-                        },
-                      )}
-                    </div>
-                    {tileSize > 1 ? (
-                      <span className="capacity-scale">
-                        Each tile represents up to {tileSize} physical places
-                      </span>
-                    ) : null}
-                    <div className="plan-capacity">
-                      <strong>
-                        {inventory ? staffed : "—"}
-                        <small> / {inventory ? physical : "—"}</small>
-                      </strong>
-                      <span>
-                        staffing-supported
-                        <br />
-                        physical places
-                      </span>
-                    </div>
-                    {fullHorizonWait !== undefined ? (
-                      <div className="plan-inline-outcome">
-                        <span>Full-horizon waiting</span>
-                        <strong>
-                          {fmt(num(fullHorizonWait))}
-                          <small>patient-hours</small>
-                        </strong>
-                        {comparison?.status === "SUCCEEDED" && i > 0 ? (
-                          <Button
-                            disabled={
-                              ctx.canWrite === false ||
-                              p.feasibility?.feasible === false
-                            }
-                            primary={chosen === p.id}
-                            onClick={() => setChosen(p.id)}
-                          >
-                            {chosen === p.id ? <Check size={13} /> : null}
-                            {chosen === p.id
-                              ? "Selected response"
-                              : "Select response"}
-                          </Button>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </div>
+          <details className="comparison-capacity-details">
+            <summary>
+              <span>
+                <strong>Capacity and staffing assumptions</strong>
+                <small>
+                  Physical places, staffed places, and activation constraints
+                </small>
+              </span>
+              <span>Show details</span>
+            </summary>
+            <div
+              className="plan-cards capacity-plan-cards"
+              style={{
+                gridTemplateColumns: `repeat(${plans.length},minmax(0,1fr))`,
+              }}
+            >
+              {plans.map((p, i) => {
+                const kind =
+                    p.kind || p.interventions?.at(-1)?.kind || selected[i - 1],
+                  last = p.metrics?.series?.at(-1),
+                  fullHorizonWait =
+                    p.metrics?.scalar_metrics?.inpatient_waiting_patient_hours,
+                  inventory = comparisonWardInventory(
+                    ctx.dataset,
+                    comparison?.source_scenario_snapshot?.dataset_version_id,
+                    last,
+                  ),
+                  physical = inventory?.physical ?? 0,
+                  staffed = inventory?.staffed ?? 0,
+                  tileSize = Math.max(1, Math.ceil(physical / 120));
+                return (
                   <div
-                    className={`plan-status ${kind === "physical_overflow" ? "amber" : ""}`}
+                    key={p.id}
+                    className={`plan-card ${p.rank === 1 ? "best-plan" : ""}`}
                   >
-                    <span className="status-dot" />
-                    {kind === "physical_overflow"
-                      ? "Additional spaces need staffing"
-                      : kind === "staff_existing"
-                        ? "Qualified reserve nursing allocation"
-                        : i === 0
-                          ? "Current resource allocation"
-                          : "Capability and resource checks apply"}
+                    <div className="plan-card-header">
+                      <span className="eyebrow">
+                        {i === 0
+                          ? "REFERENCE PLAN"
+                          : `RESPONSE ${String(i).padStart(2, "0")}`}
+                      </span>
+                      {p.rank === 1 && p.feasibility?.feasible !== false ? (
+                        <Badge tone="success">Lowest waiting</Badge>
+                      ) : null}
+                      <h2>{p.name}</h2>
+                    </div>
+                    <div className="plan-grid">
+                      <span className="micro-label">
+                        MODELED WARD INVENTORY ·{" "}
+                        {inventory?.basis || "SAVED BASELINE PENDING"}
+                      </span>
+                      <div
+                        className="capacity-diagram"
+                        role="img"
+                        aria-label={
+                          inventory
+                            ? `${physical} physical ward places; ${staffed} staffing-supported; capacity diagram without patient assignments`
+                            : "Capacity pending for the saved baseline"
+                        }
+                      >
+                        {Array.from(
+                          { length: Math.ceil(physical / tileSize) },
+                          (_, j) => {
+                            const begin = j * tileSize,
+                              count = Math.min(tileSize, physical - begin),
+                              supported = Math.max(
+                                0,
+                                Math.min(count, staffed - begin),
+                              );
+                            return (
+                              <span
+                                key={j}
+                                className={
+                                  supported === count
+                                    ? "supported"
+                                    : "unsupported"
+                                }
+                                style={
+                                  supported > 0 && supported < count
+                                    ? {
+                                        background: `linear-gradient(to right,#65b8df ${(supported / count) * 100}%,transparent ${(supported / count) * 100}%)`,
+                                        opacity: 1,
+                                      }
+                                    : undefined
+                                }
+                                title={`${tileSize === 1 ? "Place" : "Places"} ${begin + 1}${count > 1 ? `–${begin + count}` : ""}: ${supported} staffing-supported, ${count - supported} unsupported`}
+                              />
+                            );
+                          },
+                        )}
+                      </div>
+                      {tileSize > 1 ? (
+                        <span className="capacity-scale">
+                          Each tile represents up to {tileSize} physical places
+                        </span>
+                      ) : null}
+                      <div className="plan-capacity">
+                        <strong>
+                          {inventory ? staffed : "—"}
+                          <small> / {inventory ? physical : "—"}</small>
+                        </strong>
+                        <span>
+                          staffing-supported
+                          <br />
+                          physical places
+                        </span>
+                      </div>
+                      {fullHorizonWait !== undefined ? (
+                        <div className="plan-inline-outcome">
+                          <span>Full-horizon waiting</span>
+                          <strong>
+                            {fmt(num(fullHorizonWait))}
+                            <small>patient-hours</small>
+                          </strong>
+                          {comparison?.status === "SUCCEEDED" && i > 0 ? (
+                            <Button
+                              disabled={
+                                ctx.canWrite === false ||
+                                p.feasibility?.feasible === false
+                              }
+                              primary={chosen === p.id}
+                              onClick={() => setChosen(p.id)}
+                            >
+                              {chosen === p.id ? <Check size={13} /> : null}
+                              {chosen === p.id
+                                ? "Selected response"
+                                : "Select response"}
+                            </Button>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div
+                      className={`plan-status ${kind === "physical_overflow" ? "amber" : ""}`}
+                    >
+                      <span className="status-dot" />
+                      {kind === "physical_overflow"
+                        ? "Additional spaces need staffing"
+                        : kind === "staff_existing"
+                          ? "Qualified reserve nursing allocation"
+                          : i === 0
+                            ? "Current resource allocation"
+                            : "Capability and resource checks apply"}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          </details>
           <section className="comparison-chart">
             <div className="spread">
               <h3>
@@ -728,73 +810,79 @@ export default function Compare({
               </span>
             </div>
             <div className="comparison-chart-controls">
-              <label>
-                Plot
-                <select
-                  aria-label="Comparison chart metric"
-                  value={chartMetric}
-                  onChange={(e) => setChartMetric(e.target.value)}
-                >
-                  <option value="inpatient_queue">
-                    Inpatient queue · patients
-                  </option>
-                  <option value="ward_occupied">
-                    Ward occupancy · patients
-                  </option>
-                  <option value="icu_occupied">ICU occupancy · patients</option>
-                  <option value="waiting_patient_hours">
-                    {ctx.grain === "day"
-                      ? "Cumulative waiting"
-                      : "Waiting per interval"}{" "}
-                    · patient-hours
-                  </option>
-                </select>
-              </label>
-              <label>
-                Uncertainty
-                <select
-                  aria-label="Comparison uncertainty band"
-                  value={bandPlan}
-                  onChange={(e) => setBandPlan(e.target.value)}
-                >
-                  <option value="none">No band</option>
-                  {plottedPlans.map((p) => (
-                    <option key={p.id} value={p.chartKey}>
-                      {p.name} · P10–P90
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <NativeSelect
+                label="Plot"
+                aria-label="Comparison chart metric"
+                value={chartMetric}
+                onChange={(e) => setChartMetric(e.currentTarget.value)}
+                data={[
+                  {
+                    value: "inpatient_queue",
+                    label: "Inpatient queue · patients",
+                  },
+                  {
+                    value: "ward_occupied",
+                    label: "Ward occupancy · patients",
+                  },
+                  { value: "icu_occupied", label: "ICU occupancy · patients" },
+                  {
+                    value: "waiting_patient_hours",
+                    label: `${ctx.grain === "day" ? "Cumulative waiting" : "Waiting per interval"} · patient-hours`,
+                  },
+                ]}
+              />
+              <NativeSelect
+                label="Uncertainty"
+                aria-label="Comparison uncertainty band"
+                value={bandPlan}
+                onChange={(e) => setBandPlan(e.currentTarget.value)}
+                data={[
+                  { value: "none", label: "No band" },
+                  ...plottedPlans.map((plan) => ({
+                    value: plan.chartKey,
+                    label: `${plan.name} · P10–P90`,
+                  })),
+                ]}
+              />
             </div>
-            <ForecastChart
-              rows={chartRows}
-              keys={plottedPlans.map((p) => p.chartKey)}
-              labels={plottedPlans.map((p) => p.name)}
-              yLabel={
-                chartMetric === "waiting_patient_hours"
-                  ? ctx.grain === "day"
-                    ? "Cumulative patient-hours"
-                    : "Patient-hours per interval"
-                  : "Patients"
-              }
-              colors={plottedPlans.map((p) => p.chartColor)}
-              lineDashes={plottedPlans.map((p) => p.chartDash)}
-              bandKey={bandPlan}
-              height={128}
-              showBand={bandPlan !== "none"}
-              selected={chartRows.reduce(
-                (best: number, row: Entity, index: number) =>
-                  Math.abs(Date.parse(row.at) - Date.parse(ctx.selectedTime)) <
-                  Math.abs(
-                    Date.parse(chartRows[best]?.at) -
-                      Date.parse(ctx.selectedTime),
-                  )
-                    ? index
-                    : best,
-                0,
-              )}
-              onSelect={(index) => ctx.setTime(chartRows[index].at)}
-            />
+            {chartRows.length ? (
+              <ForecastChart
+                rows={chartRows}
+                timeZone={calendarScenario?.timezone || ctx.dataset?.timezone}
+                keys={plottedPlans.map((p) => p.chartKey)}
+                labels={plottedPlans.map((p) => p.name)}
+                yLabel={
+                  chartMetric === "waiting_patient_hours"
+                    ? ctx.grain === "day"
+                      ? "Cumulative patient-hours"
+                      : "Patient-hours per interval"
+                    : "Patients"
+                }
+                colors={plottedPlans.map((p) => p.chartColor)}
+                lineDashes={plottedPlans.map((p) => p.chartDash)}
+                bandKey={bandPlan}
+                height={240}
+                showBand={bandPlan !== "none"}
+                selected={chartRows.reduce(
+                  (best: number, row: Entity, index: number) =>
+                    Math.abs(
+                      Date.parse(row.at) - Date.parse(ctx.selectedTime),
+                    ) <
+                    Math.abs(
+                      Date.parse(chartRows[best]?.at) -
+                        Date.parse(ctx.selectedTime),
+                    )
+                      ? index
+                      : best,
+                  0,
+                )}
+                onSelect={(index) => ctx.setTime(chartRows[index].at)}
+              />
+            ) : (
+              <div className="chart-empty" role="status">
+                Evaluate responses to compare forecasts.
+              </div>
+            )}
             {periodLoading ? (
               <div className="comparison-progress">
                 Loading aggregates from the same matched runs…
@@ -916,89 +1004,104 @@ export default function Compare({
               );
             })}
           </div>
+          {chosen && comparison?.id ? (
+            <section className="comparison-selected-action">
+              <div>
+                <span className="eyebrow">SELECTED RESPONSE</span>
+                <strong>
+                  {plans.find((plan) => plan.id === chosen)?.name ||
+                    "Response plan"}
+                </strong>
+                <span>
+                  Save this evaluated response as a new scenario when you are
+                  ready to continue planning.
+                </span>
+              </div>
+              <Button
+                primary
+                onClick={() =>
+                  ctx.action("Saving planning response", async () => {
+                    const saved = await post(
+                      `/comparisons/${comparison.id}/save-plan`,
+                      { plan_id: chosen },
+                    );
+                    await ctx.saveScenario({ __select: saved.id });
+                    ctx.notify(
+                      "Proposed response saved as a new planning scenario.",
+                    );
+                  })
+                }
+              >
+                <Save size={15} />
+                Save selected plan
+              </Button>
+            </section>
+          ) : null}
           <ComparisonDetails plans={plans} ctx={calendarCtx} />
         </div>
-        <aside
+        <details
           className="comparison-explainer"
           id="compare-inspector-dock"
           hidden={panels.inspectorHidden}
         >
-          <span className="eyebrow">WHY STAFFING MATTERS</span>
-          <h2>Space becomes capacity when resources align.</h2>
-          <div className="equation">
-            <div>
-              <Layers size={24} />
-              <strong>Physical places</strong>
-              <span>Installed & ready</span>
+          <summary>Decision support and comparison tools</summary>
+          <div className="comparison-explainer-content">
+            <span className="eyebrow">WHY STAFFING MATTERS</span>
+            <h2>Space becomes capacity when resources align.</h2>
+            <div className="equation">
+              <div>
+                <Layers size={24} />
+                <strong>Physical places</strong>
+                <span>Installed & ready</span>
+              </div>
+              <span>+</span>
+              <div>
+                <Users size={24} />
+                <strong>Qualified staff</strong>
+                <span>Available & assigned</span>
+              </div>
+              <span>↓</span>
+              <div className="result">
+                <GitCompareArrows size={23} />
+                <strong>Usable capacity</strong>
+                <span>Compatible equipment required</span>
+              </div>
             </div>
-            <span>+</span>
-            <div>
-              <Users size={24} />
-              <strong>Qualified staff</strong>
-              <span>Available & assigned</span>
+            <p>
+              Additional spaces cannot accept patients while required staff or
+              equipment are unavailable.
+            </p>
+            <div className="insight-note">
+              <Clock3 size={16} />
+              <span>
+                Activation lead times count. Waiting before a response becomes
+                ready stays in its results.
+              </span>
             </div>
-            <span>↓</span>
-            <div className="result">
-              <GitCompareArrows size={23} />
-              <strong>Usable capacity</strong>
-              <span>Compatible equipment required</span>
-            </div>
-          </div>
-          <p>
-            Additional spaces cannot accept patients while required staff or
-            equipment are unavailable.
-          </p>
-          <div className="insight-note">
-            <Clock3 size={16} />
-            <span>
-              Activation lead times count. Waiting before a response becomes
-              ready stays in its results.
-            </span>
-          </div>
-          {comparison?.no_plan_improves ? (
-            <div className="info-note">
-              None of these plans improves the selected objective. Review the
-              remaining constraints.
-            </div>
-          ) : null}
-          <Button
-            className="full-width"
-            onClick={() => ctx.setPage("resources")}
-          >
-            Inspect resource dependencies <ChevronRight size={14} />
-          </Button>
-          {chosen && comparison?.id ? (
+            {comparison?.no_plan_improves ? (
+              <div className="info-note">
+                None of these plans improves the selected objective. Review the
+                remaining constraints.
+              </div>
+            ) : null}
             <Button
-              primary
               className="full-width"
-              onClick={() =>
-                ctx.action("Saving planning response", async () => {
-                  const saved = await post(
-                    `/comparisons/${comparison.id}/save-plan`,
-                    { plan_id: chosen },
-                  );
-                  await ctx.saveScenario({ __select: saved.id });
-                  ctx.notify(
-                    "Proposed response saved as a new planning scenario.",
-                  );
-                })
-              }
+              onClick={() => ctx.setPage("resources")}
             >
-              <Save size={15} />
-              Save selected plan
+              Inspect resource dependencies <ChevronRight size={14} />
             </Button>
-          ) : null}
-          {comparison?.status === "SUCCEEDED" ? (
-            <Button className="full-width" onClick={exportComparison}>
-              <ArrowDownToLine size={14} />
-              Export comparison
-            </Button>
-          ) : null}
-          <small className="muted">
-            Saving preserves a proposed plan with its assumptions and resource
-            requirements.
-          </small>
-        </aside>
+            {comparison?.status === "SUCCEEDED" ? (
+              <Button className="full-width" onClick={exportComparison}>
+                <ArrowDownToLine size={14} />
+                Export comparison
+              </Button>
+            ) : null}
+            <small className="muted">
+              Saving preserves a proposed plan with its assumptions and resource
+              requirements.
+            </small>
+          </div>
+        </details>
       </div>
       <PlanningTimelineDock panels={panels} name="compare">
         <Timeline

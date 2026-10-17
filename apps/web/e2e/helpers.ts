@@ -143,17 +143,39 @@ export async function capture(page: Page, name: string, testInfo: TestInfo) {
   await page.evaluate(() => document.fonts.ready);
   const file = resolve(
     process.cwd(),
-    `../../evidence/browser-${testInfo.project.name}-${name}.png`,
+    `../../${process.env.E2E_EVIDENCE_DIR || "evidence"}/browser-${testInfo.project.name}-${name}.png`,
   );
-  mkdirSync(resolve(process.cwd(), "../../evidence"), { recursive: true });
+  mkdirSync(
+    resolve(
+      process.cwd(),
+      `../../${process.env.E2E_EVIDENCE_DIR || "evidence"}`,
+    ),
+    { recursive: true },
+  );
   await page.screenshot({ path: file, fullPage: true, animations: "disabled" });
   await testInfo.attach(name, { path: file, contentType: "image/png" });
   if (await page.getByRole("dialog").count()) return;
-  const main = page.locator("main"),
-    scroll = await main.evaluate((e) => ({
-      top: e.scrollTop,
-      max: e.scrollHeight - e.clientHeight,
-    }));
+  let main = page.locator("main");
+  // Some result pages own the single visible page scroll region.
+  for (const selector of [
+    ".summary-dashboard:visible",
+    ".compare-page:visible",
+    ".analytics-content > .mantine-Tabs-panel:visible",
+    ".outcome-analytics:visible",
+  ]) {
+    const candidate = page.locator(selector);
+    if (
+      (await candidate.count()) === 1 &&
+      (await candidate.evaluate((e) => e.scrollHeight - e.clientHeight)) > 100
+    ) {
+      main = candidate;
+      break;
+    }
+  }
+  const scroll = await main.evaluate((e) => ({
+    top: e.scrollTop,
+    max: e.scrollHeight - e.clientHeight,
+  }));
   if (scroll.max > 100) {
     for (const [label, fraction] of [
       ["middle", 0.5],
@@ -212,8 +234,42 @@ export async function assertPageHealthy(page: Page) {
   expect.soft(tiny, JSON.stringify(tiny)).toEqual([]);
 }
 export function record(name: string, value: unknown) {
+  mkdirSync(
+    resolve(
+      process.cwd(),
+      `../../${process.env.E2E_EVIDENCE_DIR || "evidence"}`,
+    ),
+    { recursive: true },
+  );
   writeFileSync(
-    resolve(process.cwd(), "../../evidence/browser-" + name + ".json"),
+    resolve(
+      process.cwd(),
+      `../../${process.env.E2E_EVIDENCE_DIR || "evidence"}/browser-${name}.json`,
+    ),
     JSON.stringify(value, null, 2) + "\n",
   );
+}
+
+/** Use the same secondary menu entry a planner sees in the compact shell. */
+export async function exportResults(page: Page) {
+  await page
+    .getByRole("button", { name: "Workspace options", exact: true })
+    .click();
+  await page
+    .getByRole("menuitem", { name: "Export results", exact: true })
+    .click();
+}
+
+export async function revealSummaryTimeline(page: Page) {
+  const details = page.locator(".summary-timeline-details");
+  if ((await details.getAttribute("open")) === null)
+    await details.locator(":scope > summary").click();
+}
+
+export async function revealOutcomeMetrics(page: Page) {
+  const control = page.getByRole("button", {
+    name: /View all outcome metrics and uncertainty/,
+  });
+  if ((await control.getAttribute("aria-expanded")) !== "true")
+    await control.click();
 }

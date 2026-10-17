@@ -1,4 +1,12 @@
 import {
+  Menu as ActionMenu,
+  NativeSelect,
+  TextInput,
+  PasswordInput,
+  Tooltip,
+  UnstyledButton,
+} from "@mantine/core";
+import {
   lazy,
   Suspense,
   useCallback,
@@ -29,6 +37,9 @@ import {
   LogOut,
   Map,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  MoreHorizontal,
   Pause,
   Play,
   Plus,
@@ -98,6 +109,22 @@ const analysisNav = [
 ] as const;
 export default function App() {
   const queryClient = useQueryClient();
+  const [navCollapsed, setNavCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("hospital-navigation-collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const toggleNavigation = () =>
+    setNavCollapsed((value) => {
+      try {
+        localStorage.setItem("hospital-navigation-collapsed", String(!value));
+      } catch {
+        /* Preference storage is optional. */
+      }
+      return !value;
+    });
   const [route, setRoute] = useState(() =>
     readNavigation(new URLSearchParams(location.search)),
   );
@@ -247,6 +274,9 @@ export default function App() {
     queryFn: () =>
       api<Metrics>(`/run-groups/${run?.id}/metrics?grain=${grain}`),
     enabled: run?.status === "SUCCEEDED",
+    // Retain panels while changing chart grain, only for the same frozen run.
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[1] === run?.id ? previous : undefined,
     staleTime: Infinity,
   });
   const stateQuery = useQuery({
@@ -268,6 +298,11 @@ export default function App() {
   const metrics =
       run?.status === "SUCCEEDED" ? metricsQuery.data || null : null,
     state = run?.status === "SUCCEEDED" ? stateQuery.data || null : null;
+  const displayedGrain: Grain =
+    metricsQuery.isPlaceholderData &&
+    ["day", "week", "month"].includes(metrics?.context?.grain)
+      ? metrics!.context.grain
+      : grain;
   const resultScenario = run?.scenario_context || scenario;
   const editingContext = ["overview", "comparison", "data"].includes(page);
   const presentationScenario = editingContext ? scenario : resultScenario;
@@ -603,6 +638,11 @@ export default function App() {
       page === "overview" || draftDatasetDiffers ? "" : activeReplicationId,
     setReplication,
     metrics: page === "overview" || draftDatasetDiffers ? null : metrics,
+    metricsLoading: run?.status === "SUCCEEDED" && metricsQuery.isFetching,
+    metricsError: metricsQuery.error?.message || null,
+    retryMetrics: () => {
+      void metricsQuery.refetch();
+    },
     state:
       page === "overview" ? null : editingContext ? inspectionState : state,
     stateLoading:
@@ -620,7 +660,7 @@ export default function App() {
     selectedPatient,
     selectedUnit,
     selectedResource,
-    grain,
+    grain: displayedGrain,
     loading: summary.isLoading,
     busy,
     error,
@@ -807,8 +847,13 @@ export default function App() {
     total = Number(run?.replications_requested ?? run?.total ?? 100);
   if (summary.error && (summary.error as ApiError).status === 401)
     return <Login onLogin={() => summary.refetch()} />;
+  const needsForecastMetrics =
+    run?.status === "SUCCEEDED" && !metrics && page === "summary";
   return (
-    <div className="app-shell" data-role={user?.role}>
+    <div
+      className={`app-shell${navCollapsed ? " navigation-collapsed" : ""}`}
+      data-role={user?.role}
+    >
       <a className="skip-link" href="#main-content">
         Skip to workspace
       </a>
@@ -820,30 +865,49 @@ export default function App() {
         >
           <Menu size={22} />
         </button>
-        <button className="brand" onClick={() => setPage("overview")}>
-          <img src="/assets/mark.svg" alt="" />
+        <button
+          className="brand"
+          onClick={() => setPage("overview")}
+          aria-label="Hospital Surge Planner home"
+        >
+          <span className="hospital-brand-mark">
+            <Hospital size={23} />
+          </span>
           <span>
-            HOSPITAL<span>SURGE PLANNER</span>
+            Hospital Surge<span>Capacity planning</span>
           </span>
         </button>
+        <Tooltip
+          label={navCollapsed ? "Expand navigation" : "Collapse navigation"}
+        >
+          <button
+            className="desktop-nav-toggle icon-button"
+            onClick={toggleNavigation}
+            aria-label={
+              navCollapsed ? "Expand navigation" : "Collapse navigation"
+            }
+            aria-expanded={!navCollapsed}
+            aria-controls="workspace-navigation"
+          >
+            {navCollapsed ? (
+              <PanelLeftOpen size={19} />
+            ) : (
+              <PanelLeftClose size={19} />
+            )}
+          </button>
+        </Tooltip>
         <button className="hospital-selector" onClick={() => setPage("data")}>
           <Hospital size={18} />
           <span>
-            {inspectionDataset?.facilities?.find(
-              (f) => f.facility_id === "FAC-MAIN",
-            )?.name || "Central Hospital"}
+            {inspectionDataset?.facilities
+              ?.find((f) => f.facility_id === "FAC-MAIN")
+              ?.name?.replace(/^Demo /, "") || "Central Hospital"}
             <small>Planning workspace</small>
           </span>
           <ChevronDown size={13} />
         </button>
         <div className="top-context">
-          <span className="top-context-label">SCENARIO</span>
-          <strong>
-            {!editingContext && run
-              ? resultScenario?.name || run.scenario_name || scenario?.name
-              : scenario?.name || "Preparing workspace"}
-          </strong>
-          {dataset ? <Badge tone="warning">Synthetic dataset</Badge> : null}
+          {dataset?.synthetic ? <Badge>Synthetic planning data</Badge> : null}
           {user?.role === "viewer" ? <Badge>Read-only access</Badge> : null}
         </div>
         <div className="topbar-actions">
@@ -872,10 +936,15 @@ export default function App() {
           </button>
         </div>
       </header>
-      <aside className={`sidebar ${mobileNav ? "open" : ""}`}>
-        <div className="sidebar-section-label">PLANNING WORKSPACE</div>
+      <aside
+        id="workspace-navigation"
+        className={`sidebar ${mobileNav ? "open" : ""}`}
+        aria-label="Workspace navigation"
+      >
+        <div className="sidebar-section-label">WORKSPACE</div>
         <nav aria-label="Main navigation">
-          <button
+          <UnstyledButton
+            title={navCollapsed ? "Overview" : undefined}
             aria-label="Overview"
             className={page === "overview" ? "active" : ""}
             aria-current={page === "overview" ? "page" : undefined}
@@ -884,8 +953,9 @@ export default function App() {
             <Hospital size={18} />
             <span>Overview</span>
             {page === "overview" ? <i /> : null}
-          </button>
-          <button
+          </UnstyledButton>
+          <UnstyledButton
+            title={navCollapsed ? "Analysis" : undefined}
             aria-label="Analysis"
             className={isAnalysisPage(page) ? "active" : ""}
             aria-current={isAnalysisPage(page) ? "page" : undefined}
@@ -894,20 +964,8 @@ export default function App() {
             <Activity size={18} />
             <span>Analysis</span>
             {isAnalysisPage(page) ? <i /> : null}
-          </button>
+          </UnstyledButton>
         </nav>
-        <div className="sidebar-workflow">
-          <span className="eyebrow">YOUR WORKFLOW</span>
-          <p>
-            <span>01</span> Review the baseline
-          </p>
-          <p>
-            <span>02</span> Configure &amp; simulate
-          </p>
-          <p>
-            <span>03</span> Analyze &amp; compare
-          </p>
-        </div>
         <div className="sidebar-bottom">
           <button
             aria-label="Data & setup"
@@ -922,86 +980,77 @@ export default function App() {
             <span>Planning guide</span>
             <ArrowUpRight size={13} />
           </button>
-          <div className="workspace-status">
-            <span className="status-dot" />
-            <div>
-              <strong>Workspace connected</strong>
-              <small>
-                {user?.role || "Planner"} ·{" "}
-                {user?.local_session ? "Local planning" : "Planning workspace"}
-              </small>
-            </div>
-          </div>
-          <span className="sidebar-version">
-            HOSPITAL SURGE PLANNER <b>1.0</b>
-          </span>
         </div>
       </aside>
       <div className="workspace">
         <div className="contextbar">
           <div className="breadcrumb">
-            <Layers size={13} />
-            <span>Workspace</span>
-            <ChevronRight size={11} />
-            <strong>
-              {page === "overview"
-                ? "Overview"
-                : page === "data"
-                  ? "Data & setup"
-                  : "Analysis"}
-            </strong>
-            {isAnalysisPage(page) ? (
-              <>
-                <ChevronRight size={11} />
-                <strong>{analysisNav.find((n) => n.id === page)?.name}</strong>
-              </>
-            ) : null}
-            <span className="context-divider" />
-            <span>
-              Dataset{" "}
-              <b>
-                {inspectionDataset?.fixture?.replaceAll("_", " ") ||
-                  inspectionDataset?.name ||
-                  "loading"}
-              </b>
+            <span className="context-label">
+              {page === "comparison"
+                ? "Draft scenario"
+                : isAnalysisPage(page)
+                  ? "Results for"
+                  : "Scenario"}
             </span>
-            {presentationScenario?.revision ? (
-              <span className="revision-tag">
-                REV {presentationScenario.revision}
-              </span>
-            ) : null}
+            <strong title={presentationScenario?.name}>
+              {presentationScenario?.name || "Hospital planning"}
+            </strong>
           </div>
           <div className="context-actions">
-            <span>
-              <CalendarDays size={13} />
+            <span className="context-date" hidden={page === "comparison"}>
+              <CalendarDays size={14} />
               {presentationScenario
                 ? `${localDate(presentationScenario.start_at)} – ${localDate(atDay(presentationScenario.start_at, presentationScenario.horizon_calendar_days - 1, 0, presentationScenario.timezone))}`
                 : "—"}
             </span>
-            <button
-              title="Reset visual filters and selection"
-              onClick={() => {
-                setFacility("FAC-MAIN");
-                setPatient(null);
-                setGrain("day");
-                setReplication("");
-                setDay(0);
-              }}
-            >
-              Reset view
-            </button>
-            <button
-              onClick={() => setExportOpen(true)}
-              disabled={!run || run.status !== "SUCCEEDED"}
-            >
-              <ArrowDownToLine size={13} />
-              Export
-            </button>
             {isAnalysisPage(page) ? (
               <Button small onClick={() => setPage("overview")}>
                 <SlidersHorizontal size={13} /> Edit scenario
               </Button>
             ) : null}
+            <ActionMenu position="bottom-end" shadow="md" width={225}>
+              <ActionMenu.Target>
+                <button className="icon-button" aria-label="Workspace options">
+                  <MoreHorizontal size={20} />
+                  <span className="context-more-label">More</span>
+                </button>
+              </ActionMenu.Target>
+              <ActionMenu.Dropdown>
+                <ActionMenu.Label>Workspace tools</ActionMenu.Label>
+                <ActionMenu.Item
+                  leftSection={<ArrowDownToLine size={15} />}
+                  disabled={!run || run.status !== "SUCCEEDED"}
+                  onClick={() => setExportOpen(true)}
+                >
+                  Export results
+                </ActionMenu.Item>
+                <ActionMenu.Item
+                  leftSection={<Layers size={15} />}
+                  onClick={() => {
+                    setFacility("FAC-MAIN");
+                    setPatient(null);
+                    setGrain("day");
+                    setReplication("");
+                    setDay(0);
+                  }}
+                >
+                  Reset view
+                </ActionMenu.Item>
+                <ActionMenu.Item
+                  leftSection={<Database size={15} />}
+                  onClick={() => setPage("data")}
+                >
+                  Data &amp; setup
+                </ActionMenu.Item>
+                <ActionMenu.Divider />
+                <ActionMenu.Item
+                  leftSection={<HelpCircle size={15} />}
+                  onClick={() => setHelpOpen(true)}
+                >
+                  Assumptions &amp; model details
+                </ActionMenu.Item>
+              </ActionMenu.Dropdown>
+            </ActionMenu>
           </div>
         </div>
         {run?.comparison_id ? (
@@ -1023,6 +1072,13 @@ export default function App() {
             >
               Return to comparison <ArrowRight size={12} />
             </button>
+          </div>
+        ) : null}
+        {metricsQuery.isPlaceholderData &&
+        isAnalysisPage(page) &&
+        page !== "comparison" ? (
+          <div className="metrics-banner" role="status">
+            <LoaderCircle className="spin" size={13} /> Updating charts…
           </div>
         ) : null}
         {page !== "overview" && stateQuery.error ? (
@@ -1173,7 +1229,11 @@ export default function App() {
         <main
           id="main-content"
           tabIndex={-1}
-          aria-busy={restoringLocation || summary.isLoading}
+          aria-busy={
+            restoringLocation ||
+            summary.isLoading ||
+            (needsForecastMetrics && !metricsQuery.error)
+          }
         >
           {summary.isLoading ? (
             <div className="workspace-loading">
@@ -1213,7 +1273,33 @@ export default function App() {
                   />
                 </div>
               ) : null}
-              {page === "summary" ? (
+              {needsForecastMetrics ? (
+                <div
+                  className="analysis-empty"
+                  role={metricsQuery.error ? "alert" : "status"}
+                >
+                  {metricsQuery.error ? (
+                    <Activity size={30} />
+                  ) : (
+                    <LoaderCircle size={30} className="spin" />
+                  )}
+                  <h1>
+                    {metricsQuery.error
+                      ? "Forecast results unavailable"
+                      : "Loading forecast results"}
+                  </h1>
+                  <p>
+                    {metricsQuery.error
+                      ? "The simulation is saved, but its forecast could not be loaded. Retry to retrieve the recorded results."
+                      : "Retrieving occupancy, waiting, and uncertainty from the completed simulation."}
+                  </p>
+                  {metricsQuery.error ? (
+                    <Button primary onClick={() => metricsQuery.refetch()}>
+                      Retry results
+                    </Button>
+                  ) : null}
+                </div>
+              ) : page === "summary" ? (
                 run?.status === "SUCCEEDED" ? (
                   <Summary ctx={ctx} onUpdate={() => openUpdate()} />
                 ) : (
@@ -1294,7 +1380,7 @@ export default function App() {
                 ? "Simulation worker active"
                 : stateQuery.isFetching
                   ? "Reconstructing selected state"
-                  : summary.error || stateQuery.error
+                  : summary.error || stateQuery.error || metricsQuery.error
                     ? "Connection requires attention"
                     : "Workspace connected")}
           </span>
@@ -1506,8 +1592,8 @@ function Login({ onLogin }: { onLogin: () => void }) {
       <div className="login-card">
         <img src="/assets/mark.svg" alt="" />
         <span className="eyebrow">HOSPITAL SURGE PLANNER</span>
-        <h1>Enter your planning workspace.</h1>
-        <p>Model capacity. Understand pressure. Plan a response.</p>
+        <h1>Sign in to hospital planning</h1>
+        <p>Review capacity, forecast demand, and compare response plans.</p>
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -1521,7 +1607,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
         >
           <label>
             Email or username
-            <input
+            <TextInput
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -1530,8 +1616,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
           </label>
           <label>
             Password
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -1587,11 +1672,15 @@ function ExportDialog({
         </p>
         <label>
           Export format
-          <select value={format} onChange={(e) => setFormat(e.target.value)}>
+          <NativeSelect
+            aria-label="Export format"
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+          >
             <option value="zip">Complete planning package (.zip)</option>
             <option value="csv">Computed metrics (.csv)</option>
             <option value="json">Scenario and results (.json)</option>
-          </select>
+          </NativeSelect>
         </label>
         <label className="checkbox-label">
           <input

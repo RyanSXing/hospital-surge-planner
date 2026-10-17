@@ -1,7 +1,273 @@
+.compare-page {
+  min-width: 0;
+  height: 100%;
+  overflow: auto;
+  padding-bottom: 28px;
+  background: var(--surface-app, #f5f7fa);
+}
+
+.compare-page > .page-heading {
+  background: transparent;
+}
+
+/* Results need one reliable column: the old workstation shell reserved a
+ * permanent inspector, leaving too little room for the comparison chart. */
+.compare-page .comparison-body {
+  display: block;
+  min-width: 0;
+}
+
+.compare-page .comparison-main {
+  width: 100%;
+  min-width: 0;
+}
+
+.compare-page .heading-actions {
+  flex-wrap: wrap;
+}
+
+.compare-page .heading-actions .mantine-NativeSelect-root {
+  min-width: 170px;
+}
+
+.comparison-tools {
+  position: relative;
+}
+
+.comparison-tools > summary {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  color: var(--text, #172033);
+  cursor: pointer;
+  font-size: 12px;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.comparison-tools > summary::-webkit-details-marker {
+  display: none;
+}
+
+.comparison-tools-menu {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 6px);
+  right: 0;
+  display: flex;
+  min-width: 205px;
+  flex-direction: column;
+  gap: 7px;
+  padding: 9px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  box-shadow: 0 8px 22px rgb(16 24 40 / 15%);
+}
+
+.comparison-tools-menu .planning-panel-controls {
+  padding-top: 5px;
+  border-top: 1px solid var(--border, #dfe4ea);
+}
+
+.compare-page .comparison-context {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  min-height: 48px;
+  margin: 0 24px 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--muted, #667085);
+  font-size: 12px;
+}
+
+.compare-page .comparison-context > svg {
+  color: var(--accent, #2864dc);
+}
+
+.compare-page .comparison-context strong {
+  color: var(--text, #172033);
+}
+
+.compare-page .comparison-context > .badge {
+  margin-left: auto;
+}
+
+.compare-page .response-selector {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 24px 12px;
+}
+
+.compare-page .response-selector > button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 9px 11px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  color: var(--muted, #667085);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.compare-page .response-selector > button:hover {
+  border-color: #a9bce3;
+  color: var(--text, #172033);
+}
+
+.compare-page .response-selector > button.selected {
+  border-color: #7da2ef;
+  background: #eef4ff;
+  color: #2456b5;
+  box-shadow: inset 0 0 0 1px #7da2ef;
+}
+
+.compare-page .comparison-preflight {
+  margin: 0 24px 12px;
+  padding: 0 13px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  color: var(--muted, #667085);
+}
+
+.compare-page .comparison-preflight > summary {
+  min-height: 42px;
+  padding: 11px 0;
+  color: var(--text, #172033);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.compare-page .stale-banner,
+.compare-page .global-error {
+  margin-inline: 24px;
+}
+
+.comparison-result-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  margin: 0 24px 12px;
+  padding: 14px 16px;
+  border: 1px solid #b9dfd2;
+  border-radius: 10px;
+  background: #f1fbf7;
+}
+
+.comparison-result-summary.neutral {
+  border-color: #d8dee6;
+  background: #f7f8fa;
+}
+
+.comparison-result-icon {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  place-items: center;
+  border-radius: 9px;
+  background: #daf2e7;
+  color: #187653;
+}
+
+.comparison-result-summary.neutral .comparison-result-icon {
+  background: #e9edf2;
+  color: #526273;
+}
+
+.comparison-result-summary span,
+.comparison-result-summary p {
+  color: var(--muted, #667085);
+  font-size: 11px;
+}
+
+.comparison-result-summary h2 {
+  margin: 2px 0;
+  color: var(--text, #172033);
+  font-size: 16px;
+}
+
+.comparison-result-summary p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.compare-page .comparison-body {
+  display: block;
+  min-width: 0;
+  margin: 0 24px;
+}
+
+.compare-page .comparison-main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.compare-page .comparison-outcomes {
+  order: 2;
+  display: grid;
+  gap: 10px;
+}
+
+.compare-page .comparison-chart {
+  order: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  box-shadow: 0 1px 2px rgb(16 24 40 / 4%);
+}
+
+.compare-page .comparison-chart > .spread {
+  align-items: flex-start;
+}
+
+.compare-page .comparison-chart h3 {
+  margin: 0;
+  color: var(--text, #172033);
+  font-size: 16px;
+}
+
+.compare-page .comparison-chart-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 11px 0 5px;
+}
+
+.compare-page .comparison-chart-controls .mantine-NativeSelect-root {
+  min-width: 220px;
+}
+
+.compare-page .comparison-chart .chart-wrap {
+  margin-top: 5px;
+}
+
 .compare-page .chart-empty {
   height: auto;
-  min-height: 111px;
-  padding: 12px 0;
+  min-height: 160px;
+  padding: 14px 0;
   text-align: center;
 }
 
@@ -10,196 +276,361 @@
   flex-shrink: 0;
 }
 
-/* Keep the decision chain visible with the fixed selected-time dock at desktop sizes. */
-@media (min-width: 1024px) {
-  .compare-page.planning-panel-page > .page-heading {
-    min-height: 64px;
-    padding: 10px 24px;
-  }
+.compare-page .outcome-card {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  box-shadow: 0 1px 2px rgb(16 24 40 / 4%);
+}
 
-  .compare-page .page-heading h1 {
-    font-size: 22px;
-    line-height: 1.1;
-  }
+.compare-page .outcome-card.chosen {
+  border-color: #7da2ef;
+  box-shadow: inset 0 0 0 1px #7da2ef;
+}
 
-  .compare-page .page-heading p {
-    margin: 3px 0 0;
-  }
+.compare-page .outcome-number {
+  margin: 5px 0 7px;
+  color: var(--text, #172033);
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
 
-  .compare-page .heading-actions {
-    gap: 7px;
-  }
+.compare-page .outcome-number small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted, #667085);
+  font-size: 11px;
+  font-weight: 400;
+}
 
-  .compare-page .comparison-context {
-    min-height: 32px;
-    margin: 0 18px 7px;
-    padding: 5px 10px;
-  }
+.compare-page .outcome-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin: 11px 0;
+}
 
+.compare-page .outcome-card dl > div {
+  display: block;
+}
+
+.compare-page .outcome-card dt {
+  color: var(--muted, #667085);
+  font-size: 10px;
+}
+
+.compare-page .outcome-card dd {
+  margin: 3px 0 0;
+  color: var(--text, #172033);
+  font-size: 12px;
+}
+
+.comparison-capacity-details {
+  order: 3;
+  overflow: hidden;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+}
+
+.comparison-capacity-details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 58px;
+  padding: 11px 15px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.comparison-capacity-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.comparison-capacity-details > summary > span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.comparison-capacity-details > summary small,
+.comparison-capacity-details > summary > span:last-child {
+  color: var(--muted, #667085);
+  font-size: 11px;
+}
+
+.compare-page .capacity-plan-cards {
+  gap: 9px;
+  padding: 0 12px 12px;
+}
+
+.compare-page .capacity-plan-cards .plan-card {
+  overflow: hidden;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+
+.compare-page .capacity-plan-cards .plan-card-header,
+.compare-page .capacity-plan-cards .plan-grid,
+.compare-page .capacity-plan-cards .plan-status {
+  padding: 9px 11px;
+}
+
+.compare-page .capacity-plan-cards .plan-card-header h2 {
+  margin: 4px 0 0;
+  color: var(--text, #172033);
+  font-size: 13px;
+}
+
+.compare-page .capacity-diagram {
+  grid-template-columns: repeat(25, minmax(0, 1fr));
+  min-height: 0;
+  margin-block: 8px;
+}
+
+.compare-page .plan-inline-outcome {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--muted, #667085);
+  font-size: 10px;
+}
+
+.compare-page .plan-inline-outcome > strong {
+  color: var(--text, #172033);
+  font-size: 15px;
+}
+
+.compare-page .plan-inline-outcome .button {
+  margin-left: auto;
+}
+
+.compare-page .comparison-metrics {
+  order: 4;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+}
+
+.compare-page .comparison-metrics > summary {
+  min-height: 54px;
+  padding: 16px;
+  color: var(--text, #172033);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.compare-page .comparison-metrics[open] {
+  padding: 0 16px 16px;
+}
+
+.compare-page .comparison-metrics[open] > summary {
+  margin-inline: -16px;
+}
+
+.compare-page .comparison-plan-resources {
+  overflow: hidden;
+  margin-top: 8px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+
+.compare-page .comparison-plan-resources > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 9px 12px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.compare-page .comparison-plan-resources > summary::-webkit-details-marker {
+  display: none;
+}
+
+.compare-page .comparison-plan-resources > summary h3 {
+  margin: 0;
+  color: var(--text, #172033);
+  font-size: 13px;
+}
+
+.comparison-plan-resource-body {
+  padding: 0 12px 12px;
+}
+
+.compare-page .comparison-explainer {
+  display: block;
+  width: auto;
+  min-width: 0;
+  max-height: none;
+  order: 5;
+  margin-top: 12px;
+  overflow: hidden;
+  padding: 16px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  box-shadow: 0 1px 2px rgb(16 24 40 / 4%);
+}
+
+.compare-page .comparison-explainer > summary {
+  color: var(--text, #172033);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.comparison-explainer-content {
+  padding-top: 13px;
+}
+
+.comparison-selected-action {
+  order: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid #a8d7c6;
+  border-radius: 10px;
+  background: #f1fbf7;
+}
+
+.comparison-selected-action > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.comparison-selected-action strong {
+  color: var(--text, #172033);
+  font-size: 14px;
+}
+
+.comparison-selected-action > div > span:last-child {
+  color: var(--muted, #667085);
+  font-size: 12px;
+}
+
+.compare-page .comparison-explainer > .eyebrow,
+.compare-page .comparison-explainer > p,
+.compare-page .comparison-explainer > small {
+  color: var(--muted, #667085);
+}
+
+.compare-page .comparison-explainer h2 {
+  margin: 6px 0 12px;
+  color: var(--text, #172033);
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.compare-page .comparison-explainer .equation {
+  margin-block: 12px;
+}
+
+.compare-page > .timeline-panel {
+  margin: 12px 24px 0;
+  border: 1px solid var(--border, #dfe4ea);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+}
+
+@media (max-width: 1180px) {
   .compare-page .response-selector {
-    margin: 0 18px 7px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
 
-  .compare-page .response-selector > button {
-    padding: 5px 8px;
-  }
-
-  .compare-page .comparison-preflight {
-    margin: 0 18px 7px;
-    padding: 0 10px;
-  }
-
-  .compare-page .comparison-preflight > summary {
-    min-height: 24px;
-    padding-block: 3px;
-  }
-
-  .compare-page .comparison-body {
-    gap: 14px;
-    margin: 0 18px;
-  }
-
-  .compare-page .comparison-main {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-  }
-
-  .compare-page .capacity-plan-cards {
-    gap: 9px;
-  }
-
-  .compare-page .capacity-plan-cards .plan-card-header {
-    min-height: 40px;
-    padding: 6px 10px;
-  }
-
-  .compare-page .capacity-plan-cards .plan-card-header .eyebrow {
-    display: none;
-  }
-
-  .compare-page .capacity-plan-cards .plan-card-header h2 {
-    font-size: 13px;
-    line-height: 1.15;
-  }
-
-  .compare-page .capacity-plan-cards .plan-grid {
-    padding: 5px 10px;
-  }
-
-  .compare-page .capacity-plan-cards .plan-grid .micro-label {
+@media (min-width: 1024px) {
+  .compare-page.planning-panel-page {
     display: block;
-    font-size: 10px;
-    line-height: 1.3;
-    margin-bottom: 4px;
+    height: auto;
+    min-height: 100%;
+    overflow: auto;
   }
 
-  .compare-page .capacity-diagram {
-    grid-template-columns: repeat(25, minmax(0, 1fr));
-    min-height: 0;
-    margin: 0 0 4px;
-  }
-
-  .compare-page .capacity-plan-cards .plan-capacity {
-    margin-top: 0;
-  }
-
-  .compare-page .capacity-plan-cards .plan-capacity > span {
-    display: none;
-  }
-
-  .compare-page .plan-inline-outcome {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 4px;
-    min-height: 23px;
-    color: var(--muted);
-    font-size: 10px;
-  }
-
-  .compare-page .plan-inline-outcome > strong {
-    color: var(--text);
-    font-size: 16px;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .compare-page .plan-inline-outcome small {
-    margin-left: 3px;
-    color: var(--muted);
-    font-size: 10px;
-    font-weight: 400;
-  }
-
-  .compare-page .plan-inline-outcome .button {
-    min-height: 24px;
-    margin-left: auto;
-    padding: 3px 6px;
-    font-size: 10px;
-  }
-
-  .compare-page .capacity-plan-cards .plan-status {
-    min-height: 24px;
-    padding: 4px 10px;
-    line-height: 1.45;
-  }
-
-  .compare-page .comparison-chart {
-    margin-top: 0;
-    padding: 8px 12px;
-  }
-
-  .compare-page .comparison-chart-controls {
-    margin-top: 5px;
-  }
-
-  .compare-page .comparison-chart .chart-wrap {
-    margin-top: 5px;
-  }
-
-  .compare-page .comparison-outcomes {
-    display: none;
-  }
-
-  .compare-page .outcome-card {
-    padding: 6px 10px;
-  }
-
-  .compare-page .outcome-number {
-    font-size: 20px;
-    margin: 3px 0 5px;
-  }
-
-  .compare-page .outcome-card .outcome-bar {
-    margin-bottom: 4px;
-  }
-
-  .compare-page .outcome-card dl {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 3px 8px;
-  }
-
-  .compare-page .outcome-card dl > div {
+  .compare-page.planning-panel-page .comparison-body {
     display: block;
+    overflow: visible;
   }
 
-  .compare-page .outcome-card dt,
-  .compare-page .outcome-card dd {
+  .compare-page.planning-panel-page .comparison-main {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .compare-page.planning-panel-page .comparison-explainer {
+    width: auto;
+    min-width: 0;
+    max-height: none;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
+}
 
-  .compare-page .outcome-card dt {
-    font-size: 10px;
+@media (max-width: 767px) {
+  .compare-page {
+    height: auto;
+    overflow: visible;
   }
-
-  .compare-page .outcome-card dd {
-    font-size: 11px;
-  }
-
+  .compare-page .comparison-context,
+  .compare-page .response-selector,
+  .compare-page .comparison-preflight,
+  .compare-page .stale-banner,
+  .compare-page .global-error,
+  .comparison-result-summary,
+  .compare-page .comparison-body,
   .compare-page > .timeline-panel {
-    margin: 0 18px;
+    margin-inline: 14px;
+  }
+  .compare-page .comparison-context > .badge {
+    width: 100%;
+    margin-left: 0;
+  }
+  .compare-page .response-selector {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .compare-page .response-selector > button {
+    flex: 0 0 180px;
+  }
+  .comparison-result-summary {
+    grid-template-columns: 1fr;
+  }
+  .comparison-result-icon {
+    display: none;
+  }
+  .compare-page .comparison-outcomes,
+  .compare-page .capacity-plan-cards {
+    grid-template-columns: 1fr !important;
+  }
+  .compare-page .comparison-chart-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .compare-page .comparison-chart-controls .mantine-NativeSelect-root {
+    width: 100%;
+    min-width: 0;
+  }
+  .comparison-selected-action {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .comparison-tools-menu {
+    right: auto;
+    left: 0;
   }
 }

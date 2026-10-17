@@ -1,3 +1,4 @@
+import { NativeSelect } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Bell, Check, Edit3, Plus, Save, ShieldCheck } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
@@ -258,7 +259,7 @@ export default function AlertsDialog({
             <div className="two-fields">
               <label>
                 Metric
-                <select
+                <NativeSelect aria-label="Metric"
                   value={form.metric}
                   onChange={(e) => update("metric", e.target.value)}
                 >
@@ -267,11 +268,11 @@ export default function AlertsDialog({
                       {name}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Statistic
-                <select
+                <NativeSelect aria-label="Statistic"
                   value={form.statistic}
                   onChange={(e) => update("statistic", e.target.value)}
                 >
@@ -282,11 +283,11 @@ export default function AlertsDialog({
                   <option value="selected_replication">
                     Selected simulation run
                   </option>
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Interval
-                <select
+                <NativeSelect aria-label="Interval"
                   value={form.grain}
                   onChange={(e) => update("grain", e.target.value)}
                 >
@@ -295,11 +296,11 @@ export default function AlertsDialog({
                       {g}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Operator
-                <select
+                <NativeSelect aria-label="Operator"
                   value={form.operator}
                   onChange={(e) => update("operator", e.target.value)}
                 >
@@ -307,7 +308,7 @@ export default function AlertsDialog({
                   <option value="gte">Greater than or equal</option>
                   <option value="lt">Less than</option>
                   <option value="lte">Less than or equal</option>
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Threshold ({metrics[form.metric]?.[1]})
@@ -332,20 +333,20 @@ export default function AlertsDialog({
               </label>
               <label>
                 Severity
-                <select
+                <NativeSelect aria-label="Severity"
                   value={form.severity}
                   onChange={(e) => update("severity", e.target.value)}
                 >
                   <option value="info">Information</option>
                   <option value="warning">Warning</option>
                   <option value="critical">Critical</option>
-                </select>
+                </NativeSelect>
               </label>
               <label>
                 Supported scope
-                <select value="FAC-MAIN" disabled>
+                <NativeSelect aria-label="Supported scope" value="FAC-MAIN" disabled>
                   <option value="FAC-MAIN">Main hospital</option>
-                </select>
+                </NativeSelect>
               </label>
             </div>
             <div className="info-note">

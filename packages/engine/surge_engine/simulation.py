@@ -35,6 +35,7 @@ from .pathways import (
     queue_spec,
     stage_profile,
 )
+from .stage_clock import reserved_source_finishes_before_pickup
 
 
 class SimulationCancelled(Exception):
@@ -782,7 +783,9 @@ class HospitalSimulation:
         if (
             arrival <= 0
             or not isinstance(tr.get("remaining_stage_minutes"), (int, float))
-            or tr["remaining_stage_minutes"] <= 0
+            or tr["remaining_stage_minutes"] < 0
+            or tr["remaining_stage_minutes"] == 0
+            and not reserved_source_finishes_before_pickup(p, self.start)
         ):
             raise ValueError(
                 "Imported transfer requires future arrival and explicit positive remaining stage"
@@ -3237,6 +3240,7 @@ def state_at(trace, at):
     )
     if not 0 <= minute <= trace["horizon_elapsed_minutes"]:
         raise ValueError("Replay time outside replication interval")
+    instant = dt(trace["start_at"]) + timedelta(minutes=minute)
     patients = []
     for p in trace.get("patients", []):
         intervals = p.get("state_intervals", [])
@@ -3259,6 +3263,23 @@ def state_at(trace, at):
                 **copy.deepcopy(stage),
             }
         )
+        patient = patients[-1]
+        active_source = patient["state"] in ("inpatient", "ed_assessment", "clinic_assessment") or (
+            patient["state"] == "transfer_reserved"
+            and (patient.get("pending_transfer") or {}).get("prior_state") == "inpatient"
+        )
+        expected_end = patient.get("expected_stage_end_at")
+        if (
+            active_source
+            and patient.get("stage_status") not in ("not_started", "ready_to_exit")
+            and expected_end
+            and dt(expected_end) > instant
+        ):
+            # The trace records the exact active-stage clock. A residual copied
+            # from its entry is stale at this observation time; an absolute end
+            # also preserves fractional-minute cutoffs without rounding. Transit
+            # service remains paused and uses its separate departure residual.
+            patient["remaining_stage_spec"] = {"kind": "expected_end", "expected_end_at": expected_end}
     blockers = {}
     for group, history in trace.get("blocker_history", {}).items():
         index = bisect.bisect_right([h["start_elapsed_minutes"] for h in history], minute) - 1
@@ -3297,7 +3318,7 @@ def state_at(trace, at):
             equipment_pools.append(copy.deepcopy(history[index]))
     equipment_pools.sort(key=lambda pool: pool["equipment_pool_id"])
     return {
-        "at": iso(dt(trace["start_at"]) + timedelta(minutes=minute)),
+        "at": iso(instant),
         "elapsed_minutes": minute,
         "replication_id": trace["replication_id"],
         "patients": patients,

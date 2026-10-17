@@ -28,7 +28,8 @@
         "evidence/browser-overview-outlook.json: desktop/mobile actual operational counts, full-horizon queue bands and conditional first-unmet timing",
         "tests/test_seed_upgrade.py: deterministic generator 1.1 lineage, exact immutable checksum, current defaults, idempotent upgrades and retained historical bytes",
         "evidence/generator-release-candidate.json: valid current 365-day planning and stress fixtures",
-        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow",
+        "evidence/visual-reference-release-candidate.json:all six reference directions reviewed;11desktop/mobile views and closed chart/readiness findings"
       ],
       "spec_line": 88
     },
@@ -198,10 +199,15 @@
         "evidence/engine-snapshot-cache-optimization.json: exact committed-reference output hashes before/after snapshot caching",
         "tests/test_declared_pathways.py; tests/test_clinic_policy.py; tests/test_stepdown_snapshot.py: configured identifiers, mixtures, assessment/pathways, policy resources/allowed care, optional stepdown and committed observed continuations",
         "evidence/canonical-model-numeric-oracle.json: unchanged canonical scalar/daily outcomes on planning/stress fixtures across model repair",
-        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow",
+        "tests/test_observed_stage_clock.py:26 actual fractional/whole-time ED/inpatient/clinic and reserved/transit snapshots; exact expected-end residuals, completion-before/equal-pickup cancellation/resource release and optional stage_status compatibility",
+        "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
+        "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
+        "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
       ],
       "spec_line": 95,
-      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
+      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
     },
     {
       "id": "F09",
@@ -442,10 +448,15 @@
         "tests/test_creation_idempotency.py: lost-response creation retries preserve one entity/audit; changed request returns 409",
         "tests/test_model_version_guards.py: current model guards, legacy branch migration, server-owned authentic complete reset provenance and guarded worker regeneration",
         "tests/test_stepdown_snapshot.py; tests/test_clinic_policy.py: actual observed snapshots resume known commitments and draw only unstarted future stages",
-        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow"
+        "evidence/backend-pytest-release-candidate-final.log: 568 passed; evidence/browser-release-candidate-report.json: current 365-day source and complete 30-day configure/run/compare/update/replay/checksum-export workflow",
+        "tests/test_observed_stage_clock.py:26 actual fractional/whole-time ED/inpatient/clinic and reserved/transit snapshots; exact expected-end residuals, completion-before/equal-pickup cancellation/resource release and optional stage_status compatibility",
+        "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
+        "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
+        "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
       ],
       "spec_line": 106,
-      "current_reaudit": "Closed locally 2026-10-17: independent focused review, final 568-test backend suite, 85 frontend tests/build and 17 browser passes with 5 deliberate project skips. Next immutable hosted acceptance remains a separate F26 gate."
+      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
     },
     {
       "id": "F20",
@@ -480,9 +491,15 @@
         "evidence/backend-pytest-final.log: 184 Python tests passed; final frontend suite36 passed and production build passed",
         "evidence/browser-combined-candidate-initial-report.json: mobile readable panorama/zone focus, exact event/resource/transfer inspection passed; desktop dock/aspect repeat separately recorded",
         "apps/web/e2e/shared-panels.spec.ts: independent collapsible inspectors and keyboard resizing of180\u2013260px time docks",
-        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance"
+        "evidence/browser-final-reviewed-source-report.json: final source 5 passed, 1 deliberate mobile-form skip; complete 70% workflow, actual aggregate capacity, exact offset cutoff, replay dock, map/search and all-family incident provenance",
+        "tests/test_observed_stage_clock.py:26 actual fractional/whole-time ED/inpatient/clinic and reserved/transit snapshots; exact expected-end residuals, completion-before/equal-pickup cancellation/resource release and optional stage_status compatibility",
+        "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
+        "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
+        "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
       ],
-      "spec_line": 107
+      "spec_line": 107,
+      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
     },
     {
       "id": "F21",
@@ -784,9 +801,15 @@
         "F19: tests/test_api.py::test_selected_branch_preserves_history_and_varies_future; tests/test_review_api.py::test_branch_uses_frozen_run_when_draft_was_edited; tests/test_engine.py::test_selected_replication_branch_preserves_history_and_splits_future; tests/test_engine.py::test_observed_reset_preserves_explicit_end; tests/test_engine.py::test_observed_reset_partial_day_uses_partial_arrival_exposure",
         "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
         "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged",
-        "F18/F19: tests/test_update_frozen_context.py; tests/test_model_version_guards.py; tests/test_stepdown_snapshot.py; evidence/browser-inspector-update-context.json; evidence/browser-workflow.json"
+        "F18/F19: tests/test_update_frozen_context.py; tests/test_model_version_guards.py; tests/test_stepdown_snapshot.py; evidence/browser-inspector-update-context.json; evidence/browser-workflow.json",
+        "tests/test_observed_stage_clock.py:26 actual fractional/whole-time ED/inpatient/clinic and reserved/transit snapshots; exact expected-end residuals, completion-before/equal-pickup cancellation/resource release and optional stage_status compatibility",
+        "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
+        "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
+        "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
       ],
-      "spec_line": 1301
+      "spec_line": 1301,
+      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
     },
     {
       "id": "W10",
@@ -799,9 +822,15 @@
         "evidence/browser-replay-controls.json",
         "evidence/browser-resource-replay-final.json: play/pause/speeds, end seek, keyboard seek, exact forward/backward event sequences, reduced motion, unchanged input hash",
         "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
-        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged"
+        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged",
+        "tests/test_observed_stage_clock.py:26 actual fractional/whole-time ED/inpatient/clinic and reserved/transit snapshots; exact expected-end residuals, completion-before/equal-pickup cancellation/resource release and optional stage_status compatibility",
+        "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
+        "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
+        "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
       ],
-      "spec_line": 1302
+      "spec_line": 1302,
+      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
     },
     {
       "id": "W11",
@@ -968,9 +997,15 @@
         "F19: tests/test_api.py::test_selected_branch_preserves_history_and_varies_future; tests/test_review_api.py::test_branch_uses_frozen_run_when_draft_was_edited; tests/test_engine.py::test_selected_replication_branch_preserves_history_and_splits_future; tests/test_engine.py::test_observed_reset_preserves_explicit_end; tests/test_engine.py::test_observed_reset_partial_day_uses_partial_arrival_exposure",
         "tests/test_engine.py::test_update_idempotency_and_branch_preservation: exactly 20 patients, duplicate report unchanged",
         "tests/test_reset_reconciliation.py: complete 1,250-patient observed reset, immutable source hash and read-only preview",
-        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged"
+        "evidence/browser-reset-reconciliation.json: actual 10-rep observed reset branch completed, prior 100-run result unchanged",
+        "tests/test_observed_stage_clock.py:26 actual fractional/whole-time ED/inpatient/clinic and reserved/transit snapshots; exact expected-end residuals, completion-before/equal-pickup cancellation/resource release and optional stage_status compatibility",
+        "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
+        "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
+        "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
       ],
-      "spec_line": 1831
+      "spec_line": 1831,
+      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
     },
     {
       "id": "E10",
@@ -981,9 +1016,15 @@
         "F20: apps/web/e2e/workflows.spec.ts; apps/web/e2e/context-editor.spec.ts; apps/web/e2e/recovery.spec.ts; tests/test_review_api.py::test_event_sequence_cursor_includes_coincident_events; tests/test_engine.py::test_hourly_checkpoint_index_reconstructs_exact_ledger",
         "apps/web/e2e/replay-controls.spec.ts",
         "evidence/browser-replay-controls.json",
-        "evidence/browser-resource-replay-final.json: play/pause/speeds, end seek, keyboard seek, exact forward/backward event sequences, reduced motion, unchanged input hash"
+        "evidence/browser-resource-replay-final.json: play/pause/speeds, end seek, keyboard seek, exact forward/backward event sequences, reduced motion, unchanged input hash",
+        "tests/test_observed_stage_clock.py:26 actual fractional/whole-time ED/inpatient/clinic and reserved/transit snapshots; exact expected-end residuals, completion-before/equal-pickup cancellation/resource release and optional stage_status compatibility",
+        "evidence/backend-observed-clock-focused-final.log:73 focused continuation/snapshot/reset checks passed",
+        "evidence/backend-pytest-observed-clock-frozen.log:594 complete frozen-source backend tests passed",
+        "evidence/browser-observed-clock-final-report.json:3 desktop cases passed/3 deliberate mobile skips; precise-offset reset, Replay controls and complete30-day10-rep workflow",
+        "evidence/observed-clock-model-oracle.json:complete raw traced outputs and scalar metrics identical to6feb for both canonical fixtures under identical three-day70% surge inputs"
       ],
-      "spec_line": 1832
+      "spec_line": 1832,
+      "current_reaudit": "Closed locally after exact expected-end projection/restoration repair:594 full backend tests,73 focused checks, post-patch browser repeat and independent continuation review. Hosted next-release gates remain separate."
     },
     {
       "id": "E11",
@@ -1059,5 +1100,5 @@
     }
   ],
   "last_reviewed_at": "2026-10-17",
-  "verification_scope": "All P0/P1 functional repairs are locally verified by final 568 backend tests, 85 frontend tests/build, independent focused review, 17 browser passes/5 deliberate project skips and the Day12 eleven-view reference gallery. F26 remains pending the next immutable hosted deployment, scans, workflow, performance, fault recovery and navigation checks. Historical failed timings remain preserved; P2 is deferred."
+  "verification_scope": "Final observed-clock source passes594 full backend tests,73 focused continuation/snapshot/reset checks, independent review and3 post-patch desktop browser cases/3 deliberate mobile skips. Frontend85 tests/build and prior17-case desktop/mobile matrix remain scoped to unchanged frontend source. All P0/P1 functional findings are closed locally. F26 remains pending the next immutable hosted release and final recovery/annual/browser/backup gates; measured target misses are preserved, P2 deferred."
 }

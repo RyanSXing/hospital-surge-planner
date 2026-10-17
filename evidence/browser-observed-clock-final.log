@@ -1,0 +1,26 @@
+
+Running 6 tests using 1 worker
+
+(node:13805) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13805) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [desktop] › e2e/operational-time.spec.ts:4:1 › observed reset preserves an explicit-offset snapshot cutoff finer than one minute (9.5s)
+  ✓  2 [desktop] › e2e/replay-controls.spec.ts:4:1 › playback speed, pause, seek and exact event stepping preserve frozen results (11.1s)
+workflow: created scenario_c80d59f227cf4b28b193
+workflow: scenario screen loaded
+workflow: fields configured
+workflow: submit clicked
+workflow: queued run_868cd5529ede43fa8157
+workflow: run complete
+  ✓  3 [desktop] › e2e/workflows.spec.ts:14:1 › configure, compute, inspect, compare, update, replay and export (50.6s)
+(node:14007) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14007) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  4 [mobile] › e2e/operational-time.spec.ts:4:1 › observed reset preserves an explicit-offset snapshot cutoff finer than one minute
+  -  5 [mobile] › e2e/replay-controls.spec.ts:4:1 › playback speed, pause, seek and exact event stepping preserve frozen results
+  -  6 [mobile] › e2e/workflows.spec.ts:14:1 › configure, compute, inspect, compare, update, replay and export
+
+  3 skipped
+  3 passed (1.2m)

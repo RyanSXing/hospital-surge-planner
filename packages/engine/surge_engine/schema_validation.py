@@ -13,6 +13,7 @@ from datetime import date
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .common import dt
+from .stage_clock import reserved_source_finishes_before_pickup
 
 IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$")
 UNIT_KINDS = {"ward", "icu", "ed", "clinic", "shelter"}
@@ -1201,7 +1202,7 @@ def canonical_schema_errors(dataset):
                 n,
                 transfer,
                 "remaining_stage_minutes",
-                0 if completed_source else 1,
+                0 if completed_source or reserved_source_finishes_before_pickup(row, snapshot) else 1,
                 required=state in {"transfer_reserved", "in_transit"}
                 and not clinic_transfer
                 and not completed_source,

@@ -11,6 +11,7 @@ import zipfile
 from collections import Counter, defaultdict
 
 from .common import canonical, dt
+from .stage_clock import reserved_source_finishes_before_pickup
 
 ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$")
 
@@ -322,7 +323,9 @@ def validate_dataset(dataset):
                     not isinstance(duration, (int, float))
                     or isinstance(duration, bool)
                     or not math.isfinite(duration)
-                    or duration <= 0
+                    or duration < 0
+                    or duration == 0
+                    and not reserved_source_finishes_before_pickup(p, snapshot)
                 )
             ):
                 error(

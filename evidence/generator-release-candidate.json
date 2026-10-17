@@ -40,13 +40,19 @@
         "update_fixtures": 5,
         "assumptions": 6
       },
-      "current_census": {
+      "valid": true,
+      "patients_by_required_care_level": {
         "ward": 64,
         "icu": 8,
         "ambulatory": 12
       },
-      "all_patient_admission_timestamps_present": false,
-      "valid": true
+      "occupied_by_unit_kind": {
+        "ward": 64,
+        "icu": 8,
+        "ed": 12
+      },
+      "all_admission_timestamp_keys_present": true,
+      "all_required_admission_timestamps_present": true
     },
     {
       "fixture": "stress_snapshot",
@@ -86,13 +92,19 @@
         "update_fixtures": 5,
         "assumptions": 6
       },
-      "current_census": {
+      "valid": true,
+      "patients_by_required_care_level": {
         "ward": 90,
         "icu": 16,
         "ambulatory": 10
       },
-      "all_patient_admission_timestamps_present": false,
-      "valid": true
+      "occupied_by_unit_kind": {
+        "ward": 80,
+        "icu": 12,
+        "ed": 24
+      },
+      "all_admission_timestamp_keys_present": true,
+      "all_required_admission_timestamps_present": true
     }
   ]
 }

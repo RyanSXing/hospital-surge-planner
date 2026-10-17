@@ -1,0 +1,370 @@
+{
+  "diagnostic_script": "evidence/diagnostics/parent-phase-probe-6feb.py",
+  "diagnostic_script_sha256": "720a4a2acda6917ce3eee8a079f21fc320d3e7c12cfcfaf441bc3739726d14ee",
+  "reports": [
+    {
+      "recorded_at": "2026-10-17T14:19:14.619026+00:00",
+      "scope": "Exact completed current-input read-only serial phases; all PUTs replaced by a strict no-network stub; no jobs/objects written",
+      "code_commit": "6febf00912b930fe6b00a5a748a4acde0550e505",
+      "run_group_id": "run_fd5a8c39312a49c5adf0",
+      "replications": 10,
+      "days": 30,
+      "input_sha256": "b80a4a97e5b4760f07c28181cf43f82bd43b34a59aa8444fb60cf0931cc759b1",
+      "aggregate_exact": true,
+      "phases": [
+        {
+          "phase": "database_load_exact_frozen_inputs",
+          "wall_seconds": 0.8240820129976782,
+          "cpu_seconds": 0.7531257800000004
+        },
+        {
+          "phase": "deepcopy_payload",
+          "wall_seconds": 6.055999983800575e-05,
+          "cpu_seconds": 6.0640000000056204e-05
+        },
+        {
+          "phase": "deepcopy_dataset",
+          "wall_seconds": 0.7871802369991201,
+          "cpu_seconds": 0.7870987600000001
+        },
+        {
+          "phase": "frozen_input_digest",
+          "wall_seconds": 0.31692019600086496,
+          "cpu_seconds": 0.3168458000000012
+        },
+        {
+          "phase": "cold_import_oci_sdk",
+          "wall_seconds": 1.6106467530007649,
+          "cpu_seconds": 1.60994174
+        },
+        {
+          "phase": "cold_oci_client_and_instance_signer",
+          "wall_seconds": 0.27145278899843106,
+          "cpu_seconds": 0.23654963999999978
+        },
+        {
+          "phase": "warm_oci_store_construction",
+          "wall_seconds": 0.00022439899839810096,
+          "cpu_seconds": 0.00022483999999955984
+        },
+        {
+          "phase": "diagnostic_read_replicates_not_fresh_job_cost",
+          "wall_seconds": 0.25148713599992334,
+          "cpu_seconds": 0.19096655999999967
+        },
+        {
+          "phase": "aggregate_results",
+          "wall_seconds": 0.47377066999979434,
+          "cpu_seconds": 0.4737096600000008
+        },
+        {
+          "phase": "compact_summary",
+          "wall_seconds": 5.586000042967498e-05,
+          "cpu_seconds": 5.5880000001451435e-05
+        },
+        {
+          "phase": "period_week",
+          "wall_seconds": 0.030860196999128675,
+          "cpu_seconds": 0.030864400000000458
+        },
+        {
+          "phase": "period_month",
+          "wall_seconds": 0.015702586999395862,
+          "cpu_seconds": 0.015706139999998925
+        },
+        {
+          "phase": "diagnostic_read_trace_not_fresh_job_cost",
+          "wall_seconds": 0.5893441810003424,
+          "cpu_seconds": 0.5478584600000005
+        },
+        {
+          "phase": "per_replication_canonical_gzip_sha_md5_metadata_no_network",
+          "wall_seconds": 0.20741432300201268,
+          "cpu_seconds": 0.20733591999999845
+        },
+        {
+          "phase": "aggregate_canonical",
+          "wall_seconds": 0.1100917509975261,
+          "cpu_seconds": 0.11006646000000053
+        },
+        {
+          "phase": "aggregate_gzip6",
+          "wall_seconds": 0.028969742001208942,
+          "cpu_seconds": 0.028975060000000497
+        },
+        {
+          "phase": "aggregate_sha_md5_metadata_no_network",
+          "wall_seconds": 0.0005208580005273689,
+          "cpu_seconds": 0.0005219200000006197
+        },
+        {
+          "phase": "replications_canonical",
+          "wall_seconds": 0.14839232199665275,
+          "cpu_seconds": 0.14837918000000094
+        },
+        {
+          "phase": "replications_gzip6",
+          "wall_seconds": 0.04988917200171272,
+          "cpu_seconds": 0.04989461999999989
+        },
+        {
+          "phase": "replications_sha_md5_metadata_no_network",
+          "wall_seconds": 0.000884156997926766,
+          "cpu_seconds": 0.000885439999999349
+        },
+        {
+          "phase": "inputs_canonical",
+          "wall_seconds": 0.2981838390005578,
+          "cpu_seconds": 0.29816791999999914
+        },
+        {
+          "phase": "inputs_gzip6",
+          "wall_seconds": 0.1837420430019847,
+          "cpu_seconds": 0.18371409999999955
+        },
+        {
+          "phase": "inputs_sha_md5_metadata_no_network",
+          "wall_seconds": 0.0021997320000082254,
+          "cpu_seconds": 0.002202799999999172
+        },
+        {
+          "phase": "selected_trace_canonical",
+          "wall_seconds": 0.4106468419995508,
+          "cpu_seconds": 0.4106306600000007
+        },
+        {
+          "phase": "selected_trace_gzip6",
+          "wall_seconds": 0.2323035000008531,
+          "cpu_seconds": 0.23227162000000057
+        },
+        {
+          "phase": "selected_trace_sha_md5_metadata_no_network",
+          "wall_seconds": 0.0029818490002071485,
+          "cpu_seconds": 0.00298493999999927
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "aggregate",
+          "raw_bytes": 3054405,
+          "packed_bytes": 152267,
+          "sha256": "0546b4bdf10e43a6c5973bf97c407f31df52f08c872c8e59a238223f6fd9b543",
+          "matches_saved": true
+        },
+        {
+          "name": "replications",
+          "raw_bytes": 5846323,
+          "packed_bytes": 296590,
+          "sha256": "093efb507418a6f94b20fff9db0722e2d43590e239cccbf19347ee3e3d242233",
+          "matches_saved": true
+        },
+        {
+          "name": "inputs",
+          "raw_bytes": 22069104,
+          "packed_bytes": 889639,
+          "sha256": "af626cb8d20bedcd9a7c42cd818a86304022509f2ca7f0da4e33252cf3b58cc9",
+          "matches_saved": true
+        },
+        {
+          "name": "selected_trace",
+          "raw_bytes": 30577763,
+          "packed_bytes": 1232774,
+          "sha256": "0d71b4c7df7e019b6147baf43e05287a4b1cd85b002b72319fdca6d9bb27503a",
+          "matches_saved": true
+        }
+      ],
+      "put_preparation_calls": 14,
+      "put_preparation_bytes": 2863502,
+      "actual_put_network_latency_measured": false,
+      "peak_rss_bytes": 449789952,
+      "limits": [
+        "Single diagnostic trial, not end-to-end acceptance.",
+        "Artifact reload/decode is diagnostic setup and not a fresh-run cost.",
+        "Actual OCI PUT network latency and durable per-replication SQL publication are unmeasured.",
+        "Cold OCI SDK import and client authentication are separated, while real worker construction includes both."
+      ]
+    },
+    {
+      "recorded_at": "2026-10-17T14:19:36.393009+00:00",
+      "scope": "Exact completed current-input read-only serial phases; all PUTs replaced by a strict no-network stub; no jobs/objects written",
+      "code_commit": "6febf00912b930fe6b00a5a748a4acde0550e505",
+      "run_group_id": "run_6278e8f0faf644209992",
+      "replications": 100,
+      "days": 30,
+      "input_sha256": "f54133bcb24485985bb6e186b467c15453e936505b93e9f34a26bf8a2b0b82b0",
+      "aggregate_exact": true,
+      "phases": [
+        {
+          "phase": "database_load_exact_frozen_inputs",
+          "wall_seconds": 0.8286970779990952,
+          "cpu_seconds": 0.7613213600000002
+        },
+        {
+          "phase": "deepcopy_payload",
+          "wall_seconds": 5.9819998568855226e-05,
+          "cpu_seconds": 5.984000000047729e-05
+        },
+        {
+          "phase": "deepcopy_dataset",
+          "wall_seconds": 0.7791744230016775,
+          "cpu_seconds": 0.7789456599999998
+        },
+        {
+          "phase": "frozen_input_digest",
+          "wall_seconds": 0.3181340720002481,
+          "cpu_seconds": 0.3181261400000004
+        },
+        {
+          "phase": "cold_import_oci_sdk",
+          "wall_seconds": 1.6122735470016778,
+          "cpu_seconds": 1.610235059999999
+        },
+        {
+          "phase": "cold_oci_client_and_instance_signer",
+          "wall_seconds": 0.2464618119993247,
+          "cpu_seconds": 0.21608699999999992
+        },
+        {
+          "phase": "warm_oci_store_construction",
+          "wall_seconds": 0.0002210790007666219,
+          "cpu_seconds": 0.00022124000000012245
+        },
+        {
+          "phase": "diagnostic_read_replicates_not_fresh_job_cost",
+          "wall_seconds": 1.7740123240000685,
+          "cpu_seconds": 1.6548300000000005
+        },
+        {
+          "phase": "aggregate_results",
+          "wall_seconds": 2.0564449159974174,
+          "cpu_seconds": 2.0561732799999994
+        },
+        {
+          "phase": "compact_summary",
+          "wall_seconds": 0.00031801799923414364,
+          "cpu_seconds": 0.000318480000000676
+        },
+        {
+          "phase": "period_week",
+          "wall_seconds": 0.11025214999972377,
+          "cpu_seconds": 0.11025764000000038
+        },
+        {
+          "phase": "period_month",
+          "wall_seconds": 0.0791088750011113,
+          "cpu_seconds": 0.0790970600000005
+        },
+        {
+          "phase": "diagnostic_read_trace_not_fresh_job_cost",
+          "wall_seconds": 0.6672440590009501,
+          "cpu_seconds": 0.5316386000000008
+        },
+        {
+          "phase": "per_replication_canonical_gzip_sha_md5_metadata_no_network",
+          "wall_seconds": 2.138048261000222,
+          "cpu_seconds": 2.137790260000001
+        },
+        {
+          "phase": "aggregate_canonical",
+          "wall_seconds": 0.1081907770021644,
+          "cpu_seconds": 0.108154159999998
+        },
+        {
+          "phase": "aggregate_gzip6",
+          "wall_seconds": 0.0283737249992555,
+          "cpu_seconds": 0.02837848000000065
+        },
+        {
+          "phase": "aggregate_sha_md5_metadata_no_network",
+          "wall_seconds": 0.0004985579980711918,
+          "cpu_seconds": 0.0004997200000005364
+        },
+        {
+          "phase": "replications_canonical",
+          "wall_seconds": 1.4731585339977755,
+          "cpu_seconds": 1.473033019999999
+        },
+        {
+          "phase": "replications_gzip6",
+          "wall_seconds": 0.4980987079979968,
+          "cpu_seconds": 0.49801232000000084
+        },
+        {
+          "phase": "replications_sha_md5_metadata_no_network",
+          "wall_seconds": 0.006978436002100352,
+          "cpu_seconds": 0.006983160000000765
+        },
+        {
+          "phase": "inputs_canonical",
+          "wall_seconds": 0.29007942599855596,
+          "cpu_seconds": 0.2900613600000028
+        },
+        {
+          "phase": "inputs_gzip6",
+          "wall_seconds": 0.18332286499935435,
+          "cpu_seconds": 0.1833102999999987
+        },
+        {
+          "phase": "inputs_sha_md5_metadata_no_network",
+          "wall_seconds": 0.0022014919995854143,
+          "cpu_seconds": 0.0022039599999992276
+        },
+        {
+          "phase": "selected_trace_canonical",
+          "wall_seconds": 0.4176992169996083,
+          "cpu_seconds": 0.4176665600000007
+        },
+        {
+          "phase": "selected_trace_gzip6",
+          "wall_seconds": 0.2406810319989745,
+          "cpu_seconds": 0.24068707999999717
+        },
+        {
+          "phase": "selected_trace_sha_md5_metadata_no_network",
+          "wall_seconds": 0.0031320090020017233,
+          "cpu_seconds": 0.0031358400000023323
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "aggregate",
+          "raw_bytes": 3041401,
+          "packed_bytes": 155351,
+          "sha256": "657d8c39e543fadda28a55342780ce4c4cd9cecf68c06110e78f238480b877c6",
+          "matches_saved": true
+        },
+        {
+          "name": "replications",
+          "raw_bytes": 58469141,
+          "packed_bytes": 2955318,
+          "sha256": "8908ff61ba3eb56b9fa148754fe0fe0fa760f4fe616f5b1de1510ec44debc5be",
+          "matches_saved": true
+        },
+        {
+          "name": "inputs",
+          "raw_bytes": 22069108,
+          "packed_bytes": 889640,
+          "sha256": "48449c1ec1e122cc1084c1922742a99a201d2175edb23b0c602f9b4e81122873",
+          "matches_saved": true
+        },
+        {
+          "name": "selected_trace",
+          "raw_bytes": 31587336,
+          "packed_bytes": 1274132,
+          "sha256": "969d3a535b4effebf664b376c96ae45dd7cae065e289ed83a11ee493bd24b3b5",
+          "matches_saved": true
+        }
+      ],
+      "put_preparation_calls": 104,
+      "put_preparation_bytes": 8183426,
+      "actual_put_network_latency_measured": false,
+      "peak_rss_bytes": 649928704,
+      "limits": [
+        "Single diagnostic trial, not end-to-end acceptance.",
+        "Artifact reload/decode is diagnostic setup and not a fresh-run cost.",
+        "Actual OCI PUT network latency and durable per-replication SQL publication are unmeasured.",
+        "Cold OCI SDK import and client authentication are separated, while real worker construction includes both."
+      ]
+    }
+  ]
+}

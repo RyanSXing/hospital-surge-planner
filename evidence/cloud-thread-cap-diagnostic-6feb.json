@@ -1,0 +1,731 @@
+{
+  "scope": "Read-only exact6feb image/current frozen input diagnostic; eight30-day pure replications plus aggregate and selected trace; private temporary inputs only; no job/artifact writes",
+  "all_model_output_hashes_equal": true,
+  "trials": [
+    {
+      "mode": "default",
+      "code_commit": "6febf00912b930fe6b00a5a748a4acde0550e505",
+      "source_job": "run_6278e8f0faf644209992",
+      "input_sha256": "f54133bcb24485985bb6e186b467c15453e936505b93e9f34a26bf8a2b0b82b0",
+      "generator_version": "1.1.0",
+      "model_version": "1.1.0",
+      "production_thread_environment": {
+        "OPENBLAS_NUM_THREADS": null,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "effective_thread_environment": {
+        "OPENBLAS_NUM_THREADS": null,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "worker_import_seconds": 5.845070339997619,
+      "read_only_database_load_seconds": 0.8298532779990637,
+      "frozen_input_digest_seconds": 0.331498407998879,
+      "readiness_seconds": 4.268467845999112,
+      "eight_replications_seconds": 13.108963659997244,
+      "aggregation_seconds": 0.32770476099904045,
+      "overlapped_trace_and_aggregate_seconds": 7.327777946000424,
+      "total_pool_seconds": 20.940608495999186,
+      "parent_cpu_seconds": 1.0264360200000002,
+      "distinct_children": 8,
+      "parent_threads": 15,
+      "replication_sha256": [
+        "7bb0335c85ad26b9aeb5f7495d62dd782e9c9293553d595cca53d559e9ca5db9",
+        "13da713cf593ccf2ae8e8c364b7c22bb5dfa5df449ccd4ad5c401e4dd89849f7",
+        "2da5cb108d4203f48aaa00933894ae89a2a3ec64b6bbd2fbecd21379a6019971",
+        "57ab42f6ad14d2e7afa8e9860dc429b6bbc4d400b2854cef8f0bf91655658d1c",
+        "90180a0ed601c2c7edefe9ef3b8d4d8055fa3224496648a957bc924b6a68961a",
+        "2facc88d978f7407bacdb9e50b92ed9ae6e02027d7d1e87132a2c194d092ded7",
+        "49faca26c64d61560e2f7f1282c96b28138c50ebbe24ef6ac54621ba88551eef",
+        "6841aa3af1f643f878632ccbb0d1cb2a177f16939696d52f9442560e95653107"
+      ],
+      "aggregate_sha256": "634a634bba9ee73825a544c4ddd5867fc1c8d78e4d62aba59f7bcb1119cb3670",
+      "selected_trace_sha256": "61316b6812edcbf99ed5be830a9febd99207491e580009dc7af0b101e7764148",
+      "selected_replication_index": 4,
+      "selected_trace_execution_metrics": {
+        "wall_seconds": 6.938044132999494,
+        "cpu_seconds": 6.95706294,
+        "terminated_children_cpu_seconds": 0,
+        "process_peak_rss_bytes": 311484416,
+        "largest_terminated_child_peak_rss_bytes": 0,
+        "cpu_scope": "current process plus separately reported terminated child CPU",
+        "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+      },
+      "children": [
+        {
+          "pid": 346,
+          "ready_at": 19815.973712136,
+          "init_seconds": 2.90466404000108,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.5858516750013223,
+            "cpu_seconds": 3.555022000000001,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311484416,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 349,
+          "ready_at": 19815.987057951,
+          "init_seconds": 2.929776116001449,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.6306161649990827,
+            "cpu_seconds": 3.60636942,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311484416,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 354,
+          "ready_at": 19816.018082807,
+          "init_seconds": 2.9306778729987855,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.860489774000598,
+            "cpu_seconds": 3.8279654,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311484416,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 352,
+          "ready_at": 19816.021380336,
+          "init_seconds": 2.9342754810022598,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.6412087089993292,
+            "cpu_seconds": 3.60826078,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311484416,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 353,
+          "ready_at": 19816.022530832,
+          "init_seconds": 2.953307356998266,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.5449942120030755,
+            "cpu_seconds": 3.531274120000001,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311484416,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 350,
+          "ready_at": 19816.023810328,
+          "init_seconds": 2.9537364360003266,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.605550909000158,
+            "cpu_seconds": 3.6010491200000008,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311484416,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 351,
+          "ready_at": 19816.029770728,
+          "init_seconds": 2.961547069000517,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.6072006430003967,
+            "cpu_seconds": 3.5789015399999986,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311484416,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 355,
+          "ready_at": 19816.039456135,
+          "init_seconds": 2.9703746989980573,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.5348324659971695,
+            "cpu_seconds": 3.52604412,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311484416,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        }
+      ]
+    },
+    {
+      "mode": "cap1",
+      "code_commit": "6febf00912b930fe6b00a5a748a4acde0550e505",
+      "source_job": "run_6278e8f0faf644209992",
+      "input_sha256": "f54133bcb24485985bb6e186b467c15453e936505b93e9f34a26bf8a2b0b82b0",
+      "generator_version": "1.1.0",
+      "model_version": "1.1.0",
+      "production_thread_environment": {
+        "OPENBLAS_NUM_THREADS": null,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "effective_thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "worker_import_seconds": 5.88378592799927,
+      "read_only_database_load_seconds": 0.8122709759991267,
+      "frozen_input_digest_seconds": 0.32062838400088367,
+      "readiness_seconds": 4.2612401690021215,
+      "eight_replications_seconds": 12.846614273999876,
+      "aggregation_seconds": 0.298313520001102,
+      "overlapped_trace_and_aggregate_seconds": 7.187599432003481,
+      "total_pool_seconds": 20.51760668499992,
+      "parent_cpu_seconds": 0.9933445599999997,
+      "distinct_children": 8,
+      "parent_threads": 1,
+      "replication_sha256": [
+        "7bb0335c85ad26b9aeb5f7495d62dd782e9c9293553d595cca53d559e9ca5db9",
+        "13da713cf593ccf2ae8e8c364b7c22bb5dfa5df449ccd4ad5c401e4dd89849f7",
+        "2da5cb108d4203f48aaa00933894ae89a2a3ec64b6bbd2fbecd21379a6019971",
+        "57ab42f6ad14d2e7afa8e9860dc429b6bbc4d400b2854cef8f0bf91655658d1c",
+        "90180a0ed601c2c7edefe9ef3b8d4d8055fa3224496648a957bc924b6a68961a",
+        "2facc88d978f7407bacdb9e50b92ed9ae6e02027d7d1e87132a2c194d092ded7",
+        "49faca26c64d61560e2f7f1282c96b28138c50ebbe24ef6ac54621ba88551eef",
+        "6841aa3af1f643f878632ccbb0d1cb2a177f16939696d52f9442560e95653107"
+      ],
+      "aggregate_sha256": "634a634bba9ee73825a544c4ddd5867fc1c8d78e4d62aba59f7bcb1119cb3670",
+      "selected_trace_sha256": "61316b6812edcbf99ed5be830a9febd99207491e580009dc7af0b101e7764148",
+      "selected_replication_index": 4,
+      "selected_trace_execution_metrics": {
+        "wall_seconds": 6.798136558998522,
+        "cpu_seconds": 6.80869818,
+        "terminated_children_cpu_seconds": 0,
+        "process_peak_rss_bytes": 311476224,
+        "largest_terminated_child_peak_rss_bytes": 0,
+        "cpu_scope": "current process plus separately reported terminated child CPU",
+        "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+      },
+      "children": [
+        {
+          "pid": 491,
+          "ready_at": 19846.090574475,
+          "init_seconds": 2.8669310440018307,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.8917098269994312,
+            "cpu_seconds": 3.7105383199999995,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311476224,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 492,
+          "ready_at": 19846.102022357,
+          "init_seconds": 2.885182943999098,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.701120386002003,
+            "cpu_seconds": 3.672319420000001,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311476224,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 486,
+          "ready_at": 19846.132356855,
+          "init_seconds": 2.909197163000499,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.910752403000515,
+            "cpu_seconds": 3.845561459999999,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311476224,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 490,
+          "ready_at": 19846.148495581,
+          "init_seconds": 2.9042947990019456,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.7069902469993394,
+            "cpu_seconds": 3.6727406599999988,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311476224,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 483,
+          "ready_at": 19846.153062686,
+          "init_seconds": 2.9152643630004604,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.646244650000881,
+            "cpu_seconds": 3.568723179999999,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311476224,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 489,
+          "ready_at": 19846.160124262,
+          "init_seconds": 2.9293195350001042,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.778630067001359,
+            "cpu_seconds": 3.7521626999999995,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311476224,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 488,
+          "ready_at": 19846.163085572,
+          "init_seconds": 2.9098142410002765,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.9822777439985657,
+            "cpu_seconds": 3.7726305400000015,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311476224,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 487,
+          "ready_at": 19846.199883269,
+          "init_seconds": 2.941445835000195,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.880049245999544,
+            "cpu_seconds": 3.7483337799999994,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311476224,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        }
+      ]
+    },
+    {
+      "mode": "cap1",
+      "code_commit": "6febf00912b930fe6b00a5a748a4acde0550e505",
+      "source_job": "run_6278e8f0faf644209992",
+      "input_sha256": "f54133bcb24485985bb6e186b467c15453e936505b93e9f34a26bf8a2b0b82b0",
+      "generator_version": "1.1.0",
+      "model_version": "1.1.0",
+      "production_thread_environment": {
+        "OPENBLAS_NUM_THREADS": null,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "effective_thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "worker_import_seconds": 5.857039814000018,
+      "read_only_database_load_seconds": 0.8221706420008559,
+      "frozen_input_digest_seconds": 0.31943272900025477,
+      "readiness_seconds": 4.223020073997759,
+      "eight_replications_seconds": 12.806642060997547,
+      "aggregation_seconds": 0.29200219999984256,
+      "overlapped_trace_and_aggregate_seconds": 7.242747504002182,
+      "total_pool_seconds": 20.534432697997545,
+      "parent_cpu_seconds": 0.9941275400000009,
+      "distinct_children": 8,
+      "parent_threads": 1,
+      "replication_sha256": [
+        "7bb0335c85ad26b9aeb5f7495d62dd782e9c9293553d595cca53d559e9ca5db9",
+        "13da713cf593ccf2ae8e8c364b7c22bb5dfa5df449ccd4ad5c401e4dd89849f7",
+        "2da5cb108d4203f48aaa00933894ae89a2a3ec64b6bbd2fbecd21379a6019971",
+        "57ab42f6ad14d2e7afa8e9860dc429b6bbc4d400b2854cef8f0bf91655658d1c",
+        "90180a0ed601c2c7edefe9ef3b8d4d8055fa3224496648a957bc924b6a68961a",
+        "2facc88d978f7407bacdb9e50b92ed9ae6e02027d7d1e87132a2c194d092ded7",
+        "49faca26c64d61560e2f7f1282c96b28138c50ebbe24ef6ac54621ba88551eef",
+        "6841aa3af1f643f878632ccbb0d1cb2a177f16939696d52f9442560e95653107"
+      ],
+      "aggregate_sha256": "634a634bba9ee73825a544c4ddd5867fc1c8d78e4d62aba59f7bcb1119cb3670",
+      "selected_trace_sha256": "61316b6812edcbf99ed5be830a9febd99207491e580009dc7af0b101e7764148",
+      "selected_replication_index": 4,
+      "selected_trace_execution_metrics": {
+        "wall_seconds": 6.853746549000789,
+        "cpu_seconds": 6.865252980000001,
+        "terminated_children_cpu_seconds": 0,
+        "process_peak_rss_bytes": 311590912,
+        "largest_terminated_child_peak_rss_bytes": 0,
+        "cpu_scope": "current process plus separately reported terminated child CPU",
+        "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+      },
+      "children": [
+        {
+          "pid": 508,
+          "ready_at": 19876.102675612,
+          "init_seconds": 2.9121846919988457,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.6533509450018755,
+            "cpu_seconds": 3.6372193800000012,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311590912,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 514,
+          "ready_at": 19876.117396942,
+          "init_seconds": 2.9146471029998793,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.9794252319989027,
+            "cpu_seconds": 3.802653640000001,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311590912,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 511,
+          "ready_at": 19876.124410979,
+          "init_seconds": 2.9313616270010243,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 4.126085039999452,
+            "cpu_seconds": 3.908122200000001,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311590912,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 515,
+          "ready_at": 19876.124857477,
+          "init_seconds": 2.9266481030026625,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.697682015997998,
+            "cpu_seconds": 3.68209828,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311590912,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 513,
+          "ready_at": 19876.130782017,
+          "init_seconds": 2.9250396479983465,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.5994886250009586,
+            "cpu_seconds": 3.5791424000000003,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311590912,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 517,
+          "ready_at": 19876.144078333,
+          "init_seconds": 2.9335562599990226,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.7449174579996907,
+            "cpu_seconds": 3.7174081999999995,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311590912,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 512,
+          "ready_at": 19876.149249876,
+          "init_seconds": 2.946356956999807,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.8151051820022985,
+            "cpu_seconds": 3.6919134600000003,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311590912,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 516,
+          "ready_at": 19876.203888252,
+          "init_seconds": 2.9840504300009343,
+          "threads": 2,
+          "execution_metrics": {
+            "wall_seconds": 3.9250427139995736,
+            "cpu_seconds": 3.7888858400000007,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311590912,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        }
+      ]
+    },
+    {
+      "mode": "default",
+      "code_commit": "6febf00912b930fe6b00a5a748a4acde0550e505",
+      "source_job": "run_6278e8f0faf644209992",
+      "input_sha256": "f54133bcb24485985bb6e186b467c15453e936505b93e9f34a26bf8a2b0b82b0",
+      "generator_version": "1.1.0",
+      "model_version": "1.1.0",
+      "production_thread_environment": {
+        "OPENBLAS_NUM_THREADS": null,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "effective_thread_environment": {
+        "OPENBLAS_NUM_THREADS": null,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "worker_import_seconds": 5.815609230001428,
+      "read_only_database_load_seconds": 0.8350212990008004,
+      "frozen_input_digest_seconds": 0.3259673259999545,
+      "readiness_seconds": 4.197065339998517,
+      "eight_replications_seconds": 12.935958301997744,
+      "aggregation_seconds": 0.326081905997853,
+      "overlapped_trace_and_aggregate_seconds": 7.251595631001692,
+      "total_pool_seconds": 20.67621311399853,
+      "parent_cpu_seconds": 1.012206280000001,
+      "distinct_children": 8,
+      "parent_threads": 15,
+      "replication_sha256": [
+        "7bb0335c85ad26b9aeb5f7495d62dd782e9c9293553d595cca53d559e9ca5db9",
+        "13da713cf593ccf2ae8e8c364b7c22bb5dfa5df449ccd4ad5c401e4dd89849f7",
+        "2da5cb108d4203f48aaa00933894ae89a2a3ec64b6bbd2fbecd21379a6019971",
+        "57ab42f6ad14d2e7afa8e9860dc429b6bbc4d400b2854cef8f0bf91655658d1c",
+        "90180a0ed601c2c7edefe9ef3b8d4d8055fa3224496648a957bc924b6a68961a",
+        "2facc88d978f7407bacdb9e50b92ed9ae6e02027d7d1e87132a2c194d092ded7",
+        "49faca26c64d61560e2f7f1282c96b28138c50ebbe24ef6ac54621ba88551eef",
+        "6841aa3af1f643f878632ccbb0d1cb2a177f16939696d52f9442560e95653107"
+      ],
+      "aggregate_sha256": "634a634bba9ee73825a544c4ddd5867fc1c8d78e4d62aba59f7bcb1119cb3670",
+      "selected_trace_sha256": "61316b6812edcbf99ed5be830a9febd99207491e580009dc7af0b101e7764148",
+      "selected_replication_index": 4,
+      "selected_trace_execution_metrics": {
+        "wall_seconds": 6.862492396998277,
+        "cpu_seconds": 6.875561599999999,
+        "terminated_children_cpu_seconds": 0,
+        "process_peak_rss_bytes": 311427072,
+        "largest_terminated_child_peak_rss_bytes": 0,
+        "cpu_scope": "current process plus separately reported terminated child CPU",
+        "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+      },
+      "children": [
+        {
+          "pid": 555,
+          "ready_at": 19905.861592404,
+          "init_seconds": 2.879231520997564,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.6515822490000573,
+            "cpu_seconds": 3.6266643,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311427072,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 554,
+          "ready_at": 19905.866793106,
+          "init_seconds": 2.880615535999823,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.970739099000639,
+            "cpu_seconds": 3.7227273400000005,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311427072,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 550,
+          "ready_at": 19905.891156265,
+          "init_seconds": 2.9110953740018886,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 4.014137792997644,
+            "cpu_seconds": 3.97571572,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311427072,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 547,
+          "ready_at": 19905.89539929,
+          "init_seconds": 2.916697495002154,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.913109372002509,
+            "cpu_seconds": 3.80719824,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311427072,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 553,
+          "ready_at": 19905.896115948,
+          "init_seconds": 2.909129201001633,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.653689523001958,
+            "cpu_seconds": 3.609652839999999,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311427072,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 552,
+          "ready_at": 19905.902278587,
+          "init_seconds": 2.9085740219998115,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.8308613679982955,
+            "cpu_seconds": 3.79237964,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311427072,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 556,
+          "ready_at": 19905.903314864,
+          "init_seconds": 2.920231344000058,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.7271740950018284,
+            "cpu_seconds": 3.706783380000001,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311427072,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        },
+        {
+          "pid": 551,
+          "ready_at": 19905.909552743,
+          "init_seconds": 2.9167082349995326,
+          "threads": 16,
+          "execution_metrics": {
+            "wall_seconds": 3.8128207879999536,
+            "cpu_seconds": 3.77935484,
+            "terminated_children_cpu_seconds": 0,
+            "process_peak_rss_bytes": 311427072,
+            "largest_terminated_child_peak_rss_bytes": 0,
+            "cpu_scope": "current process plus separately reported terminated child CPU",
+            "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+          }
+        }
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-17T14:16:08.508288+00:00",
+  "code_commit": "6febf00912b930fe6b00a5a748a4acde0550e505",
+  "diagnostic_script": "evidence/diagnostics/blas-probe-6feb.py",
+  "diagnostic_script_sha256": "f57ed8d9cf48811b1569d70a13432ba69c44d926d35f19c5347e45359c65536d",
+  "summary": {
+    "default": {
+      "worker_import_seconds": 5.8303397849995235,
+      "read_only_database_load_seconds": 0.832437288499932,
+      "frozen_input_digest_seconds": 0.32873286699941673,
+      "readiness_seconds": 4.232766592998814,
+      "eight_replications_seconds": 13.022460980997494,
+      "aggregation_seconds": 0.32689333349844674,
+      "total_pool_seconds": 20.808410804998857,
+      "parent_cpu_seconds": 1.0193211500000006
+    },
+    "cap1": {
+      "worker_import_seconds": 5.870412870999644,
+      "read_only_database_load_seconds": 0.8172208089999913,
+      "frozen_input_digest_seconds": 0.3200305565005692,
+      "readiness_seconds": 4.24213012149994,
+      "eight_replications_seconds": 12.826628167498711,
+      "aggregation_seconds": 0.2951578600004723,
+      "total_pool_seconds": 20.526019691498732,
+      "parent_cpu_seconds": 0.9937360500000003
+    },
+    "pool_wall_reduction_percent": 1.3571008192143408
+  },
+  "limits": [
+    "Two trials per mode in interleaved order, not an end-to-end acceptance benchmark.",
+    "No live service environment changed; no jobs or artifact objects created.",
+    "Complete pure model outputs were hashed after removing only execution_metrics instrumentation.",
+    "Initial pool task barrier forces eight distinct children and adds synchronization overhead; compare modes within this diagnostic only."
+  ]
+}

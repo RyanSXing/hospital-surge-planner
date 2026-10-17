@@ -1,8 +1,8 @@
 {
-  "scenario_id": "scenario_58aea71cee3c4fc3bc30",
+  "scenario_id": "scenario_c80d59f227cf4b28b193",
   "horizon_calendar_days": 30,
-  "run_id": "run_b0aae7c9fdb04a58829c",
-  "comparison_id": "comparison_a483d62893d843f2bcf5",
+  "run_id": "run_868cd5529ede43fa8157",
+  "comparison_id": "comparison_7736079b84cc45aa8aa5",
   "saved_arrival_condition": {
     "kind": "arrival_multiplier",
     "start_at": "2026-10-16T05:00:00.000Z",
@@ -23,9 +23,9 @@
     "shape": "step",
     "source": "user_assumption"
   },
-  "frozen_scenario_revision_id": "revision_e0cd147c146642cda6b1",
+  "frozen_scenario_revision_id": "revision_e6100fb9e2a94ad98a18",
   "saved_and_frozen_conditions_equal": true,
-  "branch_run_id": "run_bc732b082fe3454c997c",
+  "branch_run_id": "run_77dc586514db48f7b0ad",
   "export_filename": "hospital-surge-planner.zip",
   "export_checksums": {
     "exported_arrival_condition": {
@@ -74,8 +74,8 @@
       "README.md",
       "checksums.json"
     ],
-    "archive_sha256": "b897edb05ef2df675a1e8d36ece4116f1f11078547196ce22b68cab8b87cf90e",
-    "archive_bytes": 2247617
+    "archive_sha256": "26ab3154a552307adae796398396418cefba9f696b46c4ccdd495cdc85ea8a51",
+    "archive_bytes": 2247722
   },
   "page_errors": []
 }

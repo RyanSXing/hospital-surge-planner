@@ -1,0 +1,12 @@
+{
+  "recorded_at": "2026-10-17T14:26:03.612966+00:00",
+  "status": "interrupted_not_an_acceptance_run",
+  "reason": "Final frozen patch added four optional-stage-status regression cases after collection; a new594-case suite was started. SIGINT did not stop this run promptly; the known pytest process was then terminated.",
+  "collected": 590,
+  "partial_output": "evidence/backend-pytest-observed-clock-interrupted.log",
+  "failure_marker_present": true,
+  "failure_trace_available": false,
+  "focused_demand_draft_repeat": "9 passed in6.21s, evidence/backend-demand-draft-regression.log",
+  "replacement_suite": "evidence/backend-pytest-observed-clock-frozen.log",
+  "failure_cause": "Not established from the truncated partial run; replacement full suite and focused repeat determine current-source acceptance."
+}

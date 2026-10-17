@@ -4,14 +4,9 @@
       "/usr/local/bin/node",
       "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
       "test",
-      "e2e/workflows.spec.ts",
-      "e2e/scenario-families.spec.ts",
+      "e2e/operational-time.spec.ts",
       "e2e/replay-controls.spec.ts",
-      "e2e/map-search.spec.ts",
-      "e2e/inspector-updates.spec.ts",
-      "e2e/pulse-preset.spec.ts",
-      "e2e/arrival-resource-mix.spec.ts",
-      "e2e/demand-source.spec.ts"
+      "e2e/workflows.spec.ts"
     ],
     "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
     "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
@@ -167,13 +162,13 @@
   },
   "suites": [
     {
-      "title": "arrival-resource-mix.spec.ts",
-      "file": "arrival-resource-mix.spec.ts",
+      "title": "operational-time.spec.ts",
+      "file": "operational-time.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "reported arrival resource mixtures are editable, validated and retained after reload",
+          "title": "observed reset preserves an explicit-offset snapshot cutoff finer than one minute",
           "ok": true,
           "tags": [],
           "tests": [
@@ -188,366 +183,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4164,
+                  "duration": 9465,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T13:48:42.113Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "arrival-resource-mix",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-resource-mix-repor-ec431-d-and-retained-after-reload-desktop/attachments/arrival-resource-mix-27a7e522a215942f658ce0a7e6af9e0184d08d12.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "657cabce63624bad1d25-dc8a76039ae652b7563e",
-          "file": "arrival-resource-mix.spec.ts",
-          "line": 4,
-          "column": 1
-        },
-        {
-          "title": "reported arrival resource mixtures are editable, validated and retained after reload",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3274,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:50:35.428Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "arrival-resource-mix",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-resource-mix-repor-ec431-d-and-retained-after-reload-mobile/attachments/arrival-resource-mix-c7670223aa6b009a004fef4c112bf3a6425d82a4.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "657cabce63624bad1d25-a5cd472f99e9a6493e17",
-          "file": "arrival-resource-mix.spec.ts",
-          "line": 4,
-          "column": 1
-        }
-      ]
-    },
-    {
-      "title": "demand-source.spec.ts",
-      "file": "demand-source.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "entry stream edit derives read-only demand summaries and commits one immutable version",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "desktop",
-              "projectName": "desktop",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4229,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:48:46.771Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "derived-demand-summary",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/demand-source-entry-stream-b0c17-mmits-one-immutable-version-desktop/attachments/derived-demand-summary-0e37af338f7a062cf316089d962fb919bc7a11d6.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "1f55e510021ea91129c2-3a2a7c21f061f82c458d",
-          "file": "demand-source.spec.ts",
-          "line": 4,
-          "column": 1
-        },
-        {
-          "title": "entry stream edit derives read-only demand summaries and commits one immutable version",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4138,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:50:39.143Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "derived-demand-summary",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/demand-source-entry-stream-b0c17-mmits-one-immutable-version-mobile/attachments/derived-demand-summary-4e68dc941a92ce65afb312ad1a1b67a6c1d4315e.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "1f55e510021ea91129c2-9a58144283a0537b9ab9",
-          "file": "demand-source.spec.ts",
-          "line": 4,
-          "column": 1
-        }
-      ]
-    },
-    {
-      "title": "inspector-updates.spec.ts",
-      "file": "inspector-updates.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "cancelled runs explain their state and retry the same frozen input snapshot",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "desktop",
-              "projectName": "desktop",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2092,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:48:51.016Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "cancelled-run-retry",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/inspector-updates-cancelle-c0946--same-frozen-input-snapshot-desktop/attachments/cancelled-run-retry-d49601c5f6050422603525829fd429dee59ba37e.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "9ab5ee424860681c90f0-cc374dd8e6271c581084",
-          "file": "inspector-updates.spec.ts",
-          "line": 4,
-          "column": 1
-        },
-        {
-          "title": "inspector updates retain selected entities, exact time and frozen parent provenance",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "desktop",
-              "projectName": "desktop",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 11319,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:48:53.113Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "inspector-update-context",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/inspector-updates-inspecto-0a7fd-nd-frozen-parent-provenance-desktop/attachments/inspector-update-context-8df7c28b8e004384c6fcc257e92eaa795545bb41.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "9ab5ee424860681c90f0-97627a97574823269772",
-          "file": "inspector-updates.spec.ts",
-          "line": 68,
-          "column": 1
-        },
-        {
-          "title": "cancelled runs explain their state and retry the same frozen input snapshot",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1958,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:50:43.294Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "cancelled-run-retry",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/inspector-updates-cancelle-c0946--same-frozen-input-snapshot-mobile/attachments/cancelled-run-retry-f8b63327186d430721aef990bf66d7ce052ef675.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "9ab5ee424860681c90f0-1c0e3d364d8b70418314",
-          "file": "inspector-updates.spec.ts",
-          "line": 4,
-          "column": 1
-        },
-        {
-          "title": "inspector updates retain selected entities, exact time and frozen parent provenance",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 9982,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:50:45.257Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "inspector-update-context",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/inspector-updates-inspecto-0a7fd-nd-frozen-parent-provenance-mobile/attachments/inspector-update-context-ab3d2912aaa13d5fdacd6f642e6f0d9151d8286e.png"
-                    },
-                    {
-                      "name": "inspector-update-context-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/inspector-updates-inspecto-0a7fd-nd-frozen-parent-provenance-mobile/attachments/inspector-update-context-middle-575e26f0ab49a61ec360270f0b983929bba121e5.png"
-                    },
-                    {
-                      "name": "inspector-update-context-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/inspector-updates-inspecto-0a7fd-nd-frozen-parent-provenance-mobile/attachments/inspector-update-context-lower-615771fba9096d7d54376bae0fba73102ceaebbf.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "9ab5ee424860681c90f0-d9a5a71079f1b6b4beb7",
-          "file": "inspector-updates.spec.ts",
-          "line": 68,
-          "column": 1
-        }
-      ]
-    },
-    {
-      "title": "map-search.spec.ts",
-      "file": "map-search.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "workspace search keeps completed-run context and map controls preserve their routes",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 240000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "desktop",
-              "projectName": "desktop",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 10184,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:49:04.453Z",
+                  "startTime": "2026-10-17T14:23:06.386Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -555,13 +196,13 @@
               "status": "expected"
             }
           ],
-          "id": "11063396553d6831a315-5fee0aaec281bbb11b04",
-          "file": "map-search.spec.ts",
-          "line": 44,
+          "id": "3468c252d222fd2c99df-1f811811348041a34848",
+          "file": "operational-time.spec.ts",
+          "line": 4,
           "column": 1
         },
         {
-          "title": "workspace search keeps completed-run context and map controls preserve their routes",
+          "title": "observed reset preserves an explicit-offset snapshot cutoff finer than one minute",
           "ok": true,
           "tags": [],
           "tests": [
@@ -570,10 +211,10 @@
               "annotations": [
                 {
                   "type": "skip",
-                  "description": "This desktop workflow exercises the map canvas and shared inspectors once.",
+                  "description": "Exact timestamp lineage is checked once; responsive update forms have separate coverage.",
                   "location": {
-                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts",
-                    "line": 47,
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/operational-time.spec.ts",
+                    "line": 7,
                     "column": 8
                   }
                 }
@@ -586,19 +227,19 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "skipped",
-                  "duration": 123,
+                  "duration": 246,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T13:50:55.257Z",
+                  "startTime": "2026-10-17T14:24:19.093Z",
                   "annotations": [
                     {
                       "type": "skip",
-                      "description": "This desktop workflow exercises the map canvas and shared inspectors once.",
+                      "description": "Exact timestamp lineage is checked once; responsive update forms have separate coverage.",
                       "location": {
-                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/map-search.spec.ts",
-                        "line": 47,
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/operational-time.spec.ts",
+                        "line": 7,
                         "column": 8
                       }
                     }
@@ -609,153 +250,9 @@
               "status": "skipped"
             }
           ],
-          "id": "11063396553d6831a315-3fe359bf70da58a49a99",
-          "file": "map-search.spec.ts",
-          "line": 44,
-          "column": 1
-        }
-      ]
-    },
-    {
-      "title": "pulse-preset.spec.ts",
-      "file": "pulse-preset.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "short arrival pulse is editable, undoable and frozen as one additive batch",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "desktop",
-              "projectName": "desktop",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 6274,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:49:14.655Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "4b1f93dbbf0e921edcc5-5752daf8a824645a7934",
-          "file": "pulse-preset.spec.ts",
+          "id": "3468c252d222fd2c99df-47f9047cb0bc31d813da",
+          "file": "operational-time.spec.ts",
           "line": 4,
-          "column": 1
-        },
-        {
-          "title": "short arrival pulse rejects a horizon ending before day-two noon",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "desktop",
-              "projectName": "desktop",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1292,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:49:20.934Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "4b1f93dbbf0e921edcc5-882612270b14a8205c26",
-          "file": "pulse-preset.spec.ts",
-          "line": 124,
-          "column": 1
-        },
-        {
-          "title": "short arrival pulse is editable, undoable and frozen as one additive batch",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 8150,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:50:55.393Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "4b1f93dbbf0e921edcc5-74334820c86cfd8e53e5",
-          "file": "pulse-preset.spec.ts",
-          "line": 4,
-          "column": 1
-        },
-        {
-          "title": "short arrival pulse rejects a horizon ending before day-two noon",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1243,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:51:03.548Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "4b1f93dbbf0e921edcc5-691568a448b81c70bea5",
-          "file": "pulse-preset.spec.ts",
-          "line": 124,
           "column": 1
         }
       ]
@@ -782,12 +279,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 10975,
+                  "duration": 11115,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T13:49:22.242Z",
+                  "startTime": "2026-10-17T14:23:16.868Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -842,12 +339,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "skipped",
-                  "duration": 122,
+                  "duration": 147,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T13:51:04.804Z",
+                  "startTime": "2026-10-17T14:24:19.714Z",
                   "annotations": [
                     {
                       "type": "skip",
@@ -868,220 +365,6 @@
           "id": "b643cf260ddaf8d53c21-4f15d94bb6224cd86778",
           "file": "replay-controls.spec.ts",
           "line": 4,
-          "column": 1
-        }
-      ]
-    },
-    {
-      "title": "scenario-families.spec.ts",
-      "file": "scenario-families.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "all visual scenario families save canonical inputs and compute actual effects",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 240000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "desktop",
-              "projectName": "desktop",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 11376,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:49:33.233Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "scenario-all-families",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-a5309d9ace6dccfa16299efa46556b479f204cc3.png"
-                    },
-                    {
-                      "name": "scenario-all-families-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-middle-6e3023afc979299fb3ff8b65b539ce0547ff90b5.png"
-                    },
-                    {
-                      "name": "scenario-all-families-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-families-all-visu-b7a3e--and-compute-actual-effects-desktop/attachments/scenario-all-families-lower-ff5e471998697a314c0bec490d83189e280038d0.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "4742fad0eb8fc0f2847a-2cad9db3e046a52776e6",
-          "file": "scenario-families.spec.ts",
-          "line": 12,
-          "column": 1
-        },
-        {
-          "title": "scenario resource forms and independent inspector remain keyboard accessible on mobile",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [
-                {
-                  "type": "skip",
-                  "location": {
-                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
-                    "line": 340,
-                    "column": 8
-                  }
-                }
-              ],
-              "expectedStatus": "skipped",
-              "projectId": "desktop",
-              "projectName": "desktop",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "skipped",
-                  "duration": 140,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:49:44.615Z",
-                  "annotations": [
-                    {
-                      "type": "skip",
-                      "location": {
-                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
-                        "line": 340,
-                        "column": 8
-                      }
-                    }
-                  ],
-                  "attachments": []
-                }
-              ],
-              "status": "skipped"
-            }
-          ],
-          "id": "4742fad0eb8fc0f2847a-4ead91729ce654e1385e",
-          "file": "scenario-families.spec.ts",
-          "line": 337,
-          "column": 1
-        },
-        {
-          "title": "all visual scenario families save canonical inputs and compute actual effects",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 240000,
-              "annotations": [
-                {
-                  "type": "skip",
-                  "description": "Desktop computes the complete scenario; mobile form access is checked separately.",
-                  "location": {
-                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
-                    "line": 16,
-                    "column": 8
-                  }
-                }
-              ],
-              "expectedStatus": "skipped",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "skipped",
-                  "duration": 122,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:51:04.941Z",
-                  "annotations": [
-                    {
-                      "type": "skip",
-                      "description": "Desktop computes the complete scenario; mobile form access is checked separately.",
-                      "location": {
-                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-families.spec.ts",
-                        "line": 16,
-                        "column": 8
-                      }
-                    }
-                  ],
-                  "attachments": []
-                }
-              ],
-              "status": "skipped"
-            }
-          ],
-          "id": "4742fad0eb8fc0f2847a-768564f739d0a01320df",
-          "file": "scenario-families.spec.ts",
-          "line": 12,
-          "column": 1
-        },
-        {
-          "title": "scenario resource forms and independent inspector remain keyboard accessible on mobile",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 180000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "mobile",
-              "projectName": "mobile",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1594,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-17T13:51:05.068Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "scenario-mobile-resource-form",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-families-scenario-23fda-yboard-accessible-on-mobile-mobile/attachments/scenario-mobile-resource-form-07feca31094017957a92e1dcc72f845e6ffeaf41.png"
-                    },
-                    {
-                      "name": "scenario-mobile-resource-form-middle",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-families-scenario-23fda-yboard-accessible-on-mobile-mobile/attachments/scenario-mobile-resource-form-middle-3561852cb3274eda6b7bb4051dc57aba6619e795.png"
-                    },
-                    {
-                      "name": "scenario-mobile-resource-form-lower",
-                      "contentType": "image/png",
-                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-families-scenario-23fda-yboard-accessible-on-mobile-mobile/attachments/scenario-mobile-resource-form-lower-244ffa9d3b3063cf8acde88f43ab3bd7b71620f6.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "4742fad0eb8fc0f2847a-2c36f40e3fc60e197e4b",
-          "file": "scenario-families.spec.ts",
-          "line": 337,
           "column": 1
         }
       ]
@@ -1108,11 +391,11 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 50139,
+                  "duration": 50630,
                   "errors": [],
                   "stdout": [
                     {
-                      "text": "workflow: created scenario_58aea71cee3c4fc3bc30\n"
+                      "text": "workflow: created scenario_c80d59f227cf4b28b193\n"
                     },
                     {
                       "text": "workflow: scenario screen loaded\n"
@@ -1124,7 +407,7 @@
                       "text": "workflow: submit clicked\n"
                     },
                     {
-                      "text": "workflow: queued run_b0aae7c9fdb04a58829c\n"
+                      "text": "workflow: queued run_868cd5529ede43fa8157\n"
                     },
                     {
                       "text": "workflow: run complete\n"
@@ -1132,7 +415,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T13:49:44.774Z",
+                  "startTime": "2026-10-17T14:23:27.999Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -1197,12 +480,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "skipped",
-                  "duration": 113,
+                  "duration": 153,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-17T13:51:06.676Z",
+                  "startTime": "2026-10-17T14:24:19.879Z",
                   "annotations": [
                     {
                       "type": "skip",
@@ -1230,10 +513,10 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-17T13:48:41.654Z",
-    "duration": 145231.3,
-    "expected": 17,
-    "skipped": 5,
+    "startTime": "2026-10-17T14:23:06.018Z",
+    "duration": 74089.44200000001,
+    "expected": 3,
+    "skipped": 3,
     "unexpected": 0,
     "flaky": 0
   }

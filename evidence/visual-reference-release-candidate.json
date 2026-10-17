@@ -1,0 +1,60 @@
+{
+  "recorded_at": "2026-10-17T14:09:25.665947+00:00",
+  "reviewed_code_commit": "6febf00912b930fe6b00a5a748a4acde0550e505",
+  "scope": "Bounded visual review against all six supplied references and specification section5; computed data replaces illustrative image counts. Desktop1600x1000 and mobile390x844. Browser behavior is separately exercised by the release matrix.",
+  "gallery": "evidence/screens/release-candidate-day12/index.json",
+  "selected_at": "2026-10-27T13:00:00Z",
+  "reviews": [
+    {
+      "view": "overview",
+      "reference": "01-command-overview.png",
+      "assessment": "Map-centered workspace, selected facility capacity, bottlenecks, operational counts and docked forecast; actual Day12 selected trajectory and source identity.",
+      "remaining_concrete_visual_findings": []
+    },
+    {
+      "view": "scenarios",
+      "reference": "02-visual-scenario-builder-v2.png",
+      "assessment": "Shared shell, condition palette, editable arrival curve, six resource/incident tracks, selected-condition inspector and exact calendar fields.",
+      "remaining_concrete_visual_findings": []
+    },
+    {
+      "view": "patients",
+      "reference": "03-patient-unit-explorer.png",
+      "assessment": "ED/ward/ICU schematic, actual slot states, complete paginated census and independent patient/unit inspector; mobile uses readable cards.",
+      "remaining_concrete_visual_findings": []
+    },
+    {
+      "view": "resources",
+      "reference": "04-resources-and-updates.png",
+      "assessment": "Selectable site inventory/map, clinic prerequisite/dependency view, actual capability/readiness and linked planning/update controls.",
+      "remaining_concrete_visual_findings": []
+    },
+    {
+      "view": "compare",
+      "reference": "05-visual-plan-comparison-v2.png",
+      "assessment": "Three actual capacity/response cards, staffing dependency explanation, matched-run outcome curves and calendar dock; enlarged82-pixel plotting area fits axes/table controls.",
+      "remaining_concrete_visual_findings": []
+    },
+    {
+      "view": "replay",
+      "reference": "06-visual-patient-flow-replay.png",
+      "assessment": "Original architectural schematic, recorded patient/resource counts, selected-time inspector, play/pause/speed/seek and context/pressure bands; mobile panorama and loaded accessible census.",
+      "remaining_concrete_visual_findings": []
+    }
+  ],
+  "closed_findings": [
+    {
+      "finding": "Comparison plotting height34px crowded ticks and curves",
+      "repair": "Chartheight128px gives82px plotting area, with ticks/axes/table button above fixed dock; independently rechecked."
+    },
+    {
+      "finding": "Gallery captured loading census and disabled dataset controls",
+      "repair": "Capture waits for selected recorded state, census completion and enabled Validate data; independently rechecked loaded1623-patient mobile census and complete dataset inventory."
+    }
+  ],
+  "desktop_mobile_views": 11,
+  "page_errors": [],
+  "horizontal_overflows": 0,
+  "independent_review": "data_model_audit visual review and focused closure recheck; next_release_review ledger/path integrity review",
+  "remaining_concrete_visual_findings": []
+}

@@ -1,10 +1,10 @@
 {
-  "tested_at": "2026-10-17T21:07:09.906Z",
+  "tested_at": "2026-10-17T21:17:55.168Z",
   "screens": [
     {
       "view": "overview",
-      "scenario": "scenario_a1f7879fbe134539a5c4",
-      "run": "run_92058f97a52c4c5e939e",
+      "scenario": "scenario_4bc37f944fda45a9b79a",
+      "run": "run_8ecc4e10f1ad4f1fb568",
       "title": [
         "Hospital overview"
       ],
@@ -15,8 +15,8 @@
     },
     {
       "view": "summary",
-      "scenario": "scenario_a1f7879fbe134539a5c4",
-      "run": "run_92058f97a52c4c5e939e",
+      "scenario": "scenario_4bc37f944fda45a9b79a",
+      "run": "run_8ecc4e10f1ad4f1fb568",
       "title": [
         "Results summary"
       ],
@@ -27,8 +27,8 @@
     },
     {
       "view": "replay",
-      "scenario": "scenario_a1f7879fbe134539a5c4",
-      "run": "run_92058f97a52c4c5e939e",
+      "scenario": "scenario_4bc37f944fda45a9b79a",
+      "run": "run_8ecc4e10f1ad4f1fb568",
       "title": [
         "Patient flow replay"
       ],
@@ -39,8 +39,8 @@
     },
     {
       "view": "analytics-outcomes",
-      "scenario": "scenario_a1f7879fbe134539a5c4",
-      "run": "run_92058f97a52c4c5e939e",
+      "scenario": "scenario_4bc37f944fda45a9b79a",
+      "run": "run_8ecc4e10f1ad4f1fb568",
       "title": [
         "Simulation outcomes"
       ],
@@ -51,8 +51,8 @@
     },
     {
       "view": "analytics-patients",
-      "scenario": "scenario_a1f7879fbe134539a5c4",
-      "run": "run_92058f97a52c4c5e939e",
+      "scenario": "scenario_4bc37f944fda45a9b79a",
+      "run": "run_8ecc4e10f1ad4f1fb568",
       "title": [
         "Hospital capacity"
       ],
@@ -63,8 +63,8 @@
     },
     {
       "view": "analytics-resources",
-      "scenario": "scenario_a1f7879fbe134539a5c4",
-      "run": "run_92058f97a52c4c5e939e",
+      "scenario": "scenario_4bc37f944fda45a9b79a",
+      "run": "run_8ecc4e10f1ad4f1fb568",
       "title": [
         "Resource planning"
       ],
@@ -75,8 +75,8 @@
     },
     {
       "view": "comparison",
-      "scenario": "scenario_a1f7879fbe134539a5c4",
-      "run": "run_92058f97a52c4c5e939e",
+      "scenario": "scenario_4bc37f944fda45a9b79a",
+      "run": "run_8ecc4e10f1ad4f1fb568",
       "title": [
         "Compare responses"
       ],
@@ -87,8 +87,8 @@
     },
     {
       "view": "data",
-      "scenario": "scenario_a1f7879fbe134539a5c4",
-      "run": "run_92058f97a52c4c5e939e",
+      "scenario": "scenario_4bc37f944fda45a9b79a",
+      "run": "run_8ecc4e10f1ad4f1fb568",
       "title": [
         "A clear foundation for every forecast."
       ],

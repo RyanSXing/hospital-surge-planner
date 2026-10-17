@@ -27,4 +27,8 @@ Release-specific results and hosted commit identity are recorded in the rework e
 
 ### Local release verification — 2026-10-17
 
-The full existing and new browser suite passed62 checks with28 intentional device-specific skips and zero failures on the frozen production bundle. After the narrow saved-count restoration and mobile chart-caption repairs,10 focused desktop/mobile checks passed with two device-specific skips. All103 frontend unit tests and the production TypeScript/Vite build passed. The final source and bundle stayed unchanged during the focused suite. See [local verification](../evidence/overview-analysis-local-verification.json), [full report](../evidence/browser-overview-analysis-local-full.json), and [final follow-up](../evidence/browser-overview-analysis-final-local.json).
+The full existing and new browser suite passed 62 checks with 28 intentional device-specific skips and zero failures on the frozen production bundle. After the narrow saved-count restoration and mobile chart-caption repairs, 10 focused desktop/mobile checks passed with two device-specific skips. All 103 frontend unit tests and the production TypeScript/Vite build passed. The final source and bundle stayed unchanged during the focused suite. See [local verification](../evidence/overview-analysis-local-verification.json), [full report](../evidence/browser-overview-analysis-local-full.json), and [final follow-up](../evidence/browser-overview-analysis-final-local.json).
+
+### Hosted release verification
+
+The live app runs `072118d81f3b67bb97f771c5ef4ed52ea49bc3b0`. All 10 hosted workflow checks passed with two device-specific skips; all 44 deployed frontend files match the tested build. Actual computation, private OCI artifacts, and ZIP checksums passed. Existing default scenario/run and source data stayed unchanged after verification curation. See [hosted release proof](../evidence/overview-analysis-hosted-verification.json).

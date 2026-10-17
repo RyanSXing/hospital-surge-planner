@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-17T21:21:37.311831+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "protected_records": {
+    "/scenarios/scenario_b44dbb255ef3494e8e22": {
+      "unchanged": true,
+      "sha256": "321f8974d8a3b541e19e927527032a594fb0789536b092d75adca284e764c611"
+    },
+    "/run-groups/run_8cd5ea235b5a4b75a0c1": {
+      "unchanged": true,
+      "sha256": "7e5674189d927135f79ab226174ead9e00f0f5a0612423a1cfcc6a58c9ccd879"
+    },
+    "/datasets/demo-v1-1-0-planning_baseline-41021-365": {
+      "unchanged": true,
+      "sha256": "c77a937a0f27c7ac207ac663e7d7ddfc215862dd884118ca7e1c3031797314a0"
+    }
+  },
+  "all_protected_records_unchanged": true,
+  "default_scenario_id": "scenario_b44dbb255ef3494e8e22",
+  "default_run_id": "run_8cd5ea235b5a4b75a0c1",
+  "original_default_scenario_id": "scenario_b44dbb255ef3494e8e22",
+  "original_default_run_id": "run_8cd5ea235b5a4b75a0c1",
+  "default_preserved": true,
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  }
+}

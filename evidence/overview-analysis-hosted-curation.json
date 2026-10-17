@@ -1,0 +1,307 @@
+{
+  "checked_at": "2026-10-17T21:21:33.103694+00:00",
+  "mode": "archive-only",
+  "source_evidence": [
+    "browser-navigation-flow.json",
+    "browser-navigation-touch.json",
+    "browser-navigation-aliases-desktop.json",
+    "browser-navigation-aliases-mobile.json",
+    "browser-outcome-analytics-desktop.json",
+    "browser-outcome-analytics-mobile.json",
+    "browser-saved-replication-count-desktop.json",
+    "browser-saved-replication-count-mobile.json",
+    "browser-desktop-screens.json",
+    "browser-mobile-screens.json",
+    "cloud-acceptance-overview-analysis.json"
+  ],
+  "alias_case_ids_recovered_from_exact_unique_run_tag_and_reviewed_names": {
+    "scenario_80e7360fd5f44146b173": "E2E NavRework-072118d navigation links 1792271883810",
+    "scenario_56b4de7d740d4f79b77b": "E2E NavRework-072118d navigation links 1792271740404"
+  },
+  "verification_scenarios": [
+    {
+      "id": "scenario_0e995e2480f44cc08ba3",
+      "name": "E2E NavRework-072118d outcome analytics 1792271746696",
+      "already_archived": false,
+      "before_sha256": "21d16aff20c5dc39759c695c57ba84829d4bf320516cb5cae1b34128543d84eb",
+      "archived": true
+    },
+    {
+      "id": "scenario_0f8e23c23c42474db85a",
+      "name": "E2E NavRework-072118d outcome analytics 1792271890326",
+      "already_archived": false,
+      "before_sha256": "55c3c5b6b2fb241d8b77ec08922b2fbfcb5ef8aa7297ec67736a1e79718aaa3c",
+      "archived": true
+    },
+    {
+      "id": "scenario_1233a525d76b4258b931",
+      "name": "Overview Analysis release smoke 072118d",
+      "already_archived": false,
+      "before_sha256": "fe74ffacc4e2a38d0e44141f38d7a47771a4a8fdf476668b0404fb6cce2407e9",
+      "archived": true
+    },
+    {
+      "id": "scenario_18436e59529b4bf0acbd",
+      "name": "E2E NavRework-072118d mobile navigation 1792271876792",
+      "already_archived": false,
+      "before_sha256": "2a31b05487165ce1c85deed8a37d196db1fb6b0d324e4cc011b686c78748ae61",
+      "archived": true
+    },
+    {
+      "id": "scenario_2939577515da496f8510",
+      "name": "E2E null versus zero outcomes mobile 1792271907034",
+      "already_archived": false,
+      "before_sha256": "5d238ec7c041965a62b88845c2e9560311e6ab1d07a8b9c7dcc11a9d509f5e03",
+      "archived": true
+    },
+    {
+      "id": "scenario_339741dd895242d28978",
+      "name": "E2E NavRework-072118d screen audit 1792271986994",
+      "already_archived": false,
+      "before_sha256": "d9b2b59b22df66502fc83e1f04347c42e42b6bc973794b4e5976a15a3af9df4a",
+      "archived": true
+    },
+    {
+      "id": "scenario_4bc37f944fda45a9b79a",
+      "name": "E2E NavRework-072118d screen audit 1792271847724",
+      "already_archived": false,
+      "before_sha256": "3fb4deb0c9bf1ba13e6a8e3e25ccdf35d5ca30c09e3945d6d05ebc85c74df107",
+      "archived": true
+    },
+    {
+      "id": "scenario_5088fc86b1dd48be90fb",
+      "name": "E2E NavRework-072118d outcome analytics 1792271890326 \u2014 updated",
+      "already_archived": false,
+      "before_sha256": "32276ee48afcc9ba68b9b99757c13098e821e980b21845e28bcf494a2d104eaf",
+      "archived": true
+    },
+    {
+      "id": "scenario_56b4de7d740d4f79b77b",
+      "name": "E2E NavRework-072118d navigation links 1792271740404",
+      "already_archived": false,
+      "before_sha256": "c20b82d1859061dda57793a7cfff4b941637b6fb94e98359cbcd1a39c65e2230",
+      "archived": true
+    },
+    {
+      "id": "scenario_5a03574622f14cc0a799",
+      "name": "E2E NavRework-072118d saved custom run count 1792271795005 retained",
+      "already_archived": false,
+      "before_sha256": "66f2f21ff85d7f453d075e42a3079d0c1059ad18c07df04f725616035e92467b",
+      "archived": true
+    },
+    {
+      "id": "scenario_6ecd85f114034e2d83e2",
+      "name": "E2E null versus zero outcomes desktop 1792271763055",
+      "already_archived": false,
+      "before_sha256": "22fa37e3c729c2360991a31cd07717ca056d72081b6603ccc41ea92985826a38",
+      "archived": true
+    },
+    {
+      "id": "scenario_80e7360fd5f44146b173",
+      "name": "E2E NavRework-072118d navigation links 1792271883810",
+      "already_archived": false,
+      "before_sha256": "c2b0620fe72678b71e65faa1fac5756dca06a14de764b7181ca8b59e7c8baf17",
+      "archived": true
+    },
+    {
+      "id": "scenario_955ad5ea6ad245c3a8d9",
+      "name": "E2E NavRework-072118d saved custom run count 1792271936839 retained",
+      "already_archived": false,
+      "before_sha256": "204fb0b273d50af02f7b1332a94d222805ee4ec54d2eea0555a932b03a572b1a",
+      "archived": true
+    },
+    {
+      "id": "scenario_decbfc81004b4d12b97b",
+      "name": "E2E navigation surge 1792271612133 \u2014 updated",
+      "already_archived": false,
+      "before_sha256": "b7df27189d3697ac5e7351f7ddbc6fec9246720e15f2cb945546540c76b9096d",
+      "archived": true
+    },
+    {
+      "id": "scenario_df5bfc2b0d2c48b6a20a",
+      "name": "E2E NavRework-072118d outcome analytics 1792271746696 \u2014 updated",
+      "already_archived": false,
+      "before_sha256": "b3c723d54ce2fd5e8f970d19045ddefa7d4bad51e3513e27ab8c60e8d91f8392",
+      "archived": true
+    },
+    {
+      "id": "scenario_e5b44e75cebe48aeb491",
+      "name": "E2E navigation surge 1792271612133",
+      "already_archived": false,
+      "before_sha256": "5bf8f7c73ca4d52cba928064738ebc14be38f17400adc8779cde1509fdc37909",
+      "archived": true
+    }
+  ],
+  "retained_run_ids": [
+    "run_143c551e285a454fad80",
+    "run_19d97ca11a3245efae79",
+    "run_336940d460fa454e995c",
+    "run_368d3853c0204d6bbdcd",
+    "run_38a90c3a12974a359db2",
+    "run_39aec52d96d94618bca6",
+    "run_3fa0516346f4499088c2",
+    "run_5c0db61fc9ad42598436",
+    "run_5dfa6038057840a6a05b",
+    "run_69e9bc94fe2446dc859a",
+    "run_787e02fbf75c4ff68870",
+    "run_7fd7a1d88866425b9f12",
+    "run_8ecc4e10f1ad4f1fb568",
+    "run_9eed85c54bfc4dceace3",
+    "run_a8756f9649df4964be6c",
+    "run_b5ed20352ac14273955e",
+    "run_beb2bfa3c1e547848fb3",
+    "run_c3b563a0cddc4299a158",
+    "run_c3c1c6be2802414e9f12",
+    "run_e555bc0ca8984fe1ae27",
+    "run_f65bd2da56164206a1cd",
+    "run_ffc5bf8d36734521a1b4"
+  ],
+  "retained_comparison_ids": [
+    "comparison_232ba95b2a4548308e97",
+    "comparison_43241cb7013b414d847a",
+    "comparison_52fbf5a4b25f404c92bd",
+    "comparison_97cc01d7269248c58a43",
+    "comparison_f09c60fef8bf48a7a8ca"
+  ],
+  "preexisting_active_scenarios_excluded": 36,
+  "unclaimed_new_scenarios_preserved": [],
+  "delete_requests_made": 0,
+  "default_scenario_id": "scenario_b44dbb255ef3494e8e22",
+  "retained_results_verified_after_archive": [
+    {
+      "id": "run_143c551e285a454fad80",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_19d97ca11a3245efae79",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_336940d460fa454e995c",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_368d3853c0204d6bbdcd",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_38a90c3a12974a359db2",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_39aec52d96d94618bca6",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_3fa0516346f4499088c2",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_5c0db61fc9ad42598436",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_5dfa6038057840a6a05b",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_69e9bc94fe2446dc859a",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_787e02fbf75c4ff68870",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_7fd7a1d88866425b9f12",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_8ecc4e10f1ad4f1fb568",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_9eed85c54bfc4dceace3",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_a8756f9649df4964be6c",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_b5ed20352ac14273955e",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_beb2bfa3c1e547848fb3",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_c3b563a0cddc4299a158",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_c3c1c6be2802414e9f12",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_e555bc0ca8984fe1ae27",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_f65bd2da56164206a1cd",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "run_ffc5bf8d36734521a1b4",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "comparison_232ba95b2a4548308e97",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "comparison_43241cb7013b414d847a",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "comparison_52fbf5a4b25f404c92bd",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "comparison_97cc01d7269248c58a43",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    },
+    {
+      "id": "comparison_f09c60fef8bf48a7a8ca",
+      "status": "SUCCEEDED",
+      "readable_after_archive": true
+    }
+  ]
+}

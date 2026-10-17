@@ -1,0 +1,35 @@
+{
+  "verified_at": "2026-10-17T21:21:59.635663+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "deployed_commit": "072118d81f3b67bb97f771c5ef4ed52ea49bc3b0",
+  "tested_application_source_commit": "37911bd050674a570aaa223ae1598e319cfa37f8",
+  "deployed_application_bytes_match_tested_source": true,
+  "live_frontend_files_matching_tested_bundle": 44,
+  "hosted_browser": {
+    "startTime": "2026-10-17T21:13:29.105Z",
+    "duration": 404470.767,
+    "expected": 10,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "full_local_regression": {
+    "passed": 62,
+    "device_specific_skips": 28,
+    "failures": 0
+  },
+  "final_local_followup": {
+    "passed": 10,
+    "device_specific_skips": 2,
+    "failures": 0
+  },
+  "frontend_unit_tests_passed": 103,
+  "smoke_run_id": "run_7fd7a1d88866425b9f12",
+  "private_oci_artifacts": 4,
+  "export_checksums_verified": true,
+  "all_protected_records_unchanged": true,
+  "original_default_restored_after_archiving_only_new_verification_scenarios": true,
+  "named_volumes_preserved": true,
+  "backend_engine_infrastructure_changed": false,
+  "previous_backend_acceptance": "595 backend tests; previous 84d performance/security/recovery/restore evidence remains attributed to its measured release. No new benchmark or security scan claimed."
+}

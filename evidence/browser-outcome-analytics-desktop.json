@@ -1,5 +1,5 @@
 {
-  "run_id": "run_ef8a3f3cc85f498c866d",
+  "run_id": "run_c3b563a0cddc4299a158",
   "medians_match_actual_api": {
     "arrivals": 280.5,
     "inpatient_waiting_patient_hours": 34.52333387719768,
@@ -23,9 +23,9 @@
   ],
   "selected_time_preserved": true,
   "patient_inspector_context_preserved": true,
-  "null_zero_run_id": "run_784e96523df34678971a",
+  "null_zero_run_id": "run_a8756f9649df4964be6c",
   "null_and_zero_distinguished": true,
-  "cutoff_branch_run_id": "run_19b36ca25cb7493aa3cb",
+  "cutoff_branch_run_id": "run_143c551e285a454fad80",
   "cutoff": "2026-10-17T13:00:15.250Z",
   "cutoff_projection_matches_recorded_integrals": {
     "day": 72.18969394805089,

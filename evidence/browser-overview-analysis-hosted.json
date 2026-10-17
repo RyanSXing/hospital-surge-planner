@@ -1,0 +1,976 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "navigation-flow.spec.ts",
+      "screens.spec.ts",
+      "saved-replication-count.spec.ts"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "https://hospital-surge.131.186.0.156.sslip.io",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "https://hospital-surge.131.186.0.156.sslip.io",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true,
+          "deviceScaleFactor": 1
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../evidence/browser-tests.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "navigation-flow.spec.ts",
+      "file": "navigation-flow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Overview setup to complete Analysis workflow preserves baseline and browser context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 129896,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:13:29.420Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "navigation-flow-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Overview-s-1f748-aseline-and-browser-context-desktop/attachments/navigation-flow-replay-e5b3c90161db6ba276abaac046cf5d7147f1ecbe.png"
+                    },
+                    {
+                      "name": "navigation-flow-replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Overview-s-1f748-aseline-and-browser-context-desktop/attachments/navigation-flow-replay-middle-ad34dd347530247be7e9079fdc7fde6c2801410f.png"
+                    },
+                    {
+                      "name": "navigation-flow-replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Overview-s-1f748-aseline-and-browser-context-desktop/attachments/navigation-flow-replay-lower-828d9e46a923dedd8bd4be94ce638c5711f6dc01.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-4a02c560e6d23ae485a5",
+          "file": "navigation-flow.spec.ts",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "title": "mobile touch navigation retains the Overview draft and source baseline",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Dedicated touch and narrow-screen coverage.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/navigation-flow.spec.ts",
+                    "line": 531,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 218,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:15:39.822Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Dedicated touch and narrow-screen coverage.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/navigation-flow.spec.ts",
+                        "line": 531,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-3977a1822b62ae68a1c4",
+          "file": "navigation-flow.spec.ts",
+          "line": 528,
+          "column": 1
+        },
+        {
+          "title": "root, legacy aliases and invalid navigation canonicalize without losing context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6337,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "root route",
+                      "duration": 783
+                    },
+                    {
+                      "title": "view=scenarios",
+                      "duration": 475
+                    },
+                    {
+                      "title": "view=patients",
+                      "duration": 517
+                    },
+                    {
+                      "title": "view=resources",
+                      "duration": 528
+                    },
+                    {
+                      "title": "view=compare",
+                      "duration": 523
+                    },
+                    {
+                      "title": "view=replay",
+                      "duration": 530
+                    },
+                    {
+                      "title": "view=summary",
+                      "duration": 525
+                    },
+                    {
+                      "title": "view=not-a-view",
+                      "duration": 512
+                    },
+                    {
+                      "title": "view=analysis&analysis=not-a-page",
+                      "duration": 543
+                    },
+                    {
+                      "title": "view=analysis&analysis=analytics&section=not-a-section",
+                      "duration": 503
+                    }
+                  ],
+                  "startTime": "2026-10-17T21:15:40.053Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-380ab651e138a531ecd2",
+          "file": "navigation-flow.spec.ts",
+          "line": 624,
+          "column": 1
+        },
+        {
+          "title": "Analytics outcomes match recorded metrics and preserve trajectory context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 48294,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:15:46.398Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "outcome-analytics",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Analytics--6c9eb-preserve-trajectory-context-desktop/attachments/outcome-analytics-d8ddf9c3fe9bd987df729ab4dc1cb39e04a5705a.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-c1aecc71b5ee8a5f7434",
+          "file": "navigation-flow.spec.ts",
+          "line": 672,
+          "column": 1
+        },
+        {
+          "title": "Overview setup to complete Analysis workflow preserves baseline and browser context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Complete 3-day/10-run compute is covered on desktop; touch navigation is separate.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/navigation-flow.spec.ts",
+                    "line": 88,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 270,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:17:55.756Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Complete 3-day/10-run compute is covered on desktop; touch navigation is separate.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/navigation-flow.spec.ts",
+                        "line": 88,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-1001cb0ca8fe11758b0f",
+          "file": "navigation-flow.spec.ts",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "title": "mobile touch navigation retains the Overview draft and source baseline",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6045,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:17:56.488Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "navigation-touch-overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-mobile-tou-88438-w-draft-and-source-baseline-mobile/attachments/navigation-touch-overview-14f27a5002c46e5fdf406abc289b48053279a9de.png"
+                    },
+                    {
+                      "name": "navigation-touch-overview-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-mobile-tou-88438-w-draft-and-source-baseline-mobile/attachments/navigation-touch-overview-middle-b579296a4f0ce309305af281c2c012cd10393a87.png"
+                    },
+                    {
+                      "name": "navigation-touch-overview-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-mobile-tou-88438-w-draft-and-source-baseline-mobile/attachments/navigation-touch-overview-lower-84e141269493d0d2513c615aad4b5abd134dfad2.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-d5222a258e5122e15c97",
+          "file": "navigation-flow.spec.ts",
+          "line": 528,
+          "column": 1
+        },
+        {
+          "title": "root, legacy aliases and invalid navigation canonicalize without losing context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7481,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "root route",
+                      "duration": 711
+                    },
+                    {
+                      "title": "view=scenarios",
+                      "duration": 452
+                    },
+                    {
+                      "title": "view=patients",
+                      "duration": 448
+                    },
+                    {
+                      "title": "view=resources",
+                      "duration": 449
+                    },
+                    {
+                      "title": "view=compare",
+                      "duration": 453
+                    },
+                    {
+                      "title": "view=replay",
+                      "duration": 468
+                    },
+                    {
+                      "title": "view=summary",
+                      "duration": 464
+                    },
+                    {
+                      "title": "view=not-a-view",
+                      "duration": 516
+                    },
+                    {
+                      "title": "view=analysis&analysis=not-a-page",
+                      "duration": 526
+                    },
+                    {
+                      "title": "view=analysis&analysis=analytics&section=not-a-section",
+                      "duration": 1018
+                    }
+                  ],
+                  "startTime": "2026-10-17T21:18:02.545Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-172b9cd5bff937ee2659",
+          "file": "navigation-flow.spec.ts",
+          "line": 624,
+          "column": 1
+        },
+        {
+          "title": "Analytics outcomes match recorded metrics and preserve trajectory context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 46423,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:18:10.036Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "outcome-analytics",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Analytics--6c9eb-preserve-trajectory-context-mobile/attachments/outcome-analytics-8a374facded64f9e35b413acdccb407c501a8b05.png"
+                    },
+                    {
+                      "name": "outcome-analytics-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Analytics--6c9eb-preserve-trajectory-context-mobile/attachments/outcome-analytics-middle-7f4402d5c095d414932fbb00f923fde1ca3d2c73.png"
+                    },
+                    {
+                      "name": "outcome-analytics-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Analytics--6c9eb-preserve-trajectory-context-mobile/attachments/outcome-analytics-lower-2c2f4eece48dbdc45e0463f2052c1c1f5da994f6.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-ef39b722782b056bc268",
+          "file": "navigation-flow.spec.ts",
+          "line": 672,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "saved-replication-count.spec.ts",
+      "file": "saved-replication-count.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "saved custom replication counts stay visible and are submitted unchanged",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 52613,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:16:34.712Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "171b9621c4d8ac51e9dc-1bbb14b392507eb2ab8f",
+          "file": "saved-replication-count.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "saved custom replication counts stay visible and are submitted unchanged",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 50212,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:18:56.477Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "171b9621c4d8ac51e9dc-ce54530cfac7a658279e",
+          "file": "saved-replication-count.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "screens.spec.ts",
+      "file": "screens.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "the two-page workspace and analysis sections render actual run context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27887,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:17:27.340Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-3bb628316b465a1c7e877fb1b6d1436116a981c5.png"
+                    },
+                    {
+                      "name": "overview-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-middle-0284ac71ca960644be4c75fdbbb1baf08b450710.png"
+                    },
+                    {
+                      "name": "overview-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-lower-d82eeaba99721f2db55e30243e69f8430cfd3385.png"
+                    },
+                    {
+                      "name": "summary",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/summary-6c009fe68df5dd6449dd52838d68b5d65b7d520a.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/replay-5b543f52c64b6b53b97f905d3ada8077e04293fe.png"
+                    },
+                    {
+                      "name": "replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/replay-middle-b73a6377335d1f4374f2d2a932f45b1928ca5983.png"
+                    },
+                    {
+                      "name": "replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/replay-lower-b4dc53849bdd56a9c96130d2dc98a58fb0629eed.png"
+                    },
+                    {
+                      "name": "analytics-outcomes",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-outcomes-57276eb89e66f02214c72ca30eb6df3d922cd95b.png"
+                    },
+                    {
+                      "name": "analytics-patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-patients-55ce66bbdc60e49764a6fee59eb03f9da4faf119.png"
+                    },
+                    {
+                      "name": "analytics-resources",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-resources-f1fca72af03285ab087ab4c30b8d8aa4afe83162.png"
+                    },
+                    {
+                      "name": "comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/comparison-6a26fb9d4d72d48cfe268ae9e7efbfd846d72a4f.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-a8a052396575cd57fe96b35bddd23843c8dd4aa7.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-middle-c4d6ee0adfc9dd28985911bd68bb27e699769893.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-lower-7538e70ecb72ee4b4f41a4ef35a025e1f0bbbfa0.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-c48dd46c543d0d106029",
+          "file": "screens.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "the two-page workspace and analysis sections render actual run context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26725,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-17T21:19:46.704Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/overview-3d3683778946fb04be297b4ca4707eff7b69ee66.png"
+                    },
+                    {
+                      "name": "overview-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/overview-middle-616a1b0c7b303a813898205f9dfae3332a2ff611.png"
+                    },
+                    {
+                      "name": "overview-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/overview-lower-3bf99689a540d4189b5e6d95ed74b5ada5357939.png"
+                    },
+                    {
+                      "name": "summary",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-31d4fb9e1be0a57252f98e031dc924017c676bdd.png"
+                    },
+                    {
+                      "name": "summary-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-middle-558058707f0eb5f3f63ee7417d89bb0f012575f1.png"
+                    },
+                    {
+                      "name": "summary-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-lower-d937510f129f5e486ff7e78a2a7c835c0463d277.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/replay-90473a04d221111b21a39a8d54421bec8f41165f.png"
+                    },
+                    {
+                      "name": "replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/replay-middle-28dad75e6efb25b3f7077a94f31779da9efb83f5.png"
+                    },
+                    {
+                      "name": "replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/replay-lower-7ea26e881beb5fd5f8a9ab758e3d4742ccbf5a0e.png"
+                    },
+                    {
+                      "name": "analytics-outcomes",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-outcomes-4d8264efc4481bd678e36d54805783e053eded1b.png"
+                    },
+                    {
+                      "name": "analytics-outcomes-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-outcomes-middle-1f1fb078b8279c960b662c375a6f8c379d5f91d0.png"
+                    },
+                    {
+                      "name": "analytics-outcomes-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-outcomes-lower-4f49d44fe1a5d85105e570ab22c857d5d9c04edc.png"
+                    },
+                    {
+                      "name": "analytics-patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-patients-a06bc2ebe6cd2a1b72e9ce0fc32e0b030afdc024.png"
+                    },
+                    {
+                      "name": "analytics-patients-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-patients-middle-3994b880ef396836ee4d2709e9428a8fde40fa6a.png"
+                    },
+                    {
+                      "name": "analytics-patients-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-patients-lower-2cc405d2852303e221826f6c83091690a65313e1.png"
+                    },
+                    {
+                      "name": "analytics-resources",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-resources-5b0b400a9f066195de90e665fe7adbbc1dc40117.png"
+                    },
+                    {
+                      "name": "analytics-resources-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-resources-middle-be13e8bcf8d6624a17643498b216bb5711ccaa0a.png"
+                    },
+                    {
+                      "name": "analytics-resources-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-resources-lower-5effd5a52f1c1b014375fd7b5e535aff7e07edf6.png"
+                    },
+                    {
+                      "name": "comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-e7e80299147cc7120cfa4c69a9dada78f6d26751.png"
+                    },
+                    {
+                      "name": "comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-middle-ee0920823c36e22896202489f93fc50c6c10deb9.png"
+                    },
+                    {
+                      "name": "comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-lower-60ae987a7a70d07ccaa8e5473e7884baf0fa1b29.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/data-761573125c44afedd43f21aae9ef41755c8cf982.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/data-middle-043652bc9a522b623b3f00278aea84b87dfc9079.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/data-lower-90377094ade08f0ece756142af94c68024f767c5.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-418f7801755efcbbf962",
+          "file": "screens.spec.ts",
+          "line": 13,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-17T21:13:29.105Z",
+    "duration": 404470.767,
+    "expected": 10,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

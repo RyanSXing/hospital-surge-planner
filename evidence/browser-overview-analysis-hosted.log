@@ -1,0 +1,22 @@
+
+Running 12 tests using 1 worker
+
+(node:55847) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/navigation-flow.spec.ts:85:1 › Overview setup to complete Analysis workflow preserves baseline and browser context (2.2m)
+  -   2 [desktop] › e2e/navigation-flow.spec.ts:528:1 › mobile touch navigation retains the Overview draft and source baseline
+  ✓   3 [desktop] › e2e/navigation-flow.spec.ts:624:1 › root, legacy aliases and invalid navigation canonicalize without losing context (6.3s)
+  ✓   4 [desktop] › e2e/navigation-flow.spec.ts:672:1 › Analytics outcomes match recorded metrics and preserve trajectory context (48.3s)
+  ✓   5 [desktop] › e2e/saved-replication-count.spec.ts:4:1 › saved custom replication counts stay visible and are submitted unchanged (52.6s)
+  ✓   6 [desktop] › e2e/screens.spec.ts:13:1 › the two-page workspace and analysis sections render actual run context (27.9s)
+(node:56288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -   7 [mobile] › e2e/navigation-flow.spec.ts:85:1 › Overview setup to complete Analysis workflow preserves baseline and browser context
+  ✓   8 [mobile] › e2e/navigation-flow.spec.ts:528:1 › mobile touch navigation retains the Overview draft and source baseline (6.0s)
+  ✓   9 [mobile] › e2e/navigation-flow.spec.ts:624:1 › root, legacy aliases and invalid navigation canonicalize without losing context (7.5s)
+  ✓  10 [mobile] › e2e/navigation-flow.spec.ts:672:1 › Analytics outcomes match recorded metrics and preserve trajectory context (46.4s)
+  ✓  11 [mobile] › e2e/saved-replication-count.spec.ts:4:1 › saved custom replication counts stay visible and are submitted unchanged (50.2s)
+  ✓  12 [mobile] › e2e/screens.spec.ts:13:1 › the two-page workspace and analysis sections render actual run context (26.7s)
+
+  2 skipped
+  10 passed (6.7m)

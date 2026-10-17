@@ -566,6 +566,45 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
   await page.goForward();
   await expectRoute(page, "overview");
   await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("42");
+  await page.setViewportSize({ width: 320, height: 844 });
+  const expectNarrowWidth = async () => {
+    await expect
+      .poll(() =>
+        page.evaluate(() => [
+          document.documentElement.clientWidth,
+          document.documentElement.scrollWidth,
+        ]),
+      )
+      .toEqual([320, 320]);
+  };
+  await primary(page, "Analysis", true);
+  for (const tab of ["Summary", "Replay", "Analytics", "Comparison"]) {
+    await analysis(page, tab, true);
+    await expectRoute(
+      page,
+      "analysis",
+      tab.toLowerCase(),
+      tab === "Analytics" ? "patients" : undefined,
+    );
+    await expectNarrowWidth();
+    expect(selection(page)).toEqual(retained);
+    if (tab === "Analytics") {
+      for (const [label, section] of [
+        ["Outcomes", "outcomes"],
+        ["Patients & units", "patients"],
+        ["Resources", "resources"],
+      ]) {
+        await sections.getByRole("button", { name: label, exact: true }).tap();
+        await expectRoute(page, "analysis", "analytics", section);
+        await expectNarrowWidth();
+      }
+    }
+  }
+  await primary(page, "Overview", true);
+  await expectRoute(page, "overview");
+  await expectNarrowWidth();
+  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("42");
+  expect(await baseline(page)).toEqual(source);
   await assertPageHealthy(page);
   expect(errors).toEqual([]);
   await capture(page, "navigation-touch-overview", info);
@@ -574,6 +613,9 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
     source_baseline_unchanged: true,
     unsaved_inputs_retained: true,
     touch_targets_min_height: 44,
+    viewport_widths: [390, 320],
+    all_analysis_and_analytics_tabs_accessible_at_320: true,
+    document_width_at_320: 320,
     history_preserved: true,
     page_errors: errors,
   });

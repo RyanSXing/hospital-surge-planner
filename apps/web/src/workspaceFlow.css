@@ -6,6 +6,10 @@
   min-width: 0;
   min-height: 100%;
 }
+.comparison-view {
+  height: 100%;
+  min-height: 0;
+}
 .sidebar-workflow {
   margin: 27px 19px;
   padding-top: 20px;
@@ -43,6 +47,9 @@
   display: flex;
   gap: 5px;
   align-self: stretch;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 .analysis-bar nav > button {
   display: flex;
@@ -145,6 +152,7 @@
     gap: 0;
   }
   .analysis-bar nav > button {
+    flex: 0 0 auto;
     padding: 12px 7px;
     font-size: 12px;
     gap: 5px;

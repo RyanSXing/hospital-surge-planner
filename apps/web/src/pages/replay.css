@@ -5,18 +5,8 @@
 .replay-floor-viewport {
   background: #fff;
   min-width: 0;
-  overflow: auto;
-}
-.replay-floor-viewport:fullscreen {
-  overflow: auto;
-  padding: 24px;
-  background: #f4f7fa;
-}
-.replay-floor-viewport:fullscreen .hospital-floor-plan {
-  max-width: 1800px;
-  margin: 0 auto;
-  border: 1px solid #d9e2eb;
-  border-radius: 12px;
+  min-height: 0;
+  overflow: hidden;
 }
 .replay-planned-places {
   margin: 12px 0;
@@ -972,5 +962,259 @@
   .replay-page .playback-buttons > button:not(.button) {
     min-width: 40px;
     min-height: 40px;
+  }
+}
+
+/* A desktop replay uses the available workspace, rather than a fixed tall map.
+   Only deliberate manual zoom scrolls the hospital canvas. */
+@media (min-width: 768px) {
+  .replay-page {
+    height: 100%;
+    min-height: 0;
+    padding: 0 14px 6px;
+  }
+  .replay-page > .page-heading {
+    flex: 0 0 auto;
+    height: 38px;
+    min-height: 38px;
+    padding: 3px 0;
+  }
+  .replay-page > .page-heading h1 {
+    font-size: 20px;
+  }
+  .replay-page > .page-heading p {
+    display: none;
+  }
+  .replay-page .heading-actions {
+    gap: 8px;
+  }
+  .replay-page .heading-actions > .button {
+    height: 30px;
+    min-height: 30px;
+  }
+  .replay-page .heading-actions .micro-label {
+    font-size: 10px;
+  }
+  .replay-page .mantine-NativeSelect-input {
+    height: 30px;
+    min-height: 30px;
+    font-size: 11px;
+  }
+  .replay-page .replay-location {
+    flex: 0 0 auto;
+    min-height: 24px;
+    padding: 2px 0;
+    margin-bottom: 4px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .replay-page .replay-location strong {
+    font-size: 11px;
+  }
+  .replay-page .replay-location span,
+  .replay-page .replay-campus-reference summary {
+    font-size: 10px;
+  }
+  .replay-page .replay-stage {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    height: auto !important;
+    overflow: hidden;
+  }
+  .replay-page .replay-playback-panel {
+    flex: 0 0 auto;
+    position: static;
+    margin: 0 0 4px;
+    border-radius: 7px;
+    box-shadow: none;
+  }
+  .replay-page .replay-controls {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 4px 10px;
+  }
+  .replay-page .playback-buttons {
+    flex: 0 0 auto;
+    gap: 4px;
+  }
+  .replay-page .playback-buttons > button:not(.button) {
+    min-width: 28px;
+    height: 28px;
+  }
+  .replay-page .playback-buttons > .button,
+  .replay-page .replay-controls > .button {
+    height: 30px;
+    min-height: 30px;
+    font-size: 11px;
+  }
+  .replay-page .replay-speed {
+    width: 148px;
+  }
+  .replay-page .replay-time {
+    gap: 1px;
+    min-width: 0;
+  }
+  .replay-page .replay-time strong {
+    white-space: nowrap;
+    font-size: 11px;
+  }
+  .replay-page .replay-time span {
+    font-size: 10px;
+  }
+  .replay-page .replay-scrubber {
+    padding: 0 10px 2px;
+    gap: 8px;
+    font-size: 10px;
+  }
+  .replay-page .replay-scrubber input {
+    min-width: 0;
+    min-height: 20px;
+  }
+  .replay-page .replay-workspace {
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+  .replay-page .replay-scene {
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+    border-radius: 7px;
+  }
+  .replay-page .scene-topline {
+    min-height: 34px;
+    padding: 3px 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .replay-page .scene-legend {
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 6px;
+    font-size: 10px;
+  }
+  .replay-page .scene-legend .button {
+    height: 26px;
+    min-height: 26px;
+    padding: 0 7px;
+    font-size: 11px;
+  }
+  .replay-page .scene-legend .button[aria-pressed="true"] {
+    border-color: #a5c8e2;
+    background: #f0f7fc;
+    color: #176caf;
+  }
+  .replay-page .replay-floor-viewport {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .replay-page .replay-summary {
+    flex: 0 0 auto;
+    height: 26px;
+    min-height: 26px;
+    padding: 3px 10px;
+    gap: 12px;
+    flex-wrap: nowrap;
+    font-size: 10px;
+  }
+  .replay-page .replay-summary strong,
+  .replay-page .replay-summary > span:last-child {
+    font-size: 10px;
+  }
+  .replay-page .replay-summary > .button {
+    margin-left: auto;
+    height: 22px;
+    min-height: 22px;
+    padding: 0 7px;
+    font-size: 10px;
+  }
+  .replay-page .replay-census-toggle {
+    flex: 0 0 auto;
+    min-height: 28px;
+    margin: 4px 0 0;
+    padding: 0;
+  }
+  .replay-page .replay-census-toggle .button {
+    height: 26px;
+    min-height: 26px;
+    font-size: 11px;
+  }
+  .replay-page .replay-census-toggle > span {
+    font-size: 10px;
+  }
+  .replay-page .replay-stage:fullscreen {
+    width: 100vw;
+    height: 100dvh !important;
+    padding: 12px;
+    background: #f5f8fa;
+  }
+  .replay-map-tools {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding-left: 8px;
+    border-left: 1px solid #dce6ed;
+  }
+  .replay-map-tools > .button {
+    height: 26px;
+    min-height: 26px;
+    padding: 0 7px;
+    font-size: 11px;
+  }
+  .replay-map-tools > .button[aria-pressed="true"] {
+    border-color: #a5c8e2;
+    background: #f0f7fc;
+    color: #176caf;
+  }
+  .replay-page .heading-actions > .replay-campus-reference {
+    position: relative;
+    flex: 0 0 auto;
+    width: auto;
+    margin: 0;
+    background: transparent;
+  }
+  .replay-campus-reference > summary {
+    cursor: pointer;
+    color: #567388;
+    padding: 6px 3px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .replay-campus-popover {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 7px);
+    z-index: 30;
+    width: min(680px, 75vw);
+    max-height: calc(100dvh - 160px);
+    overflow: auto;
+    padding: 16px;
+    border: 1px solid #d8e3eb;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 24px #233b4c20;
+    font-size: 12px;
+  }
+  .replay-campus-popover > strong,
+  .replay-campus-popover > span {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .replay-campus-popover > p {
+    margin: 10px 0;
+    color: #607287;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .replay-campus-popover > a {
+    color: #176caf;
+    font-size: 11px;
+    text-decoration: underline;
   }
 }

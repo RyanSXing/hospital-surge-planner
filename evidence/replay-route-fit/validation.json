@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-18T08:24:10.072324+00:00",
+  "frontend_tests": 393,
+  "backend_tests": 21,
+  "unique_desktop_browser_cases": 21,
+  "all_passed": true,
+  "production_build": "TypeScript and Vite passed",
+  "frozen_application_and_bundle_unchanged": true,
+  "scope": [
+    "Bounded deterministic sampling uses actual recorded movements and covers less frequent wards, ICU, queues and discharge without inventing traffic or changing allocation.",
+    "Exact occupied/empty bed transitions take 90ms with a single 150ms flash; unchanged beds and reduced motion never flash.",
+    "Complete hospital and controls fit 1280x720, 1440x900 and 1600x1000 desktop screens, including 100 installed Ward A beds, fullscreen, Fit and sidebar resizing.",
+    "Previous recorded bed inventory, patient inspectors, continuous routes, live scrubbing, stale seek/run guards and ED queue recovery remain verified."
+  ],
+  "preservation": "Fresh private database backup captured; final read-only hosted preservation and static bundle checks follow deployment."
+}

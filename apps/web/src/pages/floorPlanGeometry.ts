@@ -175,20 +175,50 @@ export function floorGraphJourneyPath(
 
 /** Union of occupied architectural rectangles; exterior courtyards stay outside the outline. */
 export function hospitalFootprintPath(rectangles: FloorRect[]): string {
-  const rects = rectangles.filter((rect) => rect.width > 0 && rect.height > 0);
+  const measured = rectangles
+    .filter((rect) => rect.width > 0 && rect.height > 0)
+    .map((rect) => ({
+      left: rect.x,
+      right: rect.x + rect.width,
+      top: rect.y,
+      bottom: rect.y + rect.height,
+    }));
+  // Reversing CSS zoom can give a shared edge two representations differing by
+  // a few floating-point units. Canonicalize that numerical noise only; a pixel
+  // tolerance would incorrectly close real courtyard or doorway gaps.
+  const sharedEdges = (values: number[]) => {
+    const canonical = new Map<number, number>();
+    let anchor: number | undefined;
+    for (const value of [...new Set(values)].sort((a, b) => a - b)) {
+      const tolerance =
+        64 *
+        Number.EPSILON *
+        Math.max(1, Math.abs(value), Math.abs(anchor ?? value));
+      if (anchor === undefined || value - anchor > tolerance) anchor = value;
+      canonical.set(value, anchor);
+    }
+    return canonical;
+  };
+  const horizontal = sharedEdges(
+      measured.flatMap((rect) => [rect.left, rect.right]),
+    ),
+    vertical = sharedEdges(measured.flatMap((rect) => [rect.top, rect.bottom]));
+  const rects = measured.map((rect) => ({
+    left: horizontal.get(rect.left)!,
+    right: horizontal.get(rect.right)!,
+    top: vertical.get(rect.top)!,
+    bottom: vertical.get(rect.bottom)!,
+  }));
   const xs = [
-    ...new Set(rects.flatMap((rect) => [rect.x, rect.x + rect.width])),
+    ...new Set(rects.flatMap((rect) => [rect.left, rect.right])),
   ].sort((a, b) => a - b);
   const ys = [
-    ...new Set(rects.flatMap((rect) => [rect.y, rect.y + rect.height])),
+    ...new Set(rects.flatMap((rect) => [rect.top, rect.bottom])),
   ].sort((a, b) => a - b);
   const inside = (x: number, y: number) =>
     rects.some(
       (rect) =>
-        x > rect.x &&
-        x < rect.x + rect.width &&
-        y > rect.y &&
-        y < rect.y + rect.height,
+        x > rect.left && x < rect.right && y > rect.top && y < rect.bottom,
     );
   const covered = (i: number, j: number) =>
     i >= 0 &&
@@ -197,7 +227,9 @@ export function hospitalFootprintPath(rectangles: FloorRect[]): string {
     j < ys.length - 1 &&
     inside((xs[i] + xs[i + 1]) / 2, (ys[j] + ys[j + 1]) / 2);
   const edges = new Map<string, string[]>(),
-    point = (x: number, y: number) => `${x.toFixed(2)},${y.toFixed(2)}`;
+    // Vertex identity must use the same precision as the union grid. Rounding
+    // here can collapse two real edges into a self-loop after topology is built.
+    point = (x: number, y: number) => `${x},${y}`;
   const add = (a: string, b: string) =>
     edges.set(a, [...(edges.get(a) || []), b]);
   for (let i = 0; i < xs.length - 1; i++)

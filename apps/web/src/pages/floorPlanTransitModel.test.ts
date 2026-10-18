@@ -256,6 +256,145 @@ describe("recorded floor-plan movements", () => {
     expect(new Set(first.map((journey) => journey.patientId)).size).toBe(12);
     expect(recordedFloorJourneys(events, units, from, to)).toEqual(first);
   });
+  it("represents rare wards, ICU, discharge and direct admissions within a heavily skewed sample", () => {
+    const actualUnits = [...units, "WARD-C"];
+    const patient = (id: string, minute: number, unit: string) => [
+      event("arrival", minute, { patient_id: id }),
+      event("assessment_start", minute + 0.01, {
+        patient_id: id,
+        to_unit_id: "ED",
+      }),
+      event("admission", minute + 0.02, {
+        patient_id: id,
+        from_unit_id: "ED",
+        to_unit_id: unit,
+      }),
+      event("discharge", minute + 0.03, { patient_id: id, from_unit_id: unit }),
+    ];
+    const events = [
+      ...Array.from({ length: 300 }, (_, index) =>
+        patient(`common-${index}`, index / 2 + 0.1, "WARD-A"),
+      ).flat(),
+      ...patient("rare-B", 60.111, "WARD-B"),
+      ...patient("rare-C", 60.112, "WARD-C"),
+      ...patient("rare-ICU", 60.113, "ICU"),
+      event("arrival", 60.114, {
+        patient_id: "direct",
+        payload: { entry_type: "direct_ward" },
+      }),
+      event("admission", 60.115, {
+        patient_id: "direct",
+        to_unit_id: "WARD-A",
+      }),
+    ];
+    const sample = recordedFloorJourneys(events, actualUnits, from, to);
+    expect(sample).toHaveLength(12);
+    expect(new Set(sample.map((journey) => journey.patientId)).size).toBe(12);
+    const covered = new Set(
+      sample.flatMap((journey) =>
+        journey.moves.flatMap((move) => [move.from, move.to]),
+      ),
+    );
+    for (const place of [
+      ...actualUnits,
+      "bed-waiting",
+      "ed-waiting",
+      "entrance",
+      "discharge",
+    ])
+      expect(covered.has(place), place).toBe(true);
+    const routes = (journeys: ReturnType<typeof recordedFloorJourneys>) =>
+      [
+        ...new Set(
+          journeys.flatMap((journey) =>
+            journey.moves.map((move) => `${move.from}→${move.to}`),
+          ),
+        ),
+      ].sort();
+    expect(routes(sample)).toEqual(
+      routes(recordedFloorJourneys(events, actualUnits, from, to, 1000)),
+    );
+    const actualEvents = new Set(events.map((row) => row.event_id));
+    expect(
+      sample.every((journey) =>
+        journey.moves.every((move) => actualEvents.has(move.eventId)),
+      ),
+    ).toBe(true);
+    expect(
+      recordedFloorJourneys([...events].reverse(), actualUnits, from, to),
+    ).toEqual(sample);
+  });
+  it("chooses a rare recorded phase over a longer common phase without joining a missing journey or duplicating its patient", () => {
+    const events = [
+      event("arrival", 1),
+      event("assessment_start", 2, { to_unit_id: "ED" }),
+      event("admission", 3, { from_unit_id: "ED", to_unit_id: "WARD-A" }),
+      // The source does not continue the prior chain. That gap must stay a gap.
+      event("transfer_arrived", 4, {
+        from_unit_id: "ICU",
+        to_unit_id: "WARD-C",
+      }),
+      ...Array.from({ length: 40 }, (_, index) => [
+        event("assessment_start", index + 5, {
+          patient_id: `common-${index}`,
+          to_unit_id: "ED",
+        }),
+        event("admission", index + 5.1, {
+          patient_id: `common-${index}`,
+          from_unit_id: "ED",
+          to_unit_id: "WARD-A",
+        }),
+      ]).flat(),
+    ];
+    const sample = recordedFloorJourneys(
+      events,
+      [...units, "WARD-C"],
+      from,
+      to,
+    );
+    const rare = sample.filter((journey) => journey.patientId === "P1");
+    expect(rare).toHaveLength(1);
+    expect(rare[0].moves.map((move) => [move.from, move.to])).toEqual([
+      ["ICU", "WARD-C"],
+    ]);
+    expect(sample).toHaveLength(12);
+    expect(
+      sample.every((journey) =>
+        journey.moves.every(
+          (move, index) => !index || move.from === journey.moves[index - 1].to,
+        ),
+      ),
+    ).toBe(true);
+  });
+  it("does not fabricate traffic to units without a physical recorded movement", () => {
+    const sample = recordedFloorJourneys(
+      [
+        event("admission", 1, { from_unit_id: "ED", to_unit_id: "WARD-A" }),
+        event("admission_request", 2, {
+          from_unit_id: "WARD-A",
+          to_unit_id: "ICU",
+        }),
+      ],
+      [...units, "WARD-C"],
+      from,
+      to,
+    );
+    expect(sample.flatMap((journey) => journey.moves)).toMatchObject([
+      { from: "ED", to: "WARD-A" },
+    ]);
+  });
+  it("honors empty and small sample budgets without mutating recorded input", () => {
+    const events = [
+      event("admission", 1, { from_unit_id: "ED", to_unit_id: "WARD-A" }),
+    ];
+    const saved = JSON.stringify(events);
+    for (const maximum of [0, -1, NaN, Infinity])
+      expect(recordedFloorJourneys(events, units, from, to, maximum)).toEqual(
+        [],
+      );
+    expect(recordedFloorJourneys(events, units, from, to, 1)).toHaveLength(1);
+    expect(JSON.stringify(events)).toBe(saved);
+  });
 });
 describe("floor-plan corridor routing and suppression", () => {
   it("routes between actual door anchors through the corridor and waiting-wing hallway", () => {

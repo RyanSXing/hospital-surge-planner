@@ -1,0 +1,162 @@
+{
+  "run": "run_8368cfc5571b49fdb7b4",
+  "transition_durations_ms": [
+    90
+  ],
+  "turned_on": "SLOT-ED-015",
+  "turned_off": "SLOT-ED-002",
+  "unchanged_bed_glows": 1,
+  "changes": [
+    {
+      "slot": "SLOT-WA-027",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "change": "off",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "change": "on",
+      "at": 406
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "change": "on",
+      "at": 626
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "change": "on",
+      "at": 626
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "change": "on",
+      "at": 626
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "change": "off",
+      "at": 626
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "change": "off",
+      "at": 626
+    }
+  ],
+  "reducedChanges": []
+}

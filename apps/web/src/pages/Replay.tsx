@@ -115,6 +115,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   const [advanced, setAdvanced] = useState(false);
   const [censusOpen, setCensusOpen] = useState(false);
   const floorViewport = useRef<HTMLDivElement>(null);
+  const [fullscreen, setFullscreen] = useState(false);
   const [playing, setPlaying] = useState(false),
     [speed, setSpeed] = useState(4),
     [replications, setReplications] = useState<Entity[]>([]),
@@ -129,6 +130,16 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     [stepping, setStepping] = useState(false),
     [eventCursor, setEventCursor] = useState<Entity | null>(null),
     [selectedDetail, setSelectedDetail] = useState<Entity | null>(null);
+  useEffect(() => {
+    const update = () =>
+      setFullscreen(
+        Boolean(floorViewport.current) &&
+          document.fullscreenElement === floorViewport.current,
+      );
+    update();
+    document.addEventListener("fullscreenchange", update);
+    return () => document.removeEventListener("fullscreenchange", update);
+  }, []);
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReduced(preference.matches);
@@ -679,6 +690,26 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           </p>
         </div>
         <div className="heading-actions">
+          <details className="replay-campus-reference">
+            <summary>Campus map</summary>
+            <div className="replay-campus-popover">
+              <strong>Vanderbilt hospital campus</strong>
+              <span>Nashville, Tennessee · 1211 Medical Center Drive</span>
+              <ReplayCampusContext />
+              <p>
+                Care zones illustrate the recorded hospital units and installed
+                beds. This is a planning layout, not a clinical floor plan.
+                Available places include shared staffing and equipment limits.
+              </p>
+              <a
+                href="https://www.vanderbilthealth.com/locations/vanderbilt-university-medical-center"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Location reference ↗
+              </a>
+            </div>
+          </details>
           <Button
             onClick={() => {
               pauseAtVisibleTime();
@@ -727,28 +758,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         </div>
       ) : null}
 
-      <div className="replay-location">
-        <div>
-          <strong>Vanderbilt hospital campus</strong>
-          <span>Nashville, Tennessee · 1211 Medical Center Drive</span>
-        </div>
-        <details className="replay-campus-reference">
-          <summary>Campus context · local map</summary>
-          <ReplayCampusContext />
-          <p>
-            Planning simulation with generated patient data. Care zones are a
-            simplified illustration, not a clinical floor plan.
-          </p>
-          <a
-            href="https://www.vanderbilthealth.com/locations/vanderbilt-university-medical-center"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Location reference ↗
-          </a>
-        </details>
-      </div>
-      <div className="replay-stage">
+      <div ref={floorViewport} className="replay-stage">
         <div className="replay-playback-panel">
           <div className="replay-controls">
             <div className="playback-buttons">
@@ -802,6 +812,47 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                 <option value={4}>4× · 4 hours / sec</option>
                 <option value={16}>16× · 16 hours / sec</option>
               </NativeSelect>
+            </div>
+            <div className="replay-map-tools" aria-label="Hospital map zoom">
+              <Button
+                small
+                aria-label="Zoom out"
+                onClick={() => setZoom((z) => Math.max(0.5, z - 0.25))}
+              >
+                <Minus size={13} />
+              </Button>
+              <Button
+                small
+                aria-label="Zoom in"
+                onClick={() => setZoom((z) => Math.min(3, z + 0.25))}
+              >
+                <Plus size={13} />
+              </Button>
+              <Button
+                small
+                aria-label="Fit hospital map"
+                aria-pressed={zoom === 1}
+                onClick={() => setZoom(1)}
+              >
+                Fit
+              </Button>
+              {fullscreen ? (
+                <Button
+                  small
+                  aria-label="Exit full screen"
+                  onClick={() =>
+                    void document
+                      .exitFullscreen()
+                      .catch((failure) =>
+                        setError(
+                          `Could not exit full screen. ${failure.message}`,
+                        ),
+                      )
+                  }
+                >
+                  Exit full screen
+                </Button>
+              ) : null}
             </div>
             <div className="replay-time">
               <strong>
@@ -867,34 +918,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         </div>
         <div className="replay-workspace">
           <div className="replay-scene">
-            <div className="scene-topline">
-              <span className="scene-tag">Hospital floor plan</span>
-              <div className="scene-legend">
-                <span>Recorded bed availability</span>
-                <Button
-                  small
-                  aria-label="Zoom out"
-                  onClick={() => setZoom((z) => Math.max(0.75, z - 0.25))}
-                >
-                  <Minus size={13} />
-                </Button>
-                <Button
-                  small
-                  aria-label="Zoom in"
-                  onClick={() => setZoom((z) => Math.min(2, z + 0.25))}
-                >
-                  <Plus size={13} />
-                </Button>
-                <Button
-                  small
-                  aria-label="Reset floor plan zoom"
-                  onClick={() => setZoom(1)}
-                >
-                  <RotateCcw size={13} />
-                </Button>
-              </div>
-            </div>
-            <div ref={floorViewport} className="replay-floor-viewport">
+            <div className="replay-floor-viewport">
               <ReplayFloorPlan
                 plan={floorPlan}
                 retaining={unavailable || seeking}
@@ -963,11 +987,16 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                 </strong>{" "}
                 waiting for a bed
               </span>
-              <span>
-                {floorPlan.at
-                  ? `Recorded at ${timestamp(floorPlan.at)}`
-                  : "Loading recorded bed states…"}
-              </span>
+              <Button
+                small
+                aria-expanded={censusOpen}
+                onClick={() => {
+                  pauseAtVisibleTime();
+                  setCensusOpen(!censusOpen);
+                }}
+              >
+                {censusOpen ? "Hide patient census" : "View patient census"}
+              </Button>
             </div>
           </div>
           <Drawer
@@ -1240,22 +1269,6 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           />
         </section>
       ) : null}
-      <div className="replay-census-toggle">
-        <Button
-          aria-expanded={censusOpen}
-          onClick={() => {
-            pauseAtVisibleTime();
-            setCensusOpen(!censusOpen);
-          }}
-        >
-          {censusOpen ? "Hide patient census" : "View patient census"}
-        </Button>
-        <span>
-          {patientTotal === null
-            ? "Patient count unavailable"
-            : `${fmt(patientTotal)} active patients at the recorded moment`}
-        </span>
-      </div>
       {censusOpen ? (
         <section className="patient-census">
           <div className="census-toolbar">

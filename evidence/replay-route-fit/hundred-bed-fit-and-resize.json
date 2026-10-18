@@ -1,0 +1,147 @@
+{
+  "run": "run_095bd25d9b28480c8013",
+  "first": {
+    "outside": [],
+    "fitMode": "fit",
+    "fitScale": 0.7892,
+    "mapScale": 0.7892,
+    "rooms": 5,
+    "beds": 202,
+    "mapHeight": 367.296875,
+    "smallestRoomLabelPx": 9.470220588235295,
+    "canvas": {
+      "x": 225,
+      "y": 285.484375,
+      "width": 1040,
+      "height": 377.515625
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "scroll": {
+      "page": 0,
+      "main": 0,
+      "canvasTop": 0,
+      "canvasLeft": 0
+    },
+    "fullscreen": false
+  },
+  "collapsed": {
+    "outside": [],
+    "fitMode": "fit",
+    "fitScale": 0.7858,
+    "mapScale": 0.7858,
+    "rooms": 5,
+    "beds": 202,
+    "mapHeight": 367.140625,
+    "smallestRoomLabelPx": 9.429513293310464,
+    "canvas": {
+      "x": 79,
+      "y": 285.484375,
+      "width": 1186,
+      "height": 377.515625
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "scroll": {
+      "page": 0,
+      "main": 0,
+      "canvasTop": 0,
+      "canvasLeft": 0
+    },
+    "fullscreen": false
+  },
+  "settled": {
+    "elapsed": 81.20000004768372,
+    "frames": 5,
+    "width": 916.234375
+  },
+  "sidebar_motion_invalidation": {
+    "original": {
+      "width": 801.515625,
+      "mapScale": "0.7858",
+      "nodes": 24,
+      "windowTo": "2026-10-16T09:00:00.000Z"
+    },
+    "samples": [
+      {
+        "elapsed": 0,
+        "width": 801.515625,
+        "mapScale": "0.7858",
+        "oldHeads": 12,
+        "oldTrails": 12,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      },
+      {
+        "elapsed": 11.399999976158142,
+        "width": 801.515625,
+        "mapScale": "0.7858",
+        "oldHeads": 12,
+        "oldTrails": 12,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      },
+      {
+        "elapsed": 28.09999990463257,
+        "width": 801.515625,
+        "mapScale": "0.7858",
+        "oldHeads": 12,
+        "oldTrails": 12,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      },
+      {
+        "elapsed": 287,
+        "width": 813.296875,
+        "mapScale": "0.7858",
+        "oldHeads": 12,
+        "oldTrails": 12,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      },
+      {
+        "elapsed": 294.09999990463257,
+        "width": 916.234375,
+        "mapScale": "0.7858",
+        "oldHeads": 0,
+        "oldTrails": 0,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      },
+      {
+        "elapsed": 310.09999990463257,
+        "width": 916.234375,
+        "mapScale": "0.7858",
+        "oldHeads": 0,
+        "oldTrails": 0,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      },
+      {
+        "elapsed": 326.7999999523163,
+        "width": 916.234375,
+        "mapScale": "0.7858",
+        "oldHeads": 0,
+        "oldTrails": 0,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      },
+      {
+        "elapsed": 343.5,
+        "width": 916.234375,
+        "mapScale": "0.7858",
+        "oldHeads": 0,
+        "oldTrails": 0,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      },
+      {
+        "elapsed": 360.7999999523163,
+        "width": 916.234375,
+        "mapScale": "0.7858",
+        "oldHeads": 0,
+        "oldTrails": 0,
+        "windowTo": "2026-10-16T09:00:00.000Z"
+      }
+    ]
+  },
+  "resized_paths_match_current_corridor_graph": true,
+  "frozen_ward_beds": 100,
+  "new_paths_match_current_corridor_graph": true
+}

@@ -1,8 +1,10 @@
-import { useRef, type CSSProperties } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import type { FloorBed, FloorPlan, FloorUnit } from "./replayFloorPlanModel";
 import type { FloorJourney, FloorMotionWindow } from "./floorPlanTransitModel";
 import FloorPlanTransit from "./FloorPlanTransit";
 import FloorPlanArchitecture from "./FloorPlanArchitecture";
+import ReplayBedLight from "./ReplayBedLight";
+import { floorPlanFitScale, floorPlanNaturalWidth } from "./floorPlanFitModel";
 import "./replayFloorPlan.css";
 
 const value = (number: number | null) =>
@@ -11,6 +13,7 @@ interface RoomProps {
   unit: FloorUnit;
   selectedPatientId?: string;
   selectedUnitId?: string;
+  reducedMotion?: boolean;
   onBedSelect: (bed: FloorBed, unit: FloorUnit) => void;
   onUnitSelect: (unit: FloorUnit) => void;
 }
@@ -18,6 +21,7 @@ function HospitalRoom({
   unit,
   selectedPatientId,
   selectedUnitId,
+  reducedMotion,
   onBedSelect,
   onUnitSelect,
 }: RoomProps) {
@@ -62,19 +66,15 @@ function HospitalRoom({
           aria-label={`${unit.name} recorded beds`}
         >
           {unit.beds.map((bed) => (
-            <button
+            <ReplayBedLight
               key={bed.id}
-              className={`floor-plan-bed floor-plan-bed--${bed.status}${bed.patientId && bed.patientId === selectedPatientId ? " floor-plan-bed--selected" : ""}`}
-              data-slot-id={bed.id}
-              data-unit-id={unit.id}
-              data-status={bed.status}
-              data-patient-id={bed.patientId || undefined}
-              aria-label={`${unit.name}, ${bed.label}: ${bed.description}`}
-              aria-pressed={Boolean(
+              bed={bed}
+              unit={unit}
+              selected={Boolean(
                 bed.patientId && bed.patientId === selectedPatientId,
               )}
-              title={`${bed.label} · ${bed.description}`}
-              onClick={() => onBedSelect(bed, unit)}
+              reducedMotion={reducedMotion}
+              onSelect={onBedSelect}
             />
           ))}
         </div>
@@ -149,6 +149,13 @@ export default function ReplayFloorPlan({
   onAreaSelect: (area: "ed" | "bed" | "discharge") => void;
 }) {
   const building = useRef<HTMLDivElement>(null);
+  const fitViewport = useRef<HTMLDivElement>(null);
+  const [fitSize, setFitSize] = useState({
+    viewportWidth: 0,
+    viewportHeight: 0,
+    contentWidth: 1000,
+    contentHeight: 0,
+  });
   const upper = plan.units.filter((unit) => unit.kind === "ward");
   const critical = plan.units.filter((unit) => unit.kind === "icu");
   const emergency = plan.units.filter(
@@ -157,9 +164,52 @@ export default function ReplayFloorPlan({
   const layoutKey = plan.units
     .map((unit) => `${unit.id}:${unit.beds.length}`)
     .join("|");
+  useLayoutEffect(() => {
+    const viewport = fitViewport.current,
+      node = building.current;
+    if (!viewport || !node) return;
+    const measure = () => {
+      const style = getComputedStyle(viewport);
+      const viewportWidth = Math.max(
+        0,
+        viewport.clientWidth -
+          parseFloat(style.paddingLeft || "0") -
+          parseFloat(style.paddingRight || "0"),
+      );
+      const viewportHeight = Math.max(
+        0,
+        viewport.clientHeight -
+          parseFloat(style.paddingTop || "0") -
+          parseFloat(style.paddingBottom || "0"),
+      );
+      const next = {
+        viewportWidth,
+        viewportHeight,
+        contentWidth: floorPlanNaturalWidth(viewportWidth),
+        contentHeight: node.offsetHeight,
+      };
+      setFitSize((previous) =>
+        Object.keys(next).every(
+          (key) =>
+            previous[key as keyof typeof next] ===
+            next[key as keyof typeof next],
+        )
+          ? previous
+          : next,
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [layoutKey, fitSize.contentWidth]);
+  const fitScale = floorPlanFitScale(fitSize),
+    mapScale = fitScale * zoom;
   const roomProps = {
     selectedPatientId,
     selectedUnitId,
+    reducedMotion,
     onBedSelect,
     onUnitSelect,
   };
@@ -170,7 +220,15 @@ export default function ReplayFloorPlan({
       data-recorded-at={plan.at || ""}
       data-replication-id={plan.replicationId || ""}
       data-retaining={retaining ? "true" : "false"}
+      data-fit-mode={zoom === 1 ? "fit" : "manual"}
+      data-fit-scale={fitScale}
+      data-map-scale={mapScale}
       aria-label="Hospital floor plan"
+      title={
+        retaining
+          ? "Holding the last recorded moment while the next loads."
+          : "Illustrative layout of recorded units and installed beds. Available places include shared staffing and equipment limits."
+      }
     >
       <div className="floor-plan-key">
         <span>
@@ -202,141 +260,149 @@ export default function ReplayFloorPlan({
           pressure
         </span>
       </div>
-      <div className="floor-plan-scroll">
+      <div
+        ref={fitViewport}
+        className="floor-plan-scroll"
+        data-testid="floor-plan-fit-viewport"
+      >
         <div
-          ref={building}
-          className="floor-plan-building"
-          style={{ zoom } as CSSProperties}
+          className="floor-plan-scaled-frame"
+          style={{
+            width: fitSize.contentWidth * mapScale,
+            height: fitSize.contentHeight * mapScale,
+          }}
         >
-          <FloorPlanArchitecture
-            building={building}
-            layoutKey={layoutKey}
-            zoom={zoom}
-          />
           <div
-            className="floor-plan-upper-wing"
-            data-footprint="inpatient-wing"
-            style={{
-              gridTemplateColumns: `repeat(${Math.max(1, upper.length)}, minmax(160px, 1fr))`,
-            }}
-          >
-            {upper.map((unit) => (
-              <HospitalRoom key={unit.id} unit={unit} {...roomProps} />
-            ))}
-          </div>
-          <div
-            className="floor-plan-ward-hall floor-plan-corridor"
-            data-footprint="inpatient-corridor"
-            aria-hidden="true"
-          >
-            <span>Inpatient corridor</span>
-          </div>
-          <div
-            className="floor-plan-front-spine"
-            data-footprint="entrance-spine"
-            aria-hidden="true"
-          >
-            <span className="floor-plan-lobby-label">Lobby</span>
-          </div>
-          <div className="floor-plan-admission-zone">
-            <button
-              className="floor-plan-count-area floor-plan-count-area--waiting"
-              data-testid="floor-plan-bed-waiting"
-              data-count={plan.bedWaiting ?? "unknown"}
-              onClick={() => onAreaSelect("bed")}
-              title="Patients awaiting their next ward or ICU bed. This is a queue count, not room capacity."
-            >
-              <strong>Waiting for a bed</strong>
-              <b>{value(plan.bedWaiting)}</b>
-            </button>
-          </div>
-          <div
-            className="floor-plan-critical-hall"
-            data-footprint={critical.length ? "critical-corridor" : undefined}
-            data-stacked={critical.length > 1}
-            aria-hidden="true"
-          />
-          <div
-            className="floor-plan-critical-wing"
-            data-footprint={critical.length ? "critical-wing" : undefined}
-          >
-            {critical.map((unit) => (
-              <HospitalRoom key={unit.id} unit={unit} {...roomProps} />
-            ))}
-          </div>
-          <div
-            className="floor-plan-emergency-wing"
-            data-footprint={emergency.length ? "emergency-wing" : undefined}
-          >
-            {emergency.map((unit) => (
-              <HospitalRoom key={unit.id} unit={unit} {...roomProps} />
-            ))}
-          </div>
-          <div
-            className="floor-plan-emergency-hall"
-            data-footprint={emergency.length ? "emergency-corridor" : undefined}
-            data-stacked={emergency.length > 1}
-            aria-hidden="true"
-          />
-          <div className="floor-plan-ed-zone">
-            <button
-              className="floor-plan-count-area floor-plan-count-area--waiting"
-              data-testid="floor-plan-ed-waiting"
-              data-count={plan.edWaiting ?? "unknown"}
-              onClick={() => onAreaSelect("ed")}
-              title="Patients awaiting emergency assessment, before entering emergency treatment. This is a queue count, not room capacity."
-            >
-              <strong>ED waiting</strong>
-              <b>{value(plan.edWaiting)}</b>
-            </button>
-          </div>
-          <div
-            className="floor-plan-exit-hall"
-            data-footprint="discharge-corridor"
-            aria-hidden="true"
-          />
-          <button
-            className="floor-plan-count-area floor-plan-count-area--discharge"
-            data-footprint="discharge-area"
-            data-testid="floor-plan-discharges"
-            data-count={plan.discharges ?? "unknown"}
-            onClick={() => onAreaSelect("discharge")}
-            title="Recorded discharges since this run began. This area has no modeled beds or dwell time."
-          >
-            <strong>Discharged so far</strong>
-            <b>{value(plan.discharges)}</b>
-            <span className="floor-plan-exit" aria-hidden="true">
-              Exit →
-            </span>
-          </button>
-          <div className="floor-plan-entrance" aria-hidden="true">
-            <span className="floor-plan-entry-door" />
-            <span className="floor-plan-hospital-mark">+</span>
-            <b>↑ Main entrance</b>
-          </div>
-          <FloorPlanTransit
-            building={building}
-            journeys={journeys}
-            windowKey={
-              motionWindow
-                ? `${motionWindow.rep}|${motionWindow.from}|${motionWindow.to}`
-                : ""
+            ref={building}
+            className="floor-plan-building"
+            style={
+              { width: fitSize.contentWidth, zoom: mapScale } as CSSProperties
             }
-            from={motionWindow?.from || ""}
-            to={motionWindow?.to || ""}
-            active={moving && !reducedMotion}
-            zoom={zoom}
-            motionDurationMs={motionDurationMs}
-          />
+          >
+            <FloorPlanArchitecture
+              building={building}
+              layoutKey={layoutKey}
+              zoom={mapScale}
+            />
+            <div
+              className="floor-plan-upper-wing"
+              data-footprint="inpatient-wing"
+              style={{
+                gridTemplateColumns: `repeat(${Math.max(1, upper.length)}, minmax(160px, 1fr))`,
+              }}
+            >
+              {upper.map((unit) => (
+                <HospitalRoom key={unit.id} unit={unit} {...roomProps} />
+              ))}
+            </div>
+            <div
+              className="floor-plan-ward-hall floor-plan-corridor"
+              data-footprint="inpatient-corridor"
+              aria-hidden="true"
+            >
+              <span>Inpatient corridor</span>
+            </div>
+            <div
+              className="floor-plan-front-spine"
+              data-footprint="entrance-spine"
+              aria-hidden="true"
+            >
+              <span className="floor-plan-lobby-label">Lobby</span>
+            </div>
+            <div className="floor-plan-admission-zone">
+              <button
+                className="floor-plan-count-area floor-plan-count-area--waiting"
+                data-testid="floor-plan-bed-waiting"
+                data-count={plan.bedWaiting ?? "unknown"}
+                onClick={() => onAreaSelect("bed")}
+                title="Patients awaiting their next ward or ICU bed. This is a queue count, not room capacity."
+              >
+                <strong>Waiting for a bed</strong>
+                <b>{value(plan.bedWaiting)}</b>
+              </button>
+            </div>
+            <div
+              className="floor-plan-critical-hall"
+              data-footprint={critical.length ? "critical-corridor" : undefined}
+              data-stacked={critical.length > 1}
+              aria-hidden="true"
+            />
+            <div
+              className="floor-plan-critical-wing"
+              data-footprint={critical.length ? "critical-wing" : undefined}
+            >
+              {critical.map((unit) => (
+                <HospitalRoom key={unit.id} unit={unit} {...roomProps} />
+              ))}
+            </div>
+            <div
+              className="floor-plan-emergency-wing"
+              data-footprint={emergency.length ? "emergency-wing" : undefined}
+            >
+              {emergency.map((unit) => (
+                <HospitalRoom key={unit.id} unit={unit} {...roomProps} />
+              ))}
+            </div>
+            <div
+              className="floor-plan-emergency-hall"
+              data-footprint={
+                emergency.length ? "emergency-corridor" : undefined
+              }
+              data-stacked={emergency.length > 1}
+              aria-hidden="true"
+            />
+            <div className="floor-plan-ed-zone">
+              <button
+                className="floor-plan-count-area floor-plan-count-area--waiting"
+                data-testid="floor-plan-ed-waiting"
+                data-count={plan.edWaiting ?? "unknown"}
+                onClick={() => onAreaSelect("ed")}
+                title="Patients awaiting emergency assessment, before entering emergency treatment. This is a queue count, not room capacity."
+              >
+                <strong>ED waiting</strong>
+                <b>{value(plan.edWaiting)}</b>
+              </button>
+            </div>
+            <div
+              className="floor-plan-exit-hall"
+              data-footprint="discharge-corridor"
+              aria-hidden="true"
+            />
+            <button
+              className="floor-plan-count-area floor-plan-count-area--discharge"
+              data-footprint="discharge-area"
+              data-testid="floor-plan-discharges"
+              data-count={plan.discharges ?? "unknown"}
+              onClick={() => onAreaSelect("discharge")}
+              title="Recorded discharges since this run began. This area has no modeled beds or dwell time."
+            >
+              <strong>Discharged so far</strong>
+              <b>{value(plan.discharges)}</b>
+              <span className="floor-plan-exit" aria-hidden="true">
+                Exit →
+              </span>
+            </button>
+            <div className="floor-plan-entrance" aria-hidden="true">
+              <span className="floor-plan-entry-door" />
+              <span className="floor-plan-hospital-mark">+</span>
+              <b>↑ Main entrance</b>
+            </div>
+            <FloorPlanTransit
+              building={building}
+              journeys={journeys}
+              windowKey={
+                motionWindow
+                  ? `${motionWindow.rep}|${motionWindow.from}|${motionWindow.to}`
+                  : ""
+              }
+              from={motionWindow?.from || ""}
+              to={motionWindow?.to || ""}
+              active={moving && !reducedMotion}
+              zoom={mapScale}
+              motionDurationMs={motionDurationMs}
+            />
+          </div>
         </div>
-      </div>
-      <div className="floor-plan-caption">
-        <span>
-          {retaining
-            ? "Holding the last recorded moment while the next loads."
-            : "Available counts include shared staffing and equipment limits."}
-        </span>
-        <span>Illustrative layout · recorded units and installed beds</span>
       </div>
     </section>
   );

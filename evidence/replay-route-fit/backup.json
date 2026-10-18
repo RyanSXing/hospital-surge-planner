@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T08:11:40.530352+00:00",
+  "sha256": "926bea112eec952c0bf222b31d61089f77a9f14531818b852427dd0fc77c3b87",
+  "byte_size": 5695573,
+  "object_key": "backups/hospital-replay-route-fit-20261018T081135Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing scenarios and saved results before the route coverage, quick bed light and fitted replay release"
+}

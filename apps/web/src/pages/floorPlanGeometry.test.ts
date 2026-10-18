@@ -239,3 +239,202 @@ describe("hospital footprint and corridor geometry", () => {
     expect(hospitalFootprintPath([])).toBe("");
   });
 });
+
+// Captured getBoundingClientRect()/CSS-zoom measurements from the three
+// failing desktop fits. Adjacent edges differed by approximately5.7e-14px.
+const fractionalFitMeasurements: Array<[string, number[][]]> = [
+  [
+    "normal1440",
+    [
+      [
+        13.997724624007992, 7.989344580720351, 1152.004550751984,
+        122.00122093345914,
+      ],
+      [
+        13.997724624007992, 129.99056551417948, 1152.004550751984,
+        27.995449248015984,
+      ],
+      [
+        484.992507908319, 129.99056551417948, 209.99861257561463,
+        293.0026638548199,
+      ],
+      [
+        694.9911204839336, 199.9955602419668, 29.992785393196073,
+        27.995449248015984,
+      ],
+      [
+        724.9839058771297, 165.97535934291582, 441.01836949886234,
+        96.035851046118,
+      ],
+      [
+        13.997724624007992, 277.9898995504745, 441.00199789111497,
+        109.01853598978856,
+      ],
+      [
+        454.9997225151229, 318.49325711748713, 29.992785393196073,
+        27.995449248015984,
+      ],
+      [
+        694.9911204839336, 318.49325711748713, 29.992785393196073,
+        27.995449248015984,
+      ],
+      [
+        724.9839058771297, 289.4991397968811, 441.01836949886234,
+        86.00005549697542,
+      ],
+    ],
+  ],
+  [
+    "normal1001280",
+    [
+      [
+        13.98604001861331, 7.973941368078176, 992.0279199627735,
+        162.8013029315961,
+      ],
+      [
+        13.98604001861331, 170.77524429967428, 992.0279199627735,
+        27.97208003722662,
+      ],
+      [
+        404.99395067473245, 170.77524429967428, 209.98045602605865,
+        296.68124709167057,
+      ],
+      [
+        614.9744067007911, 241.68636575151234, 29.997208003722662,
+        27.97208003722662,
+      ],
+      [
+        644.9716147045137, 206.72126570497906, 361.042345276873,
+        97.93392275476967,
+      ],
+      [
+        13.98604001861331, 320.6030711959051, 361.0107026523965,
+        110.90739879013495,
+      ],
+      [
+        374.99674267100977, 362.054909260121, 29.997208003722662,
+        27.97208003722662,
+      ],
+      [
+        614.9744067007911, 362.054909260121, 29.997208003722662,
+        27.97208003722662,
+      ],
+      [
+        644.9716147045137, 333.07026523964635, 361.042345276873,
+        85.9730107026524,
+      ],
+    ],
+  ],
+  [
+    "fullscreen1600",
+    [
+      [
+        13.994224538667417, 7.989998591350894, 1526.011550922665,
+        122.49246372728553,
+      ],
+      [
+        13.994224538667417, 130.48246231863644, 1526.011550922665,
+        27.988449077334835,
+      ],
+      [
+        672.0042259473165, 130.48246231863644, 209.99154810536695,
+        293.98816734751375,
+      ],
+      [
+        881.9957740526835, 200.73503310325398, 29.98985772644034,
+        27.988449077334835,
+      ],
+      [
+        911.9856317791238, 166.46090998732214, 628.0201436822088,
+        96.53669530919848,
+      ],
+      [
+        13.994224538667417, 278.9776024792224, 628.0201436822088,
+        109.514579518242,
+      ],
+      [
+        642.0143682208761, 319.740667699676, 29.98985772644034,
+        27.988449077334835,
+      ],
+      [
+        881.9957740526835, 319.740667699676, 29.98985772644034,
+        27.988449077334835,
+      ],
+      [
+        911.9856317791238, 290.7358782927173, 628.0201436822088,
+        85.99802789125229,
+      ],
+    ],
+  ],
+];
+
+describe("fractional fit footprint regression", () => {
+  it.each(fractionalFitMeasurements)(
+    "keeps the actual%s hospital connected without degenerate subpaths",
+    (_label, values) => {
+      const footprint = values.map(([x, y, width, height]) =>
+        rect(x, y, width, height),
+      );
+      const original = JSON.stringify(footprint);
+      const path = hospitalFootprintPath(footprint);
+      expect(path.match(/M/g)).toHaveLength(1);
+      expect(path.match(/Z/g)).toHaveLength(1);
+      const points = [...path.matchAll(/[ML]([\d.]+),([\d.]+)/g)].map(
+        (match) => [Number(match[1]), Number(match[2])],
+      );
+      expect(points.length).toBeGreaterThan(12);
+      expect(
+        points.every(
+          (point, index) =>
+            !index ||
+            point[0] !== points[index - 1][0] ||
+            point[1] !== points[index - 1][1],
+        ),
+      ).toBe(true);
+      // Check the union still has inward courtyard corners, not an exterior box.
+      expect(new Set(points.map(([x]) => x)).size).toBeGreaterThan(4);
+      expect(new Set(points.map(([, y]) => y)).size).toBeGreaterThan(4);
+      expect(JSON.stringify(footprint)).toBe(original);
+    },
+  );
+
+  it.each([0.000001, 0.001, 0.25, 16])(
+    "preserves a deliberate%spx separation instead of joining distinct rooms",
+    (gap) => {
+      const path = hospitalFootprintPath([
+        rect(0, 0, 100, 100),
+        rect(100 + gap, 0, 100, 100),
+      ]);
+      expect(path.match(/M/g)).toHaveLength(2);
+      expect(path.match(/Z/g)).toHaveLength(2);
+    },
+  );
+
+  it.each([0.32, 0.53, 0.67, 0.731, 0.86, 0.934])(
+    "survives inverse measurement at CSS zoom%s with the intended courtyards intact",
+    (scale) => {
+      const input = hospital();
+      const measured = input.footprint.map((r) => ({
+        x: (r.x * scale + 234.453125 - 234.453125) / scale,
+        y: (r.y * scale + 456.140625 - 456.140625) / scale,
+        width: (r.width * scale) / scale,
+        height: (r.height * scale) / scale,
+      }));
+      const path = hospitalFootprintPath(measured);
+      expect(path.match(/M/g)).toHaveLength(1);
+      expect(path.match(/Z/g)).toHaveLength(1);
+      const points = [...path.matchAll(/[ML]([\d.]+),([\d.]+)/g)].map(
+        (match) => [Number(match[1]), Number(match[2])],
+      );
+      const area =
+        Math.abs(
+          points.reduce((sum, [x, y], index) => {
+            const next = points[(index + 1) % points.length];
+            return sum + x * next[1] - next[0] * y;
+          }, 0),
+        ) / 2;
+      expect(area).toBeLessThan(1000 * 538 * 0.8);
+      expect(area).toBeGreaterThan(1000 * 132);
+    },
+  );
+});

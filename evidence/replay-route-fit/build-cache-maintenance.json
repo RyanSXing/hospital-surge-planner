@@ -1,0 +1,9 @@
+{
+  "reason": "The existing deployment host had 1.1 GiB available before release preparation.",
+  "operation": "docker builder prune --force",
+  "reclaimed_build_cache": "6.504 GB",
+  "scope": "Unused Docker build cache only",
+  "image_pruning": false,
+  "volume_pruning": false,
+  "new_resources": false
+}

@@ -112,6 +112,8 @@ export function recordedFloorJourneys(
   to: string,
   limit = 12,
 ): FloorJourney[] {
+  const maximum = Number.isFinite(limit) ? Math.max(0, Math.floor(limit)) : 0;
+  if (!maximum) return [];
   const allowed = new Set([
     ...unitIds,
     "entrance",
@@ -131,7 +133,9 @@ export function recordedFloorJourneys(
     .sort(
       (a, b) =>
         Date.parse(a.occurred_at) - Date.parse(b.occurred_at) ||
-        Number(a.sequence_number || 0) - Number(b.sequence_number || 0),
+        Number(a.sequence_number || 0) - Number(b.sequence_number || 0) ||
+        String(a.patient_id).localeCompare(String(b.patient_id)) ||
+        String(a.event_id || "").localeCompare(String(b.event_id || "")),
     );
   for (const event of ordered) {
     const id = event.patient_id;
@@ -181,14 +185,100 @@ export function recordedFloorJourneys(
     else existing.push({ patientId: id, moves: [move] });
     chains.set(id, existing);
   }
-  // One continuous path per patient avoids simultaneous duplicates at different locations.
-  const candidates = [...chains.values()].map(
-    (chunks) => [...chunks].sort((a, b) => b.moves.length - a.moves.length)[0],
+  return sampleRecordedFloorJourneys(
+    [...chains.values()],
+    new Set(unitIds),
+    maximum,
   );
-  if (candidates.length <= limit) return candidates;
-  return Array.from(
-    { length: limit },
-    (_, index) => candidates[Math.floor((index * candidates.length) / limit)],
+}
+
+/**
+ * A visual sample must show the recorded routes that exist, including rare
+ * wards and discharges. Chronological strides alone can omit an entire unit.
+ * Counts still come from the full saved state; this is not a proportional flow
+ * estimate. Each patient contributes at most one continuous recorded chain.
+ */
+function sampleRecordedFloorJourneys(
+  patients: FloorJourney[][],
+  unitIds: Set<string>,
+  maximum: number,
+): FloorJourney[] {
+  const candidates = patients.flat().map((journey) => {
+    const locations = new Set(
+      journey.moves.flatMap((move) => [move.from, move.to]),
+    );
+    return {
+      journey,
+      features: [
+        new Set([...locations].filter((id) => unitIds.has(id))),
+        new Set([...locations].filter((id) => !unitIds.has(id))),
+        new Set(
+          journey.moves.map((move) => JSON.stringify([move.from, move.to])),
+        ),
+      ],
+    };
+  });
+  const frequencies = [0, 1, 2].map((group) => {
+    const holders = new Map<string, Set<string>>();
+    for (const candidate of candidates)
+      for (const key of candidate.features[group]) {
+        if (!holders.has(key)) holders.set(key, new Set());
+        holders.get(key)!.add(candidate.journey.patientId);
+      }
+    return new Map([...holders].map(([key, ids]) => [key, ids.size]));
+  });
+  const covered = [new Set<string>(), new Set<string>(), new Set<string>()],
+    usedPatients = new Set<string>(),
+    selected: FloorJourney[] = [];
+  const add = (candidate: (typeof candidates)[number]) => {
+    selected.push(candidate.journey);
+    usedPatients.add(candidate.journey.patientId);
+    candidate.features.forEach((features, group) => {
+      for (const key of features) covered[group].add(key);
+    });
+  };
+  while (selected.length < maximum) {
+    let best: (typeof candidates)[number] | null = null;
+    let bestScore = [0, 0, 0];
+    for (const candidate of candidates) {
+      if (usedPatients.has(candidate.journey.patientId)) continue;
+      const score = candidate.features.map((features, group) =>
+        [...features].reduce(
+          (sum, key) =>
+            sum +
+            (covered[group].has(key) ? 0 : 1 / frequencies[group].get(key)!),
+          0,
+        ),
+      );
+      // Unit coverage comes first, followed by waiting/exit areas and directed
+      // routes. Rarity breaks the dominance of the busiest unit without
+      // inventing any movement to a quiet unit.
+      const difference = score.findIndex(
+        (value, index) => Math.abs(value - bestScore[index]) > 1e-12,
+      );
+      if (difference !== -1 && score[difference] > bestScore[difference]) {
+        best = candidate;
+        bestScore = score;
+      }
+    }
+    if (!best) break;
+    add(best);
+  }
+  // Fill the remaining budget across recorded time after route coverage, using
+  // a patient's longest actual continuous chain and never joining missing legs.
+  const remaining = patients
+    .filter((chunks) => !usedPatients.has(chunks[0].patientId))
+    .map(
+      (chunks) =>
+        [...chunks].sort((a, b) => b.moves.length - a.moves.length)[0],
+    );
+  const spaces = Math.min(maximum - selected.length, remaining.length);
+  for (let index = 0; index < spaces; index++)
+    selected.push(remaining[Math.floor((index * remaining.length) / spaces)]);
+  return selected.sort(
+    (a, b) =>
+      Date.parse(a.moves[0].at) - Date.parse(b.moves[0].at) ||
+      a.patientId.localeCompare(b.patientId),
   );
 }
 

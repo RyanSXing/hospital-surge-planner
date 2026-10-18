@@ -1,0 +1,972 @@
+{
+  "checked_at": "2026-10-18T08:11:33.373705+00:00",
+  "method": "Read-only saved trace API; no scenario mutations, simulations or artifact rewrites.",
+  "runs": [
+    {
+      "source": "live",
+      "id": "run_2088efd055e04fac8875",
+      "replication_id": "run_2088efd055e04fac8875_rep_0000",
+      "revision": 5,
+      "units": [
+        {
+          "active": true,
+          "active_staff_ids": [
+            "STAFF-CONFIG-2e504bae55c4-provider-1-001",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-002",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-003",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-004",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-005",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-006",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-007",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-008",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-009",
+            "STAFF-CONFIG-2e504bae55c4-provider-1-010",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-001",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-002",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-003",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-004",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-005",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-006",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-007",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-008",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-009",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-010",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-011",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-012",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-013",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-014",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-015",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-016",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-017",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-018",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-019",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-020",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-021",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-022",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-023",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-024",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-025",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-026",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-027",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-028",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-029",
+            "STAFF-CONFIG-2e504bae55c4-rn-1-030",
+            "STAFF-CONFIG-2e504bae55c4-support-1-001",
+            "STAFF-CONFIG-2e504bae55c4-support-1-002",
+            "STAFF-CONFIG-2e504bae55c4-support-1-003",
+            "STAFF-CONFIG-2e504bae55c4-support-1-004",
+            "STAFF-CONFIG-2e504bae55c4-support-1-005",
+            "STAFF-CONFIG-2e504bae55c4-support-1-006",
+            "STAFF-CONFIG-2e504bae55c4-support-1-007",
+            "STAFF-CONFIG-2e504bae55c4-support-1-008",
+            "STAFF-CONFIG-2e504bae55c4-support-1-009",
+            "STAFF-CONFIG-2e504bae55c4-support-1-010"
+          ],
+          "admission_gate": true,
+          "at": "2026-10-16T05:00:00Z",
+          "available": 18,
+          "background_occupied": 0,
+          "capacity_deficit": 0,
+          "cleaning": 0,
+          "elapsed_minutes": 0.0,
+          "enabled": 30,
+          "equipment": {
+            "ED_MONITOR": {
+              "available": 14,
+              "deficit": 0,
+              "in_use": 2,
+              "quantity": 16,
+              "reserved": 0
+            }
+          },
+          "facility_id": "FAC-MAIN",
+          "kind": "ed",
+          "modeled_occupied": 12,
+          "occupied": 12,
+          "physical": 30,
+          "qualified_staff_by_role": {
+            "provider": 10.0,
+            "rn": 30.0,
+            "support": 10.0
+          },
+          "ready": 18,
+          "reserved": 0,
+          "staff_by_role": {
+            "provider": 10,
+            "rn": 30,
+            "support": 10
+          },
+          "staffed": 30,
+          "unit_id": "UNIT-ED"
+        },
+        {
+          "active": true,
+          "active_staff_ids": [
+            "STAFF-CONFIG-511e70490687-provider-1-001",
+            "STAFF-CONFIG-511e70490687-provider-1-002",
+            "STAFF-CONFIG-511e70490687-provider-1-003",
+            "STAFF-CONFIG-511e70490687-provider-1-004",
+            "STAFF-CONFIG-511e70490687-provider-1-005",
+            "STAFF-CONFIG-511e70490687-provider-1-006",
+            "STAFF-CONFIG-511e70490687-provider-1-007",
+            "STAFF-CONFIG-511e70490687-provider-1-008",
+            "STAFF-CONFIG-511e70490687-provider-1-009",
+            "STAFF-CONFIG-511e70490687-provider-1-010",
+            "STAFF-CONFIG-511e70490687-rn-1-001",
+            "STAFF-CONFIG-511e70490687-rn-1-002",
+            "STAFF-CONFIG-511e70490687-rn-1-003",
+            "STAFF-CONFIG-511e70490687-rn-1-004",
+            "STAFF-CONFIG-511e70490687-rn-1-005",
+            "STAFF-CONFIG-511e70490687-rn-1-006",
+            "STAFF-CONFIG-511e70490687-rn-1-007",
+            "STAFF-CONFIG-511e70490687-rn-1-008",
+            "STAFF-CONFIG-511e70490687-rn-1-009",
+            "STAFF-CONFIG-511e70490687-rn-1-010",
+            "STAFF-CONFIG-511e70490687-rn-1-011",
+            "STAFF-CONFIG-511e70490687-rn-1-012",
+            "STAFF-CONFIG-511e70490687-rn-1-013",
+            "STAFF-CONFIG-511e70490687-rn-1-014",
+            "STAFF-CONFIG-511e70490687-rn-1-015",
+            "STAFF-CONFIG-511e70490687-rn-1-016",
+            "STAFF-CONFIG-511e70490687-rn-1-017",
+            "STAFF-CONFIG-511e70490687-rn-1-018",
+            "STAFF-CONFIG-511e70490687-rn-1-019",
+            "STAFF-CONFIG-511e70490687-rn-1-020",
+            "STAFF-CONFIG-511e70490687-rn-1-021",
+            "STAFF-CONFIG-511e70490687-rn-1-022",
+            "STAFF-CONFIG-511e70490687-rn-1-023",
+            "STAFF-CONFIG-511e70490687-rn-1-024",
+            "STAFF-CONFIG-511e70490687-rn-1-025",
+            "STAFF-CONFIG-511e70490687-rn-1-026",
+            "STAFF-CONFIG-511e70490687-rn-1-027",
+            "STAFF-CONFIG-511e70490687-rn-1-028",
+            "STAFF-CONFIG-511e70490687-rn-1-029",
+            "STAFF-CONFIG-511e70490687-rn-1-030",
+            "STAFF-CONFIG-511e70490687-support-1-001",
+            "STAFF-CONFIG-511e70490687-support-1-002",
+            "STAFF-CONFIG-511e70490687-support-1-003",
+            "STAFF-CONFIG-511e70490687-support-1-004",
+            "STAFF-CONFIG-511e70490687-support-1-005",
+            "STAFF-CONFIG-511e70490687-support-1-006",
+            "STAFF-CONFIG-511e70490687-support-1-007",
+            "STAFF-CONFIG-511e70490687-support-1-008",
+            "STAFF-CONFIG-511e70490687-support-1-009"
+          ],
+          "admission_gate": true,
+          "at": "2026-10-16T05:00:00Z",
+          "available": 4,
+          "background_occupied": 0,
+          "capacity_deficit": 0,
+          "cleaning": 0,
+          "elapsed_minutes": 0.0,
+          "enabled": 12,
+          "equipment": {
+            "ICU_MONITOR": {
+              "available": 8,
+              "deficit": 0,
+              "in_use": 8,
+              "quantity": 16,
+              "reserved": 0
+            },
+            "VENTILATOR": {
+              "available": 4,
+              "deficit": 0,
+              "in_use": 2,
+              "quantity": 6,
+              "reserved": 0
+            }
+          },
+          "facility_id": "FAC-MAIN",
+          "kind": "icu",
+          "modeled_occupied": 8,
+          "occupied": 8,
+          "physical": 12,
+          "qualified_staff_by_role": {
+            "provider": 10.0,
+            "rn": 30.0,
+            "support": 9.0
+          },
+          "ready": 4,
+          "reserved": 0,
+          "staff_by_role": {
+            "provider": 10,
+            "rn": 30,
+            "support": 9
+          },
+          "staffed": 12,
+          "unit_id": "UNIT-ICU"
+        },
+        {
+          "active": true,
+          "active_staff_ids": [
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-001",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-002",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-003",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-004",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-005",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-006",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-007",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-008",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-009",
+            "STAFF-CONFIG-cd9d442aeed5-provider-1-010",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-001",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-002",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-003",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-004",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-005",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-006",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-007",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-008",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-009",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-010",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-011",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-012",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-013",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-014",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-015",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-016",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-017",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-018",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-019",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-020",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-021",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-022",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-023",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-024",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-025",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-026",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-027",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-028",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-029",
+            "STAFF-CONFIG-cd9d442aeed5-rn-1-030",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-001",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-002",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-003",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-004",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-005",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-006",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-007",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-008",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-009",
+            "STAFF-CONFIG-cd9d442aeed5-support-1-010"
+          ],
+          "admission_gate": true,
+          "at": "2026-10-16T05:00:00Z",
+          "available": 74,
+          "background_occupied": 0,
+          "capacity_deficit": 0,
+          "cleaning": 0,
+          "elapsed_minutes": 0.0,
+          "enabled": 100,
+          "equipment": {
+            "WARD_OXYGEN": {
+              "available": 10,
+              "deficit": 0,
+              "in_use": 6,
+              "quantity": 16,
+              "reserved": 0
+            }
+          },
+          "facility_id": "FAC-MAIN",
+          "kind": "ward",
+          "modeled_occupied": 26,
+          "occupied": 26,
+          "physical": 100,
+          "qualified_staff_by_role": {
+            "provider": 10.0,
+            "rn": 30.0,
+            "support": 10.0
+          },
+          "ready": 74,
+          "reserved": 0,
+          "staff_by_role": {
+            "provider": 10,
+            "rn": 30,
+            "support": 10
+          },
+          "staffed": 100,
+          "unit_id": "UNIT-WARD-A"
+        },
+        {
+          "active": true,
+          "active_staff_ids": [
+            "STAFF-CONFIG-dca0b6e666af-provider-1-001",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-002",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-003",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-004",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-005",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-006",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-007",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-008",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-009",
+            "STAFF-CONFIG-dca0b6e666af-provider-1-010",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-001",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-002",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-003",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-004",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-005",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-006",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-007",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-008",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-009",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-010",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-011",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-012",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-013",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-014",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-015",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-016",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-017",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-018",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-019",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-020",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-021",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-022",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-023",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-024",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-025",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-026",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-027",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-028",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-029",
+            "STAFF-CONFIG-dca0b6e666af-rn-1-030",
+            "STAFF-CONFIG-dca0b6e666af-support-1-001",
+            "STAFF-CONFIG-dca0b6e666af-support-1-002",
+            "STAFF-CONFIG-dca0b6e666af-support-1-003",
+            "STAFF-CONFIG-dca0b6e666af-support-1-004",
+            "STAFF-CONFIG-dca0b6e666af-support-1-005",
+            "STAFF-CONFIG-dca0b6e666af-support-1-006",
+            "STAFF-CONFIG-dca0b6e666af-support-1-007",
+            "STAFF-CONFIG-dca0b6e666af-support-1-008",
+            "STAFF-CONFIG-dca0b6e666af-support-1-009",
+            "STAFF-CONFIG-dca0b6e666af-support-1-010"
+          ],
+          "admission_gate": true,
+          "at": "2026-10-16T05:00:00Z",
+          "available": 15,
+          "background_occupied": 0,
+          "capacity_deficit": 0,
+          "cleaning": 0,
+          "elapsed_minutes": 0.0,
+          "enabled": 40,
+          "equipment": {
+            "WARD_OXYGEN": {
+              "available": 10,
+              "deficit": 0,
+              "in_use": 6,
+              "quantity": 16,
+              "reserved": 0
+            }
+          },
+          "facility_id": "FAC-MAIN",
+          "kind": "ward",
+          "modeled_occupied": 25,
+          "occupied": 25,
+          "physical": 40,
+          "qualified_staff_by_role": {
+            "provider": 10.0,
+            "rn": 30.0,
+            "support": 10.0
+          },
+          "ready": 15,
+          "reserved": 0,
+          "staff_by_role": {
+            "provider": 10,
+            "rn": 30,
+            "support": 10
+          },
+          "staffed": 40,
+          "unit_id": "UNIT-WARD-B"
+        },
+        {
+          "active": true,
+          "active_staff_ids": [
+            "STAFF-CONFIG-6a0479b3f294-provider-1-001",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-002",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-003",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-004",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-005",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-006",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-007",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-008",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-009",
+            "STAFF-CONFIG-6a0479b3f294-provider-1-010",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-001",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-002",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-003",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-004",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-005",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-006",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-007",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-008",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-009",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-010",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-011",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-012",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-013",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-014",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-015",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-016",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-017",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-018",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-019",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-020",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-021",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-022",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-023",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-024",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-025",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-026",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-027",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-028",
+            "STAFF-CONFIG-6a0479b3f294-rn-1-029",
+            "STAFF-CONFIG-6a0479b3f294-support-1-001",
+            "STAFF-CONFIG-6a0479b3f294-support-1-002",
+            "STAFF-CONFIG-6a0479b3f294-support-1-003",
+            "STAFF-CONFIG-6a0479b3f294-support-1-004",
+            "STAFF-CONFIG-6a0479b3f294-support-1-005",
+            "STAFF-CONFIG-6a0479b3f294-support-1-006",
+            "STAFF-CONFIG-6a0479b3f294-support-1-007",
+            "STAFF-CONFIG-6a0479b3f294-support-1-008",
+            "STAFF-CONFIG-6a0479b3f294-support-1-009"
+          ],
+          "admission_gate": true,
+          "at": "2026-10-16T05:00:00Z",
+          "available": 7,
+          "background_occupied": 0,
+          "capacity_deficit": 0,
+          "cleaning": 0,
+          "elapsed_minutes": 0.0,
+          "enabled": 20,
+          "equipment": {
+            "WARD_OXYGEN": {
+              "available": 5,
+              "deficit": 0,
+              "in_use": 3,
+              "quantity": 8,
+              "reserved": 0
+            }
+          },
+          "facility_id": "FAC-MAIN",
+          "kind": "ward",
+          "modeled_occupied": 13,
+          "occupied": 13,
+          "physical": 20,
+          "qualified_staff_by_role": {
+            "provider": 10.0,
+            "rn": 29.0,
+            "support": 9.0
+          },
+          "ready": 7,
+          "reserved": 0,
+          "staff_by_role": {
+            "provider": 10,
+            "rn": 29,
+            "support": 9
+          },
+          "staffed": 20,
+          "unit_id": "UNIT-WARD-C"
+        }
+      ],
+      "windows": [
+        {
+          "label": "live-0",
+          "from": "2026-10-16T05:00:00+00:00",
+          "to": "2026-10-16T09:00:00+00:00",
+          "pages": 1,
+          "events": 67,
+          "destinations": {
+            "UNIT-WARD-A": 2,
+            "UNIT-ED": 2
+          },
+          "physical_events": {
+            "admission": 2,
+            "arrival": 2,
+            "assessment_start": 2,
+            "discharge": 12
+          }
+        },
+        {
+          "label": "live-24",
+          "from": "2026-10-17T05:00:00+00:00",
+          "to": "2026-10-17T09:00:00+00:00",
+          "pages": 1,
+          "events": 15,
+          "destinations": {
+            "UNIT-ED": 2
+          },
+          "physical_events": {
+            "discharge": 2,
+            "arrival": 2,
+            "assessment_start": 2
+          }
+        },
+        {
+          "label": "live-72",
+          "from": "2026-10-19T05:00:00+00:00",
+          "to": "2026-10-19T09:00:00+00:00",
+          "pages": 1,
+          "events": 98,
+          "destinations": {
+            "UNIT-WARD-A": 4,
+            "UNIT-ED": 9
+          },
+          "physical_events": {
+            "discharge": 14,
+            "admission": 4,
+            "arrival": 10,
+            "assessment_start": 9
+          }
+        },
+        {
+          "label": "live-240",
+          "from": "2026-10-26T05:00:00+00:00",
+          "to": "2026-10-26T09:00:00+00:00",
+          "pages": 1,
+          "events": 52,
+          "destinations": {
+            "UNIT-ED": 4,
+            "UNIT-WARD-A": 2
+          },
+          "physical_events": {
+            "discharge": 8,
+            "arrival": 5,
+            "assessment_start": 4,
+            "admission": 2
+          }
+        },
+        {
+          "label": "live-480",
+          "from": "2026-11-05T05:00:00+00:00",
+          "to": "2026-11-05T09:00:00+00:00",
+          "pages": 1,
+          "events": 70,
+          "destinations": {
+            "UNIT-ED": 8,
+            "UNIT-WARD-A": 2
+          },
+          "physical_events": {
+            "discharge": 10,
+            "arrival": 9,
+            "assessment_start": 8,
+            "admission": 2
+          }
+        }
+      ]
+    },
+    {
+      "source": "local_immutable_trace",
+      "id": "run_b30bfd6ae88b4ed4a041",
+      "replication_id": "run_b30bfd6ae88b4ed4a041_rep_0000",
+      "units": [
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 8,
+            "support": 4
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 40,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-A",
+          "kind": "ward",
+          "name": "Ward A",
+          "physical_capacity": 40,
+          "staffed_capacity": 32,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-A"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 8,
+            "support": 4
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 40,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-B",
+          "kind": "ward",
+          "name": "Ward B",
+          "physical_capacity": 40,
+          "staffed_capacity": 32,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-B"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 4,
+            "support": 2
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 20,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-C",
+          "kind": "ward",
+          "name": "Ward C",
+          "physical_capacity": 20,
+          "staffed_capacity": 16,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-C"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 6,
+            "support": 2
+          },
+          "capabilities": [
+            "ICU_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-ICU",
+          "enabled_capacity": 12,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-ICU",
+          "kind": "icu",
+          "name": "Icu",
+          "physical_capacity": 12,
+          "staffed_capacity": 12,
+          "turnover_minutes": 45,
+          "unit_id": "UNIT-ICU"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 2,
+            "rn": 6,
+            "support": 2
+          },
+          "capabilities": [
+            "ED_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-ED",
+          "enabled_capacity": 30,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-ED",
+          "kind": "ed",
+          "name": "Ed",
+          "physical_capacity": 30,
+          "staffed_capacity": 24,
+          "turnover_minutes": 15,
+          "unit_id": "UNIT-ED"
+        }
+      ],
+      "windows": [
+        {
+          "label": "local-1",
+          "from": "2026-10-16T05:00:00+00:00",
+          "to": "2026-10-17T05:00:00+00:00",
+          "events": 779,
+          "destinations": {
+            "UNIT-WARD-A": 14,
+            "UNIT-ED": 93,
+            "UNIT-ICU": 2,
+            "UNIT-WARD-B": 4
+          }
+        }
+      ],
+      "artifact_sha256": "0a76d87e48583cb47e7283b56b9008c7de953977bfb77bb575a0138f239ed90a",
+      "artifact_unchanged": true
+    },
+    {
+      "source": "local_immutable_trace",
+      "id": "run_02bc4e2789f44a4faa53",
+      "replication_id": "run_02bc4e2789f44a4faa53_rep_0000",
+      "units": [
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 8,
+            "support": 4
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 40,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-A",
+          "kind": "ward",
+          "name": "Ward A",
+          "physical_capacity": 40,
+          "staffed_capacity": 32,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-A"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 8,
+            "support": 4
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 40,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-B",
+          "kind": "ward",
+          "name": "Ward B",
+          "physical_capacity": 40,
+          "staffed_capacity": 32,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-B"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 4,
+            "support": 2
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 20,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-C",
+          "kind": "ward",
+          "name": "Ward C",
+          "physical_capacity": 20,
+          "staffed_capacity": 16,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-C"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 6,
+            "support": 2
+          },
+          "capabilities": [
+            "ICU_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-ICU",
+          "enabled_capacity": 12,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-ICU",
+          "kind": "icu",
+          "name": "Icu",
+          "physical_capacity": 12,
+          "staffed_capacity": 12,
+          "turnover_minutes": 45,
+          "unit_id": "UNIT-ICU"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 2,
+            "rn": 6,
+            "support": 2
+          },
+          "capabilities": [
+            "ED_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-ED",
+          "enabled_capacity": 30,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-ED",
+          "kind": "ed",
+          "name": "Ed",
+          "physical_capacity": 30,
+          "staffed_capacity": 24,
+          "turnover_minutes": 15,
+          "unit_id": "UNIT-ED"
+        }
+      ],
+      "windows": [
+        {
+          "label": "local-2",
+          "from": "2026-10-16T05:00:00+00:00",
+          "to": "2026-10-17T05:00:00+00:00",
+          "events": 779,
+          "destinations": {
+            "UNIT-WARD-A": 14,
+            "UNIT-ED": 93,
+            "UNIT-ICU": 2,
+            "UNIT-WARD-B": 4
+          }
+        }
+      ],
+      "artifact_sha256": "c9e9bbf9b76e0c0fe334b447b052675fa21dd7d26a73f7e2c7ebfe84d56a609c",
+      "artifact_unchanged": true
+    },
+    {
+      "source": "local_immutable_trace",
+      "id": "run_6f38eaef83674e1d8221",
+      "replication_id": "run_6f38eaef83674e1d8221_rep_0000",
+      "units": [
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 8,
+            "support": 4
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 40,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-A",
+          "kind": "ward",
+          "name": "Ward A",
+          "physical_capacity": 40,
+          "staffed_capacity": 32,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-A"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 8,
+            "support": 4
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 40,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-B",
+          "kind": "ward",
+          "name": "Ward B",
+          "physical_capacity": 40,
+          "staffed_capacity": 32,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-B"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 4,
+            "support": 2
+          },
+          "capabilities": [
+            "WARD_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-WARD",
+          "enabled_capacity": 20,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-WARD-C",
+          "kind": "ward",
+          "name": "Ward C",
+          "physical_capacity": 20,
+          "staffed_capacity": 16,
+          "turnover_minutes": 30,
+          "unit_id": "UNIT-WARD-C"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 1,
+            "rn": 6,
+            "support": 2
+          },
+          "capabilities": [
+            "ICU_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-ICU",
+          "enabled_capacity": 12,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-ICU",
+          "kind": "icu",
+          "name": "Icu",
+          "physical_capacity": 12,
+          "staffed_capacity": 12,
+          "turnover_minutes": 45,
+          "unit_id": "UNIT-ICU"
+        },
+        {
+          "advertised_staffed_capacity": null,
+          "background_occupied": 0,
+          "baseline_staff": {
+            "provider": 2,
+            "rn": 6,
+            "support": 2
+          },
+          "capabilities": [
+            "ED_CARE"
+          ],
+          "capacity_mode": "staff_derived",
+          "capacity_policy_id": "POL-ED",
+          "enabled_capacity": 30,
+          "facility_id": "FAC-MAIN",
+          "id": "UNIT-ED",
+          "kind": "ed",
+          "name": "Ed",
+          "physical_capacity": 30,
+          "staffed_capacity": 24,
+          "turnover_minutes": 15,
+          "unit_id": "UNIT-ED"
+        }
+      ],
+      "windows": [
+        {
+          "label": "local-3",
+          "from": "2026-10-16T05:00:00+00:00",
+          "to": "2026-10-17T05:00:00+00:00",
+          "events": 1292,
+          "destinations": {
+            "UNIT-WARD-A": 14,
+            "UNIT-ED": 164,
+            "UNIT-WARD-B": 12,
+            "UNIT-ICU": 3
+          }
+        }
+      ],
+      "artifact_sha256": "5f26e50918d32a1860ad0377640b7d8b79cae3058d511991cecf466f1d3e8fc8",
+      "artifact_unchanged": true
+    }
+  ]
+}

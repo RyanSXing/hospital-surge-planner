@@ -1,0 +1,6 @@
+{
+  "tests": 21,
+  "all_passed": true,
+  "junit": "backend-replay.xml",
+  "scope": "Recorded replay state, annotations and ED queue regressions; engine/API source unchanged."
+}

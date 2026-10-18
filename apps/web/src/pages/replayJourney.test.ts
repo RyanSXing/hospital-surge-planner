@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { recordedFloorJourneys } from "./floorPlanTransitModel";
 import {
   fetchReplayJourneyEvents,
   recordedDischarge,
@@ -182,5 +183,61 @@ describe("recorded replay journeys", () => {
     );
     expect(calls).toHaveLength(2);
     expect(result.map((event) => event.event_type)).toEqual(["discharge"]);
+  });
+  it("keeps rare unit movements on later event pages available to the bounded floor-plan sample", async () => {
+    const start = "2026-10-16T00:00:00Z",
+      end = "2026-10-16T04:00:00Z";
+    const common = Array.from({ length: 400 }, (_, index) => ({
+      event_type: "assessment_start",
+      patient_id: `common-${index}`,
+      event_id: `event-${index}`,
+      occurred_at: new Date(
+        Date.parse(start) + (index + 1) * 1000,
+      ).toISOString(),
+      to_unit_id: "ED",
+      sequence_number: index,
+    }));
+    const rare = ["WARD-B", "WARD-C", "ICU"].map((unit, index) => ({
+      event_type: "discharge",
+      patient_id: `rare-${unit}`,
+      event_id: `rare-event-${unit}`,
+      from_unit_id: unit,
+      occurred_at: new Date(
+        Date.parse(start) + (500 + index) * 1000,
+      ).toISOString(),
+      sequence_number: 500 + index,
+    }));
+    const pages = [common.slice(0, 200), common.slice(200), rare];
+    const calls: string[] = [];
+    const rows = await fetchReplayJourneyEvents(
+      async (path) => {
+        calls.push(path);
+        const index = calls.length - 1;
+        return {
+          items: pages[index],
+          next_cursor: index < 2 ? String((index + 1) * 200) : null,
+        };
+      },
+      "saved-rep",
+      start,
+      end,
+    );
+    expect(calls).toHaveLength(3);
+    expect(rows).toHaveLength(403);
+    const sample = recordedFloorJourneys(
+      rows,
+      ["ED", "WARD-A", "WARD-B", "WARD-C", "ICU"],
+      start,
+      end,
+    );
+    expect(sample).toHaveLength(12);
+    for (const unit of ["WARD-B", "WARD-C", "ICU"])
+      expect(
+        sample.some((journey) =>
+          journey.moves.some(
+            (move) => move.from === unit && move.to === "discharge",
+          ),
+        ),
+      ).toBe(true);
   });
 });

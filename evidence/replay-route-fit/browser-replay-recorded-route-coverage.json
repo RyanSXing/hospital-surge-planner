@@ -1,0 +1,110 @@
+{
+  "run": "run_c9fe8f10e5a1490f8798",
+  "checked": [
+    {
+      "from": "2026-10-16T05:00:00.000Z",
+      "to": "2026-10-16T21:00:00.000Z",
+      "expected": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ],
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ],
+      "patients_shown": 12
+    },
+    {
+      "from": "2026-10-16T21:00:00.000Z",
+      "to": "2026-10-17T13:00:00.000Z",
+      "expected": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ],
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ],
+      "patients_shown": 12
+    },
+    {
+      "from": "2026-10-17T13:00:00.000Z",
+      "to": "2026-10-18T05:00:00.000Z",
+      "expected": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ],
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ],
+      "patients_shown": 12
+    },
+    {
+      "from": "2026-10-18T05:00:00.000Z",
+      "to": "2026-10-18T21:00:00.000Z",
+      "expected": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ],
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ],
+      "patients_shown": 12
+    },
+    {
+      "from": "2026-10-18T21:00:00.000Z",
+      "to": "2026-10-19T05:00:00.000Z",
+      "expected": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ],
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ],
+      "patients_shown": 12
+    }
+  ],
+  "actual_admissions_by_unit": {
+    "UNIT-WARD-A": 27,
+    "UNIT-ICU": 7,
+    "UNIT-WARD-B": 19
+  },
+  "no_equal_distribution_assumed": true
+}

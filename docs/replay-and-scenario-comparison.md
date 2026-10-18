@@ -12,7 +12,11 @@ Noncapacity areas show counts. Waiting counts use the complete aggregate state, 
 
 ED waiting is the number currently awaiting assessment, not cumulative arrivals. It falls when treatment places become available. It can keep growing when supplies pause care or patients awaiting inpatient beds continue occupying ED places. Recorded unit constraints distinguish these causes from an apparent shortage of physical beds.
 
-Dragging the replay timeline updates the actual recorded state before releasing the pointer. One exact-state read runs at a time; newer pointer positions replace the pending destination, so rapid dragging cannot build a backlog or let an older event lookup overwrite the final selection. Bed fills crossfade without replacing bed elements or changing their recorded counts. During playback, a short trail and a larger marker make each sampled recorded movement easier to follow along the corridors. Reduced motion shows the same exact states without animated fills or movement.
+Dragging the replay timeline updates the actual recorded state before releasing the pointer. One exact-state read runs at a time; newer pointer positions replace the pending destination, so rapid dragging cannot build a backlog or let an older event lookup overwrite the final selection. Bed lights switch in 90 ms with one brief 150 ms glow when their recorded occupancy changes. Initial loading, unchanged frames and patient selection do not flash the beds. Reduced motion shows the same exact states without animated fills or movement.
+
+The complete map fits the available desktop width and height by default. Compact controls leave more room for the hospital. Zoom is optional; **Fit** restores the complete view. **Expand** retains playback, the timeline and zoom controls, with an explicit **Exit full screen** action.
+
+During playback, a short trail and a larger marker make each sampled recorded movement easier to follow along the corridors. The sample prioritizes coverage of actual units and routes, including less frequent ward, ICU and discharge movement, and uses at most twelve patients at once. It is not a proportional flow chart. Destinations still come from the simulation: a scenario with many available beds in Ward A can genuinely send most new ward admissions there. The display does not invent traffic to other wards.
 
 ## Comparison
 

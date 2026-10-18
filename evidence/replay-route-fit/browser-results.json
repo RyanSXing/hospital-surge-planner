@@ -1,0 +1,216 @@
+{
+  "checked_at": "2026-10-18T08:24:09.980582+00:00",
+  "unique_desktop_cases": 21,
+  "all_latest_case_results_passed": true,
+  "mobile_requested": false,
+  "cases": [
+    {
+      "file": "replay-clinical-capacity.spec.ts",
+      "project": "desktop",
+      "title": "replay displays actual separate hospital capacity and no offsite inventory",
+      "status": "passed",
+      "duration_ms": 4579,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-clinical-capacity.spec.ts",
+      "project": "desktop",
+      "title": "replay holds a stepdown patient in the recorded ICU bed until actual ward entry",
+      "status": "passed",
+      "duration_ms": 5428,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-controls.spec.ts",
+      "project": "desktop",
+      "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
+      "status": "passed",
+      "duration_ms": 7119,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-evidence.spec.ts",
+      "project": "desktop",
+      "title": "replay exposes complete filtered events, patient history and recorded resources",
+      "status": "passed",
+      "duration_ms": 7107,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "a 100-bed ward reflows inside a compact architectural map without overflowing its walls",
+      "status": "passed",
+      "duration_ms": 4429,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "current shortage pressure follows actual paused care and clears after recovery and backward seeks",
+      "status": "passed",
+      "duration_ms": 4865,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "editable bed and staffed-bed parameters rebuild replay inventory per frozen run",
+      "status": "passed",
+      "duration_ms": 8375,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "floor plan separates actual wards and every bed, with meaningful bed, area and patient inspection",
+      "status": "passed",
+      "duration_ms": 5834,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-journey.spec.ts",
+      "project": "desktop",
+      "title": "recorded arrivals occupy an actual ED bed only during care and increment cumulative discharges",
+      "status": "passed",
+      "duration_ms": 6774,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "a late seek response from the previous replication cannot repaint the newly selected run",
+      "status": "passed",
+      "duration_ms": 8213,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "held timeline drag publishes exact intermediate map states, coalesces fast changes, and seeks backward without replacing the map",
+      "status": "passed",
+      "duration_ms": 6364,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "late event and checkpoint lookups cannot override a newer native timeline seek",
+      "status": "passed",
+      "duration_ms": 5676,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "recorded playback keeps patient markers and trails on the same continuous route and clears them when paused",
+      "status": "passed",
+      "duration_ms": 4863,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "the emergency waiting count can drain using recorded treatment events, with exact reduced-motion seeks",
+      "status": "passed",
+      "duration_ms": 5439,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "Fit preserves all 100 frozen ward beds and real corridor alignment after zoom and sidebar changes",
+      "status": "passed",
+      "duration_ms": 7327,
+      "evidence_report": "output/playwright/replay-route-fit/browser-100-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "bed indicators switch quickly and glow once only for actual occupancy changes, with reduced motion suppressed",
+      "status": "passed",
+      "duration_ms": 5252,
+      "evidence_report": "output/playwright/replay-route-fit/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "the complete hospital and timeline fit 1280\u00d7720 in the page and fullscreen without scrolling",
+      "status": "passed",
+      "duration_ms": 4866,
+      "evidence_report": "output/playwright/replay-route-fit/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "the complete hospital and timeline fit 1440\u00d7900 in the page and fullscreen without scrolling",
+      "status": "passed",
+      "duration_ms": 4662,
+      "evidence_report": "output/playwright/replay-route-fit/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "the complete hospital and timeline fit 1600\u00d71000 in the page and fullscreen without scrolling",
+      "status": "passed",
+      "duration_ms": 2562,
+      "evidence_report": "output/playwright/replay-route-fit/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "the movement sample represents recorded activity across every ward, ICU, emergency care and discharge without inventing equal admissions",
+      "status": "passed",
+      "duration_ms": 9993,
+      "evidence_report": "output/playwright/replay-route-fit/browser-final.json"
+    },
+    {
+      "file": "replay-simple.spec.ts",
+      "project": "desktop",
+      "title": "recorded floor plan stays stable through buffered playback, delayed seek and backwards seek",
+      "status": "passed",
+      "duration_ms": 11887,
+      "evidence_report": "output/playwright/replay-route-fit/browser-regression-final.json"
+    }
+  ],
+  "executions": [
+    {
+      "report": "output/playwright/replay-route-fit/browser-final.json",
+      "stats": {
+        "startTime": "2026-10-18T08:18:22.384Z",
+        "duration": 34186.835,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/replay-route-fit/browser-100-final.json",
+      "stats": {
+        "startTime": "2026-10-18T08:21:57.536Z",
+        "duration": 8491.385,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/replay-route-fit/browser-regression-final.json",
+      "stats": {
+        "startTime": "2026-10-18T08:22:20.888Z",
+        "duration": 97885.425,
+        "expected": 15,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "resolved_findings": [
+    "Fractional measured edges could split a connected building outline; corrected and covered by the three real failed measurements and intentional-gap regressions.",
+    "Sidebar geometry is checked after native width transitions settle; animation cleanup is checked during the actual transition, not hidden behind that wait.",
+    "Prior zoom-reset assertions now use the visible Fit hospital map control."
+  ]
+}

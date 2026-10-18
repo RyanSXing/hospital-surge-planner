@@ -1,0 +1,18 @@
+.hospital-floor-plan .floor-plan-bed {
+  transition:
+    background-color 90ms ease-out,
+    border-color 90ms ease-out;
+}
+.hospital-floor-plan .floor-plan-bed::after {
+  transition: opacity 90ms ease-out;
+}
+.hospital-floor-plan--still .floor-plan-bed,
+.hospital-floor-plan--still .floor-plan-bed::after {
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hospital-floor-plan .floor-plan-bed,
+  .hospital-floor-plan .floor-plan-bed::after {
+    transition: none !important;
+  }
+}

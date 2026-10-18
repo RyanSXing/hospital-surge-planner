@@ -1,8 +1,24 @@
 # Hosted verification record
 
-[AEGIS Console](https://aegisconsole.131.186.0.156.sslip.io) runs application release **`ac0fe41c141d4a0f8bf94964335f09320176265c`**, with base model/generator **1.1.0** and current hospital-operations model **1.3**. Frozen operations models 1.0–1.2 remain supported. The previous hospital-surge address remains an exact HTTPS alias. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
+[AEGIS Console](https://aegisconsole.131.186.0.156.sslip.io) runs application release **`56f76da2710ea52ba538d132c13d43e1feb380a1`**, with base model/generator **1.1.0** and current hospital-operations model **1.3**. Frozen operations models 1.0–1.2 remain supported. The previous hospital-surge address remains an exact HTTPS alias. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
 
-## Recorded Replay treatment status and resource shading — 2026-10-18
+## Sunfire planning assistant and sign-in gate — 2026-10-18
+
+Sunfire uses actual OCI GPT-OSS 120B inference, the existing shared manual draft, guarded Undo, validated plan saving and real simulation jobs. The compact launcher expands into reserved workspace space. Conversations and completed-run references survive reload; delayed responses cannot overwrite later manual edits. The initial authentication gate prevents console chrome before Sign in, and the three staff roles use distinct restrained slider colors.
+
+Verification passed **471 frontend tests**, **252 backend tests** and **16 distinct desktop browser cases**. The actual-provider planning workflow applied exactly 100 extra one-time arrivals and temporary 40 → 30 → 40 bed availability, preserved normal demand, exercised Undo/Redo, completed two simulation repetitions, matched measured outcomes and opened exact Replay evidence. The final read-only answer repair followed those browser cases and was verified by the latest backend/provider suite plus actual-provider browser questions; no complete historical suite rerun is claimed. [Scope and attempts](../evidence/sunfire/README.md), [validation](../evidence/sunfire/validation.json), [source hashes](../evidence/sunfire/tested-build-manifest.json).
+
+The first live main-bottleneck question revealed an unrequested daily filter. The correction uses matching full-forecast ensemble evidence, ranks recorded waiting burden and names the affected unit and first occurrence. The corrected live answer and exact Replay state agree with saved metrics and observations. Missing evidence remains unavailable; constraint categories are not added together. [Live assistant](../evidence/sunfire/live-sunfire.json), [browser](../evidence/sunfire/live-browser.json), [state](../evidence/sunfire/live-replay-state.json).
+
+GPT-OSS is the strongest verified fit from limited accessible-model probes, not a universal best-model claim. Grok/Gemini quotas were zero; the authorized Grok increase submission was rejected as tenancy-ineligible and created no request. Production uses model-scoped instance identity and no copied user key. [Model selection](../evidence/sunfire/model-selection.json), [quota attempt](../evidence/sunfire/grok-quota-attempt.json).
+
+All **54 hosted frontend files** match the tested build. All six services are healthy and running, with unchanged named volumes. The **four active scenarios, 23 protected records and workspace defaults** are preserved. Acceptance created three read-only assistant turns and **no scenario edits or new production simulations**. A fresh private backup preceded deployment. The final repair rebuilt application images only; unused intermediate build artifacts were removed while current and pre-update rollback images remain. [Deployment](../evidence/sunfire/deployment-current.json), [assets](../evidence/sunfire/live-assets.json), [runtime](../evidence/sunfire/runtime-preservation.json), [preservation](../evidence/sunfire/preservation.json).
+
+Earlier performance, security-scan and restore results retain their original attribution. Existing hosting/storage are reused, and the simulation engine package is unchanged.
+
+## Previous recorded Replay treatment status and resource shading — 2026-10-18
+
+Release `ac0fe41c141d4a0f8bf94964335f09320176265c` established the following behavior and verification record.
 
 Active treatment rooms turn red during recorded pauses, including empty rooms. The fixed map key shows the reason and actual resumption time. A disruption ending while supplies remain exhausted does not falsely resume care. Missing history remains unavailable. Bed occupancy and queue areas are unchanged. Natural layout measurements with paint scaling remove a CSS-zoom feedback loop that could move the map by eight pixels.
 

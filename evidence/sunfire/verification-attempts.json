@@ -1,0 +1,120 @@
+{
+  "production_mutated": false,
+  "browser_prompts_unchanged": true,
+  "attempts": [
+    {
+      "report": "sunfire-browser-results.json",
+      "passed": 0,
+      "failed": 2,
+      "duration_ms": 49175.713,
+      "causes": [
+        "Explicit compound draft edit became proposal",
+        "Explicit staffing draft edit became proposal"
+      ],
+      "provider": "openai.gpt-oss-120b",
+      "backend_reported": true
+    },
+    {
+      "report": "fixed-direct-browser-results.json",
+      "passed": 0,
+      "failed": 2,
+      "duration_ms": 50713.381,
+      "causes": [
+        "Valid composed action arrived at final allowed tool call, then planner failed before publication",
+        "Explicit staffing draft edit still emitted proposal"
+      ],
+      "provider": "openai.gpt-oss-120b",
+      "backend_reported": true
+    },
+    {
+      "report": "final-handoff-browser-results.json",
+      "passed": 0,
+      "failed": 2,
+      "duration_ms": 54611.925,
+      "causes": [
+        "Test fixture used a dataset list-card projection as full units data; test-only full GET corrected",
+        "Fresh explicit Set request with contextual Using prefix still became proposal"
+      ],
+      "verified_before_failure": [
+        "Compound100patientbatch plus temporary40to30to40availability composed and actually acknowledged",
+        "Delayed direct staffing response rejected as stale; manual9nurses preserved"
+      ],
+      "provider": "openai.gpt-oss-120b",
+      "backend_reported": true
+    },
+    {
+      "report": "final-browser-results.json",
+      "passed": 1,
+      "failed": 1,
+      "duration_ms": 34445.505,
+      "causes": [
+        "Explicit Save+Run request returned Save-only action; strict run expectation retained"
+      ],
+      "verified_before_failure": [
+        "Actual compound draft edit and single acknowledgement",
+        "Arrival graph adds100onlytoincidentday without changing normal inflow",
+        "1280and1440compact/expanded/sidebar nonoverlap",
+        "Guarded chatUndo and existing manualUndo/Redo",
+        "Actual delayed-provider response rejected as stale; fresh current-draft request applied successfully"
+      ],
+      "provider": "openai.gpt-oss-120b",
+      "backend_reported": true
+    },
+    {
+      "report": "accepted-browser-results.json",
+      "passed": 1,
+      "failed": 1,
+      "duration_ms": 53887.089,
+      "causes": [
+        "Frontend requested100maximum chartpoints below existing APIminimum200; actual completed7.6hwait was unavailable"
+      ],
+      "verified_before_failure": [
+        "Real directSave+Run action submitted and completed2of2replications",
+        "Actual delayed-response CAS and fresh recovery passed again"
+      ],
+      "real_completed_run_id": "run_dd0457210ecc48de919a",
+      "provider": "openai.gpt-oss-120b",
+      "frontend_fix": "Bounded cardquery200plus actual-response integration assertion"
+    },
+    {
+      "report": "measured-browser-results.json",
+      "passed": 1,
+      "failed": 1,
+      "duration_ms": 61390.82,
+      "causes": [
+        "Historical applied run action omitted its durable run ID, so completed card disappeared after browser reload"
+      ],
+      "verified_before_failure": [
+        "Real2of2completed with actual averagewaitp50readback",
+        "100real recorded one-timebatch arrivals",
+        "Actualenabled40to30to40 at frozen closure times",
+        "RecordedSummaryand exactReplaynavigation with map/chat bounds",
+        "ReturnConfiguration retainedcurveandchat",
+        "Escape returnsfocus;unsentcomposer preservedacrossclose/reopen",
+        "Realstale-responseCASandfreshrequestpassedagain"
+      ],
+      "real_completed_run_id": "run_5b7d3213031c406c97c7",
+      "action_id": "sunfire_action_a1faa908a5ef4926b0cf",
+      "provider": "openai.gpt-oss-120b",
+      "backend_reported": true
+    },
+    {
+      "report": "persistent-browser-results.json",
+      "passed": 2,
+      "failed": 0,
+      "duration_ms": 42694.015,
+      "provider": "openai.gpt-oss-120b",
+      "complete_flow_verified": true,
+      "source_frozen": true
+    }
+  ],
+  "final_acceptance": {
+    "report": "persistent-browser-results.json",
+    "passed": 2,
+    "failed": 0,
+    "provider_evidence": "persistent-evidence/browser-sunfire-real-provider.json",
+    "cas_evidence": "persistent-evidence/browser-sunfire-real-delayed-response-cas.json",
+    "no_production_mutation": true,
+    "no_further_browser_runners": true
+  }
+}

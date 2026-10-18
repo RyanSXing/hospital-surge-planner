@@ -1,0 +1,38 @@
+{
+  "passed": 2,
+  "failed": 0,
+  "duration_ms": 42694.015,
+  "model": "openai.gpt-oss-120b",
+  "scenario_id": "scenario_434d49b7278c40e5a1c1",
+  "run_id": "run_0e24e7b6a42846d5928b",
+  "run_turn_id": "sunfire_turn_45ac95e429d34b4a89d4",
+  "saved_revision": 2,
+  "incident_patients": 100,
+  "enabled_counts": [
+    40,
+    30,
+    40
+  ],
+  "replay_navigation": {
+    "replication_id": "run_0e24e7b6a42846d5928b_rep_0001",
+    "at": "2026-10-16T22:54:08.065546Z",
+    "trace_ready": true
+  },
+  "average_wait_p50": 7.7248990403313105,
+  "actual_action_request_counts": [
+    "sunfire/actions/sunfire_action_e80f56da1e344232a8e0/ack",
+    "sunfire/actions/sunfire_action_86e0ac35863a4a87ab34/ack",
+    "sunfire/actions/sunfire_action_428a72d3cb9343bb93b5/apply"
+  ],
+  "cas": {
+    "scenario_id": "scenario_dd5124f19a2942ff9697",
+    "original_turn_id": "sunfire_turn_8116e4336fea4ab5a978",
+    "fresh_turn_id": "sunfire_turn_10f5dd0936694c99b780",
+    "held_actual_provider_responses": 1,
+    "manual_nurses_preserved": 9,
+    "recovered_nurses": 10,
+    "scenario_revision_unchanged": 1
+  },
+  "e2e_sha256": "4430abb7341a2d2a6beffee5e67d37424751db98f86bfab3d170576f6ecc2f0e",
+  "report_sha256": "cea9fa4c49b2951a579cb2d60019ee5a0d13540fcd8a41ed9598cdbb59873708"
+}

@@ -1,0 +1,97 @@
+{
+  "accepted_at": "2026-10-18T11:46:02.053146+00:00",
+  "application_commit": "56f76da2710ea52ba538d132c13d43e1feb380a1",
+  "status": "accepted",
+  "primary_url": "https://aegisconsole.131.186.0.156.sslip.io",
+  "all_checks_passed": true,
+  "local_validation": {
+    "verified_at": "2026-10-18T11:36:11.995428+00:00",
+    "all_passed": true,
+    "frontend_tests": 471,
+    "backend_tests": 252,
+    "backend_scopes": {
+      "backend-regressions.xml": {
+        "tests": 87,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backend-bottleneck-readback.xml": {
+        "tests": 165,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "unique_desktop_browser_cases": 16,
+    "browser_scopes": {
+      "auth-final-browser-results.json": {
+        "startTime": "2026-10-18T11:11:05.135Z",
+        "duration": 8821.328,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "manual-browser-results.json": {
+        "startTime": "2026-10-18T10:59:32.162Z",
+        "duration": 73256.899,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "persistent-browser-results.json": {
+        "startTime": "2026-10-18T11:22:24.354Z",
+        "duration": 42694.015,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    "actual_provider": "openai.gpt-oss-120b through OCI",
+    "simulation_engine_package_unchanged": true,
+    "scope_notes": [
+      "New assistant orchestration/provider tests plus existing API, durable worker, manual configuration, arrivals and library-comparison regressions.",
+      "The complete historical backend and browser suites were not repeated.",
+      "The final read-only bottleneck repair was covered by the latest backend/provider suite and an actual-provider UI question. The 16 desktop planning/auth/manual cases retain their earlier successful attribution; their frontend and action execution logic are unchanged.",
+      "Earlier failed real-provider attempts were retained privately and prompted fixes; final reported browser cases must pass without retries.",
+      "No new performance, broad model benchmark, security-scan or restoration claim."
+    ]
+  },
+  "frontend_files_verified": 54,
+  "services_healthy": 6,
+  "active_scenarios_preserved": 4,
+  "protected_records_preserved": 23,
+  "stored_record_bytes_preserved": true,
+  "workspace_defaults_preserved": true,
+  "named_volumes_preserved": true,
+  "actual_live_oci_model": "openai.gpt-oss-120b",
+  "production_read_only_assistant_turns": 3,
+  "production_planning_actions": 0,
+  "new_production_simulations": 0,
+  "exact_live_replay_navigation": true,
+  "current_and_pre_update_rollback_images_preserved": true,
+  "backup_preceded_deployment": true,
+  "engine_package_unchanged": true,
+  "limitations": [
+    "Model selection is based on limited functional probes, not a universal-best benchmark.",
+    "The final read-only answer fix followed the 16 desktop flows; it was verified with the latest backend/provider suite and actual-provider UI questions. The frontend and action execution logic are unchanged.",
+    "No new broad performance benchmark, security scan or restore trial is claimed. Earlier evidence retains its original release attribution."
+  ],
+  "evidence": [
+    "live-assets.json",
+    "runtime-preservation.json",
+    "hostname-acceptance.json",
+    "preservation.json",
+    "stored-record-preservation.json",
+    "live-api.json",
+    "live-sunfire.json",
+    "live-browser.json",
+    "live-replay-state.json",
+    "build-image-cleanup.json",
+    "backup.json",
+    "tested-build-manifest.json"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "removed_unused_intermediate_tags": [
+    "hospital-surge-planner-api:77c683426ce3bb796978667e18e35387930bf4ba",
+    "hospital-surge-planner-web:77c683426ce3bb796978667e18e35387930bf4ba"
+  ],
+  "protected_current_and_pre_update_rollback_images": {
+    "hospital-surge-planner-api:56f76da2710ea52ba538d132c13d43e1feb380a1": "sha256:465b30d313ac86ea36bfbda18885d44119aec0972ea3e35999ffef462611a2fd",
+    "hospital-surge-planner-api:ac0fe41c141d4a0f8bf94964335f09320176265c": "sha256:36d8673d7e970d1f19c726eb1712ee41200eb5584bcf8610040ea6920dc54938",
+    "hospital-surge-planner-web:56f76da2710ea52ba538d132c13d43e1feb380a1": "sha256:82cb868561a84b7b4a5541e4b0280124d7ec2bc03f7bea2a8dd4ef53ac8793b7",
+    "hospital-surge-planner-web:ac0fe41c141d4a0f8bf94964335f09320176265c": "sha256:b531a4bf6f3f37b32bad5eec7f95f1f1210886f9eae80470356719c33171ed4c"
+  },
+  "protected_images_still_present": true,
+  "free_bytes_before": 1197469696,
+  "free_bytes_after": 2370035712,
+  "volume_operations": 0,
+  "database_operations": 0,
+  "forced_removal": false,
+  "checked_at": "2026-10-18T11:44:36.571477+00:00"
+}

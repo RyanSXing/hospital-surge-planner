@@ -1,0 +1,57 @@
+{
+  "deployed_at": "2026-10-18T11:40:28.825941+00:00",
+  "code_commit": "56f76da2710ea52ba538d132c13d43e1feb380a1",
+  "image_tag": "56f76da2710ea52ba538d132c13d43e1feb380a1",
+  "archive": {
+    "commit": "56f76da2710ea52ba538d132c13d43e1feb380a1",
+    "members": 492,
+    "sha256": "2f8a57ab5ebe8bc921eba5f17a13d69827e032bc6ce4511ff23dd943354dac52"
+  },
+  "host": "131.186.0.156",
+  "directory": "/opt/hospital-surge-planner",
+  "steps": [
+    "(build_dir=$(mktemp -d /opt/hospital-surge-planner/.build-XXXXXX) || exit 1; trap 'rm -rf -- \"$build_dir\"' EXIT; tar -xzf release.tar.gz -C \"$build_dir\" && install -m 600 .env \"$build_dir/.env\" && CODE_COMMIT=56f76da2710ea52ba538d132c13d43e1feb380a1 docker compose --env-file \"$build_dir/.env\" -f \"$build_dir/infra/compose.yaml\" --profile tls build api web)",
+    "tar -xzf release.tar.gz",
+    "CODE_COMMIT=56f76da2710ea52ba538d132c13d43e1feb380a1 docker compose --env-file .env -f infra/compose.yaml up -d postgres redis",
+    "CODE_COMMIT=56f76da2710ea52ba538d132c13d43e1feb380a1 docker compose --env-file .env -f infra/compose.yaml run --rm api .venv/bin/alembic -c infra/alembic.ini upgrade head",
+    "CODE_COMMIT=56f76da2710ea52ba538d132c13d43e1feb380a1 docker compose --env-file .env -f infra/compose.yaml up -d api worker web",
+    "CODE_COMMIT=56f76da2710ea52ba538d132c13d43e1feb380a1 docker compose --env-file .env -f infra/compose.yaml --profile tls up -d tls",
+    "CODE_COMMIT=56f76da2710ea52ba538d132c13d43e1feb380a1 docker compose --env-file .env -f infra/compose.yaml ps"
+  ],
+  "status": "deployed_pending_acceptance",
+  "required_next": [
+    "authenticated smoke run",
+    "OCI artifact upload/download",
+    "full workflow verification",
+    "backup and restore test",
+    "record image digests and benchmark"
+  ],
+  "operational_override": {
+    "kind": "app_image_build_scope_only",
+    "source_commit": "56f76da2710ea52ba538d132c13d43e1feb380a1",
+    "source_tree_clean": true,
+    "original_deployer_sha256": "9b4974995da592ae75a91e4ce3fc60666791d36099a5519ce4ff1d234a96b066",
+    "effective_deployer_sha256": "3a8bbf57661a322f155bdabc2ec0a35c48964f881a74d08c8f63450b4831f120",
+    "wrapper_sha256": "8ee2906a8cf8f21ce42ea0b9a9a2e5602244567e4173940b656e3822749c7fe9",
+    "build_services": [
+      "api",
+      "web"
+    ],
+    "api_image_consumers": [
+      "api",
+      "worker"
+    ],
+    "omitted_build_services": [
+      "postgres",
+      "redis",
+      "tls"
+    ],
+    "first_sunfire_report_sha256": "78c98407ea38c3bdde0e67f8268dade4ef0f8a7ad48a0a90de03bfec40f56b89",
+    "original_deployer": "scripts/deploy.py",
+    "other_deployer_steps_preserved": true,
+    "first_sunfire_report": "evidence/sunfire/deployment.json",
+    "historical_report_sha256": "8a1fb44a8915986b14d9a28889574e890e037d83d1e92f0533e2f0c1befe0512",
+    "private_log": "data/deployment/sunfire-app-repair-56f76da2710e-20261018T113835Z-013a7fd7.log",
+    "no_image_prune_or_infrastructure_change": true
+  }
+}

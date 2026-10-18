@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-18T11:44:01.989290+00:00",
+  "target": {
+    "kind": "replay",
+    "label": "View recorded bottleneck",
+    "run_group_id": "run_892e59f7876c492cb4b2",
+    "replication_id": "run_892e59f7876c492cb4b2_rep_0001",
+    "at": "2026-10-27T13:14:42.473849Z"
+  },
+  "emergency_unit": {
+    "unit_id": "UNIT-ED",
+    "physical": 30,
+    "staffed": 30,
+    "occupied": 29,
+    "available": 0
+  },
+  "recorded_blockers": {
+    "place_turnover": 1
+  },
+  "queue_counts": {
+    "FAC-MAIN": {
+      "direct_waiting": 0,
+      "ed": 1,
+      "ed_boarding": 0,
+      "icu": 0,
+      "stepdown": 0,
+      "total": 0,
+      "ward": 0
+    }
+  },
+  "matches_visible_replay": true,
+  "new_simulations": 0
+}

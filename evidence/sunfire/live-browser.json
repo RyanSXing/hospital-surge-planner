@@ -1,0 +1,33 @@
+{
+  "application_commit": "56f76da2710ea52ba538d132c13d43e1feb380a1",
+  "base_url": "https://aegisconsole.131.186.0.156.sslip.io",
+  "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+  "run_id": "run_892e59f7876c492cb4b2",
+  "replication_id": "run_892e59f7876c492cb4b2_rep_0001",
+  "at": "2026-10-27T13:14:42.473849Z",
+  "observed_replay_time": "Oct 27, 08:14:42 AM CDT",
+  "observed_emergency_constraint": "Bed being cleaned",
+  "observed_emergency_occupied": 29,
+  "observed_emergency_physical": 30,
+  "observed_ed_waiting": 1,
+  "map_bounds": {
+    "bottom": 663,
+    "height": 404.453125,
+    "left": 79,
+    "right": 885,
+    "top": 258.546875,
+    "viewportHeight": 720,
+    "viewportWidth": 1280,
+    "width": 806
+  },
+  "assistant_bounds": {
+    "left": 900,
+    "right": 1280,
+    "width": 380
+  },
+  "map_fits_beside_assistant": true,
+  "actual_provider_reply": true,
+  "exact_recorded_navigation": true,
+  "read_only_scenario": true,
+  "new_simulations": 0
+}

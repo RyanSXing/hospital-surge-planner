@@ -1,0 +1,90 @@
+{
+  "checked_at": "2026-10-18T11:42:48.881870+00:00",
+  "application_commit": "56f76da2710ea52ba538d132c13d43e1feb380a1",
+  "status": {
+    "name": "Sunfire",
+    "guide_version": "sunfire-planning-v1",
+    "available": true,
+    "model": "openai.gpt-oss-120b",
+    "region": "us-chicago-1",
+    "code": "ready",
+    "retryable": false
+  },
+  "chat_id": "sunfire_chat_8dbdbb67a4ad436182fe",
+  "turn_id": "sunfire_turn_cf44936a0f234c02a23e",
+  "durable_turn_status": "SUCCEEDED",
+  "stored_turns": 3,
+  "model": "openai.gpt-oss-120b",
+  "answer": "Across the completed simulations, the main recorded bottleneck was beds were being cleaned in Emergency department. First recorded: Oct 27, 2026, 8:14 AM CDT. This is the earliest occurrence across simulations. It had the greatest mean recorded waiting burden. Median peak queue for this constraint: 23.5 patients. Average wait per patient: 0.2 hours (median across simulations). Constraint categories can overlap. Review the recorded measures and source links below; no planning changes were applied.",
+  "evidence": {
+    "id": "evidence_0",
+    "kind": "results",
+    "title": "Recorded simulation results",
+    "scope": "ensemble",
+    "context": {
+      "run_group_id": "run_892e59f7876c492cb4b2",
+      "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+      "scenario_revision_id": "revision_8f3bd2baa98f46f9ba22",
+      "source_draft_revision": 8,
+      "dataset_version_id": "demo-v1-1-0-hospital_baseline-41021-365",
+      "model_version": "1.1.0",
+      "hospital_operations_model_version": "1.3",
+      "start_at": "2026-10-16T05:00:00Z",
+      "end_at": "2026-11-15T06:00:00Z",
+      "timezone": "America/Chicago",
+      "scope": "ensemble",
+      "measurement_start_at": "2026-10-16T05:00:00Z",
+      "matches_current_draft": true,
+      "replications_completed": 10,
+      "replications_requested": 10,
+      "evidence_label": "Recorded ensemble results",
+      "saved_revision": 8
+    },
+    "summary": "Across the completed simulations, the main recorded bottleneck was beds were being cleaned in Emergency department. First recorded: Oct 27, 2026, 8:14 AM CDT. This is the earliest occurrence across simulations. It had the greatest mean recorded waiting burden. Median peak queue for this constraint: 23.5 patients. Average wait per patient: 0.2 hours (median across simulations). Constraint categories can overlap.",
+    "values": [
+      {
+        "label": "Average wait per patient",
+        "value": 0.18921239837773077,
+        "unit": "hours",
+        "statistic": "median across simulations"
+      },
+      {
+        "label": "Peak patients waiting for a bed",
+        "value": 0.0,
+        "unit": "patients",
+        "statistic": "median across simulations"
+      },
+      {
+        "label": "Average medical supplies",
+        "value": 90.74305702300319,
+        "unit": "percent",
+        "statistic": "median across simulations"
+      },
+      {
+        "label": "Patients treated within 24 hours",
+        "value": 100.0,
+        "unit": "percent",
+        "statistic": "median across simulations"
+      }
+    ],
+    "links": [
+      {
+        "kind": "run",
+        "label": "View recorded results",
+        "run_group_id": "run_892e59f7876c492cb4b2"
+      },
+      {
+        "kind": "replay",
+        "label": "View recorded bottleneck",
+        "run_group_id": "run_892e59f7876c492cb4b2",
+        "replication_id": "run_892e59f7876c492cb4b2_rep_0001",
+        "at": "2026-10-27T13:14:42.473849Z"
+      }
+    ]
+  },
+  "measured_wait_hours": 0.18921239837773077,
+  "display_matches_actual_metrics": true,
+  "planning_actions": 0,
+  "new_simulations": 0,
+  "host_auth": "instance_principal"
+}

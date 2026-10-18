@@ -1,0 +1,28 @@
+{
+  "run_id": "run_a0d58ea96b5845368ec4",
+  "input_sha256": "03fde8ae5eb0ce9a9ba53483fa75d1e5722439a33ed7650524f618166b301ec1",
+  "views": {
+    "patients": {
+      "dock": {
+        "x": 210,
+        "y": 696,
+        "width": 1390,
+        "height": 180
+      },
+      "independent_collapse": true,
+      "keyboard_resize": true,
+      "context_preserved": true
+    },
+    "compare": {
+      "dock": {
+        "x": 210,
+        "y": 696.25,
+        "width": 1390,
+        "height": 180
+      },
+      "independent_collapse": true,
+      "keyboard_resize": true,
+      "context_preserved": true
+    }
+  }
+}

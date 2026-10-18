@@ -5,7 +5,7 @@ The October 2026 interface redesign follows the user's light hospital-management
 ## Working through a forecast
 
 1. **Overview** shows the saved starting census as occupancy bars. Choose a duration, emergency-arrival level and arrival pattern beside the live arrivals chart. Open **More parameters** for optional precise edits. **Run simulation** saves the inputs and opens the completed forecast in Analysis.
-2. **Summary** shows occupancy and queue charts, a short finding, and the next useful action. Facility maps, exact bed status, and the precise calendar/time controls are optional sections.
+2. **Summary** shows the same four outcome cards as Analytics, the full forecast timeline, a waiting chart, a short finding and the next useful action. Exact calendar/time controls are available directly in the timeline. Bed status remains an optional section.
 3. **Replay** follows one explicitly selected recorded run. Play, pause, speed, event stepping, and time remain separate from the ensemble forecast. Patient, capacity, and event evidence are available in an inspection drawer; exact timing tools and the full census are optional.
 4. **Analytics** contains Outcomes and Patients & units. Charts are the starting point; full metric tables and exact records remain available when needed.
 5. **Comparison** evaluates response plans against matched inputs. The chart and paired waiting reduction guide selection. Save a chosen response as a proposed scenario; source scenarios and earlier results remain intact.

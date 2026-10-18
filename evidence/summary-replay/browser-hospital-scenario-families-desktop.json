@@ -1,0 +1,10 @@
+{
+  "scenario_id": "scenario_f4130b742f3a403bbce8",
+  "run_id": "run_20e9bb695b22459785a0",
+  "frozen_revision": "revision_8a116343385c48e5a458",
+  "all_collections_frozen": true,
+  "all_five_hospital_change_groups": true,
+  "extra_arrivals": 7,
+  "completed_inputs_immutable": true,
+  "page_errors": []
+}

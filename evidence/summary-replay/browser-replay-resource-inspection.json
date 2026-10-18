@@ -1,0 +1,14 @@
+{
+  "project": "mobile",
+  "scenario_id": "scenario_17c37fdfe2b04bcea389",
+  "run_id": "run_7a2c76c87f084d428b0e",
+  "at": "2026-10-16T06:00:00.000Z",
+  "unit_id": "UNIT-ICU",
+  "equipment_capabilities": [
+    "ICU_MONITOR",
+    "VENTILATOR"
+  ],
+  "off_site_transport_controls": false,
+  "hospital_units_only": true,
+  "actual_api_values_match": true
+}

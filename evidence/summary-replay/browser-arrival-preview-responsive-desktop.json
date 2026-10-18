@@ -1,0 +1,37 @@
+{
+  "scenario_id": "scenario_1d859eff914f4a7ea95b",
+  "measurements": [
+    {
+      "viewport": 320,
+      "label_pixels": 13,
+      "chart_width": 224,
+      "chart_left": 48,
+      "chart_right": 272,
+      "main_overflow": 0
+    },
+    {
+      "viewport": 390,
+      "label_pixels": 13,
+      "chart_width": 294,
+      "chart_left": 48,
+      "chart_right": 342,
+      "main_overflow": 0
+    },
+    {
+      "viewport": 1280,
+      "label_pixels": 13.007948369565216,
+      "chart_width": 629.390625,
+      "chart_left": 590.609375,
+      "chart_right": 1220,
+      "main_overflow": 0
+    },
+    {
+      "viewport": 1600,
+      "label_pixels": 12.998233695652175,
+      "chart_width": 850.9375,
+      "chart_left": 689.0625,
+      "chart_right": 1540,
+      "main_overflow": 0
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "tested_at": "2026-10-18T02:45:00.681Z",
+  "screens": [
+    {
+      "view": "overview",
+      "scenario": "scenario_93622b8c7e82401f811f",
+      "run": "run_d1f6c33abd8c40af9142",
+      "title": [
+        "Hospital overview"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "summary",
+      "scenario": "scenario_93622b8c7e82401f811f",
+      "run": "run_d1f6c33abd8c40af9142",
+      "title": [
+        "Results summary"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "replay",
+      "scenario": "scenario_93622b8c7e82401f811f",
+      "run": "run_d1f6c33abd8c40af9142",
+      "title": [
+        "Patient flow replay"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "analytics-outcomes",
+      "scenario": "scenario_93622b8c7e82401f811f",
+      "run": "run_d1f6c33abd8c40af9142",
+      "title": [
+        "Simulation outcomes"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "analytics-patients",
+      "scenario": "scenario_93622b8c7e82401f811f",
+      "run": "run_d1f6c33abd8c40af9142",
+      "title": [
+        "Patients & units"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "comparison",
+      "scenario": "scenario_93622b8c7e82401f811f",
+      "run": "run_d1f6c33abd8c40af9142",
+      "title": [
+        "Compare response plans"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "view": "data",
+      "scenario": "scenario_93622b8c7e82401f811f",
+      "run": "run_d1f6c33abd8c40af9142",
+      "title": [
+        "Data & setup"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ],
+  "page_errors": []
+}

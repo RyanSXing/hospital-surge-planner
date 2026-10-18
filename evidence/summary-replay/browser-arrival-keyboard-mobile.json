@@ -1,0 +1,9 @@
+{
+  "scenario_id": "scenario_62968e448fe84001bcac",
+  "sequential_negative_input": -20,
+  "sequential_positive_input": 20,
+  "incomplete_input_restores_last_valid_value": true,
+  "live_graph_matches_input": true,
+  "slider_and_undo_stay_in_sync": true,
+  "saved_multiplier": 1.2
+}

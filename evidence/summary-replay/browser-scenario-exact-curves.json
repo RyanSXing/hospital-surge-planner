@@ -1,0 +1,8 @@
+{
+  "scenario_id": "scenario_e7c3ff8554b84f2783ac",
+  "unrelated_save_preserves_custom_curve": true,
+  "custom_point_edit_preserves_other_points": true,
+  "multiple_intervals_unique": true,
+  "exact_time_edit_retains_hour": true,
+  "undo_restores_exact_time": true
+}

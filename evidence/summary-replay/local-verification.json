@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-10-18T02:45:08.670625+00:00",
+  "frontend": {
+    "unit_tests_passed": 142,
+    "test_files_passed": 23,
+    "production_build": "passed"
+  },
+  "backend_contracts": {
+    "backend_source_changed": false,
+    "command": ".venv/bin/pytest -q tests/test_review_api.py tests/test_patient_queries.py tests/test_replay_annotations.py",
+    "passed": 21,
+    "warnings": 1,
+    "seconds": 23.3,
+    "scope": "Existing API range, pagination, coincident-event ordering, exact state and patient-history contracts used by the new frontend replay. Full 605-case backend baseline remains attributed to the preceding single-hospital release."
+  },
+  "browser": {
+    "full_frozen_build": {
+      "startTime": "2026-10-18T02:24:31.662Z",
+      "duration": 1002160.898,
+      "expected": 93,
+      "skipped": 19,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "final_affected_flow_build": {
+      "startTime": "2026-10-18T02:42:32.415Z",
+      "duration": 148450.315,
+      "expected": 8,
+      "skipped": 2,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "distinct_cases": 112,
+    "distinct_passed": 93,
+    "intentional_device_skips": 19,
+    "unresolved_failures": 0,
+    "attribution": "The complete suite passed before one Summary-only CSS correction. The final production bundle reran every affected screen, timeline keyboard/calendar and comparison flow. Replay and all other application bytes are unchanged; the full suite was not repeated on the final CSS."
+  },
+  "final_source_tests_and_bundle_unchanged_since_followup": true,
+  "independent_review": "No remaining source correctness blockers after discharge-bay handoff review",
+  "scope": [
+    "shared Summary and Analytics outcome values including null/zero/percent",
+    "promoted visible forecast timeline with keyboard/calendar/time selection",
+    "recorded patient arrival, care stages, event-only visit and discharge-bay dwell",
+    "continuous replay with delayed state responses and exact pause/seek",
+    "real local simulation, comparison/save/reopen, update/reforecast and checksum-verified ZIP",
+    "desktop and touch mobile including narrow 320px Summary"
+  ],
+  "hosted_export_download": "excluded",
+  "historical_test_attribution": "Full 605-case backend baseline remains on prior single-hospital release; API and engine source are unchanged here."
+}

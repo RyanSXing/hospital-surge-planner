@@ -282,9 +282,9 @@ export async function exportResults(page: Page) {
 }
 
 export async function revealSummaryTimeline(page: Page) {
-  const details = page.locator(".summary-timeline-details");
-  if ((await details.getAttribute("open")) === null)
-    await details.locator(":scope > summary").click();
+  await expect(
+    page.locator(".summary-timeline-card .timeline-panel"),
+  ).toBeVisible();
 }
 
 export async function revealOutcomeMetrics(page: Page) {

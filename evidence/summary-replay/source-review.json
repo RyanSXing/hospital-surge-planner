@@ -1,0 +1,26 @@
+{
+  "reviewed_at": "2026-10-18T02:35:51.794257+00:00",
+  "scope": "Independent final source review, separate from browser execution",
+  "unresolved_source_blockers": 0,
+  "checked": [
+    "Shared p50 outcome formatting, zero/null handling and responsive timeline placement",
+    "Paginated (start,end] event windows and replication-specific caches",
+    "Recorded physical care stages, event-only patients and arrival visibility gates",
+    "Timestamped routes and selected-path visual-clock cutoff",
+    "Explicit-discharge-only bay routing, boundary carry, terminal activation and no expiry restart",
+    "Pause, reduced motion, backwards seek and replication reset cleanup"
+  ],
+  "fixes_from_browser_evidence": [
+    "Bay hold registration moved from optional final RAF to recorded discharge timing",
+    "Recorded boundary carry survives snapshot handoff and respects visual time",
+    "Draw-loop diagnostics include the patient held in the discharge bay"
+  ],
+  "coverage_note": "Persistent late-arrival gating has focused unit coverage; the real browser journey regression exercises an event-only queued ED patient and discharge-bay dwell on both devices.",
+  "reviewed_file_sha256": {
+    "apps/web/src/pages/Replay.tsx": "066584304cddfca3bb892f5b2bc1691fd0ac1d00b10aeb6d1cefb6418a1e99f3",
+    "apps/web/src/pages/replayJourney.ts": "647336637db312a861d463018bed7655f762f22533e533970a245c83017d26ec",
+    "apps/web/src/pages/replayMotion.ts": "7e85bb61e1b5f3cd2a32e8d82e86bc757961886cc1f4a4b368d8bf0b26b2b95b",
+    "apps/web/src/pages/Overview.tsx": "75dcaa593647565dc791e4aca4bda65d89ad32ef9d2a129aa8bb26b891adece4",
+    "apps/web/src/pages/OutcomeSummaryCards.tsx": "0f0b3102b9fcb6436dd242d39f51c5a7c59aff91fcf9f0fe7d39bd931d1cb764"
+  }
+}

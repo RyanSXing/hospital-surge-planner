@@ -1,0 +1,9 @@
+{
+  "measured_at": "2026-10-18T02:07:09.127668+00:00",
+  "scope": "Local API only; completed existing trace and full 16-hour paginated event window; not a hosted benchmark",
+  "event_count": 778,
+  "pages": 4,
+  "seconds": 0.05446491704788059,
+  "run_id": "run_b79b4c3899ae40918305",
+  "replication_id": "run_b79b4c3899ae40918305_rep_0000"
+}

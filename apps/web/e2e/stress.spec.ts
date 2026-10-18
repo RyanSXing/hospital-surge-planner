@@ -22,20 +22,29 @@ test("stress census exposes initial boarding and actual patient blockers", async
     ).id,
   );
   await open(page, context.scenario.id, "summary", run.id);
-  const waiting = page
-    .locator(".summary-metrics article")
-    .filter({ hasText: "Patients waiting for a bed" });
-  await expect(waiting).toContainText("14");
-  await expect(
-    page
-      .locator(".summary-metrics article")
-      .filter({ hasText: "Ward occupancy" }),
-  ).toContainText("80 / 80");
-  await expect(
-    page
-      .locator(".summary-metrics article")
-      .filter({ hasText: "ICU occupancy" }),
-  ).toContainText("12 / 12");
+  const metrics = await api(
+    page.request,
+    `/run-groups/${run.id}/metrics?grain=day`,
+  );
+  const format = (value: number) =>
+    new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value);
+  for (const [key, label, percent] of [
+    ["arrivals", "New arrivals", false],
+    ["discharges", "Completed discharges", false],
+    ["inpatient_waiting_patient_hours", "Placement waiting", false],
+    ["ward_utilization", "Ward utilization", true],
+  ] as const) {
+    const statistic = metrics.scalar_metrics[key];
+    const median = typeof statistic === "number" ? statistic : statistic.p50;
+    await expect(
+      page.locator(".summary-metrics article").filter({ hasText: label }),
+    ).toContainText(
+      `${format(median * (percent ? 100 : 1))}${percent ? "%" : ""}`,
+    );
+  }
+  await expect(page.locator(".summary-metrics")).not.toContainText(
+    "Ward occupancy",
+  );
   await capture(page, "stress-summary", info);
   await page
     .getByRole("navigation", { name: "Analysis navigation" })

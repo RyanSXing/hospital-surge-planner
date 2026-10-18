@@ -1,0 +1,10 @@
+{
+  "scenario_id": "scenario_512d25b0d31f4e978c21",
+  "physical_run_id": "run_a905830ee56248f8a8e9",
+  "staffed_run_id": "run_de53c7462b7846dab9b5",
+  "physical_beds": 32,
+  "without_added_nurses": 16,
+  "with_added_nurses": 32,
+  "source_inventory_unchanged": true,
+  "only_main_hospital": true
+}

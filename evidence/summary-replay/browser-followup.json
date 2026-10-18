@@ -1,0 +1,855 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "e2e/(screens|keyboard-alerts|hospital-comparison)\\.spec\\.ts$",
+      "--workers=1",
+      "--output",
+      "../../output/playwright/summary-replay/followup-results"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true,
+          "deviceScaleFactor": 1
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../output/playwright/summary-replay/browser-followup.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "hospital-comparison.spec.ts",
+      "file": "hospital-comparison.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "one hospital can run, compare internal bed responses, save a plan, and reopen it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33070,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:42:32.787Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-a780b1f106bc3ebd588ca772fba9c45f7ec3f896.png"
+                    },
+                    {
+                      "name": "hospital-comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-middle-dd7412e6136fc95ca0dd5bbce6f22c74e8622cf7.png"
+                    },
+                    {
+                      "name": "hospital-comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-lower-1a838f286ded9917761b416784a2c105a8fca56b.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-ec2a619312ee6be289a5",
+          "file": "hospital-comparison.spec.ts",
+          "line": 32,
+          "column": 1
+        },
+        {
+          "title": "reevaluating a selected response requires a selection from the new results before saving",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11834,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:43:06.677Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-25c8d693ecc285c9a466",
+          "file": "hospital-comparison.spec.ts",
+          "line": 314,
+          "column": 1
+        },
+        {
+          "title": "one hospital can run, compare internal bed responses, save a plan, and reopen it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21427,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:44:08.051Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-mobile/attachments/hospital-comparison-b34c9531c1a72f7e4a1020d06a98d56592736aed.png"
+                    },
+                    {
+                      "name": "hospital-comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-mobile/attachments/hospital-comparison-middle-d9afd09188d39c4639cebb27445e5a14bf16ce9d.png"
+                    },
+                    {
+                      "name": "hospital-comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-mobile/attachments/hospital-comparison-lower-e63ff8fd2667ebb7be7f0e07d048f377334333d4.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-fa9cd7dc02565aaf5c9e",
+          "file": "hospital-comparison.spec.ts",
+          "line": 32,
+          "column": 1
+        },
+        {
+          "title": "reevaluating a selected response requires a selection from the new results before saving",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10658,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:44:30.063Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-4bb47a61a13d3b1e818e",
+          "file": "hospital-comparison.spec.ts",
+          "line": 314,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "keyboard-alerts.spec.ts",
+      "file": "keyboard-alerts.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard entry, calendar drilldown, inspection, comparison and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25523,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:43:18.542Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "keyboard-export",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/keyboard-alerts-keyboard-e-b7427-ction-comparison-and-export-desktop/attachments/keyboard-export-25353e89b731c87c8e4404230c17fc9c8d51a157.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-6839bcfeb3b799c36268",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 21,
+          "column": 1
+        },
+        {
+          "title": "planning alert review preserves the completed result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6882,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:43:44.072Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "alert-review",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/keyboard-alerts-planning-a-e5a7d-serves-the-completed-result-desktop/attachments/alert-review-3110a8e4156baf9cff0224badc1e31e87b685db5.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-274861cf9c5a12652e1d",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 202,
+          "column": 1
+        },
+        {
+          "title": "keyboard entry, calendar drilldown, inspection, comparison and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Desktop keyboard workflow; mobile touch layout is covered by the screen matrix.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                    "line": 24,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 230,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:44:40.742Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Desktop keyboard workflow; mobile touch layout is covered by the screen matrix.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-8380bf854925636705c5",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 21,
+          "column": 1
+        },
+        {
+          "title": "planning alert review preserves the completed result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Alert mutation runs once.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                    "line": 205,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 160,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:44:40.981Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Alert mutation runs once.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/keyboard-alerts.spec.ts",
+                        "line": 205,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-6d6f9efb466b494d6d1c",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 202,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "screens.spec.ts",
+      "file": "screens.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "the two-page workspace and analysis sections render actual run context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16614,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:43:50.970Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-d508a200b57b200d624b5da9806dd924757a7168.png"
+                    },
+                    {
+                      "name": "overview-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-middle-ccfc2d7397158c00dd526e785eb2b9edcb3bc345.png"
+                    },
+                    {
+                      "name": "overview-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-lower-9f9137025bf9f81e1fd92ba148eb7447606381e9.png"
+                    },
+                    {
+                      "name": "summary",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/summary-5e8de5d6b33cc932b3085d5979e1e42d0b4faa82.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/replay-44922fb1b710fe31d0f12c9127d7e5212707fdb5.png"
+                    },
+                    {
+                      "name": "analytics-outcomes",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-outcomes-aa8ede9971f45bb9318e9ab8ac07765f787b4609.png"
+                    },
+                    {
+                      "name": "analytics-outcomes-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-outcomes-middle-09aa33c4244068f016909226035117060bc60cfd.png"
+                    },
+                    {
+                      "name": "analytics-outcomes-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-outcomes-lower-658c1b54136c3d71e8f81521dac618bd7dae56f1.png"
+                    },
+                    {
+                      "name": "analytics-patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-patients-ac27b421d6f784c6bff40b70b044172640fef4b3.png"
+                    },
+                    {
+                      "name": "comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/comparison-a2f583b639216494c2f008e9d9587975f2f5f253.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-5ee915e434e19be772c8ecdc0720199263d2a388.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-middle-c1326b56ddedce673ec3a72f03653917e27b1280.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-lower-5478453a8912a59ff10f5684a454762411d6e3b4.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-c48dd46c543d0d106029",
+          "file": "screens.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "the two-page workspace and analysis sections render actual run context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19538,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T02:44:41.169Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/overview-188687714e4b2c2f262b60f7d1522bceedc01bcf.png"
+                    },
+                    {
+                      "name": "overview-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/overview-middle-146b27b2e0376e57212b61a11d262aacdbf9ab64.png"
+                    },
+                    {
+                      "name": "overview-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/overview-lower-4934e62c33e53ef3ddde3dadd50f96af38b20290.png"
+                    },
+                    {
+                      "name": "summary-width-320",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-width-320-7bd4324591df90c220cb26222f5da78e9b078023.png"
+                    },
+                    {
+                      "name": "summary-width-320-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-width-320-middle-cf5f515a34921939213f0ddbb4a14b2574074d69.png"
+                    },
+                    {
+                      "name": "summary-width-320-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-width-320-lower-e81e52cfda93283a5f0cc69d1d1324a0795f8db3.png"
+                    },
+                    {
+                      "name": "summary-width-390",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-width-390-144b923a1cda2258af4c25f8ccc64fba2df0a61b.png"
+                    },
+                    {
+                      "name": "summary-width-390-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-width-390-middle-64b31f205ef861209c02d0e9bc6b965438165bdc.png"
+                    },
+                    {
+                      "name": "summary-width-390-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-width-390-lower-a0ad673a51bf2f0373f6018cdeccbbb5ab68fd1c.png"
+                    },
+                    {
+                      "name": "summary",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-89a7e65094d64867098fe1b39d927706361d1b2f.png"
+                    },
+                    {
+                      "name": "summary-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-middle-c79a692bb725d7f03634fb2eefc07785890c602e.png"
+                    },
+                    {
+                      "name": "summary-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/summary-lower-ceef3c1e7f5ad295cd513745b12d017b7194fe6a.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/replay-097d1273d8b491718c2e50567a6e4ec3a7416962.png"
+                    },
+                    {
+                      "name": "replay-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/replay-middle-f741acdcd0f19944ca9063783fc652d6027f0ed8.png"
+                    },
+                    {
+                      "name": "replay-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/replay-lower-5807802593ed94b10447a65678ef567973cbc9ba.png"
+                    },
+                    {
+                      "name": "analytics-outcomes",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-outcomes-6a905010599b318bf184a8cd459aa95c471838a7.png"
+                    },
+                    {
+                      "name": "analytics-outcomes-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-outcomes-middle-e49d6feea139b8c350e61d8050422a360c997296.png"
+                    },
+                    {
+                      "name": "analytics-outcomes-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-outcomes-lower-0a931ad0bc125bb3abaec249b064dabe7cc7a3cb.png"
+                    },
+                    {
+                      "name": "analytics-patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-patients-92c097da4308a2d311a0df3901f2898d26df94ea.png"
+                    },
+                    {
+                      "name": "analytics-patients-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-patients-middle-2af03aa271e1ad95b973eb2f37f966d4ac8bdccf.png"
+                    },
+                    {
+                      "name": "analytics-patients-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/analytics-patients-lower-69087d664eaf6f8f9bfcefc774186b6c6d509044.png"
+                    },
+                    {
+                      "name": "comparison-width-320",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-width-320-198cb9b88f36b0214cf819490c09ada2943a85a3.png"
+                    },
+                    {
+                      "name": "comparison-width-320-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-width-320-middle-60c45fd4ba831a56730defb7d071e3c5bd097364.png"
+                    },
+                    {
+                      "name": "comparison-width-320-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-width-320-lower-141d7298f7349e96fa407a4f54d9bf72a196e492.png"
+                    },
+                    {
+                      "name": "comparison-width-820",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-width-820-e8d319708ba7a112be8270aac77b9a777d57a6ef.png"
+                    },
+                    {
+                      "name": "comparison-width-820-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-width-820-middle-2adb5a3675d83477757fa0aa604a04dbb5902e80.png"
+                    },
+                    {
+                      "name": "comparison-width-820-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-width-820-lower-69b2bc27cebf2fa9c5e8192dd12e48bb9dc77b2e.png"
+                    },
+                    {
+                      "name": "comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-11277659aeac564eb43c47b2749d502948f11678.png"
+                    },
+                    {
+                      "name": "comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-middle-1c9563cb372c6f209832ef71e1db9d87663f70b2.png"
+                    },
+                    {
+                      "name": "comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/comparison-lower-70dd5fc13f154fcc03cc6c9bd203f30a02fc266a.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/data-669fe7cd7f93d41eb3b0c2966aa67750ec5dc144.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/data-middle-e929dfdf036347dfee815398f3428aa76b484935.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/summary-replay/followup-results/screens-the-two-page-works-c7e00-s-render-actual-run-context-mobile/attachments/data-lower-e2e0715c3d9a376e6a62574c52a9f0d5b237781c.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-418f7801755efcbbf962",
+          "file": "screens.spec.ts",
+          "line": 13,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T02:42:32.415Z",
+    "duration": 148450.315,
+    "expected": 8,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

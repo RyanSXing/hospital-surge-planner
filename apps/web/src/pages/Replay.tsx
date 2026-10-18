@@ -7,8 +7,18 @@ import {
   prepareReplayMotion,
   replayFramePoint,
   replayMotionProgress,
+  replayRouteIsVisible,
+  replayRoutePoint,
+  retainReplayRoute,
   type ReplayMotion,
+  type ReplayPoint,
 } from "./replayMotion";
+import {
+  fetchReplayJourneyEvents,
+  recordedDischarge,
+  recordedJourneySteps,
+  type ReplayJourneyZone,
+} from "./replayJourney";
 import { drawReplayBackdrop } from "./replayBackdrop";
 import { usePatientPage } from "./usePatientPage";
 import {
@@ -64,7 +74,7 @@ const zones = [
   { id: "icu", name: "ICU care", x: 655, y: 320, w: 150, h: 170 },
   {
     id: "exit",
-    name: "Discharge",
+    name: "Discharge bay",
     x: 845,
     y: 470,
     w: 120,
@@ -80,6 +90,11 @@ function hospitalZone(zone: string) {
       >
     )[zone] || zone
   );
+}
+function asJourneyZone(zone: string): ReplayJourneyZone {
+  return ["arrivals", "ed", "queue", "ward", "icu", "exit"].includes(zone)
+    ? (zone as ReplayJourneyZone)
+    : "queue";
 }
 function hospitalOnly<T extends Entity>(rows: T[]) {
   return rows.filter(
@@ -143,6 +158,228 @@ function position(
     zone: z,
   };
 }
+function patientAtZone(patient: Entity, zone: ReplayJourneyZone): Entity {
+  const state =
+    zone === "arrivals"
+      ? "ed_waiting"
+      : zone === "ed"
+        ? "ed_assessment"
+        : zone === "queue"
+          ? "direct_waiting"
+          : zone === "ward" || zone === "icu"
+            ? "inpatient"
+            : "discharged";
+  return {
+    ...patient,
+    state,
+    unit_id: undefined,
+    care_level:
+      zone === "icu" ? "icu" : zone === "ward" ? "ward" : patient.care_level,
+  };
+}
+function routePosition(
+  patient: Entity,
+  zone: ReplayJourneyZone,
+  height: number,
+  unitKinds: Record<string, string>,
+) {
+  return position(patientAtZone(patient, zone), height, unitKinds);
+}
+const journeyNeighbors: Record<ReplayJourneyZone, ReplayJourneyZone[]> = {
+  arrivals: ["ed"],
+  ed: ["arrivals", "queue"],
+  queue: ["ed", "ward", "icu"],
+  ward: ["queue", "exit"],
+  icu: ["queue", "exit"],
+  exit: ["ward", "icu"],
+};
+function routeZones(
+  from: ReplayJourneyZone,
+  to: ReplayJourneyZone,
+): ReplayJourneyZone[] {
+  if (from === to) return [from];
+  const pending: ReplayJourneyZone[][] = [[from]];
+  const visited = new Set<ReplayJourneyZone>([from]);
+  while (pending.length) {
+    const path = pending.shift()!;
+    const last = path.at(-1)!;
+    for (const next of journeyNeighbors[last]) {
+      if (visited.has(next)) continue;
+      const full = [...path, next];
+      if (next === to) return full;
+      visited.add(next);
+      pending.push(full);
+    }
+  }
+  return [from, to];
+}
+function corridorPoints(
+  from: ReplayJourneyZone,
+  to: ReplayJourneyZone,
+  height: number,
+) {
+  const scale = height / 620;
+  const point = (x: number, y: number) => ({ x, y: y * scale });
+  const route = routeZones(from, to);
+  const points: { x: number; y: number }[] = [];
+  for (let index = 0; index < route.length - 1; index++) {
+    const edge = `${route[index]}:${route[index + 1]}`;
+    const reverse = `${route[index + 1]}:${route[index]}`;
+    const segments: Record<string, { x: number; y: number }[]> = {
+      "arrivals:ed": [point(150, 265), point(180, 265)],
+      "ed:queue": [point(410, 265), point(430, 265)],
+      "queue:ward": [point(620, 265), point(640, 265), point(640, 160)],
+      "queue:icu": [point(620, 265), point(640, 265), point(640, 405)],
+      "ward:exit": [
+        point(640, 160),
+        point(640, 405),
+        point(830, 405),
+        point(830, 520),
+      ],
+      "icu:exit": [point(820, 405), point(830, 405), point(830, 520)],
+    };
+    const edgePoints =
+      segments[edge] || segments[reverse]?.slice().reverse() || [];
+    points.push(...edgePoints);
+  }
+  return points;
+}
+function transitionRoute(
+  patient: Entity,
+  from: ReplayJourneyZone,
+  stages: ReplayJourneyZone[],
+  finalZone: ReplayJourneyZone,
+  origin: { x: number; y: number },
+  target: { x: number; y: number },
+  height: number,
+  unitKinds: Record<string, string>,
+) {
+  const route = [origin];
+  let prior = from;
+  for (const stage of [...stages, finalZone]) {
+    if (prior !== stage) route.push(...corridorPoints(prior, stage, height));
+    const atStage =
+      stage === finalZone
+        ? target
+        : routePosition(patient, stage, height, unitKinds);
+    // A duplicated waypoint gives each recorded care area a short visible
+    // dwell instead of turning it into a one-frame corner in a long corridor.
+    route.push(
+      atStage,
+      atStage,
+      atStage,
+      atStage,
+      atStage,
+      atStage,
+      atStage,
+      atStage,
+    );
+    prior = stage;
+  }
+  return route;
+}
+type TimedJourneyRoute = {
+  points: ReplayPoint[];
+  keyframes: number[];
+  /** Event-only patients must not appear before their recorded arrival. */
+  visibleAt: number;
+};
+type TransientJourney = TimedJourneyRoute & { patient: Entity };
+type JourneyPresentation = {
+  routes: Map<string, ReplayPoint[]>;
+  routeKeyframes: Map<string, number[]>;
+  transientJourneys: TransientJourney[];
+  departureRoutes: Map<string, TimedJourneyRoute>;
+  dischargeCarries: {
+    id: string;
+    patient: Entity;
+    point: ReplayPoint;
+    at: number;
+  }[];
+};
+type ActiveJourneyWindow = {
+  rep: string;
+  at: number;
+  events: Entity[];
+  presentation?: JourneyPresentation;
+};
+function timedTransitionRoute(
+  patient: Entity,
+  from: ReplayJourneyZone,
+  steps: { zone: ReplayJourneyZone; at: number }[],
+  finalZone: ReplayJourneyZone,
+  origin: ReplayPoint,
+  target: ReplayPoint,
+  height: number,
+  unitKinds: Record<string, string>,
+  fromAt: number,
+  toAt: number,
+  visibleAt = 0,
+): TimedJourneyRoute {
+  const points: ReplayPoint[] = [origin];
+  const keyframes = [visibleAt];
+  const span = Math.max(1, toAt - fromAt);
+  let prior = from;
+  let current = origin;
+  let priorAt = visibleAt;
+  const put = (point: ReplayPoint, at: number) => {
+    const last = points.at(-1)!;
+    const lastAt = keyframes.at(-1)!;
+    if (last.x !== point.x || last.y !== point.y || lastAt !== at) {
+      points.push(point);
+      keyframes.push(at);
+    }
+  };
+  const move = (
+    stage: ReplayJourneyZone,
+    eventAt: number,
+    point: ReplayPoint,
+  ) => {
+    const eventProgress = Math.max(
+      priorAt,
+      Math.min(1, (eventAt - fromAt) / span),
+    );
+    if (stage === prior) {
+      put(point, eventProgress);
+      current = point;
+      priorAt = eventProgress;
+      return;
+    }
+    // Keep the dot in its recorded source until shortly before the trace
+    // records the destination. This makes the displayed clock truthful.
+    const travel = Math.min(
+      0.12,
+      Math.max(0.012, (eventProgress - priorAt) * 0.4),
+    );
+    const travelStart = Math.max(priorAt, eventProgress - travel);
+    put(current, travelStart);
+    const leg = [...corridorPoints(prior, stage, height), point];
+    for (const [index, waypoint] of leg.entries())
+      put(
+        waypoint,
+        travelStart +
+          ((eventProgress - travelStart) * (index + 1)) / leg.length,
+      );
+    prior = stage;
+    current = point;
+    priorAt = eventProgress;
+  };
+  for (const step of steps) {
+    if (!Number.isFinite(step.at)) continue;
+    move(
+      step.zone,
+      step.at,
+      routePosition(patient, step.zone, height, unitKinds),
+    );
+  }
+  // The exact state at the sample end remains authoritative. In the unusual
+  // event that the bounded event list has no matching final transition, delay
+  // this presentation-only catch-up until the endpoint rather than inventing
+  // an earlier clinical move.
+  move(finalZone, toAt, target);
+  put(target, 1);
+  return { points, keyframes, visibleAt };
+}
 const timestamp = (at: string) =>
   localDate(at, {
     month: "short",
@@ -190,6 +427,20 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   useEffect(() => setJumpTime(utcMinute(ctx.selectedTime)), [ctx.selectedTime]);
   const drawnPoints = useRef(new Map<string, { x: number; y: number }>());
   const drawnPatients = useRef<Entity[]>([]);
+  const journeyWindows = useRef(new Map<string, Entity[]>());
+  const activeJourneyWindow = useRef<ActiveJourneyWindow | null>(null);
+  const dischargeHolds = useRef<
+    Map<
+      string,
+      {
+        patient: Entity;
+        point: { x: number; y: number };
+        notBefore: number;
+        until: number | null;
+      }
+    >
+  >(new Map());
+  const dischargeHoldRegistrations = useRef(new Set<string>());
   const fadingPatients = useRef<{
     rep: string;
     at: number;
@@ -423,6 +674,13 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   useEffect(() => {
     setEventCursor(null);
     setPlaying(false);
+    journeyWindows.current.clear();
+    activeJourneyWindow.current = null;
+    dischargeHolds.current.clear();
+    dischargeHoldRegistrations.current.clear();
+    drawnPoints.current.clear();
+    drawnPatients.current = [];
+    motionState.current = null;
   }, [rep]);
   useEffect(() => {
     let ignore = false;
@@ -502,15 +760,35 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         if (at <= cursor || ready.has(at) || pending.has(at)) continue;
         pending.add(at);
         const instant = new Date(at).toISOString();
-        void queryClient
-          .fetchQuery({
+        const intervalStart = new Date(
+          cursor + (index - 1) * speed * 3600000,
+        ).toISOString();
+        const journeyKey = `${rep}|${intervalStart}|${instant}`;
+        void Promise.all([
+          queryClient.fetchQuery({
             queryKey: ["run-state", rep, instant],
             queryFn: () =>
               api(`/runs/${rep}/state?at=${encodeURIComponent(instant)}`),
             staleTime: Infinity,
-          })
-          .then(() => {
-            if (active) ready.add(at);
+          }),
+          queryClient.fetchQuery({
+            queryKey: ["replay-journey-events", rep, intervalStart, instant],
+            queryFn: () =>
+              fetchReplayJourneyEvents(api, rep, intervalStart, instant),
+            staleTime: Infinity,
+            gcTime: 5 * 60 * 1000,
+          }),
+        ])
+          .then(([, events]) => {
+            if (active) {
+              journeyWindows.current.set(journeyKey, events);
+              // Keep the in-memory window cache bounded during long replays.
+              while (journeyWindows.current.size > 12)
+                journeyWindows.current.delete(
+                  journeyWindows.current.keys().next().value!,
+                );
+              ready.add(at);
+            }
           })
           .catch((failure) => {
             if (active) {
@@ -591,6 +869,94 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       ]),
     );
     const recordedTime = Date.parse(ctx.state?.at || ctx.selectedTime);
+    const cachedJourney = activeJourneyWindow.current;
+    const sameSample =
+      previous &&
+      previous.rep === rep &&
+      previous.at === recordedTime &&
+      cachedJourney?.rep === rep &&
+      cachedJourney.at === recordedTime;
+    const advancingSample =
+      !!previous && previous.rep === rep && previous.at < recordedTime;
+    if (advancingSample) dischargeHoldRegistrations.current.clear();
+    // A scheduled state can advance before the final animation frame. Carry
+    // any explicit discharge that reached the prior sample boundary into this
+    // frame so its discharge-bay dwell is never skipped at a window handoff.
+    if (
+      playing &&
+      !reduced &&
+      previous &&
+      cachedJourney &&
+      previous.rep === rep &&
+      previous.at < recordedTime &&
+      cachedJourney.rep === rep &&
+      cachedJourney.at === previous.at
+    ) {
+      for (const carry of cachedJourney.presentation?.dischargeCarries || [])
+        dischargeHolds.current.set(carry.id, {
+          patient: carry.patient,
+          point: carry.point,
+          notBefore: carry.at,
+          until: null,
+        });
+      for (const carry of cachedJourney.presentation?.dischargeCarries || [])
+        dischargeHoldRegistrations.current.add(carry.id);
+    }
+    // At the natural end there is no following state change to trigger the
+    // carry path. The endpoint is now exact, so it is safe to begin the same
+    // short bay dwell for an explicit discharge stamped at that boundary.
+    if (
+      !playing &&
+      !reduced &&
+      recordedTime >= endMs &&
+      sameSample &&
+      cachedJourney?.presentation
+    )
+      for (const carry of cachedJourney.presentation.dischargeCarries) {
+        if (!dischargeHoldRegistrations.current.has(carry.id)) {
+          dischargeHoldRegistrations.current.add(carry.id);
+          dischargeHolds.current.set(carry.id, {
+            patient: carry.patient,
+            point: carry.point,
+            notBefore: carry.at,
+            until: null,
+          });
+        }
+      }
+    const journeyEvents = sameSample
+      ? cachedJourney.events
+      : previous && previous.at < recordedTime
+        ? journeyWindows.current.get(
+            `${rep}|${new Date(previous.at).toISOString()}|${new Date(recordedTime).toISOString()}`,
+          ) || []
+        : [];
+    if (previous && previous.rep === rep && previous.at < recordedTime)
+      activeJourneyWindow.current = {
+        rep,
+        at: recordedTime,
+        events: journeyEvents,
+      };
+    const previousPatients = new Map(
+      drawnPatients.current.map((patient) => [patientId(patient), patient]),
+    );
+    const journeyEventsByPatient = new Map<string, Entity[]>();
+    for (const event of journeyEvents) {
+      if (!event.patient_id) continue;
+      const rows = journeyEventsByPatient.get(event.patient_id) || [];
+      rows.push(event);
+      journeyEventsByPatient.set(event.patient_id, rows);
+    }
+    const journeyDischarges = new Map(
+      Array.from(journeyEventsByPatient, ([id, events]) => [
+        id,
+        recordedDischarge(events, id),
+      ]),
+    );
+    if (!previous || previous.rep !== rep || recordedTime < previous.at) {
+      dischargeHolds.current.clear();
+      dischargeHoldRegistrations.current.clear();
+      activeJourneyWindow.current = null;
+    }
     node.dataset.recordedAt = new Date(recordedTime).toISOString();
     const originPoints = new Map(
       drawnPoints.current.size ? drawnPoints.current : previous?.points || [],
@@ -617,6 +983,119 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           ),
         );
     }
+    const animationFromAt = Number.isFinite(
+      Date.parse(node.dataset.visualAt || ""),
+    )
+      ? Date.parse(node.dataset.visualAt!)
+      : previous?.at || recordedTime;
+    const routes = new Map<string, ReplayPoint[]>();
+    const routeKeyframes = new Map<string, number[]>();
+    for (const patient of visiblePatients) {
+      const id = patientId(patient);
+      const origin = originPoints.get(id);
+      const target = targetPoints.get(id)!;
+      if (!origin || !previous || previous.at >= recordedTime) continue;
+      const steps = recordedJourneySteps(
+        journeyEventsByPatient.get(id) || [],
+        id,
+        unitKinds,
+      ).filter((step) => step.zone !== "exit");
+      const arrivedInWindow =
+        !previousPatients.has(id) &&
+        Date.parse(patient.arrival_at) > previous.at &&
+        Date.parse(patient.arrival_at) <= recordedTime;
+      const initialZone =
+        steps[0]?.zone ||
+        (patient.entry_type === "direct_ward" ? "queue" : "arrivals");
+      const prior = previousPatients.get(id) || patient;
+      const from = arrivedInWindow
+        ? initialZone
+        : asJourneyZone(hospitalZone(zoneFor(prior, unitKinds)));
+      const final = asJourneyZone(hospitalZone(zoneFor(patient, unitKinds)));
+      const arrivalEvent = (journeyEventsByPatient.get(id) || []).find(
+        (event) => event.event_type === "arrival",
+      );
+      const visibleAt = arrivedInWindow
+        ? Math.max(
+            0,
+            Math.min(
+              1,
+              (Date.parse(arrivalEvent?.occurred_at || patient.arrival_at) -
+                animationFromAt) /
+                Math.max(1, recordedTime - animationFromAt),
+            ),
+          )
+        : 0;
+      const route = timedTransitionRoute(
+        patient,
+        from,
+        steps,
+        final,
+        origin,
+        target,
+        H,
+        unitKinds,
+        animationFromAt,
+        recordedTime,
+        visibleAt,
+      );
+      if (retainReplayRoute(route.points.length, visibleAt)) {
+        routes.set(id, route.points);
+        routeKeyframes.set(id, route.keyframes);
+      }
+    }
+    const visibleIds = new Set(
+      visiblePatients.map((patient) => patientId(patient)),
+    );
+    let transientJourneys: TransientJourney[] = Array.from(
+      journeyEventsByPatient,
+    )
+      .filter(([id, events]) => {
+        const names = new Set(events.map((event) => event.event_type));
+        return (
+          !visibleIds.has(id) &&
+          !previousPatients.has(id) &&
+          names.has("arrival") &&
+          names.has("discharge")
+        );
+      })
+      .map(([id, events]) => {
+        const arrival = events.find((event) => event.event_type === "arrival")!;
+        const patient = {
+          patient_id: id,
+          entry_type: arrival.payload?.entry_type || "ed",
+          care_level: "ambulatory",
+          state: "ed_waiting",
+        };
+        const steps = recordedJourneySteps(events, id, unitKinds);
+        const first = steps[0]?.zone || "arrivals";
+        const origin = routePosition(patient, first, H, unitKinds);
+        const target = routePosition(patient, "exit", H, unitKinds);
+        const arrivalAt = Math.max(
+          0,
+          Math.min(
+            1,
+            (Date.parse(arrival.occurred_at) - animationFromAt) /
+              Math.max(1, recordedTime - animationFromAt),
+          ),
+        );
+        return {
+          patient,
+          ...timedTransitionRoute(
+            patient,
+            first,
+            steps,
+            "exit",
+            origin,
+            target,
+            H,
+            unitKinds,
+            animationFromAt,
+            recordedTime,
+            arrivalAt,
+          ),
+        };
+      });
     if (!playing || reduced || !previous || previous.rep !== rep)
       fadingPatients.current = null;
     else if (previous.at !== recordedTime) {
@@ -638,6 +1117,81 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     }
     const departing = fadingPatients.current?.patients || [];
     const departingOrigins = fadingPatients.current?.origins || new Map();
+    const recordedDepartures = departing.filter((patient) =>
+      journeyDischarges.get(patientId(patient)),
+    );
+    let departureRoutes = new Map<string, TimedJourneyRoute>();
+    for (const patient of recordedDepartures) {
+      const id = patientId(patient);
+      const origin =
+        departingOrigins.get(id) || position(patient, H, unitKinds);
+      departureRoutes.set(
+        id,
+        timedTransitionRoute(
+          patient,
+          asJourneyZone(hospitalZone(zoneFor(patient, unitKinds))),
+          recordedJourneySteps(
+            journeyEventsByPatient.get(id) || [],
+            id,
+            unitKinds,
+          ),
+          "exit",
+          origin,
+          routePosition(patient, "exit", H, unitKinds),
+          H,
+          unitKinds,
+          animationFromAt,
+          recordedTime,
+        ),
+      );
+    }
+    const dischargeCarries = [
+      ...recordedDepartures.flatMap((patient) => {
+        const id = patientId(patient);
+        const route = departureRoutes.get(id);
+        return route
+          ? [
+              {
+                id,
+                patient,
+                point: route.points.at(-1)!,
+                at: Date.parse(journeyDischarges.get(id)!.occurred_at),
+              },
+            ]
+          : [];
+      }),
+      ...transientJourneys.map((journey) => ({
+        id: patientId(journey.patient),
+        patient: journey.patient,
+        point: journey.points.at(-1)!,
+        at: Date.parse(
+          journeyDischarges.get(patientId(journey.patient))!.occurred_at,
+        ),
+      })),
+    ];
+    const freshPresentation: JourneyPresentation = {
+      routes,
+      routeKeyframes,
+      transientJourneys,
+      departureRoutes,
+      dischargeCarries,
+    };
+    // Selection and drawer changes rerender the same sample while the canvas
+    // is moving. Keep the original timed plan; rebuilding it from a later
+    // visual clock would shift recorded transitions under the viewer.
+    const presentation =
+      sameSample && cachedJourney?.presentation
+        ? cachedJourney.presentation
+        : freshPresentation;
+    if (previous && previous.rep === rep && previous.at < recordedTime)
+      activeJourneyWindow.current = {
+        rep,
+        at: recordedTime,
+        events: journeyEvents,
+        presentation,
+      };
+    transientJourneys = presentation.transientJourneys;
+    departureRoutes = presentation.departureRoutes;
     drawnPatients.current = visiblePatients;
     const movedMarkers = visiblePatients.filter((patient) => {
       const prior = originPoints.get(patientId(patient));
@@ -651,21 +1205,47 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       height: H,
       points: targetPoints,
       origins: originPoints,
+      routes: presentation.routes,
+      routeKeyframes: presentation.routeKeyframes,
       playing,
       reduced,
       now: performance.now(),
-      originAt: Number.isFinite(Date.parse(node.dataset.visualAt || ""))
-        ? Date.parse(node.dataset.visualAt!)
-        : undefined,
+      originAt: animationFromAt,
     });
     const moving = motion.duration > 0;
+    const presentationActive = playing && !reduced && moving;
+    const finishingDischargeHold =
+      !playing &&
+      !reduced &&
+      recordedTime >= endMs &&
+      dischargeHolds.current.size > 0;
     node.dataset.previousMarkers = String(previous?.points.size || 0);
     node.dataset.movedMarkers = String(movedMarkers);
     node.dataset.visibleMarkers = String(visiblePatients.length);
+    node.dataset.journeyEvents = String(journeyEvents.length);
+    node.dataset.journeyRoutes = String(presentation.routes.size);
+    node.dataset.dischargeJourneys = String(
+      recordedDepartures.length + transientJourneys.length,
+    );
+    node.dataset.transientJourneys = String(transientJourneys.length);
+    node.dataset.transientPatientIds = transientJourneys
+      .map((journey) => patientId(journey.patient))
+      .join(",");
+    if (!transientJourneys.length) {
+      node.dataset.journeyFrame = "[]";
+      node.dataset.journeyFrameAt = "0";
+    }
+    node.dataset.snapshotOmissions = String(
+      departing.length - recordedDepartures.length,
+    );
     motionState.current = motion;
     function draw(progress: number) {
       if (!g || !node) return;
-      node.dataset.animating = String(playing && !reduced && moving);
+      if (!presentationActive && !finishingDischargeHold)
+        dischargeHolds.current.clear();
+      if (!presentationActive && !finishingDischargeHold)
+        dischargeHoldRegistrations.current.clear();
+      node.dataset.animating = String(presentationActive);
       node.dataset.paintCount = String(
         Number(node.dataset.paintCount || 0) + 1,
       );
@@ -688,6 +1268,8 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       const yScale = H / 620;
       g.moveTo(145, 265 * yScale);
       g.lineTo(650, 265 * yScale);
+      g.lineTo(650, 160 * yScale);
+      g.moveTo(650, 265 * yScale);
       g.lineTo(650, 405 * yScale);
       g.lineTo(840, 405 * yScale);
       g.lineTo(840, 520 * yScale);
@@ -698,6 +1280,24 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       g.setLineDash([5, 8]);
       g.stroke();
       g.setLineDash([]);
+      g.fillStyle = "#8aa2b1";
+      for (const [x, y, angle] of [
+        [168, 265 * yScale, 0],
+        [425, 265 * yScale, 0],
+        [640, 335 * yScale, Math.PI / 2],
+        [832, 462 * yScale, Math.PI / 2],
+      ]) {
+        g.save();
+        g.translate(x, y);
+        g.rotate(angle);
+        g.beginPath();
+        g.moveTo(5, 0);
+        g.lineTo(-4, -4);
+        g.lineTo(-4, 4);
+        g.closePath();
+        g.fill();
+        g.restore();
+      }
       for (const original of zones) {
         const z = layoutZone(original, H);
         g.fillStyle =
@@ -723,7 +1323,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         const n = zoneTotals[z.id] || 0;
         if (z.id !== "exit" || z.h > 60)
           g.fillText(
-            z.id === "exit" ? "Patients leave care" : `${n} patients`,
+            z.id === "exit"
+              ? "Recorded discharges pause here"
+              : `${n} patients`,
             z.x + 12,
             z.y + 44,
           );
@@ -739,11 +1341,31 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         }
       }
       if (recordedPath.length) {
-        const path = recordedPath
-          .filter((value: { at: number }) => value.at <= recordedTime)
-          .map((value: { patient: Entity }) =>
-            position(value.patient, H, unitKinds),
+        const intervals = recordedPath.filter(
+          (value: { at: number }) => value.at <= visualTime,
+        ) as { at: number; patient: Entity }[];
+        const path: { x: number; y: number }[] = [];
+        for (const [index, interval] of intervals.entries()) {
+          const target = position(interval.patient, H, unitKinds);
+          if (!index) {
+            path.push(target);
+            continue;
+          }
+          const prior = intervals[index - 1].patient;
+          const origin = path.at(-1)!;
+          path.push(
+            ...transitionRoute(
+              interval.patient,
+              asJourneyZone(hospitalZone(zoneFor(prior, unitKinds))),
+              [],
+              asJourneyZone(hospitalZone(zoneFor(interval.patient, unitKinds))),
+              origin,
+              target,
+              H,
+              unitKinds,
+            ).slice(1),
           );
+        }
         g.beginPath();
         for (let i = 0; i < path.length; i++) {
           if (i === 0) g.moveTo(path[i].x, path[i].y);
@@ -756,15 +1378,55 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         g.setLineDash([]);
       }
       const framePoints = new Map<string, { x: number; y: number }>();
+      const journeyFrame = new Map<
+        string,
+        { id: string; x: number; y: number }
+      >();
+      const dischargeProgress = (discharge: Entity) =>
+        Math.max(
+          0,
+          Math.min(
+            1,
+            (Date.parse(discharge.occurred_at) - motion.fromAt) /
+              Math.max(1, recordedTime - motion.fromAt),
+          ),
+        );
+      const registerDischargeHold = (
+        id: string,
+        patient: Entity,
+        point: ReplayPoint,
+        at: number,
+      ) => {
+        if (!dischargeHoldRegistrations.current.has(id)) {
+          dischargeHoldRegistrations.current.add(id);
+          dischargeHolds.current.set(id, {
+            patient,
+            point,
+            notBefore: at,
+            until: performance.now() + 550,
+          });
+        }
+      };
       for (const p of visiblePatients) {
         const target = targetPoints.get(patientId(p))!;
         const prior = motion.origins.get(patientId(p));
+        const route = motion.routes.get(patientId(p));
+        const keyframes = motion.routeKeyframes.get(patientId(p));
+        if (moving && route && !replayRouteIsVisible(keyframes, progress))
+          continue;
         const pos =
-          moving && prior ? replayFramePoint(prior, target, progress) : target;
+          moving && route?.length
+            ? replayRoutePoint(route, progress, keyframes)
+            : moving && prior
+              ? replayFramePoint(prior, target, progress)
+              : target;
         framePoints.set(patientId(p), pos);
         const chosen = patientId(ctx.selectedPatient || {}) === patientId(p);
+        const visibleAt = keyframes?.[0] || 0;
         g.globalAlpha =
-          moving && motion.entering.has(patientId(p)) ? progress : 1;
+          moving && motion.entering.has(patientId(p))
+            ? Math.min(1, Math.max(0, (progress - visibleAt) * 4))
+            : 1;
         g.beginPath();
         g.arc(pos.x, pos.y, chosen ? 5.5 : 3, 0, Math.PI * 2);
         g.fillStyle = p.admission_pending
@@ -782,16 +1444,96 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         }
       }
       g.globalAlpha = 1;
-      for (const patient of departing) {
+      for (const patient of presentationActive ? departing : []) {
         const origin = departingOrigins.get(patientId(patient))!;
-        // A bounded snapshot can omit a still-active patient. Fade a marker at
-        // its last known position rather than inventing a discharge journey.
-        const point = origin;
-        g.globalAlpha = 1 - progress;
+        const id = patientId(patient);
+        const discharge = journeyDischarges.get(id);
+        // A bounded snapshot can omit an active patient. Only an explicit,
+        // recorded discharge sends a dot to the discharge bay.
+        const dischargeRoute = departureRoutes.get(id);
+        const point = dischargeRoute
+          ? replayRoutePoint(
+              dischargeRoute.points,
+              progress,
+              dischargeRoute.keyframes,
+            )
+          : origin;
+        if (
+          discharge &&
+          dischargeRoute &&
+          progress >= dischargeProgress(discharge)
+        )
+          registerDischargeHold(
+            id,
+            patient,
+            dischargeRoute.points.at(-1)!,
+            Date.parse(discharge.occurred_at),
+          );
+        if (discharge)
+          journeyFrame.set(id, {
+            id,
+            x: Math.round(point.x),
+            y: Math.round(point.y),
+          });
+        g.globalAlpha = discharge ? 1 : 1 - progress;
         g.beginPath();
         g.arc(point.x, point.y, 3, 0, Math.PI * 2);
-        g.fillStyle = "#0b8ca5";
+        g.fillStyle = discharge ? "#4d7c5c" : "#0b8ca5";
         g.fill();
+      }
+      for (const journey of presentationActive ? transientJourneys : []) {
+        const id = patientId(journey.patient);
+        if (!replayRouteIsVisible(journey.keyframes, progress)) continue;
+        const point = replayRoutePoint(
+          journey.points,
+          progress,
+          journey.keyframes,
+        );
+        journeyFrame.set(id, {
+          id,
+          x: Math.round(point.x),
+          y: Math.round(point.y),
+        });
+        const discharge = journeyDischarges.get(id);
+        if (discharge && progress >= dischargeProgress(discharge))
+          registerDischargeHold(
+            id,
+            journey.patient,
+            journey.points.at(-1)!,
+            Date.parse(discharge.occurred_at),
+          );
+        g.globalAlpha = Math.min(1, progress * 4);
+        g.beginPath();
+        g.arc(point.x, point.y, 3, 0, Math.PI * 2);
+        g.fillStyle = "#4d7c5c";
+        g.fill();
+      }
+      const now = performance.now();
+      for (const [id, hold] of presentationActive || finishingDischargeHold
+        ? dischargeHolds.current
+        : []) {
+        if (visualTime < hold.notBefore) continue;
+        if (hold.until === null) hold.until = now + 550;
+        if (hold.until <= now) {
+          dischargeHolds.current.delete(id);
+          continue;
+        }
+        journeyFrame.set(id, {
+          id,
+          x: Math.round(hold.point.x),
+          y: Math.round(hold.point.y),
+        });
+        g.globalAlpha = Math.min(1, (hold.until - now) / 180);
+        g.beginPath();
+        g.arc(hold.point.x, hold.point.y, 3, 0, Math.PI * 2);
+        g.fillStyle = "#4d7c5c";
+        g.fill();
+      }
+      if (now - Number(node.dataset.journeyFrameAt || 0) >= 75) {
+        node.dataset.journeyFrameAt = String(now);
+        node.dataset.journeyFrame = JSON.stringify(
+          Array.from(journeyFrame.values()),
+        );
       }
       g.globalAlpha = 1;
       drawnPoints.current = framePoints;
@@ -823,6 +1565,13 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       };
       draw(replayMotionProgress(motion, performance.now()));
       frame = requestAnimationFrame(paint);
+    } else if (finishingDischargeHold) {
+      const paintHold = () => {
+        draw(1);
+        if (dischargeHolds.current.size)
+          frame = requestAnimationFrame(paintHold);
+      };
+      paintHold();
     } else draw(1);
     return () => {
       cancelAnimationFrame(frame);
@@ -845,6 +1594,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     zoneInventory,
     unitKinds,
     startMs,
+    endMs,
   ]);
   async function chooseReplication(id: string) {
     setPlaying(false);

@@ -23,6 +23,10 @@ import {
   scaleOutcomeStatistics,
 } from "./outcomeProjection";
 import { finiteStatistic } from "./resultsMetrics";
+import {
+  formatOutcomeStatistic,
+  OutcomeSummaryCards,
+} from "./OutcomeSummaryCards";
 import "./outcomeAnalytics.css";
 
 type MetricField = {
@@ -198,12 +202,6 @@ const plots = {
 };
 type Plot = keyof typeof plots;
 
-function display(value: unknown, stat: "p10" | "p50" | "p90", percent = false) {
-  const result = finiteStatistic(value, stat);
-  return result === null
-    ? "—"
-    : `${fmt(result * (percent ? 100 : 1), 1)}${percent ? "%" : ""}`;
-}
 export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
   const [plot, setPlot] = useState<Plot>("demand");
   const [band, setBand] = useState(true);
@@ -378,35 +376,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
             </div>
           </div>
 
-          <section className="outcome-highlights" aria-label="Key outcomes">
-            {[
-              { key: "arrivals", label: "New arrivals", unit: "patients" },
-              {
-                key: "discharges",
-                label: "Completed discharges",
-                unit: "patients",
-              },
-              {
-                key: "inpatient_waiting_patient_hours",
-                label: "Placement waiting",
-                unit: "patient-hours",
-              },
-              {
-                key: "ward_utilization",
-                label: "Ward utilization",
-                unit: "of staffed capacity",
-                percent: true,
-              },
-            ].map((field) => (
-              <article key={field.key}>
-                <span>{field.label}</span>
-                <strong>
-                  {display(scalar[field.key], "p50", field.percent)}
-                </strong>
-                <small>{field.unit} · median</small>
-              </article>
-            ))}
-          </section>
+          <OutcomeSummaryCards scalar={scalar} className="outcome-highlights" />
 
           <section className={`outcome-insight ${insight.tone}`}>
             <span className="outcome-insight-icon">
@@ -637,7 +607,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                             <td>{field.unit}</td>
                             {(["p10", "p50", "p90"] as const).map((stat) => (
                               <td key={stat}>
-                                {display(
+                                {formatOutcomeStatistic(
                                   scalar[field.key],
                                   stat,
                                   "percent" in field && field.percent === true,
@@ -653,8 +623,9 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                     <p className="outcome-note">
                       Expected arrivals over the full simulation horizon (
                       {dateText(metrics.start_at)} — {dateText(end || "")}) are{" "}
-                      {display(scalar.expected_arrivals, "p50")} patients,
-                      median. This includes time before the update cutoff.
+                      {formatOutcomeStatistic(scalar.expected_arrivals, "p50")}{" "}
+                      patients, median. This includes time before the update
+                      cutoff.
                     </p>
                   ) : null}
                   <p className="outcome-note">

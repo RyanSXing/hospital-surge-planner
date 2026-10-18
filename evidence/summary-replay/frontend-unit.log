@@ -1,0 +1,12 @@
+
+> hospital-surge-planner-web@1.0.0 test
+> vitest run
+
+
+ RUN  v4.1.12 /Users/rsxing/Downloads/Agies/apps/web
+
+
+ Test Files  23 passed (23)
+      Tests  142 passed (142)
+   Start at  21:42:16
+   Duration  1.06s (transform 1.36s, setup 0ms, import 2.13s, tests 575ms, environment 2ms)

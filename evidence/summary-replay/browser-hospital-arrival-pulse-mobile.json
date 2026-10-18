@@ -1,0 +1,23 @@
+{
+  "scenario_id": "scenario_224bd1659d044511afed",
+  "run_id": "run_8343c252f54c484aa29b",
+  "saved_batch": {
+    "kind": "arrival_batch",
+    "entry_stream_id": "ED_MAIN",
+    "count": 20,
+    "at": "2026-10-17T17:00:00.000Z",
+    "spread_minutes": 60,
+    "care_mix": {
+      "discharge": 0.8,
+      "ward": 0.16,
+      "icu": 0.04
+    },
+    "id": "262b0708-2d93-4ad7-880c-9a741cdaa99f",
+    "name": "Short arrival pulse",
+    "source": "user_assumption"
+  },
+  "frozen_conditions_equal": true,
+  "exact_batch_arrivals": 20,
+  "undo_redo_verified": true,
+  "unrelated_incident_preserved": true
+}

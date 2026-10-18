@@ -1,0 +1,15 @@
+{
+  "scenario_id": "scenario_0175485c580a4767892a",
+  "original_run_id": "run_0ef28b1a8ec6479297ef",
+  "original_input_sha256": "0cf3611f5d611162ac9f3f83ed99dad74cddc6b9e570d9275421b9863f06f3af",
+  "care_mix": {
+    "discharge": 0.6,
+    "ward": 0.3,
+    "icu": 0.1
+  },
+  "exact_window_days": [
+    5,
+    9
+  ],
+  "saved_revision": 2
+}

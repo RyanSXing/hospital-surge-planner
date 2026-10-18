@@ -89,6 +89,22 @@ test("one hospital can run, compare internal bed responses, save a plan, and reo
   await expect(page.locator(".summary-chart-grid svg[role=img]")).toHaveCount(
     2,
   );
+  const summaryCards = page.locator(".summary-metrics article");
+  await expect(summaryCards).toHaveCount(4);
+  await expect(summaryCards).toContainText([
+    "New arrivals",
+    "Completed discharges",
+    "Placement waiting",
+    "Ward utilization",
+  ]);
+  const format = (value: number) =>
+    new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value);
+  const wardUtilization = originalMetrics.scalar_metrics.ward_utilization;
+  const wardMedian =
+    typeof wardUtilization === "number" ? wardUtilization : wardUtilization.p50;
+  await expect(
+    summaryCards.filter({ hasText: "Ward utilization" }),
+  ).toContainText(`${format(wardMedian * 100)}%`);
   await expect(page.locator(".summary-dashboard")).not.toContainText(
     "FAC-MAIN",
   );

@@ -1,0 +1,13 @@
+{
+  "application_changes_after_full_suite": [
+    "apps/web/src/pages/summaryDashboard.css"
+  ],
+  "test_changes_after_full_suite": [
+    "apps/web/e2e/screens.spec.ts"
+  ],
+  "reason": "Final mobile screenshot review found the hour selector truncating its timezone. Only Summary-scoped CSS changed: remove inherited wrapper padding, size the selector, and place the date above controls at320px. Screens test now captures Summary at320px and390px.",
+  "final_affected_flow": "screens, keyboard-alerts, hospital-comparison on desktop and mobile",
+  "replay_source_unchanged_since_full_suite": true,
+  "all_other_application_source_and_configuration_unchanged_since_full_suite": true,
+  "full_suite_repeated_on_final_css": false
+}

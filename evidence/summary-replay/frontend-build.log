@@ -1,0 +1,42 @@
+
+> hospital-surge-planner-web@1.0.0 build
+> tsc -b && vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 2978 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                0.67 kB │ gzip:   0.39 kB
+dist/assets/Analytics-Do3VcGuu.css             1.20 kB │ gzip:   0.51 kB
+dist/assets/PlanningPanels-dTYZPhGN.css        4.24 kB │ gzip:   0.98 kB
+dist/assets/OutcomeAnalytics-BhIFyNBf.css      5.38 kB │ gzip:   1.37 kB
+dist/assets/PlanningOverview-DjCs7qs1.css      6.75 kB │ gzip:   1.58 kB
+dist/assets/Overview-zB5lpTlO.css              7.00 kB │ gzip:   1.67 kB
+dist/assets/Patients-BN3GHb61.css              7.97 kB │ gzip:   1.88 kB
+dist/assets/Compare-BUV9UFzh.css              11.41 kB │ gzip:   2.22 kB
+dist/assets/Replay-DUjTZS8c.css               15.06 kB │ gzip:   3.36 kB
+dist/assets/Scenarios-D-_C62a6.css            18.41 kB │ gzip:   4.14 kB
+dist/assets/index-COsXxafU.css               323.05 kB │ gzip:  51.51 kB
+dist/assets/get-safe-id-Bp3H8K0-.js            0.12 kB │ gzip:   0.13 kB
+dist/assets/chevron-left-BimVtjl-.js           0.13 kB │ gzip:   0.14 kB
+dist/assets/clock-3-DbKiQEXH.js                0.18 kB │ gzip:   0.17 kB
+dist/assets/OutcomeSummaryCards-BUr1WfE-.js    0.84 kB │ gzip:   0.50 kB
+dist/assets/usePatientPage-BEcVxCCQ.js         1.16 kB │ gzip:   0.69 kB
+dist/assets/resultsMetrics-CqPKVmOW.js         1.96 kB │ gzip:   0.85 kB
+dist/assets/Analytics-BoxIMbnT.js              2.14 kB │ gzip:   1.00 kB
+dist/assets/model-DP_Jge8b.js                  3.20 kB │ gzip:   1.40 kB
+dist/assets/PlanningPanels-eVwmYE1B.js         3.22 kB │ gzip:   1.23 kB
+dist/assets/Tabs-DDwHSuvF.js                   4.28 kB │ gzip:   1.76 kB
+dist/assets/PlanningOverview-ykHIwnpx.js       5.35 kB │ gzip:   1.93 kB
+dist/assets/Accordion-CCCt11XK.js              6.48 kB │ gzip:   2.60 kB
+dist/assets/Overview-CNDScLUT.js               6.94 kB │ gzip:   2.70 kB
+dist/assets/OutcomeAnalytics-mik0H5dt.js      16.04 kB │ gzip:   5.45 kB
+dist/assets/DataSetup-CBMbKqtM.js             29.38 kB │ gzip:  10.21 kB
+dist/assets/Compare-C9j2zzae.js               30.33 kB │ gzip:   9.76 kB
+dist/assets/Patients-DHdgZie6.js              31.00 kB │ gzip:   8.91 kB
+dist/assets/Replay-ug--pMQt.js                61.70 kB │ gzip:  20.66 kB
+dist/assets/Charts-rlZCLgP9.js                71.28 kB │ gzip:  24.32 kB
+dist/assets/Scenarios-CU4JU1dF.js             78.96 kB │ gzip:  25.52 kB
+dist/assets/index-Crip169q.js                556.21 kB │ gzip: 172.78 kB
+✓ built in 2.56s

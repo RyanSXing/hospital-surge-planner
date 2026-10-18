@@ -59,7 +59,9 @@ test("keyboard entry, calendar drilldown, inspection, comparison and export", as
     page.getByRole("heading", { name: "Results summary" }),
   ).toBeVisible();
   await expect(page.locator(".state-loading-overlay")).toHaveCount(0);
-  await activate(page, page.locator(".summary-timeline-details > summary"));
+  await expect(
+    page.locator(".summary-timeline-card .timeline-panel"),
+  ).toBeVisible();
   const grid = page.getByRole("grid", {
     name: "Daily forecast; arrow keys navigate",
   });

@@ -5,20 +5,14 @@ import {
   ArrowUpRight,
   BedDouble,
   Building2,
-  CalendarRange,
   Clock3,
   Info,
   ShieldCheck,
 } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
-import {
-  Badge,
-  BedGrid,
-  BedLegend,
-  Button,
-  CapacityBar,
-} from "../components/ui";
+import { BedGrid, BedLegend, Button, CapacityBar } from "../components/ui";
 import { ForecastChart, Timeline } from "../components/Charts";
+import { OutcomeSummaryCards } from "./OutcomeSummaryCards";
 import { fmt, localDate } from "../api";
 import {
   nameOf,
@@ -57,14 +51,13 @@ export default function Overview({
   const ed = statsFor(ctx, "ed");
   const queue = queueStats(ctx);
   const selectedStateUnavailable = stateUnavailable(ctx);
-  const metric = ctx.metrics?.scalar_metrics || {};
   const rows: Entity[] = ctx.metrics?.series || ctx.metrics?.daily || [];
   const rowIndex = selectedRow(rows, ctx.selectedTime);
+  const metric = ctx.metrics?.scalar_metrics || {};
   const firstShortage = metric.time_to_first_shortage_hours;
   const peakQueue = metric.peak_inpatient_queue;
   const predictedShortage = finiteStatistic(firstShortage);
   const noRecordedQueue = finiteStatistic(peakQueue, "max") === 0;
-  const admissionWait = finiteStatistic(metric.completed_wait_median_hours);
   const hasPressure = !queue.unavailable && queue.total > 0;
   const facility = ctx.dataset?.facilities?.find(
     (item) => (item.id || item.facility_id) === ctx.selectedFacility,
@@ -140,48 +133,10 @@ export default function Overview({
         </div>
       </header>
 
-      <section className="summary-metrics" aria-label="Hospital summary">
-        <article className="stat">
-          <span>Ward occupancy</span>
-          <strong>
-            {ward.unavailable ? "—" : `${ward.occupied} / ${ward.staffed}`}
-          </strong>
-          <small>
-            {selectedStateUnavailable
-              ? "Selected-time state unavailable"
-              : `${ward.available} suitable places available now`}
-          </small>
-        </article>
-        <article className="stat">
-          <span>ICU occupancy</span>
-          <strong>
-            {icu.unavailable ? "—" : `${icu.occupied} / ${icu.staffed}`}
-          </strong>
-          <small>
-            {selectedStateUnavailable
-              ? "Selected-time state unavailable"
-              : `${icu.available} suitable places available now`}
-          </small>
-        </article>
-        <article className={`stat${hasPressure ? " needs-attention" : ""}`}>
-          <span>Patients waiting for a bed</span>
-          <strong>{queue.unavailable ? "—" : queue.total}</strong>
-          <small>
-            {selectedStateUnavailable
-              ? "Selected-time state unavailable"
-              : `${queue.ward} ward · ${queue.icu} ICU`}
-          </small>
-        </article>
-        <article className="stat">
-          <span>Typical admission wait</span>
-          <strong>
-            {ctx.metrics && admissionWait !== null
-              ? `${fmt(admissionWait, 1)} h`
-              : "—"}
-          </strong>
-          <small>completed admissions · median across runs</small>
-        </article>
-      </section>
+      <OutcomeSummaryCards
+        scalar={ctx.metrics?.scalar_metrics}
+        className="summary-metrics"
+      />
 
       <section className={`summary-insight ${insight.tone}`}>
         <div className="summary-insight-icon">
@@ -217,39 +172,8 @@ export default function Overview({
       </section>
 
       <section className="summary-chart-grid" aria-label="Forecast charts">
-        <article className="summary-chart-card summary-chart-card-wide">
-          <div className="summary-card-heading">
-            <div>
-              <span className="eyebrow">OCCUPANCY FORECAST</span>
-              <h2>Occupied and staffed beds</h2>
-            </div>
-            <Badge>{ctx.metrics ? "Median forecast" : "Awaiting run"}</Badge>
-          </div>
-          <ForecastChart
-            rows={rows}
-            keys={[
-              "ward_occupied",
-              "ward_staffed",
-              "icu_occupied",
-              "icu_staffed",
-            ]}
-            labels={[
-              "Ward occupied",
-              "Ward staffed",
-              "ICU occupied",
-              "ICU staffed",
-            ]}
-            height={220}
-            selected={rowIndex}
-            onSelect={(index) =>
-              ctx.setTime(rows[index].at || rows[index].start_at)
-            }
-            yLabel="Patients and staffed beds"
-          />
-          <p>
-            Solid lines show occupied beds. Dashed lines show staffing-supported
-            capacity. Select any point to update the rest of the workspace.
-          </p>
+        <article className="summary-chart-card summary-chart-card-wide summary-timeline-card">
+          <Timeline ctx={ctx} title="Forecast timeline" />
         </article>
         <article className="summary-chart-card">
           <div className="summary-card-heading">
@@ -391,22 +315,6 @@ export default function Overview({
             </>
           )
         ) : null}
-      </details>
-
-      <details className="summary-details summary-timeline-details">
-        <summary>
-          <span className="summary-details-icon">
-            <CalendarRange size={18} />
-          </span>
-          <span>
-            <strong>Open exact forecast timeline</strong>
-            <small>
-              Review interventions, updates, and choose a precise time
-            </small>
-          </span>
-          <span>Show</span>
-        </summary>
-        <Timeline ctx={ctx} />
       </details>
     </div>
   );

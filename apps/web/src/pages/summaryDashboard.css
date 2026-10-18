@@ -48,32 +48,25 @@
 
 .summary-metrics article {
   display: flex;
-  min-height: 88px;
+  min-height: 90px;
   flex-direction: column;
-  gap: 5px;
-  padding: 12px 14px;
+  gap: 4px;
+  padding: 15px 16px;
+  border-radius: 10px;
 }
 
 .summary-metrics article > span,
 .summary-metrics article > small {
   color: var(--muted, #667085);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .summary-metrics article > strong {
+  margin: 2px 0;
   color: var(--text, #172033);
-  font-size: 27px;
+  font-size: 25px;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
-}
-
-.summary-metrics article.needs-attention {
-  border-color: #f5c16c;
-  background: #fffaf0;
-}
-
-.summary-metrics article.needs-attention > strong {
-  color: #a85b00;
 }
 
 .summary-insight {
@@ -330,10 +323,60 @@
   line-height: 1.5;
 }
 
-.summary-timeline-details > .timeline-panel {
+.summary-timeline-card {
+  overflow: hidden;
+  padding: 0;
+}
+
+.summary-timeline-card > .timeline-panel {
   margin: 0;
   border: 0;
-  border-top: 1px solid var(--border, #dfe4ea);
+  border-radius: inherit;
+}
+
+.summary-timeline-card .timeline-header {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.summary-timeline-card .timeline-heading {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.summary-timeline-card .timeline-selection {
+  flex-shrink: 0;
+}
+
+.summary-timeline-card .timeline-selection .hour-select {
+  width: 144px;
+  max-width: none;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+@media (max-width: 360px) {
+  .summary-timeline-card .timeline-selection {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
+    gap: 8px;
+  }
+  .summary-timeline-card .timeline-selection > span {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    text-align: center;
+  }
+  .summary-timeline-card .timeline-selection .hour-select {
+    grid-column: 2;
+    grid-row: 2;
+    width: 100%;
+  }
+  .summary-timeline-card .timeline-selection > button {
+    grid-row: 2;
+  }
+  .summary-timeline-card .timeline-selection > button:last-child {
+    grid-column: 3;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -384,10 +427,10 @@
   }
   .summary-metrics article {
     min-height: 100px;
-    padding: 13px;
+    padding: 15px 14px;
   }
   .summary-metrics article > strong {
-    font-size: 23px;
+    font-size: 25px;
   }
   .summary-capacity-grid {
     gap: 16px;

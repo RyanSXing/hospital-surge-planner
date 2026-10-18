@@ -45,6 +45,19 @@ test("the two-page workspace and analysis sections render actual run context", a
       await expect(
         page.getByRole("heading", { name: "Results summary" }),
       ).toBeVisible();
+    if (view === "summary" && info.project.name === "mobile") {
+      const viewport = page.viewportSize()!;
+      for (const width of [320, 390]) {
+        await page.setViewportSize({ ...viewport, width });
+        await assertPageHealthy(page);
+        await page.locator(".summary-timeline-card").scrollIntoViewIfNeeded();
+        await capture(page, `summary-width-${width}`, info);
+      }
+      await page.setViewportSize(viewport);
+      await page.locator("main").evaluate((node) => {
+        node.scrollTop = 0;
+      });
+    }
     if (view === "analytics-patients") {
       await expect(
         page.getByText("Selected simulation trajectory", { exact: true }),

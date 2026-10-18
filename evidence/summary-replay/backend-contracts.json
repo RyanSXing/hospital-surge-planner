@@ -1,0 +1,8 @@
+{
+  "backend_source_changed": false,
+  "command": ".venv/bin/pytest -q tests/test_review_api.py tests/test_patient_queries.py tests/test_replay_annotations.py",
+  "passed": 21,
+  "warnings": 1,
+  "seconds": 23.3,
+  "scope": "Existing API range, pagination, coincident-event ordering, exact state and patient-history contracts used by the new frontend replay. Full 605-case backend baseline remains attributed to the preceding single-hospital release."
+}

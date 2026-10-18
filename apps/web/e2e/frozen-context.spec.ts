@@ -173,37 +173,54 @@ test("completed comparisons and source search preserve distinct frozen and rebas
     },
   );
   expect(changed.ok()).toBe(true);
+  const historicalBefore = await api(
+    page.request,
+    `/comparisons/${comparison.id}`,
+  );
   await page.goto(
-    `/?scenario=${context.scenario.id}&run=${reference.id}&view=analysis&analysis=comparison&comparison=${comparison.id}`,
+    `/?scenario=${context.scenario.id}&run=${reference.id}&view=analysis&analysis=comparison&comparison=${comparison.id}&compare_left=${context.scenario.id}&compare_right=${rebased.scenario.id}`,
   );
-  await expect(page.locator(".comparison-context")).toContainText(
-    context.scenario.name,
-  );
-  await expect(page.locator(".comparison-context")).toContainText("1 days");
-  await page.locator("details.comparison-tools > summary").click();
-  await page.getByRole("button", { name: "Assumptions", exact: true }).click();
-  const assumptions = page.getByRole("dialog", {
-    name: "Comparison assumptions",
-  });
-  await expect(assumptions).toContainText(context.scenario.name);
-  await expect(assumptions).toContainText("Saved hospital baseline");
-  await expect(assumptions).toContainText("1 local days");
-  await expect(assumptions).toContainText(String(context.scenario.base_seed));
-  await expect(assumptions).not.toContainText("Rebased live draft");
-  await assumptions.getByRole("button", { name: "Close dialog" }).click();
-  await page
-    .getByRole("button", { name: "Show compare timeline", exact: true })
-    .click();
-  const calendar = page.locator("#compare-timeline-dock");
   await expect(
-    calendar.getByLabel("Select hour within day").locator("option").first(),
-  ).toHaveText("12:00 AM CDT");
-  await calendar
-    .getByRole("button", { name: "Day details", exact: true })
-    .click();
-  const dayDetails = page.getByRole("dialog", { name: /^Day 1/ });
-  await expect(dayDetails).toContainText("12:00 AM CDT");
-  await dayDetails.getByRole("button", { name: "Close dialog" }).click();
+    page.getByRole("heading", { name: "Compare saved scenarios", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel("Left saved scenario", { exact: true }),
+  ).toHaveValue(context.scenario.id);
+  await expect(
+    page.getByLabel("Right saved scenario", { exact: true }),
+  ).toHaveValue(rebased.scenario.id);
+  await expect(page.getByTestId("comparison-left")).toContainText("3 days");
+  await expect(
+    page.getByTestId("left-average_wait_per_patient_hours"),
+  ).toHaveText("—");
+  // Historical response-plan runs are preserved, but are not results for the
+  // separately edited saved library configuration.
+  await expect(
+    page.getByRole("button", {
+      name: "Open left scenario results",
+      exact: true,
+    }),
+  ).toHaveCount(0);
+  const current = await api(
+    page.request,
+    `/scenario-comparisons?left_scenario_id=${context.scenario.id}&right_scenario_id=${rebased.scenario.id}`,
+  );
+  expect(current.left.scenario.dataset_version_id).toBe(rebased.dataset.id);
+  expect(current.left.scenario.horizon_calendar_days).toBe(3);
+  expect(current.left.metrics).toBeNull();
+  const frozenReference = await api(
+    page.request,
+    `/run-groups/${reference.id}`,
+  );
+  expect(frozenReference.scenario_context.dataset_version_id).toBe(
+    context.dataset.id,
+  );
+  expect(frozenReference.scenario_context.horizon_calendar_days).toBe(1);
+  expect(frozenReference.scenario_context.timezone).toBe("America/Chicago");
+  expect(frozenReference.input_sha256).toBe(reference.input_sha256);
+  expect(await api(page.request, `/comparisons/${comparison.id}`)).toEqual(
+    historicalBefore,
+  );
   await open(page, context.scenario.id, "analytics-patients", reference.id);
   await page.locator(".patient-table tbody .link-button").first().click();
   await page

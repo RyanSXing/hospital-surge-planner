@@ -1,4 +1,5 @@
 import { test, expect, type APIRequestContext } from "@playwright/test";
+import { expectFloorPlanAt } from "./replay-floorplan-helpers";
 import { api, open, scenario, waitRun } from "./helpers";
 
 type JourneyWindow = {
@@ -112,9 +113,9 @@ async function recordedDischargeWindow(
   return null;
 }
 
-test("replay shows a recorded patient through ED and the discharge bay", async ({
+test("recorded arrivals occupy an actual ED bed only during care and increment cumulative discharges", async ({
   page,
-}, testInfo) => {
+}, info) => {
   const context = await scenario(page, "recorded replay journey", {
     horizon_calendar_days: 2,
     replications: 1,
@@ -139,177 +140,58 @@ test("replay shows a recorded patient through ED and the discharge bay", async (
       })
     ).id,
   );
-  const replicationId = run.selected_replication_id;
-  const journey = await recordedDischargeWindow(
-    page.request,
-    replicationId,
-    run,
-  );
+  const rep = run.selected_replication_id;
+  const journey = await recordedDischargeWindow(page.request, rep, run);
   expect(
     journey,
-    "the controlled ED batch needs a queued arrival, timed ED care, and discharge inside one replay step",
+    "controlled batch contains a recorded queued ED visit and discharge",
   ).not.toBeNull();
-  if (!journey) return;
-
-  // This confirms the selected patient is an event-only journey. Neither
-  // endpoint snapshot can supply its dot, so the canvas must use recorded
-  // events rather than accidentally animating a current census record.
-  for (const at of [journey.startAt, journey.endAt]) {
-    const state = await api(
-      page.request,
-      `/runs/${replicationId}/state?at=${encodeURIComponent(at)}`,
-    );
-    expect(
-      state.patients.some(
-        (patient: any) => patient.patient_id === journey.patientId,
-      ),
-      `patient ${journey.patientId} must be absent from the ${at} snapshot`,
-    ).toBe(false);
-  }
-
+  if (!journey) throw new Error("Missing controlled journey");
   await open(page, context.scenario.id, "replay", run.id);
   const url = new URL(page.url());
-  url.searchParams.set("at", journey.startAt);
-  await page.goto(url.toString());
-  const canvas = page.locator(".replay-canvas");
-  await expect(canvas).toHaveAttribute("data-recorded-at", journey.startAt);
-  await page
-    .getByLabel("Replay speed", { exact: true })
-    .selectOption(String(journey.speed));
-
-  // Read diagnostics emitted by the actual canvas draw loop. The collector
-  // starts before Play so it observes the full route rather than only its last
-  // frame in the discharge bay.
-  const frames = page.evaluate(async ({ patientId, startAt, endAt }) => {
-    const node = document.querySelector<HTMLCanvasElement>(".replay-canvas");
-    if (!node) return { samples: [], diagnostics: null };
-    const samples: {
-      recordedAt: string;
-      clock: string;
-      x: number;
-      y: number;
-    }[] = [];
-    let diagnostics: Record<string, string> | null = null;
-    let observedAt = "";
-    const started = performance.now();
-    while (performance.now() - started < 6_000) {
-      const frameAt = node.dataset.journeyFrameAt || "";
-      if (frameAt && frameAt !== observedAt) {
-        observedAt = frameAt;
-        if (node.dataset.recordedAt === endAt)
-          diagnostics = {
-            recordedAt: node.dataset.recordedAt || "",
-            visualAt: node.dataset.visualAt || "",
-            journeyEvents: node.dataset.journeyEvents || "",
-            dischargeJourneys: node.dataset.dischargeJourneys || "",
-            transientJourneys: node.dataset.transientJourneys || "",
-            transientPatientIds: node.dataset.transientPatientIds || "",
-            frameAt,
-          };
-        const point = JSON.parse(node.dataset.journeyFrame || "[]").find(
-          (value: { id?: string }) => value.id === patientId,
-        );
-        if (
-          point &&
-          Date.parse(node.dataset.visualAt || "") >= Date.parse(startAt)
-        )
-          samples.push({
-            recordedAt: node.dataset.recordedAt || "",
-            clock: node.dataset.visualAt || "",
-            ...point,
-          });
-        const dischargeBayFrames = samples.filter(
-          (value) =>
-            value.x >= 845 &&
-            value.x <= 965 &&
-            value.y >= 470 &&
-            value.y <= 575,
-        );
-        if (diagnostics && dischargeBayFrames.length >= 2)
-          return { samples, diagnostics };
-      }
-      await new Promise((resolve) => setTimeout(resolve, 35));
+  url.searchParams.set("patient", journey.patientId);
+  const moments = [
+    { at: journey.startAt, bed: false, name: "Before arrival" },
+    { at: journey.arrivalAt, bed: false, name: "Waiting for assessment" },
+    { at: journey.assessmentAt, bed: true, name: "Receiving ED care" },
+    {
+      at: new Date(Date.parse(journey.dischargeAt) - 1000).toISOString(),
+      bed: true,
+      name: "Still receiving ED care",
+    },
+    {
+      at: new Date(Date.parse(journey.dischargeAt) + 1000).toISOString(),
+      bed: false,
+      name: "Discharged",
+    },
+  ];
+  const counts: number[] = [];
+  for (const moment of moments) {
+    url.searchParams.set("at", moment.at);
+    await page.goto(url.toString());
+    const state = await expectFloorPlanAt(page, rep, moment.at);
+    const bed = page.locator(
+      `.floor-plan-bed[data-patient-id="${journey.patientId}"]`,
+    );
+    await expect(bed, moment.name).toHaveCount(moment.bed ? 1 : 0);
+    if (moment.bed) {
+      await expect(bed).toHaveAttribute("data-unit-id", "UNIT-ED");
+      await expect(bed).toHaveAttribute("data-status", "occupied");
     }
-    return { samples, diagnostics };
-  }, journey);
-  await page.getByLabel("Play replay", { exact: true }).click();
-  const observations = await frames;
-  await testInfo.attach("replay-journey-observations", {
-    body: JSON.stringify({ journey, observations }, null, 2),
+    counts.push(state.flow_counts["FAC-MAIN"].discharges);
+  }
+  expect(counts.at(-1)).toBeGreaterThan(counts.at(-2)!);
+  await page
+    .getByRole("button", { name: "Inspect replay", exact: true })
+    .click();
+  await expect(page.locator(".replay-inspector")).toContainText(
+    "No active location at this timestamp",
+  );
+  await expect(
+    page.locator(".replay-patient-history .info-note"),
+  ).toContainText("Discharged at");
+  await info.attach("recorded-floorplan-journey", {
+    body: JSON.stringify({ journey, moments, counts }, null, 2),
     contentType: "application/json",
   });
-  const observed = observations.samples;
-
-  expect(observations.diagnostics?.recordedAt).toBe(journey.endAt);
-  expect(observations.diagnostics?.transientPatientIds).toMatch(
-    new RegExp(`(^|,)${journey.patientId}(,|$)`),
-  );
-  expect(
-    Number(observations.diagnostics?.journeyEvents),
-  ).toBeGreaterThanOrEqual(journey.events.length);
-  expect(Number(observations.diagnostics?.dischargeJourneys)).toBeGreaterThan(
-    0,
-  );
-  expect(Number(observations.diagnostics?.transientJourneys)).toBeGreaterThan(
-    0,
-  );
-
-  const inZone = (
-    point: { x: number; y: number },
-    zone: "arrivals" | "ed" | "exit",
-  ) =>
-    zone === "arrivals"
-      ? point.x >= 20 && point.x <= 145 && point.y >= 180 && point.y <= 350
-      : zone === "ed"
-        ? point.x >= 190 && point.x <= 400 && point.y >= 160 && point.y <= 370
-        : point.x >= 845 && point.x <= 965 && point.y >= 470 && point.y <= 575;
-  const first = (zone: "arrivals" | "ed" | "exit") =>
-    observed.findIndex((point) => inZone(point, zone));
-  const arrival = first("arrivals");
-  const emergency = first("ed");
-  const dischargeBay = first("exit");
-  expect(
-    arrival,
-    "actual draw frames include the arrivals area",
-  ).toBeGreaterThanOrEqual(0);
-  expect(emergency, "actual draw frames include the ED area").toBeGreaterThan(
-    arrival,
-  );
-  expect(
-    dischargeBay,
-    "actual draw frames reach the discharge bay",
-  ).toBeGreaterThan(emergency);
-  expect(
-    observed.filter((point) => inZone(point, "exit")).length,
-    "the discharge bay remains visible before the event-only dot fades",
-  ).toBeGreaterThanOrEqual(2);
-
-  const toleranceMs = 250;
-  const elapsed = (value: string) => Date.parse(value);
-  expect(
-    observed.filter(
-      (point) =>
-        elapsed(point.clock) < elapsed(journey.arrivalAt) - toleranceMs,
-    ),
-    "the event-only dot is not drawn before its recorded arrival",
-  ).toHaveLength(0);
-  expect(
-    observed.filter(
-      (point) =>
-        inZone(point, "ed") &&
-        elapsed(point.clock) < elapsed(journey.assessmentAt) - toleranceMs,
-    ),
-    "the dot does not enter the ED before recorded assessment starts",
-  ).toHaveLength(0);
-  expect(
-    observed.filter(
-      (point) =>
-        inZone(point, "exit") &&
-        elapsed(point.clock) < elapsed(journey.dischargeAt) - toleranceMs,
-    ),
-    "the dot does not reach the discharge bay before its recorded discharge",
-  ).toHaveLength(0);
-
-  const pause = page.getByLabel("Pause replay", { exact: true });
-  if (await pause.isVisible()) await pause.click();
 });

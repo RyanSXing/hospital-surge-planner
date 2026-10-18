@@ -450,8 +450,13 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
               <h2>{insight.title}</h2>
               <p>{insight.body}</p>
             </div>
-            <Button onClick={() => ctx.setPage("compare")}>
-              Compare responses <ArrowRight size={14} />
+            <Button
+              onClick={() => {
+                if (ctx.compareScenarios) ctx.compareScenarios();
+                else ctx.setPage("compare");
+              }}
+            >
+              Compare scenarios <ArrowRight size={14} />
             </Button>
           </section>
 

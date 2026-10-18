@@ -10,24 +10,11 @@ import {
   scenario,
   waitRun,
 } from "./helpers";
+import { expectFloorPlanAt } from "./replay-floorplan-helpers";
 
-test("replay displays only the simulated hospital capacity", async ({
+test("replay displays actual separate hospital capacity and no offsite inventory", async ({
   page,
 }, info) => {
-  await page.addInitScript(() => {
-    const fillText = CanvasRenderingContext2D.prototype.fillText;
-    (window as any).__clinicalCapacityPaints = [];
-    CanvasRenderingContext2D.prototype.fillText = function (
-      ...args: Parameters<typeof fillText>
-    ) {
-      if (this.canvas.classList.contains("replay-canvas")) {
-        const paints = (window as any).__clinicalCapacityPaints as string[];
-        paints.push(String(args[0]));
-        if (paints.length > 2000) paints.splice(0, paints.length - 2000);
-      }
-      return fillText.apply(this, args);
-    };
-  });
   const context = await scenario(page, "clinical replay capacity", {
     horizon_calendar_days: 1,
     replications: 1,
@@ -40,49 +27,41 @@ test("replay displays only the simulated hospital capacity", async ({
       })
     ).id,
   );
-  const state = await api(
-    page.request,
-    `/runs/${run.selected_replication_id}/state?at=${encodeURIComponent(run.start_at)}`,
+  await open(page, context.scenario.id, "replay", run.id);
+  const state = await expectFloorPlanAt(
+    page,
+    run.selected_replication_id,
+    run.start_at,
   );
-  const ward = state.units.filter(
+  const wards = state.units.filter(
     (unit: any) => unit.kind === "ward" && unit.facility_id === "FAC-MAIN",
   );
-  const totals = ward.reduce(
-    (sum: any, unit: any) => ({
-      occupied: sum.occupied + unit.occupied,
-      staffed: sum.staffed + unit.staffed,
-      background: sum.background + unit.background_occupied,
-    }),
-    { occupied: 0, staffed: 0, background: 0 },
-  );
-  expect(totals.occupied).toBeGreaterThan(0);
-  expect(totals.staffed).toBeGreaterThanOrEqual(totals.occupied);
-  await open(page, context.scenario.id, "replay", run.id);
-  await expect(page.locator(".replay-canvas")).toHaveAttribute(
-    "data-recorded-at",
-    new Date(run.start_at).toISOString(),
-  );
-  await expect
-    .poll(() => page.evaluate(() => (window as any).__clinicalCapacityPaints))
-    .toContain(`${totals.occupied}/${totals.staffed} occupied / staffed`);
-  const paints: string[] = await page.evaluate(
-    () => (window as any).__clinicalCapacityPaints,
-  );
-  expect(paints.some((text) => /shelter|overflow|transport/i.test(text))).toBe(
-    false,
+  expect(wards).toHaveLength(3);
+  for (const unit of wards) {
+    const room = page.locator(
+      `.floor-plan-unit[data-unit-id="${unit.unit_id}"]`,
+    );
+    await expect(
+      room.locator('.floor-plan-bed[data-status="occupied"]'),
+    ).toHaveCount(unit.occupied);
+    await expect(room).toHaveAttribute("data-staffed", String(unit.staffed));
+  }
+  await expect(page.getByTestId("replay-floor-plan")).not.toContainText(
+    /shelter|overflow|transport/i,
   );
   await capture(page, "replay-clinical-capacity", info);
   record("replay-clinical-capacity", {
-    run_id: run.id,
-    replication_id: run.selected_replication_id,
-    at: run.start_at,
-    ward: totals,
-    only_main_hospital_included: true,
-    actual_canvas_label: `${totals.occupied}/${totals.staffed}`,
+    run: run.id,
+    wards: wards.map((unit: any) => ({
+      id: unit.unit_id,
+      occupied: unit.occupied,
+      staffed: unit.staffed,
+    })),
+    actual_separate_wards: true,
   });
 });
 
-test("replay holds a stepdown patient and care path in ICU until actual ward entry", async ({
+test("replay holds a stepdown patient in the recorded ICU bed until actual ward entry", async ({
   page,
 }, info) => {
   await login(page);
@@ -170,72 +149,14 @@ print(json.dumps(data))
       count: 1,
     }),
   ]);
-  await page.addInitScript(() => {
-    const proto = CanvasRenderingContext2D.prototype;
-    let path: { x: number; y: number }[] = [];
-    const fillRect = proto.fillRect,
-      beginPath = proto.beginPath,
-      moveTo = proto.moveTo,
-      lineTo = proto.lineTo,
-      arc = proto.arc,
-      stroke = proto.stroke;
-    (window as any).__heldPaint = { dots: [], path: [] };
-    proto.fillRect = function (...args: Parameters<typeof fillRect>) {
-      if (
-        this.canvas.classList.contains("replay-canvas") &&
-        args[0] === 0 &&
-        args[1] === 0
-      )
-        (window as any).__heldPaint = {
-          dots: [],
-          path: [],
-          height: this.canvas.height / devicePixelRatio,
-        };
-      return fillRect.apply(this, args);
-    };
-    proto.beginPath = function () {
-      path = [];
-      return beginPath.call(this);
-    };
-    proto.moveTo = function (x, y) {
-      path.push({ x, y });
-      return moveTo.call(this, x, y);
-    };
-    proto.lineTo = function (x, y) {
-      path.push({ x, y });
-      return lineTo.call(this, x, y);
-    };
-    proto.arc = function (...args: Parameters<typeof arc>) {
-      if (
-        this.canvas.classList.contains("replay-canvas") &&
-        (args[2] === 3 || args[2] === 5.5)
-      )
-        (window as any).__heldPaint.dots.push({ x: args[0], y: args[1] });
-      return arc.apply(this, args);
-    };
-    proto.stroke = function (...args: Parameters<typeof stroke>) {
-      if (
-        this.canvas.classList.contains("replay-canvas") &&
-        this.strokeStyle === "#0e849a"
-      )
-        (window as any).__heldPaint.path = [...path];
-      return stroke.apply(this, args);
-    };
-  });
   await open(page, plan.id, "replay", run.id);
-  await expect(page.locator(".replay-canvas")).toHaveAttribute(
-    "data-recorded-at",
-    new Date(run.start_at).toISOString(),
+  await expectFloorPlanAt(page, rep, run.start_at);
+  const beforeBed = page.locator(
+    `.floor-plan-bed[data-patient-id="${patient.patient_id}"]`,
   );
-  await expect
-    .poll(() => page.evaluate(() => (window as any).__heldPaint.dots.length))
-    .toBe(1);
-  const initial = await page.evaluate(() => (window as any).__heldPaint);
-  expect(initial.dots[0].x).toBeGreaterThan(655);
-  expect(initial.dots[0].x).toBeLessThan(805);
-  expect((initial.dots[0].y / initial.height) * 620).toBeGreaterThan(320);
-  expect((initial.dots[0].y / initial.height) * 620).toBeLessThan(490);
-  await capture(page, "replay-stepdown-held-icu", info);
+  await expect(beforeBed).toHaveCount(1);
+  await expect(beforeBed).toHaveAttribute("data-unit-id", "UNIT-ICU");
+  await expect(beforeBed).toHaveAttribute("data-status", "occupied");
   const detail = await api(
     page.request,
     `/runs/${rep}/patients/${patient.patient_id}?at=${encodeURIComponent(run.start_at)}`,
@@ -245,35 +166,27 @@ print(json.dumps(data))
       interval.state === "inpatient" && interval.unit_id !== "UNIT-ICU",
   );
   expect(wardEntry).toBeTruthy();
+  await capture(page, "replay-stepdown-held-icu", info);
   const url = new URL(page.url());
   url.searchParams.set("at", wardEntry.start_at);
   url.searchParams.set("patient", patient.patient_id);
   await page.goto(url.toString());
-  await expect(page.locator(".replay-canvas")).toHaveAttribute(
-    "data-recorded-at",
-    new Date(wardEntry.start_at).toISOString(),
+  await expectFloorPlanAt(page, rep, wardEntry.start_at);
+  const afterBed = page.locator(
+    `.floor-plan-bed[data-patient-id="${patient.patient_id}"]`,
   );
-  await expect
-    .poll(() => page.evaluate(() => (window as any).__heldPaint.path.length))
-    .toBeGreaterThanOrEqual(2);
-  const entered = await page.evaluate(() => (window as any).__heldPaint);
-  expect(entered.dots).toHaveLength(1);
-  expect((entered.dots[0].y / entered.height) * 620).toBeLessThan(280);
-  expect((entered.path[0].y / entered.height) * 620).toBeGreaterThan(320);
-  expect((entered.path.at(-1).y / entered.height) * 620).toBeLessThan(280);
-  await capture(page, "replay-stepdown-actual-ward-path", info);
+  await expect(afterBed).toHaveCount(1);
+  await expect(afterBed).toHaveAttribute("data-unit-id", wardEntry.unit_id);
+  await expect(
+    page.locator(
+      `.floor-plan-unit[data-unit-id="UNIT-ICU"] .floor-plan-bed[data-patient-id="${patient.patient_id}"]`,
+    ),
+  ).toHaveCount(0);
+  await capture(page, "replay-stepdown-actual-ward-bed", info);
   record("replay-held-unit", {
-    run_id: run.id,
-    source: {
-      at: run.start_at,
-      unit_id: patient.unit_id,
-      requested_care: patient.care_level,
-      canvas: initial,
-    },
-    destination: {
-      at: wardEntry.start_at,
-      unit_id: wardEntry.unit_id,
-      canvas: entered,
-    },
+    run: run.id,
+    before: { at: run.start_at, unit: "UNIT-ICU" },
+    after: { at: wardEntry.start_at, unit: wardEntry.unit_id },
+    actual_slot_identity: true,
   });
 });

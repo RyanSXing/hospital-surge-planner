@@ -1,0 +1,15 @@
+{
+  "first": {
+    "id": "run_61be5afc7c9441109322",
+    "physical": 48,
+    "staffed": 36,
+    "available": 10
+  },
+  "second": {
+    "id": "run_5eb6b33efe1e4d62ac40",
+    "physical": 44,
+    "staffed": 32,
+    "available": 6
+  },
+  "old_result_preserved": true
+}

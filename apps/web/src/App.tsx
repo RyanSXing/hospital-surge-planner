@@ -683,6 +683,17 @@ export default function App() {
     error,
     page,
     setPage,
+    compareScenarios: () => {
+      const target = new URL(location.href);
+      if (scenario?.id) target.searchParams.set("compare_left", scenario.id);
+      if (target.searchParams.get("compare_right") === scenario?.id)
+        target.searchParams.delete("compare_right");
+      target.searchParams.delete("comparison");
+      target.searchParams.delete("plan");
+      history.replaceState({}, "", target);
+      setComparisonSelection(null);
+      setPage("comparison");
+    },
     setTime,
     setDay,
     setFacility,
@@ -1100,27 +1111,6 @@ export default function App() {
               </ActionMenu>
             </div>
           </div>
-          {run?.comparison_id ? (
-            <div className="evaluated-plan-banner">
-              <GitCompareArrows size={13} />
-              <span>
-                Evaluated comparison plan:{" "}
-                <strong>{run.scenario_name || "Saved alternative"}</strong> ·
-                Results use its frozen resource assumptions.
-              </span>
-              <button
-                onClick={() => {
-                  const u = new URL(location.href);
-                  u.searchParams.set("comparison", run.comparison_id);
-                  history.replaceState({}, "", u);
-                  setComparisonSelection(run.comparison_id);
-                  setPage("compare");
-                }}
-              >
-                Return to comparison <ArrowRight size={12} />
-              </button>
-            </div>
-          ) : null}
           {page !== "overview" && stateQuery.error ? (
             <div className="global-error">
               <ErrorBox
@@ -1328,19 +1318,7 @@ export default function App() {
                   </div>
                 ) : page === "summary" ? (
                   run?.status === "SUCCEEDED" ? (
-                    <Summary
-                      ctx={ctx}
-                      onUpdate={() => openUpdate()}
-                      comparisonId={comparisonSelection}
-                      onReviewResponse={(comparisonId, planId) => {
-                        const target = new URL(location.href);
-                        target.searchParams.set("comparison", comparisonId);
-                        target.searchParams.set("plan", planId);
-                        history.replaceState({}, "", target);
-                        setComparisonSelection(comparisonId);
-                        setPage("comparison");
-                      }}
-                    />
+                    <Summary ctx={ctx} onUpdate={() => openUpdate()} />
                   ) : (
                     <div className="analysis-empty">
                       {active ? (

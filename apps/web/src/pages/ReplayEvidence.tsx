@@ -288,8 +288,14 @@ export function ReplayPatientHistory({
   );
 }
 
-export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
-  const [chosenUnit, setChosenUnit] = useState("");
+export function ReplayRecordedCapacity({
+  ctx,
+  initialUnit = "",
+}: {
+  ctx: PlanningContext;
+  initialUnit?: string;
+}) {
+  const [chosenUnit, setChosenUnit] = useState(initialUnit);
   const [chosenSlot, setChosenSlot] = useState("");
   const [chosenEquipment, setChosenEquipment] = useState("");
   const units = unitsOf(ctx).filter(
@@ -308,6 +314,11 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
       value.installation_status === "installed",
   );
   const slot = slots.find((value) => value.slot_id === chosenSlot);
+  const plannedSlots: Entity[] = (ctx.state?.slots || []).filter(
+    (value: Entity) =>
+      value.unit_id === unitId(unit || {}) &&
+      value.installation_status === "planned",
+  );
   const policy = ctx.dataset?.capacity_policies?.find(
     (value: Entity) => value.capacity_policy_id === unit?.capacity_policy_id,
   );
@@ -373,6 +384,28 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
         }}
       />
       <BedLegend />
+      {plannedSlots.length ? (
+        <details className="replay-planned-places">
+          <summary>
+            {plannedSlots.length} planned places · not installed
+          </summary>
+          <p className="small-copy muted">
+            These places are excluded from current bed counts and available
+            capacity.
+          </p>
+          <div>
+            {plannedSlots.map((place) => (
+              <Button
+                small
+                key={place.slot_id}
+                onClick={() => ctx.inspectEntity("slot", place.slot_id)}
+              >
+                Planned bed {place.display_label || place.slot_id}
+              </Button>
+            ))}
+          </div>
+        </details>
+      ) : null}
       {slot ? (
         <p className="small-copy">
           Selected bed · {eventName(slot.status)}

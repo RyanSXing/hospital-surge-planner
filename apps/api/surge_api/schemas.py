@@ -140,6 +140,7 @@ class RunCreate(Command):
     scenario_id: str | None = None
     scenario: ScenarioCreate | None = None
     replications: int | None = Field(default=None, ge=1, le=500)
+    expected_scenario_revision: int | None = Field(default=None, ge=1)
 
 
 class Plan(Command):

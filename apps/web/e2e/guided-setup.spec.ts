@@ -288,7 +288,7 @@ test("simple hospital setup keeps its live graph visible and runs the exact opti
   expect(run.scenario_context.conditions).toEqual(saved.conditions);
   await assertPageHealthy(page);
   await open(page, saved.id, "replay", run.id);
-  await expect(page.locator(".replay-canvas")).toBeVisible();
+  await expect(page.getByTestId("replay-floor-plan")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Play replay", exact: true }),
   ).toBeVisible();

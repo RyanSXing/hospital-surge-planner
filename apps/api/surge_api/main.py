@@ -2108,6 +2108,18 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         session=Depends(db),
     ):
         payload = command_dict(payload)
+        expected = payload.get("expected_scenario_revision")
+        if expected is not None:
+            if not payload.get("scenario_id"):
+                fail(422, "A saved scenario is required for a revision check", "validation_failed")
+            selected = owned(session, payload["scenario_id"], "scenario", user)
+            if selected.revision != expected:
+                fail(
+                    409,
+                    "The saved scenario changed. Refresh the comparison before running it.",
+                    "revision_conflict",
+                    [{"field": "expected_scenario_revision", "revision": selected.revision}],
+                )
         previous = idempotent(session, user, "run-groups", key, payload)
         if previous:
             return job_view(owned_job(session, previous, user, "run"))
@@ -2713,6 +2725,22 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "replication_id": identity,
             "ready": False,
         }
+
+    @router.get("/scenario-comparisons")
+    def saved_scenario_comparison(
+        left_scenario_id: str = Query(min_length=1, max_length=96),
+        right_scenario_id: str = Query(min_length=1, max_length=96),
+        max_points: int = Query(default=1000, ge=200, le=2000),
+        user=Depends(current_user),
+        session=Depends(db),
+    ):
+        from .scenario_comparisons import compare_saved_scenarios
+
+        left = owned(session, left_scenario_id, "scenario", user)
+        right = owned(session, right_scenario_id, "scenario", user)
+        if left.id == right.id:
+            fail(422, "Choose two different saved scenarios", "distinct_scenarios_required")
+        return compare_saved_scenarios(session, user, left, right, job_view, max_points)
 
     @router.post("/comparisons", status_code=202)
     def create_comparison(

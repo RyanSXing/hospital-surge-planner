@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T07:20:32.472027+00:00",
+  "sha256": "8f67da7aa6007b76ca263d1a3a9387d3c48ed834e927be370d9b7f72fd487ce8",
+  "byte_size": 5695095,
+  "object_key": "backups/hospital-floorplan-library-comparison-20261018T072026Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing scenarios and saved results before the replay map and saved-scenario comparison release"
+}

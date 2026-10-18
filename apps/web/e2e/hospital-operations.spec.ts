@@ -327,7 +327,7 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
   const decision = page.getByTestId("decision-summary");
   await expect(decision).toContainText("largest recorded constraint");
   await expect(
-    decision.getByRole("button", { name: "Compare responses", exact: true }),
+    decision.getByRole("button", { name: "Compare scenarios", exact: true }),
   ).toBeVisible();
   await expect(decision).not.toContainText("Best tested response:");
   await decision.getByText("Why this conclusion?", { exact: true }).click();
@@ -411,11 +411,11 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
   });
 });
 
-test("Decision summary reviews a matched response, saves that plan, and rejects stale recommendations", async ({
+test("Summary opens saved-scenario comparison and keeps historical comparisons intact", async ({
   page,
 }, info) => {
   test.skip(info.project.name !== "desktop", "Desktop workflow requested.");
-  const context = await scenario(page, "matched decision response", {
+  const context = await scenario(page, "saved scenario comparison entry", {
     horizon_calendar_days: 3,
     replications: 2,
     conditions: [
@@ -423,7 +423,6 @@ test("Decision summary reviews a matched response, saves that plan, and rejects 
         kind: "arrival_multiplier",
         entry_stream_id: "ED_MAIN",
         shape: "step",
-        surge_percent: 100,
         multiplier: 2,
       },
     ],
@@ -436,12 +435,13 @@ test("Decision summary reviews a matched response, saves that plan, and rejects 
       })
     ).id,
   );
+  // Historical plan records stay readable, but no longer drive the new UI.
   const queued = await api(page.request, "/comparisons", "POST", {
     scenario_id: context.scenario.id,
     replications: 2,
     plans: [
       {
-        name: "Staff more ward beds",
+        name: "Historical staffing response",
         interventions: [
           {
             kind: "staff_existing",
@@ -454,42 +454,107 @@ test("Decision summary reviews a matched response, saves that plan, and rejects 
       },
     ],
   });
-  const comparison = await waitComparison(page, queued.id);
-  expect(comparison.no_plan_improves).toBe(false);
-  const plan = comparison.plans.find((row: any) => !row.reference);
-  expect(median(plan.improvement.absolute_change)).toBeGreaterThan(0);
+  const historical = await waitComparison(page, queued.id);
+  const alternative = await api(page.request, "/scenarios", "POST", {
+    name: `E2E saved alternative ${Date.now()}`,
+    dataset_version_id: context.dataset.id,
+    horizon_calendar_days: 3,
+    replications: 2,
+    base_seed: context.scenario.base_seed,
+    conditions: [
+      ...context.scenario.conditions,
+      {
+        kind: "unit_configuration",
+        unit_id: "UNIT-WARD-A",
+        staff_counts: { rn: 12, provider: 1, support: 4 },
+      },
+    ],
+  });
+  const alternativeRun = await waitRun(
+    page,
+    (
+      await api(page.request, "/run-groups", "POST", {
+        scenario_id: alternative.id,
+      })
+    ).id,
+  );
+  const legacyBrowserRequests: string[] = [];
+  page.on("request", (request) => {
+    if (
+      request.method() === "GET" &&
+      /^\/api\/comparisons(?:\/|$)/.test(new URL(request.url()).pathname)
+    )
+      legacyBrowserRequests.push(request.url());
+  });
   await page.goto(
-    `/?scenario=${context.scenario.id}&view=analysis&analysis=summary&run=${run.id}&comparison=${comparison.id}`,
+    `/?scenario=${context.scenario.id}&view=analysis&analysis=summary&run=${run.id}&comparison=${historical.id}`,
   );
   const decision = page.getByTestId("decision-summary");
-  await expect(decision).toContainText("Best tested response:");
-  await expect(decision).toContainText("2 additional nurses");
-  await capture(page, "decision-summary-matched-response", info);
+  await expect(decision).not.toContainText("Best tested response:");
+  await expect(
+    decision.getByRole("button", { name: "Review response", exact: true }),
+  ).toHaveCount(0);
   await decision
-    .getByRole("button", { name: "Review response", exact: true })
+    .getByRole("button", { name: "Compare scenarios", exact: true })
     .click();
+  await expect(
+    page.getByRole("heading", { name: "Compare saved scenarios", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel("Left saved scenario", { exact: true }),
+  ).toHaveValue(context.scenario.id);
+  await page
+    .getByLabel("Right saved scenario", { exact: true })
+    .selectOption(alternative.id);
+  await expect(
+    page.getByRole("button", {
+      name: "Open right scenario results",
+      exact: true,
+    }),
+  ).toBeVisible();
   await expect
-    .poll(() => new URL(page.url()).searchParams.get("analysis"))
-    .toBe("comparison");
-  await expect
-    .poll(() => new URL(page.url()).searchParams.get("comparison"))
-    .toBe(comparison.id);
-  const selected = page.locator(".comparison-selected-action");
-  await expect(selected).toContainText("Staff more ward beds");
-  const saveResponse = page.waitForResponse(
-    (response) =>
-      response.url().endsWith(`/api/comparisons/${comparison.id}/save-plan`) &&
-      response.request().method() === "POST",
+    .poll(() => new URL(page.url()).searchParams.get("compare_right"))
+    .toBe(alternative.id);
+  expect(new URL(page.url()).searchParams.get("scenario")).toBe(
+    context.scenario.id,
   );
-  await selected
-    .getByRole("button", { name: "Save selected plan", exact: true })
+  expect(new URL(page.url()).searchParams.get("run")).toBe(run.id);
+  expect(new URL(page.url()).searchParams.has("comparison")).toBe(false);
+  await expect(
+    page.getByText("Open and staff extra beds", { exact: true }),
+  ).toHaveCount(0);
+  await capture(page, "summary-library-comparison-entry", info);
+  await page
+    .getByRole("button", { name: "Open right scenario results", exact: true })
     .click();
-  const savedResponse = await saveResponse;
-  expect(savedResponse.ok(), await savedResponse.text()).toBeTruthy();
-  const saved = await savedResponse.json();
-  expect(savedResponse.request().postDataJSON().plan_id).toBe(plan.id);
-  expect(saved.parent_scenario_id).toBe(context.scenario.id);
-  expect(saved.interventions).toEqual(plan.interventions);
+  await expect(
+    page.getByRole("heading", { name: "Results summary", exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(() => new URL(page.url()).searchParams.get("run"))
+    .toBe(alternativeRun.id);
+  // Comparison is retained while hidden; the Summary action must still reset
+  // its left side to this newly opened scenario on re-entry.
+  await page
+    .getByTestId("decision-summary")
+    .getByRole("button", { name: "Compare scenarios", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Left saved scenario", { exact: true }),
+  ).toHaveValue(alternative.id);
+  await page
+    .getByLabel("Right saved scenario", { exact: true })
+    .selectOption(context.scenario.id);
+  await expect(
+    page.getByRole("button", {
+      name: "Open right scenario results",
+      exact: true,
+    }),
+  ).toBeVisible();
+  expect(legacyBrowserRequests).toEqual([]);
+  expect(await api(page.request, `/comparisons/${historical.id}`)).toEqual(
+    historical,
+  );
 
   const latest = await api(page.request, `/scenarios/${context.scenario.id}`);
   const revised = await page.request.patch(
@@ -510,26 +575,22 @@ test("Decision summary reviews a matched response, saves that plan, and rejects 
     },
   );
   expect(revised.ok(), await revised.text()).toBeTruthy();
-  await page.goto(
-    `/?scenario=${context.scenario.id}&view=analysis&analysis=summary&run=${run.id}&comparison=${comparison.id}`,
-  );
+  await open(page, context.scenario.id, "summary", run.id);
   await expect(decision).toHaveClass(/decision-summary--stale/);
-  await expect(decision).not.toContainText("Best tested response:");
+  await expect(decision).toContainText("Run the current configuration");
   await expect(
     decision.getByRole("button", { name: "Review response", exact: true }),
   ).toHaveCount(0);
-  await expect(decision).toContainText("Run the current configuration");
-  await capture(page, "decision-summary-stale-protection", info);
-  record("decision-summary-navigation", {
+  record("summary-library-comparison-entry", {
     scenario_id: context.scenario.id,
     run_id: run.id,
-    comparison_id: comparison.id,
-    selected_plan_id: plan.id,
-    saved_scenario_id: saved.id,
-    matched_response_reviewed: true,
-    existing_save_plan_used: true,
-    stale_recommendation_hidden: true,
-    stale_configuration_field: "hospital_operations.supplies.initial_percent",
+    compared_scenario_id: alternative.id,
+    compared_run_id: alternativeRun.id,
+    historical_comparison_id: historical.id,
+    historical_comparison_unchanged: true,
+    no_legacy_recommendations_or_fetches: true,
+    cached_reentry_selects_current_scenario: true,
+    stale_result_protection: true,
   });
 });
 
@@ -606,7 +667,7 @@ test("View bottleneck reconstructs a real unretained source and opens its exact 
   const after = await api(page.request, `/runs/${source.replicationId}/trace`);
   expect(after.ready).toBe(true);
   await expect(page.locator("main")).toHaveAttribute("aria-busy", "false");
-  await expect(page.locator(".replay-canvas")).toBeVisible();
+  await expect(page.getByTestId("replay-floor-plan")).toBeVisible();
   await assertPageHealthy(page);
   await capture(page, "decision-summary-unretained-source-replay", info);
   expect(errors).toEqual([]);

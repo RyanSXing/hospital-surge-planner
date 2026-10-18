@@ -1,0 +1,21 @@
+# Replay and saved-scenario comparison
+
+## Replay
+
+Analysis → Replay shows an illustrative top-down hospital map with connected wards, emergency care, intensive care, waiting and discharge areas. Beds are compact rectangles. Blue means occupied; white means a ready physical bed. Reserved, cleaning and unavailable beds have separate states in the legend. Selecting a bed opens its recorded patient or slot; selecting a unit opens its capacity evidence.
+
+The map uses the selected run and replication's reconstructed `state.slots` and `state.units`. It does not substitute the editable draft or baseline dataset's bed slots. Editing installed or staffed bed capacity and running again produces a new replay with that run's inventory. Older saved results keep their original inventory. Uninstalled planned beds remain in the capacity inspector and do not inflate the map's bed count.
+
+Staffing and equipment are shared unit constraints. A ready physical bed is not necessarily available for another admission; each area therefore also shows its recorded supported capacity and admission availability. Red intensity follows occupancy relative to supported capacity and recorded constraints. Constraint categories can overlap and are never summed as separate contributions.
+
+Noncapacity areas show counts. Waiting counts use the complete aggregate state, not a bounded patient sample. “Discharged so far” counts actual discharge events since the run began; the model does not invent a discharge-bay capacity or dwell time. Missing evidence is unavailable, not zero. Corridor movement illustrates recorded patient location changes during playback. Seeking, changing runs or enabling reduced motion clears movement.
+
+## Comparison
+
+Analysis → Comparison selects two active scenarios from the saved library. Each side uses the latest complete ordinary simulation matching that scenario's current saved configuration revision, frozen inputs, dataset, period and model version. Unsaved draft edits are excluded. Starting a run checks the expected saved revision before enqueueing; a concurrent edit requires a refresh.
+
+The page shows outcomes, one bookmarked chart workspace and collapsed configuration differences. Changing either selector does not replace the workspace's selected scenario or run. “Open results” explicitly opens the chosen side's recorded results. Pair selection is retained in `compare_left` and `compare_right` URL parameters and browser history.
+
+Missing, incomplete, failed, stale and archived results remain explicit. Differences are available only when periods, baselines and model versions are compatible. Zero baseline values do not produce a percentage improvement. Results are separate simulation ensembles; displayed right-minus-left differences are descriptive. Historical automated-comparison records remain available through the existing API and saved artifacts, but the new page does not generate preset response plans.
+
+The read-only projection is `GET /api/scenario-comparisons?left_scenario_id=…&right_scenario_id=…`. Existing scenarios and saved results require no migration or rewrite.

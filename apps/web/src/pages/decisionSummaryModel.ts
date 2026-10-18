@@ -486,7 +486,7 @@ export function buildDecisionSummary({
     remaining: null,
     evidence: [],
     main: null,
-    action: { kind: "compare", label: "Compare responses" },
+    action: { kind: "compare", label: "Compare scenarios" },
     replay: null,
   };
   if (!ctx.run || ctx.run.status !== "SUCCEEDED") {
@@ -640,7 +640,7 @@ export function buildDecisionSummary({
   if (!comparison) {
     model.response = comparisonUnavailable
       ? "The saved comparison could not be loaded. No response recommendation is available."
-      : "Compare responses to test which resource changes improve this plan.";
+      : "Compare saved scenarios to see how their configurations affect patient flow.";
     return model;
   }
   if (!comparisonMatchesResult(comparison, ctx)) {
@@ -817,7 +817,8 @@ export function followDecisionAction(
     void ctx.runScenario();
   } else if (action.kind === "configure") {
     ctx.setPage("overview");
-  } else ctx.setPage("compare");
+  } else if (ctx.compareScenarios) ctx.compareScenarios();
+  else ctx.setPage("compare");
 }
 
 /** Only an eligible plan in this exact comparison can enter the existing save flow. */

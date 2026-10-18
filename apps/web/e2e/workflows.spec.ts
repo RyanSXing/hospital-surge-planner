@@ -90,88 +90,102 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
     "SELECTED PATIENT",
   );
   await capture(page, "workflow-patient", info);
+  const alternative = await api(page.request, "/scenarios", "POST", {
+    name: `E2E saved staffing response ${Date.now()}`,
+    dataset_version_id: savedInputs.dataset_version_id,
+    start_at: savedInputs.start_at,
+    timezone: savedInputs.timezone,
+    horizon_calendar_days: savedInputs.horizon_calendar_days,
+    base_seed: savedInputs.base_seed,
+    replications: 2,
+    conditions: savedInputs.conditions,
+    interventions: [
+      ...(savedInputs.interventions || []),
+      {
+        id: "library-additional-nurses",
+        kind: "staff_existing",
+        name: "Two additional ward nurses",
+        unit_id: "UNIT-WARD-A",
+        facility_id: "FAC-MAIN",
+        nurses: 2,
+        start_at: savedInputs.start_at,
+        activation_minutes: 0,
+      },
+    ],
+    ...(savedInputs.hospital_operations
+      ? { hospital_operations: savedInputs.hospital_operations }
+      : {}),
+  });
   await open(page, context.scenario.id, "comparison", run.id);
-  await page.getByLabel("Comparison simulation runs").selectOption("10");
+  await expect(
+    page.getByRole("heading", { name: "Compare saved scenarios", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByLabel("Right saved scenario", { exact: true })
+    .selectOption(alternative.id);
   const compared = page.waitForResponse(
-    (r) =>
-      r.url().endsWith("/api/comparisons") && r.request().method() === "POST",
+    (response) =>
+      response.url().endsWith("/api/run-groups") &&
+      response.request().method() === "POST",
     { timeout: 30000 },
   );
   await page
-    .getByRole("button", { name: "Evaluate responses", exact: true })
+    .getByRole("button", { name: "Run right scenario", exact: true })
     .click();
-  const comparison = await (await compared).json();
-  let result: any;
-  await expect
-    .poll(
-      async () => {
-        result = await api(page.request, "/comparisons/" + comparison.id);
-        return result.status;
-      },
-      {
-        timeout: process.env.E2E_BASE_URL ? 300000 : 150000,
-        intervals: [1000, 2000],
-      },
-    )
-    .toBe("SUCCEEDED");
-  await page.locator(".comparison-capacity-details > summary").click();
-  for (const [index, plan] of result.plans.entries()) {
-    const last = plan.metrics.series.at(-1);
-    const card = page.locator(".capacity-plan-cards .plan-card").nth(index);
-    await expect(card.locator(".micro-label")).toContainText("HORIZON END");
-    await expect(card.locator(".capacity-diagram")).toHaveAttribute(
-      "aria-label",
-      `${Math.round(last.ward_physical.p50)} physical ward places; ${Math.round(last.ward_staffed.p50)} staffing-supported; capacity diagram without patient assignments`,
-    );
-  }
-  expect(result.plans.length).toBe(3);
-  await expect(
-    page.getByText("10 runs per plan", { exact: true }),
-  ).toBeVisible();
-  await page
-    .getByLabel("Comparison chart metric")
-    .selectOption("ward_occupied");
-  await page.getByLabel("Comparison uncertainty band").selectOption("plan_2");
-  await expect(page.locator(".comparison-chart")).toContainText(
-    "Ward occupancy",
+  const comparisonResponse = await compared;
+  expect(comparisonResponse.ok(), await comparisonResponse.text()).toBe(true);
+  expect(comparisonResponse.request().postDataJSON()).toEqual({
+    scenario_id: alternative.id,
+    expected_scenario_revision: alternative.revision,
+  });
+  const alternativeRun = await waitRun(
+    page,
+    (await comparisonResponse.json()).id,
   );
+  expect(alternativeRun.replications_completed).toBe(2);
+  await expect(
+    page.getByRole("button", {
+      name: "Open right scenario results",
+      exact: true,
+    }),
+  ).toBeVisible();
+  const comparison = await api(
+    page.request,
+    `/scenario-comparisons?left_scenario_id=${context.scenario.id}&right_scenario_id=${alternative.id}`,
+  );
+  expect(comparison.kind).toBe("saved_scenarios");
+  expect(comparison.scope).toBe("independent_ensembles");
+  expect(comparison.left.run.id).toBe(run.id);
+  expect(comparison.right.run.id).toBe(alternativeRun.id);
+  expect(comparison.paired_evidence).toBeNull();
   await page
-    .getByLabel("Comparison chart metric")
-    .selectOption("inpatient_queue");
+    .getByRole("button", { name: "Ward occupancy", exact: true })
+    .click();
+  await expect(page.locator(".scenario-comparison-chart")).toContainText(
+    "Patients in ward beds",
+  );
+  await page.getByRole("button", { name: "Bed waiting", exact: true }).click();
   await capture(page, "workflow-comparison", info);
   await page
-    .getByText("Full outcome metrics & resource assumptions", { exact: true })
+    .locator("details.scenario-comparison-details")
+    .first()
+    .locator("summary")
     .click();
-  await expect(page.locator(".comparison-metrics")).toContainText(
-    "Completed inpatient admissions",
-  );
-  await page.locator(".comparison-plan-resources > summary").last().click();
+  await expect(
+    page.locator("details.scenario-comparison-details").first(),
+  ).toContainText("Planned hospital responses");
   await page
-    .getByRole("button", { name: "Open in summary", exact: true })
-    .last()
+    .getByRole("button", { name: "Open right scenario results", exact: true })
     .click();
   await expect
     .poll(() => new URL(page.url()).searchParams.get("run"))
-    .toBe(result.plans.at(-1).run_group_id);
-  await expect(page.locator(".evaluated-plan-banner")).toContainText(
-    result.plans.at(-1).name,
+    .toBe(alternativeRun.id);
+  await expect(page.locator(".evaluated-plan-banner")).toHaveCount(0);
+  const alternativeSaved = await api(
+    page.request,
+    `/scenarios/${alternative.id}`,
   );
-  await page.getByRole("button", { name: "Return to comparison" }).click();
-  await expect(
-    page.getByText("10 runs per plan", { exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Select response", exact: true })
-    .last()
-    .click();
-  const saved = page.waitForResponse(
-    (r) => r.url().includes("/save-plan") && r.request().method() === "POST",
-    { timeout: 30000 },
-  );
-  await page
-    .getByRole("button", { name: "Save selected plan", exact: true })
-    .click();
-  expect((await saved).ok()).toBeTruthy();
+  expect(alternativeSaved.interventions).toEqual(alternative.interventions);
   await open(page, context.scenario.id, "summary", run.id);
   await page.getByRole("button", { name: "Record update" }).click();
   const dialog = page.getByRole("dialog");
@@ -270,7 +284,9 @@ with zipfile.ZipFile(path) as bundle:
     scenario_id: context.scenario.id,
     horizon_calendar_days: workflowDays,
     run_id: run.id,
-    comparison_id: comparison.id,
+    compared_scenario_ids: [context.scenario.id, alternative.id],
+    alternative_run_id: alternativeRun.id,
+    comparison_basis: comparison.scope,
     saved_arrival_condition: savedArrival,
     frozen_scenario_revision_id: frozenInputs.id,
     saved_and_frozen_conditions_equal: true,

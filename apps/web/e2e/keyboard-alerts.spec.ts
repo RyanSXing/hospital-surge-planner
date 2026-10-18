@@ -129,37 +129,66 @@ test("keyboard entry, calendar drilldown, inspection, comparison and export", as
     true,
   );
   await expect(
-    page.getByRole("button", { name: "Evaluate responses", exact: true }),
+    page.getByRole("heading", { name: "Compare saved scenarios", exact: true }),
   ).toBeVisible();
-  const repetitions = page.getByLabel("Comparison simulation runs");
-  await tabTo(page, repetitions);
-  await page.keyboard.type("10 runs");
-  await page.keyboard.press("Tab");
-  await expect(repetitions).toHaveValue("10");
-  const compared = page.waitForResponse(
-    (r) =>
-      r.url().endsWith("/api/comparisons") && r.request().method() === "POST",
-  );
+  const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
+  const alternative = await api(page.request, "/scenarios", "POST", {
+    name: `Keyboard saved alternative ${Date.now()}`,
+    dataset_version_id: saved.dataset_version_id,
+    start_at: saved.start_at,
+    timezone: saved.timezone,
+    horizon_calendar_days: saved.horizon_calendar_days,
+    base_seed: saved.base_seed,
+    replications: 1,
+    conditions: saved.conditions,
+  });
   await activate(
     page,
-    page.getByRole("button", { name: "Evaluate responses", exact: true }),
+    page.getByRole("button", { name: "Refresh results", exact: true }),
   );
-  const comparison = await (await compared).json();
-  await expect
-    .poll(
-      async () =>
-        (await api(page.request, "/comparisons/" + comparison.id)).status,
-      { timeout: 150000, intervals: [1000, 2000] },
-    )
-    .toBe("SUCCEEDED");
-  await activate(page, page.locator(".comparison-capacity-details > summary"));
+  const savedSelector = page.getByLabel("Right saved scenario", {
+    exact: true,
+  });
   await expect(
-    page.getByRole("button", { name: "Select response", exact: true }).last(),
-  ).toBeEnabled();
+    savedSelector.locator(`option[value="${alternative.id}"]`),
+  ).toHaveCount(1);
+  await tabTo(page, savedSelector);
+  // Native-select type-ahead works across platforms; Home/ArrowDown can be
+  // handled by the operating system without changing a headless Mac picker.
+  await page.keyboard.type(alternative.name, { delay: 20 });
+  await page.keyboard.press("Tab");
+  await expect(savedSelector).toHaveValue(alternative.id);
+  const compared = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/run-groups") &&
+      response.request().method() === "POST",
+  );
   await activate(
     page,
-    page.getByRole("button", { name: "Select response", exact: true }).last(),
+    page.getByRole("button", { name: "Run right scenario", exact: true }),
   );
+  const comparisonResponse = await compared;
+  expect(comparisonResponse.request().postDataJSON()).toEqual({
+    scenario_id: alternative.id,
+    expected_scenario_revision: alternative.revision,
+  });
+  const comparisonRun = await waitRun(
+    page,
+    (await comparisonResponse.json()).id,
+  );
+  await expect(
+    page.getByRole("button", {
+      name: "Open right scenario results",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await activate(
+    page,
+    page.getByRole("button", { name: "Ward occupancy", exact: true }),
+  );
+  await expect(
+    page.locator(".scenario-comparison-chart svg[role=img]"),
+  ).toHaveCount(1);
   await activate(
     page,
     page.getByRole("button", { name: "Workspace options", exact: true }),
@@ -192,7 +221,8 @@ test("keyboard entry, calendar drilldown, inspection, comparison and export", as
   record("keyboard", {
     scenario_id: context.scenario.id,
     run_id: run.id,
-    comparison_id: comparison.id,
+    compared_scenario_ids: [context.scenario.id, alternative.id],
+    comparison_run_id: comparisonRun.id,
     actions:
       "Tab/Shift+Tab, Enter, ArrowRight, ArrowDown, Home, text entry; no pointer clicks",
     calendar_grains: ["day", "week", "month"],

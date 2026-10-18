@@ -114,6 +114,7 @@ export interface PlanningContext {
   error: string | null;
   page: PageId;
   setPage: (p: PageId) => void;
+  compareScenarios?: () => void;
   setTime: (t: string) => void;
   setDay: (d: number) => void;
   setFacility: (s: string) => void;

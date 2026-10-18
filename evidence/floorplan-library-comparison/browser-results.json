@@ -1,0 +1,329 @@
+{
+  "checked_at": "2026-10-18T07:30:18.615637+00:00",
+  "unique_desktop_cases": 28,
+  "all_latest_case_results_passed": true,
+  "mobile_requested": false,
+  "cases": [
+    {
+      "file": "frozen-context.spec.ts",
+      "project": "desktop",
+      "title": "completed comparisons and source search preserve distinct frozen and rebased datasets",
+      "status": "passed",
+      "duration_ms": 6484,
+      "evidence_report": "output/playwright/floorplan-library-comparison/comparison-flow.json"
+    },
+    {
+      "file": "frozen-context.spec.ts",
+      "project": "desktop",
+      "title": "historical results retain frozen dates and assumptions beside an edited draft",
+      "status": "passed",
+      "duration_ms": 8188,
+      "evidence_report": "output/playwright/floorplan-library-comparison/comparison-flow.json"
+    },
+    {
+      "file": "guided-setup.spec.ts",
+      "project": "desktop",
+      "title": "arrival percentage accepts sequential negative and positive typing without losing the draft",
+      "status": "passed",
+      "duration_ms": 3356,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-desktop.json"
+    },
+    {
+      "file": "guided-setup.spec.ts",
+      "project": "desktop",
+      "title": "arrival slider follows every day of the selected duration and survives save and reload",
+      "status": "passed",
+      "duration_ms": 4798,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-desktop.json"
+    },
+    {
+      "file": "guided-setup.spec.ts",
+      "project": "desktop",
+      "title": "simple hospital setup keeps its live graph visible and runs the exact optional inputs",
+      "status": "passed",
+      "duration_ms": 12388,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-desktop.json"
+    },
+    {
+      "file": "hospital-comparison.spec.ts",
+      "project": "desktop",
+      "title": "a changed saved revision is never silently run, and different horizons never receive a ranking or overlay",
+      "status": "passed",
+      "duration_ms": 19677,
+      "evidence_report": "output/playwright/floorplan-library-comparison/comparison-final.json"
+    },
+    {
+      "file": "hospital-comparison.spec.ts",
+      "project": "desktop",
+      "title": "duplicate or historical comparison links fall back to two distinct library scenarios without legacy preset requests",
+      "status": "passed",
+      "duration_ms": 28483,
+      "evidence_report": "output/playwright/floorplan-library-comparison/comparison-final.json"
+    },
+    {
+      "file": "hospital-comparison.spec.ts",
+      "project": "desktop",
+      "title": "two library scenarios run explicitly, compare actual saved results, preserve settings, and navigate without automated presets",
+      "status": "passed",
+      "duration_ms": 15148,
+      "evidence_report": "output/playwright/floorplan-library-comparison/comparison-final.json"
+    },
+    {
+      "file": "hospital-operations.spec.ts",
+      "project": "desktop",
+      "title": "Summary opens saved-scenario comparison and keeps historical comparisons intact",
+      "status": "passed",
+      "duration_ms": 17246,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-final-navigation.json"
+    },
+    {
+      "file": "hospital-operations.spec.ts",
+      "project": "desktop",
+      "title": "View bottleneck reconstructs a real unretained source and opens its exact recorded state",
+      "status": "passed",
+      "duration_ms": 9209,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-final-navigation.json"
+    },
+    {
+      "file": "hospital-operations.spec.ts",
+      "project": "desktop",
+      "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+      "status": "passed",
+      "duration_ms": 9409,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-desktop.json"
+    },
+    {
+      "file": "keyboard-alerts.spec.ts",
+      "project": "desktop",
+      "title": "keyboard entry, calendar drilldown, inspection, comparison and export",
+      "status": "passed",
+      "duration_ms": 22197,
+      "evidence_report": "output/playwright/floorplan-library-comparison/keyboard-final.json"
+    },
+    {
+      "file": "keyboard-alerts.spec.ts",
+      "project": "desktop",
+      "title": "planning alert review preserves the completed result",
+      "status": "passed",
+      "duration_ms": 5410,
+      "evidence_report": "output/playwright/floorplan-library-comparison/comparison-final.json"
+    },
+    {
+      "file": "navigation-flow.spec.ts",
+      "project": "desktop",
+      "title": "Analytics outcomes match recorded metrics and preserve trajectory context",
+      "status": "passed",
+      "duration_ms": 15427,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-desktop.json"
+    },
+    {
+      "file": "navigation-flow.spec.ts",
+      "project": "desktop",
+      "title": "Overview setup to complete Analysis workflow preserves baseline and browser context",
+      "status": "passed",
+      "duration_ms": 59814,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-final-navigation.json"
+    },
+    {
+      "file": "navigation-flow.spec.ts",
+      "project": "desktop",
+      "title": "root, legacy aliases and invalid navigation canonicalize without losing context",
+      "status": "passed",
+      "duration_ms": 12088,
+      "evidence_report": "output/playwright/floorplan-library-comparison/root-desktop.json"
+    },
+    {
+      "file": "replay-clinical-capacity.spec.ts",
+      "project": "desktop",
+      "title": "replay displays actual separate hospital capacity and no offsite inventory",
+      "status": "passed",
+      "duration_ms": 5209,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+    },
+    {
+      "file": "replay-clinical-capacity.spec.ts",
+      "project": "desktop",
+      "title": "replay holds a stepdown patient in the recorded ICU bed until actual ward entry",
+      "status": "passed",
+      "duration_ms": 3995,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+    },
+    {
+      "file": "replay-controls.spec.ts",
+      "project": "desktop",
+      "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
+      "status": "passed",
+      "duration_ms": 7338,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+    },
+    {
+      "file": "replay-evidence.spec.ts",
+      "project": "desktop",
+      "title": "replay exposes complete filtered events, patient history and recorded resources",
+      "status": "passed",
+      "duration_ms": 7051,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-corrected-browser.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "a 100-bed ward reflows inside a compact architectural map without overflowing its walls",
+      "status": "passed",
+      "duration_ms": 2413,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "current shortage pressure follows actual paused care and clears after recovery and backward seeks",
+      "status": "passed",
+      "duration_ms": 5208,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "editable bed and staffed-bed parameters rebuild replay inventory per frozen run",
+      "status": "passed",
+      "duration_ms": 12366,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "floor plan separates actual wards and every bed, with meaningful bed, area and patient inspection",
+      "status": "passed",
+      "duration_ms": 5649,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-corrected-browser.json"
+    },
+    {
+      "file": "replay-journey.spec.ts",
+      "project": "desktop",
+      "title": "recorded arrivals occupy an actual ED bed only during care and increment cumulative discharges",
+      "status": "passed",
+      "duration_ms": 5341,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+    },
+    {
+      "file": "replay-simple.spec.ts",
+      "project": "desktop",
+      "title": "recorded floor plan stays stable through buffered playback, delayed seek and backwards seek",
+      "status": "passed",
+      "duration_ms": 13119,
+      "evidence_report": "output/playwright/floorplan-library-comparison/replay-motion-final-browser.json"
+    },
+    {
+      "file": "saved-replication-count.spec.ts",
+      "project": "desktop",
+      "title": "saved custom replication counts stay visible and are submitted unchanged",
+      "status": "passed",
+      "duration_ms": 10697,
+      "evidence_report": "output/playwright/floorplan-library-comparison/comparison-flow.json"
+    },
+    {
+      "file": "workflows.spec.ts",
+      "project": "desktop",
+      "title": "configure, compute, inspect, compare, update, replay and export",
+      "status": "passed",
+      "duration_ms": 20365,
+      "evidence_report": "output/playwright/floorplan-library-comparison/comparison-flow.json"
+    }
+  ],
+  "executions": [
+    {
+      "report": "output/playwright/floorplan-library-comparison/root-desktop.json",
+      "stats": {
+        "startTime": "2026-10-18T07:16:21.306Z",
+        "duration": 138875.795,
+        "expected": 9,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/floorplan-library-comparison/comparison-flow.json",
+      "stats": {
+        "startTime": "2026-10-18T07:16:28.778Z",
+        "duration": 161401.056,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/floorplan-library-comparison/comparison-final.json",
+      "stats": {
+        "startTime": "2026-10-18T07:25:21.305Z",
+        "duration": 105955.919,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/floorplan-library-comparison/replay-final-browser.json",
+      "stats": {
+        "startTime": "2026-10-18T07:25:25.789Z",
+        "duration": 132477.742,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/floorplan-library-comparison/root-final-navigation.json",
+      "stats": {
+        "startTime": "2026-10-18T07:25:30.360Z",
+        "duration": 87852.657,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/floorplan-library-comparison/replay-corrected-browser.json",
+      "stats": {
+        "startTime": "2026-10-18T07:27:55.776Z",
+        "duration": 45509.25,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/floorplan-library-comparison/keyboard-final.json",
+      "stats": {
+        "startTime": "2026-10-18T07:28:13.546Z",
+        "duration": 22961.395,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/floorplan-library-comparison/replay-motion-final-browser.json",
+      "stats": {
+        "startTime": "2026-10-18T07:29:11.042Z",
+        "duration": 13915.881,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "earlier_assertion_failures_resolved": true,
+  "test_adjustments": [
+    "Equivalent ISO instants are compared as instants.",
+    "Existing empty-slot state label is Ready.",
+    "Native macOS select uses keyboard type-ahead.",
+    "Reduced-motion setting intentionally pauses playback before resume."
+  ]
+}

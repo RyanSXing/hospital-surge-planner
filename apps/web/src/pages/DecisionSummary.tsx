@@ -41,43 +41,12 @@ export function useDecisionEvidence(ctx?: PlanningContext) {
   return { ensemble, example };
 }
 
-export default function DecisionSummary({
-  ctx,
-  comparisonId,
-  onReviewResponse,
-}: {
-  ctx: PlanningContext;
-  comparisonId?: string | null;
-  onReviewResponse?: (comparisonId: string, planId: string) => void;
-}) {
+export default function DecisionSummary({ ctx }: { ctx: PlanningContext }) {
   const { ensemble, example } = useDecisionEvidence(ctx);
-  const savedComparisonId =
-    comparisonId !== undefined
-      ? comparisonId
-      : (new URLSearchParams(location.search).get("comparison") ??
-        (ctx.scenario
-          ? sessionStorage.getItem(`hospital.comparison.${ctx.scenario.id}`)
-          : null));
-  const comparison = useQuery({
-    queryKey: ["decision-comparison", savedComparisonId],
-    queryFn: ({ signal }) =>
-      api(`/comparisons/${encodeURIComponent(savedComparisonId!)}`, { signal }),
-    enabled: Boolean(savedComparisonId && ctx.run?.status === "SUCCEEDED"),
-    refetchOnMount: "always",
-    staleTime: 0,
-    refetchInterval: (query) =>
-      query.state.data &&
-      !["SUCCEEDED", "FAILED", "CANCELLED"].includes(query.state.data.status)
-        ? 2000
-        : false,
-    retry: false,
-  });
   const model = buildDecisionSummary({
     ctx,
     ensemble: ensemble.data,
     example: example.data,
-    comparison: comparison.data,
-    comparisonUnavailable: comparison.isError,
     loading: ensemble.isFetching || example.isFetching,
   });
   const date = model.main?.firstAt
@@ -108,9 +77,7 @@ export default function DecisionSummary({
               (!runnable || ctx.canWrite === false)) ||
             Boolean(ctx.busy)
           }
-          onClick={() =>
-            followDecisionAction(model.action, ctx, onReviewResponse)
-          }
+          onClick={() => followDecisionAction(model.action, ctx)}
         >
           {model.action.label} <ArrowRight size={14} aria-hidden="true" />
         </Button>
@@ -118,7 +85,7 @@ export default function DecisionSummary({
       {model.notice || model.state === "stale" ? (
         <p className="decision-summary-revision">
           {model.notice ||
-            `Showing saved revision ${ctx.run?.source_draft_revision ?? "unavailable"}. Run the current configuration for an updated recommendation.`}
+            `Showing saved revision ${ctx.run?.source_draft_revision ?? "unavailable"}. Run the current configuration for updated results.`}
         </p>
       ) : null}
       <div className="decision-summary-content">
@@ -146,19 +113,6 @@ export default function DecisionSummary({
             ))}
           </div>
         </div>
-        {model.response ? (
-          <div className="decision-summary-line">
-            <span>Tested response</span>
-            <div>
-              <p>{model.response}</p>
-              {model.improvement ? (
-                <p className="decision-summary-improvement">
-                  {model.improvement}
-                </p>
-              ) : null}
-            </div>
-          </div>
-        ) : null}
         {model.remaining ? (
           <div className="decision-summary-line">
             <span>Still to address</span>

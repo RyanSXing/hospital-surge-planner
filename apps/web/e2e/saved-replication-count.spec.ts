@@ -1,6 +1,6 @@
 import { expandScenarioSection } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
-import { api, open, record, scenario } from "./helpers";
+import { api, open, record, scenario, waitRun } from "./helpers";
 
 test("saved custom replication counts stay visible and are submitted unchanged", async ({
   page,
@@ -35,117 +35,92 @@ test("saved custom replication counts stay visible and are submitted unchanged",
     (await api(page.request, `/scenarios/${context.scenario.id}`)).replications,
   ).toBe(2);
 
-  const comparison = await api(page.request, "/comparisons", "POST", {
-    scenario_id: context.scenario.id,
-    replications: 2,
-    plans: [
-      {
-        name: "Existing ward staffing",
-        interventions: [
-          { kind: "staff_existing", start_at: context.scenario.start_at },
-        ],
-      },
-    ],
-  });
-  const projected = await api(page.request, `/comparisons/${comparison.id}`);
-  expect(projected.plans.every((plan: any) => plan.total === 2)).toBe(true);
-  // Deterministic pending UI fixture derived from the real GET projection.
-  // Status and completion are deliberately reset; requested totals stay real.
-  // This tests pre-result rendering without racing the live worker's completion.
-  const pendingProjection = {
-    ...projected,
-    status: "RUNNING",
-    completed: 0,
-    plans: projected.plans.map((plan: any) => ({
-      ...plan,
-      status: "RUNNING",
-      completed: 0,
-      metrics: undefined,
-    })),
-  };
-  const comparisonCount = page.getByRole("combobox", {
-    name: "Comparison simulation runs",
-    exact: true,
-  });
-  // Only initial saved-view reads use the fixture. Computation and subsequent
-  // completion, reevaluation, and reload remain actual API operations.
-  const queuedRoute = `**/api/comparisons/${comparison.id}`;
-  await page.route(queuedRoute, (route) =>
-    route.fulfill({ json: pendingProjection }),
+  const savedScenario = await api(
+    page.request,
+    `/scenarios/${context.scenario.id}`,
   );
-  try {
-    await page.goto(
-      `/?scenario=${context.scenario.id}&view=analysis&analysis=comparison&comparison=${comparison.id}`,
-    );
-    await expect(
-      page.getByText("Computation in progress", { exact: true }),
-    ).toBeVisible();
-    await expect(comparisonCount).toHaveValue("2");
-    await expect(comparisonCount.locator("option:checked")).toHaveText(
-      "2 runs · Saved count",
-    );
-    await expect(comparisonCount.locator("option")).toHaveCount(4);
-  } finally {
-    await page.unroute(queuedRoute);
-  }
-  await expect
-    .poll(
-      async () =>
-        (await api(page.request, `/comparisons/${comparison.id}`)).status,
-      { timeout: 120000 },
-    )
-    .toBe("SUCCEEDED");
-  await expect(comparisonCount).toHaveValue("2");
+  const other = await api(page.request, "/scenarios", "POST", {
+    name: `E2E three-run comparison ${Date.now()}`,
+    dataset_version_id: savedScenario.dataset_version_id,
+    start_at: savedScenario.start_at,
+    timezone: savedScenario.timezone,
+    horizon_calendar_days: 1,
+    base_seed: savedScenario.base_seed,
+    replications: 3,
+    conditions: [],
+  });
+  await page.goto(
+    `/?scenario=${savedScenario.id}&view=analysis&analysis=comparison&compare_left=${savedScenario.id}&compare_right=${other.id}`,
+  );
   await expect(
-    page.getByText("2 runs per plan", { exact: true }),
+    page.getByRole("heading", { name: "Compare saved scenarios", exact: true }),
   ).toBeVisible();
-  const evaluated = page.waitForResponse(
-    (response) =>
-      response.url().endsWith("/api/comparisons") &&
-      response.request().method() === "POST",
+  await expect(page.getByTestId("comparison-left")).toContainText(
+    "2 planned runs",
   );
-  await page
-    .getByRole("button", { name: "Evaluate responses", exact: true })
-    .click();
-  const response = await evaluated;
-  expect(response.ok(), await response.text()).toBe(true);
-  expect(response.request().postDataJSON().replications).toBe(2);
-  const repeated = await response.json();
-  let result: any;
-  await expect
-    .poll(
-      async () => {
-        result = await api(page.request, `/comparisons/${repeated.id}`);
-        return result.status;
-      },
-      { timeout: 120000 },
-    )
-    .toBe("SUCCEEDED");
-  expect(
-    result.plans.every(
-      (plan: any) => plan.metrics.replications_completed === 2,
-    ),
-  ).toBe(true);
+  await expect(page.getByTestId("comparison-right")).toContainText(
+    "3 planned runs",
+  );
+  await expect(page.getByTestId("left-success_score_percent")).toHaveText("—");
+  const completed: any[] = [];
+  for (const [position, selected, count] of [
+    ["left", savedScenario, 2],
+    ["right", other, 3],
+  ] as const) {
+    const queued = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/run-groups") &&
+        response.request().method() === "POST",
+    );
+    await page
+      .getByRole("button", { name: `Run ${position} scenario`, exact: true })
+      .click();
+    const submitted = await queued;
+    expect(submitted.ok(), await submitted.text()).toBe(true);
+    expect(submitted.request().postDataJSON()).toEqual({
+      scenario_id: selected.id,
+      expected_scenario_revision: selected.revision,
+    });
+    const result = await waitRun(page, (await submitted.json()).id);
+    expect(result.replications_completed).toBe(count);
+    expect(result.scenario_context.replications).toBe(count);
+    completed.push(result);
+    await expect(
+      page.getByRole("button", {
+        name: `Open ${position} scenario results`,
+        exact: true,
+      }),
+    ).toBeVisible();
+  }
   await page.reload();
-  await expect(comparisonCount).toHaveValue("2");
-  await expect(comparisonCount.locator("option:checked")).toHaveText(
-    "2 runs · Saved count",
+  await expect(page.getByTestId("comparison-left")).toContainText(
+    "2 simulation runs",
+  );
+  await expect(page.getByTestId("comparison-right")).toContainText(
+    "3 simulation runs",
+  );
+  const projection = await api(
+    page.request,
+    `/scenario-comparisons?left_scenario_id=${savedScenario.id}&right_scenario_id=${other.id}`,
+  );
+  expect(projection.left.metrics.replications_completed).toBe(2);
+  expect(projection.right.metrics.replications_completed).toBe(3);
+  expect(projection.compatibility.comparable).toBe(true);
+  expect(projection.paired_evidence).toBeNull();
+  expect(
+    (await api(page.request, `/scenarios/${savedScenario.id}`)).replications,
+  ).toBe(2);
+  expect((await api(page.request, `/scenarios/${other.id}`)).replications).toBe(
+    3,
   );
   record(`saved-replication-count-${info.project.name}`, {
-    scenario_id: context.scenario.id,
-    source_comparison_id: comparison.id,
-    submitted_comparison_id: repeated.id,
-    saved_and_submitted_replications: 2,
-    metadata_projection_source_status: projected.status,
-    pending_ui_fixture: {
-      derived_from_actual_get: true,
-      overridden_status: "RUNNING",
-      completed_reset_to_zero: true,
-      metrics_removed: true,
-      actual_requested_count: 2,
-    },
-    count_restored_without_metrics: true,
-    custom_option_visible_in_both_selectors: true,
-    reload_retains_custom_count: true,
+    scenario_id: savedScenario.id,
+    compared_scenario_id: other.id,
+    saved_and_submitted_counts: [2, 3],
+    run_ids: completed.map((run) => run.id),
+    no_simulation_parameter_overrides: true,
+    counts_restored_without_metrics: true,
+    reload_retains_custom_counts: true,
+    comparison_basis: "independent_ensembles",
   });
 });

@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { api, capture, open, record, scenario, waitRun } from "./helpers";
 import { utcToWall } from "../src/zonedTime";
+import { expectFloorPlanAt } from "./replay-floorplan-helpers";
 import { humanLabel } from "../src/presentation";
 
 test("replay exposes complete filtered events, patient history and recorded resources", async ({
@@ -38,32 +39,6 @@ test("replay exposes complete filtered events, patient history and recorded reso
   const url = new URL(page.url());
   url.searchParams.set("at", at);
   await page.goto(url.toString());
-  if (info.project.name === "mobile") {
-    const viewport = page.locator(".replay-canvas-viewport");
-    await expect(page.getByLabel("Focus care zone")).toBeVisible();
-    await expect
-      .poll(() =>
-        viewport.evaluate(
-          (element) => element.scrollWidth - element.clientWidth,
-        ),
-      )
-      .toBeGreaterThan(500);
-    await page.getByLabel("Focus care zone").selectOption("ward");
-    await expect
-      .poll(() => viewport.evaluate((element) => element.scrollLeft))
-      .toBeGreaterThan(400);
-    const geometry = await page
-      .locator(".replay-canvas")
-      .evaluate((element) => element.getBoundingClientRect().toJSON());
-    expect(geometry.width).toBeGreaterThanOrEqual(900);
-    expect(geometry.height / geometry.width).toBeCloseTo(620 / 1000, 2);
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBeTruthy();
-    await capture(page, "replay-mobile-readable-zones", info);
-  }
   await page
     .getByRole("button", { name: "Inspect replay", exact: true })
     .click();
@@ -185,14 +160,14 @@ test("replay exposes complete filtered events, patient history and recorded reso
     .poll(async () =>
       Date.parse(
         (await page
-          .locator(".replay-canvas")
+          .getByTestId("replay-floor-plan")
           .getAttribute("data-recorded-at")) || "",
       ),
     )
     .toBe(Date.parse(annotations.shortage_periods[0].start_at));
   await expect(page.getByText("Loading this census page…")).toHaveCount(0);
-  await expect(page.locator(".replay-canvas")).toHaveAttribute(
-    "data-animating",
+  await expect(page.getByTestId("replay-floor-plan")).toHaveAttribute(
+    "data-retaining",
     "false",
   );
   expect(
@@ -205,20 +180,15 @@ test("replay exposes complete filtered events, patient history and recorded reso
   });
   if (info.project.name === "desktop") {
     await page.setViewportSize({ width: 1600, height: 900 });
-    const geometry = await page
-      .locator(".replay-canvas")
-      .evaluate((node: HTMLCanvasElement) => {
-        const bounds = node.getBoundingClientRect();
-        return {
-          width: bounds.width,
-          height: bounds.height,
-          rasterRatio: node.height / node.width,
-        };
-      });
-    expect(geometry.width).toBeGreaterThan(700);
-    expect(geometry.height / geometry.width).toBeCloseTo(
-      geometry.rasterRatio,
-      3,
+    await expect(page.getByTestId("replay-floor-plan")).toBeVisible();
+    const geometry = await page.getByTestId("replay-floor-plan").boundingBox();
+    expect(geometry!.width).toBeGreaterThan(700);
+    await expect(page.locator(".floor-plan-unit")).toHaveCount(
+      state.units.filter(
+        (unit: any) =>
+          unit.facility_id === "FAC-MAIN" &&
+          ["ward", "icu", "ed", "clinic"].includes(unit.kind),
+      ).length,
     );
     // Complete annotations remain reachable through ordinary page scrolling.
     await page
@@ -255,19 +225,10 @@ test("replay exposes complete filtered events, patient history and recorded reso
   await expect(
     page.locator(".replay-patient-history .info-note"),
   ).toContainText("Not yet arrived");
-  const initial = await api(
-    page.request,
-    `/runs/${rep}/state?at=${encodeURIComponent(run.start_at)}`,
-  );
-  await expect(page.locator(".replay-canvas")).toHaveAttribute(
-    "data-visible-markers",
-    String(
-      initial.patients.filter(
-        (patient: any) =>
-          !patient.facility_id || patient.facility_id === "FAC-MAIN",
-      ).length,
-    ),
-  );
+  await expectFloorPlanAt(page, rep, run.start_at);
+  await expect(
+    page.locator(`.floor-plan-bed[data-patient-id="${future.patient_id}"]`),
+  ).toHaveCount(0);
   const departed = laterPatients.find(
     (value: any) =>
       value.departure_at &&
@@ -283,19 +244,10 @@ test("replay exposes complete filtered events, patient history and recorded reso
   await expect(
     page.locator(".replay-patient-history .info-note"),
   ).toContainText("Discharged at");
-  const last = await api(
-    page.request,
-    `/runs/${rep}/state?at=${encodeURIComponent(run.end_at)}`,
-  );
-  await expect(page.locator(".replay-canvas")).toHaveAttribute(
-    "data-visible-markers",
-    String(
-      last.patients.filter(
-        (patient: any) =>
-          !patient.facility_id || patient.facility_id === "FAC-MAIN",
-      ).length,
-    ),
-  );
+  await expectFloorPlanAt(page, rep, run.end_at);
+  await expect(
+    page.locator(`.floor-plan-bed[data-patient-id="${departed.patient_id}"]`),
+  ).toHaveCount(0);
   await page.keyboard.press("Escape");
   await page
     .getByRole("button", { name: "Advanced replay tools", exact: true })
@@ -311,10 +263,7 @@ test("replay exposes complete filtered events, patient history and recorded reso
   await expect
     .poll(() => new URL(page.url()).searchParams.get("at"))
     .toBe(jumped);
-  await expect(page.locator(".replay-canvas")).toHaveAttribute(
-    "data-recorded-at",
-    jumped,
-  );
+  await expectFloorPlanAt(page, rep, jumped);
   record("replay-complete-evidence", {
     run_id: run.id,
     replication_id: rep,
@@ -325,8 +274,8 @@ test("replay exposes complete filtered events, patient history and recorded reso
     patient_history_events: detail.events.length,
     exact_shortage_periods: annotations.shortage_periods.length,
     viewport: info.project.name,
-    future_censored_selection_does_not_add_marker: true,
-    departed_selection_does_not_add_marker: true,
+    future_censored_selection_does_not_occupy_bed: true,
+    departed_selection_does_not_occupy_bed: true,
     utc_jump_reconstructs_requested_time: true,
   });
 });

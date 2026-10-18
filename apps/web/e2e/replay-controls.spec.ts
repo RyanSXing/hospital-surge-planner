@@ -70,8 +70,8 @@ test("playback speed, pause, seek and exact event stepping preserve frozen resul
   await page.getByLabel("Play replay", { exact: true }).click();
   await expect.poll(at).not.toBe(reducedAt);
   await page.getByLabel("Pause replay", { exact: true }).click();
-  await expect(page.locator(".replay-canvas")).toHaveAttribute(
-    "data-animating",
+  await expect(page.getByTestId("replay-floor-plan")).toHaveAttribute(
+    "data-retaining",
     "false",
   );
   const final = await api(page.request, "/run-groups/" + run.id);

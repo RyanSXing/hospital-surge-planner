@@ -2,6 +2,35 @@
   height: auto;
   min-height: 100%;
 }
+.replay-floor-viewport {
+  background: #fff;
+  min-width: 0;
+  overflow: auto;
+}
+.replay-floor-viewport:fullscreen {
+  overflow: auto;
+  padding: 24px;
+  background: #f4f7fa;
+}
+.replay-floor-viewport:fullscreen .hospital-floor-plan {
+  max-width: 1800px;
+  margin: 0 auto;
+  border: 1px solid #d9e2eb;
+  border-radius: 12px;
+}
+.replay-planned-places {
+  margin: 12px 0;
+  font-size: 12px;
+  color: #607287;
+}
+.replay-planned-places summary {
+  cursor: pointer;
+}
+.replay-planned-places > div {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 .replay-mobile-navigation {
   display: none;
 }

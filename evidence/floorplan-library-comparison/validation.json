@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-18T07:30:18.694834+00:00",
+  "frontend_tests": 349,
+  "backend_tests": 159,
+  "unique_desktop_browser_cases": 28,
+  "all_passed": true,
+  "production_build": "TypeScript and Vite passed",
+  "python_lint": "Ruff passed",
+  "frozen_application_and_bundle_unchanged": true,
+  "independent_review": "Legacy comparison export leakage found and corrected; final browser regression passed.",
+  "preservation": "Existing host database backup created before release; saved data verification follows deployment.",
+  "scope": [
+    "Top-down hospital map with exact installed bed inventory and occupied/ready/reserved/cleaning/unavailable states.",
+    "Edited48/36 and44/32 physical/staffed counts remain immutable in their saved replays;100 physical beds render without overflow.",
+    "Recorded corridor movement, discharge paths, continuous stable bed/map DOM, seeking and reduced motion.",
+    "Two saved scenario comparison, current revision validation, missing and incompatible results, keyboard and history navigation, legacy-link export cleanup."
+  ]
+}

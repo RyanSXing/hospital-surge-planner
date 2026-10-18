@@ -1,0 +1,21 @@
+{
+  "tests": 159,
+  "all_passed": true,
+  "suites": [
+    {
+      "file": "evidence/floorplan-library-comparison/replay-state.xml",
+      "tests": 19,
+      "failures": 0
+    },
+    {
+      "file": "evidence/floorplan-library-comparison/saved-comparison.xml",
+      "tests": 37,
+      "failures": 0
+    },
+    {
+      "file": "evidence/floorplan-library-comparison/api-regressions.xml",
+      "tests": 103,
+      "failures": 0
+    }
+  ]
+}

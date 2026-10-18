@@ -23,6 +23,7 @@ export function ForecastChart({
   timeZone,
   markers = [],
   yMax,
+  dateLabelMode = "auto",
 }: {
   rows: Entity[];
   keys?: string[];
@@ -38,6 +39,7 @@ export function ForecastChart({
   timeZone?: string;
   markers?: { index: number; label: string }[];
   yMax?: number;
+  dateLabelMode?: "auto" | "date";
 }) {
   const dateLabel = (
     at: string,
@@ -79,6 +81,7 @@ export function ForecastChart({
   const firstAt = rows[0]?.at || rows[0]?.start_at,
     lastAt = rows.at(-1)?.at || rows.at(-1)?.start_at,
     intraday =
+      dateLabelMode === "auto" &&
       rows.length > 1 &&
       firstAt &&
       lastAt &&

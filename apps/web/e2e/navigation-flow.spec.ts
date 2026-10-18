@@ -323,57 +323,69 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
 
   await analysis(page, "Comparison");
   await expectRoute(page, "analysis", "comparison");
-  await page.getByLabel("Comparison simulation runs").selectOption("10");
-  const compared = page.waitForResponse(
-    (r) =>
-      r.url().endsWith("/api/comparisons") && r.request().method() === "POST",
+  const alternative = await api(page.request, "/scenarios", "POST", {
+    name: `E2E navigation alternative ${Date.now()}`,
+    dataset_version_id: context.dataset.id,
+    horizon_calendar_days: saved.horizon_calendar_days,
+    replications: 10,
+    base_seed: saved.base_seed,
+    conditions: [
+      ...saved.conditions,
+      {
+        kind: "unit_configuration",
+        unit_id: "UNIT-WARD-A",
+        staff_counts: { rn: 12, provider: 1, support: 4 },
+      },
+    ],
+  });
+  const alternativeRun = await waitRun(
+    page,
+    (
+      await api(page.request, "/run-groups", "POST", {
+        scenario_id: alternative.id,
+      })
+    ).id,
   );
   await page
-    .getByRole("button", { name: "Evaluate responses", exact: true })
+    .getByRole("button", { name: "Refresh results", exact: true })
     .click();
-  const comparisonResponse = await compared;
-  expect(comparisonResponse.ok(), await comparisonResponse.text()).toBeTruthy();
-  const comparison = await comparisonResponse.json();
-  let evaluated: any;
-  await expect
-    .poll(
-      async () => {
-        evaluated = await api(page.request, "/comparisons/" + comparison.id);
-        return evaluated.status;
-      },
-      {
-        timeout: process.env.E2E_BASE_URL ? 300000 : 150000,
-        intervals: [500, 1000, 2000],
-      },
-    )
-    .toBe("SUCCEEDED");
   await expect(
-    page.getByText("10 runs per plan", { exact: true }),
-  ).toBeVisible();
-  await expect.poll(() => selection(page).comparison).toBe(comparison.id);
-  const comparisonContext = selection(page);
-  expect(comparisonContext.comparison).toBe(comparison.id);
-  const plan = evaluated.plans.at(-1);
-  await page.locator(".comparison-metrics > summary").click();
-  await page.locator(".comparison-plan-resources > summary").last().click();
+    page.getByLabel("Left saved scenario", { exact: true }),
+  ).toHaveValue(context.scenario.id);
   await page
-    .getByRole("button", { name: "Open in summary", exact: true })
-    .last()
+    .getByLabel("Right saved scenario", { exact: true })
+    .selectOption(alternative.id);
+  await expect(
+    page.getByRole("button", {
+      name: "Open right scenario results",
+      exact: true,
+    }),
+  ).toBeVisible();
+  const comparisonContext = selection(page);
+  expect(comparisonContext.comparison).toBeNull();
+  const comparedPair = { left: context.scenario.id, right: alternative.id };
+  expect(new URL(page.url()).searchParams.get("compare_left")).toBe(
+    comparedPair.left,
+  );
+  expect(new URL(page.url()).searchParams.get("compare_right")).toBe(
+    comparedPair.right,
+  );
+  await page
+    .getByRole("button", { name: "Open right scenario results", exact: true })
     .click();
   await expectRoute(page, "analysis", "summary");
   await expect
     .poll(() => new URL(page.url()).searchParams.get("run"))
-    .toBe(plan.run_group_id);
-  await expect(page.locator(".evaluated-plan-banner")).toContainText(plan.name);
+    .toBe(alternativeRun.id);
+  await expect(page.locator(".evaluated-plan-banner")).toHaveCount(0);
   await page.reload();
   await expectRoute(page, "analysis", "summary");
-  await expect(page.locator(".evaluated-plan-banner")).toContainText(plan.name);
   const planContext = selection(page);
   await page.goBack();
   await expectRoute(page, "analysis", "comparison");
   await expect(
-    page.getByText("10 runs per plan", { exact: true }),
-  ).toBeVisible();
+    page.getByLabel("Right saved scenario", { exact: true }),
+  ).toHaveValue(alternative.id);
   expect(selection(page)).toEqual(comparisonContext);
   await page.goForward();
   await expectRoute(page, "analysis", "summary");
@@ -425,49 +437,46 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
     );
     await expectRoute(page, "analysis", "summary");
     expect(selection(page)).toEqual(planContext);
-    await expect(page.locator(".evaluated-plan-banner")).toContainText(
-      plan.name,
-    );
+    await expect(page.locator(".evaluated-plan-banner")).toHaveCount(0);
   } finally {
     release();
     await page.unroute(summaryPattern, delayBack);
   }
 
-  // An unfinished response selection survives navigation; the plan's saved
-  // comparison can still be reopened after the selection has cleared results.
-  await page
-    .getByRole("button", { name: "Return to comparison", exact: true })
-    .click();
+  // Saved-scenario selections stay in the URL and survive cached navigation.
+  await analysis(page, "Comparison");
   await expectRoute(page, "analysis", "comparison");
-  await expect.poll(() => selection(page).comparison).toBe(comparison.id);
-  await page.locator(".response-selector button.selected").first().click();
-  await expect.poll(() => selection(page).comparison).toBeNull();
-  const unsavedResponses = await page
-    .locator(".response-selector button.selected")
-    .allTextContents();
+  await page
+    .getByRole("button", { name: "Swap scenarios", exact: true })
+    .click();
   await expect(
-    page.getByText("Select responses to evaluate", { exact: true }),
-  ).toBeVisible();
+    page.getByLabel("Left saved scenario", { exact: true }),
+  ).toHaveValue(alternative.id);
+  await expect(
+    page.getByLabel("Right saved scenario", { exact: true }),
+  ).toHaveValue(context.scenario.id);
   await analysis(page, "Summary");
   await page.goBack();
   await expectRoute(page, "analysis", "comparison");
-  expect(
-    await page.locator(".response-selector button.selected").allTextContents(),
-  ).toEqual(unsavedResponses);
-  expect(selection(page).comparison).toBeNull();
   await expect(
-    page.getByText("Select responses to evaluate", { exact: true }),
-  ).toBeVisible();
+    page.getByLabel("Left saved scenario", { exact: true }),
+  ).toHaveValue(alternative.id);
+  await expect(
+    page.getByLabel("Right saved scenario", { exact: true }),
+  ).toHaveValue(context.scenario.id);
   await analysis(page, "Summary");
   await page
-    .getByRole("button", { name: "Return to comparison", exact: true })
+    .getByTestId("decision-summary")
+    .getByRole("button", { name: "Compare scenarios", exact: true })
     .click();
   await expectRoute(page, "analysis", "comparison");
-  await expect.poll(() => selection(page).comparison).toBe(comparison.id);
   await expect(
-    page.getByText("10 runs per plan", { exact: true }),
-  ).toBeVisible();
-  await analysis(page, "Summary");
+    page.getByLabel("Left saved scenario", { exact: true }),
+  ).toHaveValue(alternative.id);
+  await page
+    .getByRole("button", { name: "Open left scenario results", exact: true })
+    .click();
+  await expectRoute(page, "analysis", "summary");
 
   await page
     .locator(".summary-dashboard:visible")
@@ -513,7 +522,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   const branchContext = selection(page);
   await page.reload();
   await expectRoute(page, "analysis", "replay");
-  await expect(page.locator(".replay-canvas")).toBeVisible();
+  await expect(page.getByTestId("replay-floor-plan")).toBeVisible();
   expect(selection(page)).toEqual(branchContext);
   await exportResults(page);
   await page
@@ -561,8 +570,8 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     run_id: run.id,
     horizon_days: 3,
     replications: 10,
-    comparison_id: comparison.id,
-    evaluated_plan_run_id: plan.run_group_id,
+    compared_scenario_ids: comparedPair,
+    compared_scenario_run_id: alternativeRun.id,
     branch_run_id: branch.id,
     baseline_unchanged_after_seek: true,
     unsaved_setup_retained: true,
@@ -570,8 +579,8 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     context_keys: contextKeys,
     reload_back_forward_context_preserved: true,
     delayed_popstate_response_ignored: true,
-    unsaved_responses_survive_history: true,
-    cleared_comparison_reopened_from_plan: true,
+    saved_scenario_pair_survives_history: true,
+    comparison_reopens_from_current_summary: true,
     overview_export_and_alerts_use_selected_run: true,
     resource_details_use_modal_and_clear_selection_on_close: true,
     export: checksums,

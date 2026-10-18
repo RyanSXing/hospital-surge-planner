@@ -1,0 +1,206 @@
+import { describe, expect, it } from "vitest";
+import {
+  corridorRoute,
+  floorJourneyPath,
+  floorMotionIsCurrent,
+  recordedFloorJourneys,
+} from "./floorPlanTransitModel";
+
+const from = "2026-10-16T05:00:00Z",
+  to = "2026-10-16T09:00:00Z";
+const event = (event_type: string, minute: number, fields: any = {}) => ({
+  event_type,
+  patient_id: "P1",
+  event_id: `${event_type}-${minute}`,
+  occurred_at: new Date(Date.parse(from) + minute * 60000).toISOString(),
+  ...fields,
+});
+const units = ["ED", "WARD-A", "WARD-B", "ICU"];
+describe("recorded floor-plan movements", () => {
+  it("preserves the actual ED to specific ward to discharge sequence", () => {
+    const journeys = recordedFloorJourneys(
+      [
+        event("arrival", 1, { payload: { entry_type: "ed" } }),
+        event("assessment_start", 10, { to_unit_id: "ED" }),
+        event("admission_request", 15, { from_unit_id: "ED" }),
+        event("queue_entry", 16),
+        event("admission", 20, { from_unit_id: "ED", to_unit_id: "WARD-B" }),
+        event("discharge", 100, { from_unit_id: "WARD-B" }),
+      ],
+      units,
+      from,
+      to,
+    );
+    expect(journeys).toHaveLength(1);
+    expect(journeys[0].moves.map((move) => [move.from, move.to])).toEqual([
+      ["entrance", "ed-waiting"],
+      ["ed-waiting", "ED"],
+      ["ED", "WARD-B"],
+      ["WARD-B", "discharge"],
+    ]);
+    expect(journeys[0].moves.map((move) => move.eventId)).not.toContain(
+      "admission_request-15",
+    );
+  });
+  it("does not move a held ICU stepdown patient until recorded arrival in the ward", () => {
+    const requests = [
+      event("assessment_end", 2, { from_unit_id: "ICU" }),
+      event("admission_request", 3, {
+        from_unit_id: "ICU",
+        reason_code: "icu_stepdown_to_ward",
+      }),
+      event("transfer_departed", 4, {
+        from_unit_id: "ICU",
+        to_unit_id: "WARD-A",
+      }),
+    ];
+    expect(recordedFloorJourneys(requests, units, from, to)).toEqual([]);
+    const journeys = recordedFloorJourneys(
+      [
+        ...requests,
+        event("transfer_arrived", 5, {
+          to_unit_id: "WARD-A",
+          payload: { source_unit_id: "ICU" },
+        }),
+      ],
+      units,
+      from,
+      to,
+    );
+    expect(journeys[0].moves).toMatchObject([
+      { from: "ICU", to: "WARD-A", at: event("x", 5).occurred_at },
+    ]);
+  });
+  it("never invents an unknown discharge source, unknown ward or offsite destination", () => {
+    expect(
+      recordedFloorJourneys(
+        [
+          event("discharge", 1),
+          event("admission", 3, { from_unit_id: "ED", to_unit_id: "OFFSITE" }),
+          event("transfer_arrived", 4, {
+            to_unit_id: "WARD-A",
+            payload: { source_unit_id: "OFFSITE" },
+          }),
+        ],
+        units,
+        from,
+        to,
+      ),
+    ).toEqual([]);
+  });
+  it("orders trace events and excludes past or future events outside the playback step", () => {
+    const journeys = recordedFloorJourneys(
+      [
+        event("discharge", 40, { from_unit_id: "ED" }),
+        event("assessment_start", 20, { to_unit_id: "ED" }),
+        event("arrival", -1),
+        event("arrival", 300),
+      ],
+      units,
+      from,
+      to,
+    );
+    expect(journeys[0].moves.map((move) => move.to)).toEqual([
+      "ED",
+      "discharge",
+    ]);
+  });
+  it("keeps direct arrivals in the bed waiting area and ignores same-unit administrative transitions", () => {
+    const journeys = recordedFloorJourneys(
+      [
+        event("arrival", 1, { payload: { entry_type: "direct_ward" } }),
+        event("admission", 2, { to_unit_id: "WARD-A" }),
+        event("admission", 3, { from_unit_id: "WARD-A", to_unit_id: "WARD-A" }),
+      ],
+      units,
+      from,
+      to,
+    );
+    expect(journeys[0].moves.map((move) => move.to)).toEqual([
+      "bed-waiting",
+      "WARD-A",
+    ]);
+  });
+  it("bounds a deterministic visual sample while never cloning a patient into concurrent paths", () => {
+    const events = Array.from({ length: 80 }, (_, i) =>
+      event("assessment_start", i + 1, {
+        patient_id: `P${i}`,
+        to_unit_id: "ED",
+      }),
+    );
+    const first = recordedFloorJourneys(events, units, from, to);
+    expect(first).toHaveLength(12);
+    expect(new Set(first.map((journey) => journey.patientId)).size).toBe(12);
+    expect(recordedFloorJourneys(events, units, from, to)).toEqual(first);
+  });
+});
+describe("floor-plan corridor routing and suppression", () => {
+  it("routes between actual door anchors through the corridor and waiting-wing hallway", () => {
+    const points = corridorRoute(
+      { x: 20, y: 10 },
+      { x: 100, y: 90, corridorX: 90 },
+      50,
+    );
+    expect(points).toEqual([
+      { x: 20, y: 10 },
+      { x: 20, y: 50 },
+      { x: 90, y: 50 },
+      { x: 90, y: 90 },
+      { x: 100, y: 90, corridorX: 90 },
+    ]);
+    expect(
+      points
+        .slice(1)
+        .every(
+          (point, i) => point.x === points[i].x || point.y === points[i].y,
+        ),
+    ).toBe(true);
+  });
+  it("joins a patient's section changes into one continuous path without room-crossing diagonals", () => {
+    const journeys = recordedFloorJourneys(
+      [
+        event("admission", 5, { from_unit_id: "ED", to_unit_id: "WARD-A" }),
+        event("discharge", 10, { from_unit_id: "WARD-A" }),
+      ],
+      units,
+      from,
+      to,
+    );
+    const anchors = new Map([
+      ["ED", { x: 10, y: 80 }],
+      ["WARD-A", { x: 100, y: 20 }],
+      ["discharge", { x: 200, y: 90, corridorX: 180 }],
+    ]);
+    expect(floorJourneyPath(journeys[0], anchors, 50)).toBe(
+      "M10.00,80.00 L10.00,50.00 L100.00,50.00 L100.00,20.00 L100.00,50.00 L180.00,50.00 L180.00,90.00 L200.00,90.00",
+    );
+    anchors.delete("WARD-A");
+    expect(floorJourneyPath(journeys[0], anchors, 50)).toBeNull();
+  });
+  it("suppresses motion for pause, reduced motion, manual jumps, old snapshots, changed runs and non-forward windows", () => {
+    const window = { rep: "REP1", from, to, events: [] },
+      context = {
+        rep: "REP1",
+        selectedAt: to,
+        recordedAt: to,
+        playing: true,
+        reduced: false,
+      };
+    expect(floorMotionIsCurrent(window, context)).toBe(true);
+    for (const update of [
+      { playing: false },
+      { reduced: true },
+      { rep: "REP2" },
+      { selectedAt: from },
+      { recordedAt: from },
+      { selectedAt: "bad" },
+    ])
+      expect(floorMotionIsCurrent(window, { ...context, ...update })).toBe(
+        false,
+      );
+    expect(
+      floorMotionIsCurrent({ ...window, from: to, to: from }, context),
+    ).toBe(false);
+    expect(floorMotionIsCurrent(null, context)).toBe(false);
+  });
+});

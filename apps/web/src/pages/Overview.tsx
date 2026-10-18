@@ -19,13 +19,9 @@ import "./summaryDashboard.css";
 export default function Overview({
   ctx,
   onUpdate,
-  comparisonId,
-  onReviewResponse,
 }: {
   ctx: PlanningContext;
   onUpdate: () => void;
-  comparisonId?: string | null;
-  onReviewResponse?: (comparisonId: string, planId: string) => void;
 }) {
   const [operationsOpen, setOperationsOpen] = useState(false);
   const ward = statsFor(ctx, "ward");
@@ -91,11 +87,7 @@ export default function Overview({
         className="summary-metrics"
       />
 
-      <DecisionSummary
-        ctx={ctx}
-        comparisonId={comparisonId}
-        onReviewResponse={onReviewResponse}
-      />
+      <DecisionSummary ctx={ctx} />
 
       <section className="summary-chart-grid" aria-label="Forecast charts">
         <article className="summary-chart-card summary-chart-card-wide summary-timeline-card">

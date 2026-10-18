@@ -1,0 +1,79 @@
+{
+  "run": "run_1d6ba5d28cc244cb96a3",
+  "continuity": {
+    "blanks": 0,
+    "banners": 0,
+    "moved": false,
+    "sameRoot": true,
+    "sameBeds": true,
+    "moments_sample_count": 6,
+    "moments_samples": [
+      "2026-10-16T05:00:00Z",
+      "2026-10-16T09:00:00Z",
+      "2026-10-17T12:00:00Z",
+      "2026-10-16T05:00:00Z"
+    ],
+    "motion_sample_count": 1005,
+    "motion_samples": [
+      {
+        "at": 1792.1,
+        "x": 476.70001220703125,
+        "y": 735.3985595703125,
+        "patient": "PAT-PLAN-000078",
+        "from": "UNIT-ED",
+        "to": "UNIT-WARD-A",
+        "events": "RUN-510599f2ee6a0b648a86-E00000005",
+        "path": "M220.20,228.64 L220.20,201.64 L220.20,174.64",
+        "windowFrom": "2026-10-16T05:00:00.000Z",
+        "windowTo": "2026-10-16T09:00:00.000Z",
+        "inside": true
+      },
+      {
+        "at": 1808.8,
+        "x": 476.70001220703125,
+        "y": 734.319091796875,
+        "patient": "PAT-PLAN-000078",
+        "from": "UNIT-ED",
+        "to": "UNIT-WARD-A",
+        "events": "RUN-510599f2ee6a0b648a86-E00000005",
+        "path": "M220.20,228.64 L220.20,201.64 L220.20,174.64",
+        "windowFrom": "2026-10-16T05:00:00.000Z",
+        "windowTo": "2026-10-16T09:00:00.000Z",
+        "inside": true
+      },
+      {
+        "at": 4092.1,
+        "x": 342.4429016113281,
+        "y": 709.6087646484375,
+        "patient": "PAT-ED_MAIN-20261016-000600-b-0002",
+        "from": "entrance",
+        "to": "UNIT-ED",
+        "events": "RUN-510599f2ee6a0b648a86-E00000224,RUN-510599f2ee6a0b648a86-E00000226",
+        "path": "M0.00,201.64 L877.66,201.64 L877.66,250.81 L887.66,250.81 L877.66,250.81 L877.66,201.64 L220.20,201.64 L220.20,228.64",
+        "windowFrom": "2026-10-16T13:00:00.000Z",
+        "windowTo": "2026-10-16T17:00:00.000Z",
+        "inside": true
+      },
+      {
+        "at": 4092.1,
+        "x": 313.4307861328125,
+        "y": 709.6087646484375,
+        "patient": "PAT-ED_MAIN-20261016-000600-b-0003",
+        "from": "entrance",
+        "to": "UNIT-ED",
+        "events": "RUN-510599f2ee6a0b648a86-E00000233,RUN-510599f2ee6a0b648a86-E00000235",
+        "path": "M0.00,201.64 L877.66,201.64 L877.66,250.81 L887.66,250.81 L877.66,250.81 L877.66,201.64 L220.20,201.64 L220.20,228.64",
+        "windowFrom": "2026-10-16T13:00:00.000Z",
+        "windowTo": "2026-10-16T17:00:00.000Z",
+        "inside": true
+      }
+    ]
+  },
+  "requests": 10,
+  "delayed_state_ms": 400,
+  "errors": [],
+  "complete_evidence": {
+    "path": "output/playwright/floorplan-library-comparison/replay-motion-final-browser/browser-replay-stable-floor-plan.json",
+    "sha256": "25c672fb33cce6a15fe31910fadfbfcd12fce6cd9efb6f967d115d3df1f6f9b7"
+  }
+}

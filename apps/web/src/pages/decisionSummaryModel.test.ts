@@ -511,7 +511,7 @@ describe("decision result and comparison matching", () => {
     const model = buildDecisionSummary({ ctx: setup(), ensemble: evidence });
     expect(model.action).toEqual({
       kind: "compare",
-      label: "Compare responses",
+      label: "Compare scenarios",
     });
     expect(model.response).not.toContain("Best tested");
   });
@@ -681,13 +681,20 @@ describe("decision navigation contracts", () => {
   });
   it("routes no-comparison and stale results to the appropriate action", () => {
     const ctx = setup();
-    followDecisionAction({ kind: "compare", label: "Compare responses" }, ctx);
+    followDecisionAction({ kind: "compare", label: "Compare scenarios" }, ctx);
     expect(ctx.setPage).toHaveBeenCalledWith("compare");
     followDecisionAction(
       { kind: "simulate", label: "Run updated simulation" },
       ctx,
     );
     expect(ctx.runScenario).toHaveBeenCalledOnce();
+  });
+  it("opens the current scenario in the saved-library comparison when available", () => {
+    const ctx = setup();
+    ctx.compareScenarios = vi.fn();
+    followDecisionAction({ kind: "compare", label: "Compare scenarios" }, ctx);
+    expect(ctx.compareScenarios).toHaveBeenCalledOnce();
+    expect(ctx.setPage).not.toHaveBeenCalled();
   });
   it("describes only new intervention changes, preserving the tested base plan", () => {
     const common = { kind: "staff_existing", nurses: 1 };

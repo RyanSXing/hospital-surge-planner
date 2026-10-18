@@ -183,7 +183,7 @@ describe("patient-facing metrics from actual varied simulations", () => {
     expect(model.problem).toContain("No modeled resource shortage");
     expect(model.action).toEqual({
       kind: "compare",
-      label: "Compare responses",
+      label: "Compare scenarios",
     });
     expect(model.response).not.toContain("Best tested");
     expect(model.replay).toBeNull();

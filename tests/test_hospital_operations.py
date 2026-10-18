@@ -6,7 +6,7 @@ from datetime import timedelta
 import pytest
 from surge_engine import aggregate_results, generate_dataset, run_replication, state_at
 from surge_engine.common import dt, endpoint, iso
-from surge_engine.hospital_operations import validate_hospital_operations
+from surge_engine.hospital_operations import OPERATIONS_MODEL_VERSION, validate_hospital_operations
 from surge_engine.simulation import HospitalSimulation
 
 
@@ -315,7 +315,7 @@ def test_optional_model_has_same_metrics_with_and_without_replay_storage(hospita
     assert detailed["bottleneck_evidence"] == compact["bottleneck_evidence"]
     assert compact["scalar_metrics"]["patient_conservation_ok"]
     aggregate = aggregate_results([compact])
-    assert aggregate["hospital_operations_model_version"] == "1.1"
+    assert aggregate["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION
     assert aggregate["metric_definitions"] == detailed["metric_definitions"]
     assert any(row["care_paused"]["mean"] == 1 for row in aggregate["series"])
     assert any(row["treatment_disrupted"]["mean"] == 1 for row in aggregate["series"])

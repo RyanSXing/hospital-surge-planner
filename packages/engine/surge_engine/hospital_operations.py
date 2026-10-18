@@ -13,8 +13,8 @@ from zoneinfo import ZoneInfo
 
 from .common import dt, endpoint
 
-OPERATIONS_MODEL_VERSION = "1.1"
-SUPPORTED_OPERATIONS_MODEL_VERSIONS = frozenset({"1.0", "1.1"})
+OPERATIONS_MODEL_VERSION = "1.2"
+SUPPORTED_OPERATIONS_MODEL_VERSIONS = frozenset({"1.0", "1.1", "1.2"})
 SEVERITIES = ("low", "medium", "high")
 
 
@@ -284,7 +284,12 @@ class HospitalOperations:
 
     def pause(self, patient):
         if not patient.get("care_paused"):
-            patient["_operations_remaining"] = self.service_remaining(patient)
+            remaining = self.service_remaining(patient)
+            if self.model_version == "1.2" and remaining <= 1e-9:
+                # Care already completed before this instant. Keep the pending
+                # completion event valid; the shortage still blocks new starts.
+                return
+            patient["_operations_remaining"] = remaining
             patient["_token"] += 1
             patient["care_paused"] = True
             self.sim.transition(patient, patient["state"], patient.get("unit_id"), patient.get("slot_id"))

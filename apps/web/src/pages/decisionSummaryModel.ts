@@ -63,7 +63,7 @@ function stable(value: unknown): string {
       .join(",")}}`;
   return JSON.stringify(value) ?? "undefined";
 }
-const knownOperationsVersions = new Set(["1.0", "1.1"]);
+const knownOperationsVersions = new Set(["1.0", "1.1", "1.2"]);
 function operationsEnabled(scenario: Entity | null | undefined): boolean {
   return Boolean(
     scenario?.hospital_operations &&

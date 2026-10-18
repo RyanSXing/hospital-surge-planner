@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T06:45:50.966685+00:00",
+  "sha256": "3f8028bd3293e3ad268bf1c3117348475a7878e06f880e32b6853eaec39c75ca",
+  "byte_size": 5692339,
+  "object_key": "backups/hospital-simulation-logic-audit-20261018T064545Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing workspace before simulation logic boundary correction deployment; no scenario mutations requested"
+}

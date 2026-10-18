@@ -1,4 +1,4 @@
-"""Operations1.1 fixes new runs while frozen1.0 jobs remain reproducible."""
+"""Current operations semantics do not rewrite supported historical runs."""
 
 import copy
 import io
@@ -15,7 +15,7 @@ from surge_api.main import create_app
 from surge_api.model_versions import ModelVersionMismatch, execution_scenario, require_current_model
 from surge_engine import generate_dataset, run_replication
 from surge_engine.common import MODEL_VERSION, dt
-from surge_engine.hospital_operations import OPERATIONS_MODEL_VERSION
+from surge_engine.hospital_operations import OPERATIONS_MODEL_VERSION, SUPPORTED_OPERATIONS_MODEL_VERSIONS
 
 
 def operations():
@@ -63,7 +63,7 @@ def enqueue(client, *, version=None, scenario_id=None):
     assert response.status_code == 202, response.text
     run = response.json()
     if version is not None:
-        # Represent a job frozen before the1.1 release, not a client-controlled override.
+        # Represent a historically frozen job, not a client-controlled override.
         with client.app.state.Session.begin() as session:
             row = session.get(Job, run["id"])
             row.payload = {**row.payload, "hospital_operations_model_version": version}
@@ -118,8 +118,8 @@ def test_new_runs_freeze_current_version_and_keep_dispatch_out_of_public_inputs(
     client = ops_client
     run = enqueue(client)
     frozen = payload(client, run["id"])
-    assert frozen["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION == "1.1"
-    assert run["hospital_operations_model_version"] == "1.1"
+    assert frozen["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION
+    assert run["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION
     assert "_hospital_operations_model_version" not in frozen["scenario"]
     assert digest({"dataset": client.dataset, "scenario": frozen["scenario"]}) == frozen["input_sha256"]
     seen = []
@@ -131,7 +131,7 @@ def test_new_runs_freeze_current_version_and_keep_dispatch_out_of_public_inputs(
 
     monkeypatch.setattr(worker, "timed_replication", checked)
     finished = complete(client, run["id"])
-    assert seen and set(seen) == {"1.1"}
+    assert seen and set(seen) == {OPERATIONS_MODEL_VERSION}
     assert payload(client, run["id"]) == frozen
     assert "_hospital_operations_model_version" not in finished["scenario_context"]
     with client.app.state.Session() as session:
@@ -139,15 +139,18 @@ def test_new_runs_freeze_current_version_and_keep_dispatch_out_of_public_inputs(
         inputs = ArtifactStore().get_json(stored.result["inputs_artifact"])
         assert inputs["scenario"] == frozen["scenario"]
         assert digest(inputs) == frozen["input_sha256"]
-        assert stored.result["manifest"]["hospital_operations_model_version"] == "1.1"
+        assert stored.result["manifest"]["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION
     metrics = client.get(f"/api/run-groups/{run['id']}/metrics").json()
-    assert metrics["hospital_operations_model_version"] == "1.1"
-    assert metrics["context"]["hospital_operations_model_version"] == "1.1"
+    assert metrics["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION
+    assert metrics["context"]["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION
 
 
-def test_frozen_10_trace_and_export_regeneration_use_10_without_rewriting_results(ops_client, monkeypatch):
+@pytest.mark.parametrize("historical_version", ["1.0", "1.1"])
+def test_frozen_trace_and_export_regeneration_preserve_historical_version(
+    ops_client, monkeypatch, historical_version
+):
     client = ops_client
-    old = complete(client, enqueue(client, version="1.0")["id"])
+    old = complete(client, enqueue(client, version=historical_version)["id"])
     frozen = payload(client, old["id"])
     rows = client.get(f"/api/run-groups/{old['id']}/replications").json()["items"]
     other = next(row for row in rows if row["id"] != old["selected_replication_id"])
@@ -172,29 +175,35 @@ def test_frozen_10_trace_and_export_regeneration_use_10_without_rewriting_result
     response = client.post("/api/exports", json={"run_group_id": old["id"], "replication_id": other["id"]})
     assert response.status_code == 202, response.text
     exported = complete(client, response.json()["id"])
-    assert seen == ["1.0"]
+    assert seen == [historical_version]
     downloaded = client.get(exported["download_url"])
     assert downloaded.status_code == 200
     with zipfile.ZipFile(io.BytesIO(downloaded.content)) as archive:
         events = [json.loads(line) for line in archive.read("events.jsonl").splitlines()]
         assert_clinical_events_match({"events": events}, expected)
-        assert json.loads(archive.read("model-manifest.json"))["hospital_operations_model_version"] == "1.0"
+        assert (
+            json.loads(archive.read("model-manifest.json"))["hospital_operations_model_version"]
+            == historical_version
+        )
     response = client.post(f"/api/runs/{other['id']}/trace")
     assert response.status_code == 202, response.text
     complete(client, response.json()["id"])
-    assert seen == ["1.0", "1.0"]
+    assert seen == [historical_version, historical_version]
     with client.app.state.Session() as session:
         parent = session.get(Job, old["id"])
         trace = ArtifactStore().get_json(session.get(Document, other["id"]).data["trace_artifact"])
-        assert trace["hospital_operations_model_version"] == "1.0"
+        assert trace["hospital_operations_model_version"] == historical_version
         assert_clinical_events_match(trace, expected)
         assert parent.payload == frozen
         assert parent.result == before_result
     # The ordinary scenario remains editable/rerunnable under current semantics.
-    assert enqueue(client, scenario_id=old["scenario_id"])["hospital_operations_model_version"] == "1.1"
+    assert (
+        enqueue(client, scenario_id=old["scenario_id"])["hospital_operations_model_version"]
+        == OPERATIONS_MODEL_VERSION
+    )
 
 
-@pytest.mark.parametrize("version", [None, "unknown", "1.2", {"invalid": "version"}])
+@pytest.mark.parametrize("version", [None, "unknown", "1.999", {"invalid": "version"}])
 def test_unknown_or_missing_operations_version_is_rejected_before_computation(
     ops_client, monkeypatch, version
 ):
@@ -256,15 +265,16 @@ def branch_from(client, parent, *, enqueue_branch=True, origin="simulation_branc
     return applied.json()
 
 
-def test_inherited_history_stays_10_and_observed_reset_uses_11(ops_client):
+@pytest.mark.parametrize("historical_version", ["1.0", "1.1"])
+def test_inherited_history_retains_version_and_observed_reset_uses_current(ops_client, historical_version):
     client = ops_client
-    old = complete(client, enqueue(client, version="1.0")["id"])
+    old = complete(client, enqueue(client, version=historical_version)["id"])
     child = branch_from(client, old)
     frozen = payload(client, child["run_group_id"])
-    assert frozen["hospital_operations_model_version"] == "1.0"
+    assert frozen["hospital_operations_model_version"] == historical_version
     finished = complete(client, child["run_group_id"])
     assert finished["scenario_context"]["parent_run_group_id"] == old["id"]
-    assert finished["hospital_operations_model_version"] == "1.0"
+    assert finished["hospital_operations_model_version"] == historical_version
     cutoff = dt("2026-10-16T06:00:00Z")
     with client.app.state.Session() as session:
         store = ArtifactStore()
@@ -278,8 +288,14 @@ def test_inherited_history_stays_10_and_observed_reset_uses_11(ops_client):
             row for row in clinical_events(original) if dt(row["occurred_at"]) < cutoff
         ]
     reset = branch_from(client, old, origin="observed_reset")
-    assert payload(client, reset["run_group_id"])["hospital_operations_model_version"] == "1.1"
-    assert complete(client, reset["run_group_id"])["hospital_operations_model_version"] == "1.1"
+    assert (
+        payload(client, reset["run_group_id"])["hospital_operations_model_version"]
+        == OPERATIONS_MODEL_VERSION
+    )
+    assert (
+        complete(client, reset["run_group_id"])["hospital_operations_model_version"]
+        == OPERATIONS_MODEL_VERSION
+    )
 
 
 def test_mismatched_inherited_version_is_rejected_at_api_and_worker(ops_client, monkeypatch):
@@ -306,7 +322,10 @@ def test_mismatched_inherited_version_is_rejected_at_api_and_worker(ops_client, 
         assert session.get(Job, identity).result["retry"]["error_category"] == "ModelVersionMismatch"
 
 
-def test_comparison_version_is_frozen_and_old_comparisons_are_projected_without_mutation(ops_client):
+@pytest.mark.parametrize("historical_version", ["1.0", "1.1"])
+def test_comparison_version_is_frozen_and_old_comparisons_are_projected_without_mutation(
+    ops_client, historical_version
+):
     client = ops_client
     source = enqueue(client)
     response = client.post(
@@ -319,7 +338,7 @@ def test_comparison_version_is_frozen_and_old_comparisons_are_projected_without_
     )
     assert response.status_code == 202, response.text
     current = response.json()
-    assert current["hospital_operations_model_version"] == "1.1"
+    assert current["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION
     with client.app.state.Session.begin() as session:
         comparison = session.get(Document, current["id"])
         historical = copy.deepcopy(comparison.data)
@@ -327,16 +346,16 @@ def test_comparison_version_is_frozen_and_old_comparisons_are_projected_without_
         comparison.data = historical
         for plan in historical["plans"]:
             run = session.get(Job, plan["run_group_id"])
-            run.payload = {**run.payload, "hospital_operations_model_version": "1.0"}
+            run.payload = {**run.payload, "hospital_operations_model_version": historical_version}
     for plan in current["plans"]:
         complete(client, plan["run_group_id"])
     projected = client.get(f"/api/comparisons/{current['id']}")
     assert projected.status_code == 200, projected.text
-    assert projected.json()["hospital_operations_model_version"] == "1.0"
+    assert projected.json()["hospital_operations_model_version"] == historical_version
     assert all(
         plan["hospital_operations_model_version"]
         == plan["metrics"]["hospital_operations_model_version"]
-        == "1.0"
+        == historical_version
         for plan in projected.json()["plans"]
     )
     with client.app.state.Session() as session:
@@ -357,7 +376,7 @@ def test_clients_cannot_override_server_owned_operations_version(ops_client, fie
     assert response.json()["error"]["code"] == "SERVER_OWNED_PROVENANCE"
 
 
-@pytest.mark.parametrize("version", ["1.0", "1.1"])
+@pytest.mark.parametrize("version", sorted(SUPPORTED_OPERATIONS_MODEL_VERSIONS))
 def test_execution_dispatch_is_a_private_copy(version):
     frozen = {
         "model_version": MODEL_VERSION,

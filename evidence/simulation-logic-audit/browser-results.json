@@ -1,0 +1,754 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/hospital-operations.spec.ts",
+      "e2e/arrival-curve.spec.ts",
+      "e2e/configuration-controls.spec.ts",
+      "e2e/analytics-bookmarks.spec.ts",
+      "e2e/hospital-comparison.spec.ts",
+      "--project=desktop"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../output/playwright/simulation-logic-audit/browser-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "analytics-bookmarks.spec.ts",
+      "file": "analytics-bookmarks.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop chart bookmarks share one graph and sparse Summary periods remain visible without shifting on seek",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7458,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:44:46.139Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "analytics-bookmarks",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/analytics-bookmarks-840dd259ab19687f12296ef47a989fe75cd80d6c.png"
+                    },
+                    {
+                      "name": "analytics-bookmarks-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/analytics-bookmarks-middle-fedaa9a36706b52e533a624fd1f9640d0928e6ad.png"
+                    },
+                    {
+                      "name": "analytics-bookmarks-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/analytics-bookmarks-lower-a49c1c0862e0453f83d66858b6bdb66f2ee15208.png"
+                    },
+                    {
+                      "name": "summary-month-observation",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/summary-month-observation-520418c76836dc5b0c1af36bbb60de53be3accd3.png"
+                    },
+                    {
+                      "name": "summary-month-observation-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/summary-month-observation-middle-89f24b9c21bbbb296b7c2ea722bfaabdf3c520a0.png"
+                    },
+                    {
+                      "name": "summary-month-observation-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/summary-month-observation-lower-d1238a5f35c30d7b26ff72b674d854fbb0cd5709.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cb5e0539f0311d2d3b85-61afd2c87a5f550dd9d3",
+          "file": "analytics-bookmarks.spec.ts",
+          "line": 12,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "arrival-curve.spec.ts",
+      "file": "arrival-curve.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "14-day edited curve keeps controls available and drives actual simulated arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8310,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:44:54.744Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-controls-14-days",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-6e8624f0eba35bf22ab954ced61dc04af11a909c.png"
+                    },
+                    {
+                      "name": "arrival-controls-14-days-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-middle-45f375a9bccaaa1f3a52878a9b26cfce4e8c34be.png"
+                    },
+                    {
+                      "name": "arrival-controls-14-days-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-lower-fd6796fc8f20155594b724b99493fca575434f88.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-25a2c530de57d89b2804",
+          "file": "arrival-curve.spec.ts",
+          "line": 21,
+          "column": 3
+        },
+        {
+          "title": "30-day edited curve keeps controls available and drives actual simulated arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10073,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:45:03.059Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-controls-30-days",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-b94974ac1fa2a8e73c6caadb84ae30f8185aceee.png"
+                    },
+                    {
+                      "name": "arrival-controls-30-days-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-middle-dfebe8e36628db7a79a1da6f62a56adc4f40d996.png"
+                    },
+                    {
+                      "name": "arrival-controls-30-days-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-lower-f5360f1f38021725eeecb1d6241dea318a49f162.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-3c4001714784d53a47bb",
+          "file": "arrival-curve.spec.ts",
+          "line": 21,
+          "column": 3
+        },
+        {
+          "title": "dragged daily arrivals keep a stable axis, one undo and exact saved simulation inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6789,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:45:13.140Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-curve-edited",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-802cdf274082a6fb7d2648678d47fddc23763958.png"
+                    },
+                    {
+                      "name": "arrival-curve-edited-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-middle-d80812e95d90ea8e3c3e5a762eb3e153d3957971.png"
+                    },
+                    {
+                      "name": "arrival-curve-edited-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-lower-55243a6dd4e3125a5d506a8631fd051498fee0e9.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-0a31090c5fe080900e88",
+          "file": "arrival-curve.spec.ts",
+          "line": 212,
+          "column": 1
+        },
+        {
+          "title": "daily arrival keyboard controls stop at the fixed scheduled-batch minimum",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2054,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:45:19.940Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-6fdb70f75fecac7c9361",
+          "file": "arrival-curve.spec.ts",
+          "line": 442,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "configuration-controls.spec.ts",
+      "file": "configuration-controls.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop configuration saves editable beds and all staff roles into a real immutable simulation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36121,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:45:22.023Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "configuration-capacity",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-2ea9df5aace1b6101baa894efec0d5befaa2e3ba.png"
+                    },
+                    {
+                      "name": "configuration-capacity-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-middle-5ff1fcf8e7fd9304f04f4718f2e5b7b4055b1869.png"
+                    },
+                    {
+                      "name": "configuration-capacity-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-lower-3ef1b46df3e8b85b643153f2ecac5b51d2cec3ef.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8046fb91dcc545788072-a8b7b1c5c4ca9fcfcbe5",
+          "file": "configuration-controls.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "hospital-comparison.spec.ts",
+      "file": "hospital-comparison.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "one hospital can run, compare internal bed responses, save a plan, and reopen it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27779,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:45:58.224Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-5c5a02c3539a1d40f77461590174713b4ba383d9.png"
+                    },
+                    {
+                      "name": "hospital-comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-middle-4f1332ca24109ebe0f50605a7a6c53ff5e7d2f01.png"
+                    },
+                    {
+                      "name": "hospital-comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-lower-96245eb52e1d39e1a9e65b4733bce7bb214de22b.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-ec2a619312ee6be289a5",
+          "file": "hospital-comparison.spec.ts",
+          "line": 32,
+          "column": 1
+        },
+        {
+          "title": "reevaluating a selected response requires a selection from the new results before saving",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10394,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:46:26.011Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-25c8d693ecc285c9a466",
+          "file": "hospital-comparison.spec.ts",
+          "line": 324,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "hospital-operations.spec.ts",
+      "file": "hospital-operations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22931,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:46:36.432Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "operations-configuration",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-63b14a1bd89bf093fae432192dcb3d68a855d972.png"
+                    },
+                    {
+                      "name": "operations-configuration-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-middle-04d8b2cba3e845ba073a423aee237e95881af138.png"
+                    },
+                    {
+                      "name": "operations-configuration-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-lower-e2e59023ff8199fd64220c3ec70590719d2ab2df.png"
+                    },
+                    {
+                      "name": "decision-summary-operations",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-1646630852a38d990babb301e384b6d0b66bcc8f.png"
+                    },
+                    {
+                      "name": "decision-summary-operations-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-middle-f8ae05503a4d6b97a6ff0eb5700df2b2f8e9a7b3.png"
+                    },
+                    {
+                      "name": "decision-summary-operations-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-lower-b89e5835cda65f2dec6c2266ecebce26cb02ed01.png"
+                    },
+                    {
+                      "name": "operations-exact-bottleneck-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-exact-bottleneck-replay-b4ecf2473a41827589eb8cf6c1960251cabd2de6.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-809c22ece277b907a784764176ac7cc0bf3ecf5f.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-middle-31aa939cd84b3865439bd9a35999d041cd04fe62.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-lower-c38885d400c0d86f0c6a41aa85fad75ca34a2430.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-64171581d0a3e4ec580d",
+          "file": "hospital-operations.spec.ts",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "Decision summary reviews a matched response, saves that plan, and rejects stale recommendations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10859,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:46:59.369Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "decision-summary-matched-response",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-Decisi-e2c41-jects-stale-recommendations-desktop/attachments/decision-summary-matched-response-73c81966e258248904e0a942bbd33c3d37ac29cc.png"
+                    },
+                    {
+                      "name": "decision-summary-matched-response-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-Decisi-e2c41-jects-stale-recommendations-desktop/attachments/decision-summary-matched-response-middle-535308d42aaedf2c2f0b497455803116669520a6.png"
+                    },
+                    {
+                      "name": "decision-summary-matched-response-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-Decisi-e2c41-jects-stale-recommendations-desktop/attachments/decision-summary-matched-response-lower-cb689bd5b9b37e7191055b712f03b055d78dca9b.png"
+                    },
+                    {
+                      "name": "decision-summary-stale-protection",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-Decisi-e2c41-jects-stale-recommendations-desktop/attachments/decision-summary-stale-protection-527f5375ee5a8846340edf8c115e354ca7c250c2.png"
+                    },
+                    {
+                      "name": "decision-summary-stale-protection-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-Decisi-e2c41-jects-stale-recommendations-desktop/attachments/decision-summary-stale-protection-middle-0efd6e946c55935000f96c6e42a8dec532394c53.png"
+                    },
+                    {
+                      "name": "decision-summary-stale-protection-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-Decisi-e2c41-jects-stale-recommendations-desktop/attachments/decision-summary-stale-protection-lower-632ba00c9d7003cda808f90de6f01e4e3053b923.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-7e0d975d01c14e256dd4",
+          "file": "hospital-operations.spec.ts",
+          "line": 414,
+          "column": 1
+        },
+        {
+          "title": "View bottleneck reconstructs a real unretained source and opens its exact recorded state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8225,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T06:47:10.236Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "decision-summary-unretained-source-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-operations-View-b-c8f5f-ns-its-exact-recorded-state-desktop/attachments/decision-summary-unretained-source-replay-5366aac4b0e83218b5fee6c97900f5e282107542.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-2dc1c868cebcc6163c74",
+          "file": "hospital-operations.spec.ts",
+          "line": 536,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T06:44:45.715Z",
+    "duration": 152893.53,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

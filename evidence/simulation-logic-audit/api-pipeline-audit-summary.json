@@ -1,0 +1,272 @@
+{
+  "recorded_at": "2026-10-18T06:42:50.595200+00:00",
+  "operations_model_version": "1.2",
+  "all_passed": true,
+  "unique_tests_passed": 44,
+  "pipeline_cases": 27,
+  "version_cases": 17,
+  "focused_refinement": "One-week case rerun after adding a distinct zero-arrivals day; it also passed.",
+  "runs": [
+    {
+      "report": "output/playwright/simulation-logic-audit/api-pipeline-and-version-results.xml",
+      "stdout_summary": "44 passed, 1 warning in40.57s",
+      "passed": 44,
+      "tests": [
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_saved_global_slider_and_late_dot_edits_drive_every_simulated_day[one-week]",
+          "seconds": 3.05
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_saved_global_slider_and_late_dot_edits_drive_every_simulated_day[two-weeks]",
+          "seconds": 4.014
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_saved_global_slider_and_late_dot_edits_drive_every_simulated_day[one-month-dst]",
+          "seconds": 7.551
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_local_calendar_supplies_and_disruption_results_survive_api_round_trip",
+          "seconds": 1.802
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid0]",
+          "seconds": 0.087
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid1]",
+          "seconds": 0.075
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid2]",
+          "seconds": 0.032
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid3]",
+          "seconds": 0.034
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid4]",
+          "seconds": 0.031
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid5]",
+          "seconds": 0.032
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid6]",
+          "seconds": 0.038
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid7]",
+          "seconds": 0.033
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid8]",
+          "seconds": 0.033
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid9]",
+          "seconds": 0.034
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid10]",
+          "seconds": 0.072
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid11]",
+          "seconds": 0.079
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid12]",
+          "seconds": 0.075
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid13]",
+          "seconds": 0.074
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_server_rejects_invalid_operations_before_draft_or_job_mutation[invalid14]",
+          "seconds": 0.076
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_invalid_clock_horizon_or_seed_leaves_saved_configuration_intact[bad0]",
+          "seconds": 0.06
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_invalid_clock_horizon_or_seed_leaves_saved_configuration_intact[bad1]",
+          "seconds": 0.032
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_invalid_clock_horizon_or_seed_leaves_saved_configuration_intact[bad2]",
+          "seconds": 0.053
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_invalid_clock_horizon_or_seed_leaves_saved_configuration_intact[bad3]",
+          "seconds": 0.049
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_invalid_clock_horizon_or_seed_leaves_saved_configuration_intact[bad4]",
+          "seconds": 0.057
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_invalid_clock_horizon_or_seed_leaves_saved_configuration_intact[bad5]",
+          "seconds": 0.033
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_shortening_horizon_cannot_silently_drop_a_saved_disruption",
+          "seconds": 0.067
+        },
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_comparison_freezes_config_pairs_actual_results_and_saves_evaluated_plan",
+          "seconds": 3.357
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_new_runs_freeze_current_version_and_keep_dispatch_out_of_public_inputs",
+          "seconds": 1.267
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_frozen_trace_and_export_regeneration_preserve_historical_version[1.0]",
+          "seconds": 1.812
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_frozen_trace_and_export_regeneration_preserve_historical_version[1.1]",
+          "seconds": 2.401
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_unknown_or_missing_operations_version_is_rejected_before_computation[None]",
+          "seconds": 0.746
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_unknown_or_missing_operations_version_is_rejected_before_computation[unknown]",
+          "seconds": 0.701
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_unknown_or_missing_operations_version_is_rejected_before_computation[1.999]",
+          "seconds": 0.543
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_unknown_or_missing_operations_version_is_rejected_before_computation[version3]",
+          "seconds": 0.532
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_inherited_history_retains_version_and_observed_reset_uses_current[1.0]",
+          "seconds": 2.558
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_inherited_history_retains_version_and_observed_reset_uses_current[1.1]",
+          "seconds": 3.011
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_mismatched_inherited_version_is_rejected_at_api_and_worker",
+          "seconds": 1.046
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_comparison_version_is_frozen_and_old_comparisons_are_projected_without_mutation[1.0]",
+          "seconds": 1.33
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_comparison_version_is_frozen_and_old_comparisons_are_projected_without_mutation[1.1]",
+          "seconds": 1.657
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_clients_cannot_override_server_owned_operations_version[hospital_operations_model_version]",
+          "seconds": 0.446
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_clients_cannot_override_server_owned_operations_version[_hospital_operations_model_version]",
+          "seconds": 0.468
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_execution_dispatch_is_a_private_copy[1.0]",
+          "seconds": 0.0
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_execution_dispatch_is_a_private_copy[1.1]",
+          "seconds": 0.0
+        },
+        {
+          "class": "tests.test_operations_versions_api",
+          "name": "test_execution_dispatch_is_a_private_copy[1.2]",
+          "seconds": 0.0
+        }
+      ]
+    },
+    {
+      "report": "output/playwright/simulation-logic-audit/api-week-zero-refinement.xml",
+      "stdout_summary": "1 passed,26 deselected,1 warning in4.38s",
+      "passed": 1,
+      "tests": [
+        {
+          "class": "tests.test_simulation_pipeline_audit",
+          "name": "test_saved_global_slider_and_late_dot_edits_drive_every_simulated_day[one-week]",
+          "seconds": 3.203
+        }
+      ]
+    }
+  ],
+  "isolation": "All writes were to pytest temporary SQLite databases and temporary artifact folders. No production scenarios, datasets, jobs, or results were accessed or modified.",
+  "verified": [
+    "API save and worker execution use global ED arrival slider curves for every day of7/14/30-day horizons.",
+    "Late per-day graph edits change actual arrival samples: zero demand removes generated ED arrivals, reductions thin the same identities, increases preserve baseline arrivals and add surge identities. Direct-ward arrivals and unchanged days remain identical under paired seeds.",
+    "Independent full-local-day rate/weekday arithmetic matches exact expected arrivals, while events and daily API totals reconcile sampled counts and patient conservation.",
+    "Local-calendar boundaries span the25-hour DST day and721 elapsed hours in30days. Refill cadence follows local dates; supply daily percentages and elapsed-weighted averages are independently checked. The DST disruption has25hours without treatment while arrivals continue.",
+    "Queued jobs retain saved configuration revisions, public checksums and conditions after draft edits; stale writes receive409 without overwriting the newer draft.",
+    "Fifteen invalid severity/supply/disruption cases reject both scenario PATCH and inline run submission before job mutation; invalid clocks/horizons/seeds and shortening beyond a saved disruption also preserve the draft.",
+    "A real9-trajectory comparison freezes source conditions/severity/seed/revision, calculates paired waiting changes from actual per-replication results, ranks a beneficial qualified-staff response first, and saves exactly the evaluated plan even after the source draft changes.",
+    "New operations jobs use1.2; historical1.0 and1.1 traces, absent-trace exports, inherited branches and comparison metadata stay reproducible and do not rewrite parent results. Observed resets use current semantics."
+  ],
+  "limitations": [
+    "Low-volume generated hospital inputs retain real modeled census/pathways/schedules/equipment; this is correctness verification, not a throughput or clinical-validation benchmark.",
+    "The integration supply-percentage arithmetic uses zero consumption to isolate refill/calendar accounting; active consumption and completion-boundary checks are covered separately by the engine audit.",
+    "The real comparison uses three paired replications per plan to verify exact bookkeeping and ranking, not to establish clinical or statistical adequacy of an operational response.",
+    "Browser/UI behavior is outside this API/worker audit; no live deployment was performed by this subagent."
+  ],
+  "implementation_changes": [],
+  "source_sha256": {
+    "tests/test_simulation_pipeline_audit.py": "defdbbdf558d0addb8685205f652bd07492e39e49f180669ca2d42ace37dcb64",
+    "tests/test_operations_versions_api.py": "f827900c3cf1236c9e4e47e3fbd4dfbc6f4bf4e137ade0e0b81172a265f7bf4a"
+  }
+}

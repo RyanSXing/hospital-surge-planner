@@ -1,0 +1,72 @@
+{
+  "recorded_at": "2026-10-18T06:47:46.773599+00:00",
+  "operations_model_version": "1.2",
+  "backend_unique_tests_passed": 314,
+  "backend_reports": [
+    {
+      "file": "core-regressions.xml",
+      "passed": 196,
+      "new_unique_cases": 196
+    },
+    {
+      "file": "resource-matrix.xml",
+      "passed": 36,
+      "new_unique_cases": 36
+    },
+    {
+      "file": "independent-oracles.xml",
+      "passed": 66,
+      "new_unique_cases": 38
+    },
+    {
+      "file": "api-pipeline-and-version-results.xml",
+      "passed": 44,
+      "new_unique_cases": 44
+    },
+    {
+      "file": "api-week-zero-refinement.xml",
+      "passed": 1,
+      "new_unique_cases": 0
+    }
+  ],
+  "frontend_tests_passed": 281,
+  "desktop_workflows_passed": 11,
+  "desktop_stats": {
+    "startTime": "2026-10-18T06:44:45.715Z",
+    "duration": 152893.53,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "production_build": "passed",
+  "source_and_bundle_unchanged_after_verification": true,
+  "isolation": "Temporary SQLite/artifacts for API and engine checks; dedicated local simulation-logic-audit DB/artifacts for desktop flows. No existing production scenario was edited by these tests.",
+  "confirmed_defects": [
+    {
+      "problem": "A service completing exactly at supply depletion or disruption onset was paused with zero remaining care until recovery.",
+      "controlled_example": "12-hour completed ward care plus a shortage from12h through24h discharged at24h; current1.2 correctly discharges at12h.",
+      "fix": "Keep completed service events valid while continuing to block new care during the shortage.",
+      "backward_compatibility": "Frozen1.0 and1.1 jobs retain their original trajectories and can still regenerate traces, exports, branches and matching-version comparisons."
+    }
+  ],
+  "verified_rules": [
+    "7/14/30-day global arrival curves and late daily edits reach actual event arrivals; zero days, reductions, surges and unchanged-day paired identities reconcile.",
+    "Bed counts, staffed limits, nurses, providers, support and patient-specific oxygen independently bound new admissions;36 controlled resource cases have exact admission waves and queue integrals.",
+    "Severity changes only newly arriving inpatient/stepdown care duration; separate assessments, routing, initial residuals and paired arrivals remain stable.",
+    "Disruptions and stock exhaustion pause unfinished care, retain patient locations, continue arrivals, prevent starts and resume exact residuals; overlaps form a union.",
+    "Supplies remain0\u2013100%, active-care consumption and capped refills conserve stock, and DST25-hour days use elapsed-weighted daily/overall percentages.",
+    "Patient/event ledgers independently reconstruct conservation, occupancy, waiting including unfinished queues, admission/ED metrics and success eligibility.",
+    "Missing or no-arrival measures stay unavailable; overlapping constraint categories are not added as independent patient burden.",
+    "Real paired comparisons freeze input revisions/seeds/models, rank measured improvements, save the evaluated plan and reject stale or mismatched recommendations.",
+    "Desktop flows verify edits/save/reload/run/Summary/Analytics/bookmarks/Replay at recorded bottlenecks/Comparison/saveplan, including reconstruction of an unretained source."
+  ],
+  "model_semantics_to_keep_visible": [
+    "Success score is first treatment within24 elapsed hours among eligible arrivals; it does not mean admission within24h or clinical outcome.",
+    "Staff/equipment loss restricts new placements and reports existing occupied deficits without ejecting patients, as specified; supply outages and explicit disruptions pause care clocks."
+  ],
+  "limits": [
+    "Finite engineering scenarios and seeded regressions cannot prove every possible input combination.",
+    "Synthetic durations, resource ratios and access targets were not calibrated against observed hospital operations."
+  ]
+}

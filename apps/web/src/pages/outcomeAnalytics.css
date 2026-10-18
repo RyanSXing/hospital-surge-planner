@@ -386,3 +386,34 @@
   background: #f1f6fb;
   border-color: #d7e5f1;
 }
+.outcome-constraint-markers {
+  border-top: 1px solid #e5ebf2;
+  padding-top: 12px;
+  margin-top: 8px;
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: #61788e;
+}
+.outcome-constraint-key {
+  color: #92621b;
+  font-weight: 600;
+}
+.outcome-constraint-markers > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  color: #40576d;
+}
+.outcome-constraint-markers small {
+  font-size: 11px;
+}
+.outcome-empty-metric {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  text-align: center;
+  color: #61788e;
+  background: #fafcfe;
+}

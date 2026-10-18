@@ -297,6 +297,13 @@ def validate_scenario(data, dataset=None):
             not isinstance(data[field], int) or isinstance(data[field], bool) or not 1 <= data[field] <= limit
         ):
             error(field, f"Must remain within the server maximum of {limit}")
+    if start and end:
+        from surge_engine.hospital_operations import validate_hospital_operations
+
+        try:
+            validate_hospital_operations(data.get("hospital_operations"), start, end)
+        except (ValueError, TypeError, OverflowError) as exc:
+            error("hospital_operations", str(exc))
     from surge_engine.unit_configuration import apply_unit_configuration, unit_configuration_errors
 
     configuration_errors = unit_configuration_errors(dataset, data) if not errors else []

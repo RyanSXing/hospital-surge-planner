@@ -1,50 +1,37 @@
 import { useState } from "react";
-import {
-  Activity,
-  ArrowRight,
-  ArrowUpRight,
-  BedDouble,
-  Building2,
-  Clock3,
-  Info,
-  ShieldCheck,
-} from "lucide-react";
+import { BedDouble, Building2, Clock3, Info } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { BedGrid, BedLegend, Button, CapacityBar } from "../components/ui";
 import { Timeline } from "../components/Charts";
 import { OutcomeSummaryCards } from "./OutcomeSummaryCards";
 import SimulationBottlenecks from "./SimulationBottlenecks";
-import { fmt, localDate } from "../api";
+import { localDate } from "../api";
 import {
   nameOf,
   patientsOf,
-  queueStats,
   selectedRunNumber,
   stateUnavailable,
   statsFor,
 } from "../model";
-import { finiteStatistic } from "./resultsMetrics";
+import DecisionSummary from "./DecisionSummary";
 import "./summaryDashboard.css";
 
 export default function Overview({
   ctx,
   onUpdate,
+  comparisonId,
+  onReviewResponse,
 }: {
   ctx: PlanningContext;
   onUpdate: () => void;
+  comparisonId?: string | null;
+  onReviewResponse?: (comparisonId: string, planId: string) => void;
 }) {
   const [operationsOpen, setOperationsOpen] = useState(false);
   const ward = statsFor(ctx, "ward");
   const icu = statsFor(ctx, "icu");
   const ed = statsFor(ctx, "ed");
-  const queue = queueStats(ctx);
   const selectedStateUnavailable = stateUnavailable(ctx);
-  const metric = ctx.metrics?.scalar_metrics || {};
-  const firstShortage = metric.time_to_first_shortage_hours;
-  const peakQueue = metric.peak_inpatient_queue;
-  const predictedShortage = finiteStatistic(firstShortage);
-  const noRecordedQueue = finiteStatistic(peakQueue, "max") === 0;
-  const hasPressure = !queue.unavailable && queue.total > 0;
   const facility = ctx.dataset?.facilities?.find(
     (item) => (item.id || item.facility_id) === ctx.selectedFacility,
   );
@@ -67,27 +54,6 @@ export default function Overview({
           (patient ? "occupied" : slot.enabled ? "ready" : "disabled"),
       };
     });
-  const insight = hasPressure
-    ? {
-        tone: "warning" as const,
-        title: `${queue.total} patients are waiting for a bed`,
-        body: `${queue.ward} need ward care and ${queue.icu} need intensive care. Review patients first, then compare response options.`,
-      }
-    : predictedShortage !== null
-      ? {
-          tone: "warning" as const,
-          title: `Patients may start waiting for care after ${fmt(predictedShortage, 1)} hours`,
-          body: "Timing includes emergency assessment and inpatient queues. Review the recorded constraints below before comparing responses.",
-        }
-      : {
-          tone: noRecordedQueue ? ("success" as const) : ("neutral" as const),
-          title: noRecordedQueue
-            ? "No inpatient bed queue in these results"
-            : "Review the queue charts for bed pressure",
-          body: noRecordedQueue
-            ? "Try higher demand or fewer staff to test the plan's limits."
-            : "The first waiting time was not recorded. Inspect the queue and capacity charts before choosing a response.",
-        };
 
   return (
     <div className="summary-dashboard">
@@ -121,41 +87,15 @@ export default function Overview({
 
       <OutcomeSummaryCards
         scalar={ctx.metrics?.scalar_metrics}
+        ctx={ctx}
         className="summary-metrics"
       />
 
-      <section className={`summary-insight ${insight.tone}`}>
-        <div className="summary-insight-icon">
-          {insight.tone === "warning" ? (
-            <Activity size={22} aria-hidden="true" />
-          ) : insight.tone === "success" ? (
-            <ShieldCheck size={22} aria-hidden="true" />
-          ) : (
-            <Info size={22} aria-hidden="true" />
-          )}
-        </div>
-        <div>
-          <span>What needs attention</span>
-          <h2>{insight.title}</h2>
-          <p>{insight.body}</p>
-        </div>
-        <div className="summary-insight-actions">
-          {hasPressure ? (
-            <Button onClick={() => ctx.setPage("patients")}>
-              Review patients <ArrowRight size={14} />
-            </Button>
-          ) : null}
-          <Button
-            primary
-            onClick={() =>
-              ctx.setPage(noRecordedQueue ? "overview" : "compare")
-            }
-          >
-            {noRecordedQueue ? "Test another scenario" : "Compare responses"}{" "}
-            <ArrowUpRight size={14} />
-          </Button>
-        </div>
-      </section>
+      <DecisionSummary
+        ctx={ctx}
+        comparisonId={comparisonId}
+        onReviewResponse={onReviewResponse}
+      />
 
       <section className="summary-chart-grid" aria-label="Forecast charts">
         <article className="summary-chart-card summary-chart-card-wide summary-timeline-card">

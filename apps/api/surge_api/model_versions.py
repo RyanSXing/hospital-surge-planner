@@ -102,6 +102,14 @@ def require_current_model(payload):
 
     if payload.get("model_version") != MODEL_VERSION:
         raise ModelVersionMismatch(payload.get("model_version"), MODEL_VERSION)
+    if payload.get("scenario", {}).get("hospital_operations"):
+        from surge_engine.hospital_operations import OPERATIONS_MODEL_VERSION
+
+        if payload.get("hospital_operations_model_version") != OPERATIONS_MODEL_VERSION:
+            raise ModelVersionMismatch(
+                "hospital operations " + str(payload.get("hospital_operations_model_version", "unknown")),
+                "hospital operations " + OPERATIONS_MODEL_VERSION,
+            )
 
 
 def require_current_run_context(payload, session, workspace_id):

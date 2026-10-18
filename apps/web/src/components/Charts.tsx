@@ -21,6 +21,8 @@ export function ForecastChart({
   bandKey,
   lineDashes,
   timeZone,
+  markers = [],
+  yMax,
 }: {
   rows: Entity[];
   keys?: string[];
@@ -34,6 +36,8 @@ export function ForecastChart({
   bandKey?: string;
   lineDashes?: (string | undefined)[];
   timeZone?: string;
+  markers?: { index: number; label: string }[];
+  yMax?: number;
 }) {
   const dateLabel = (
     at: string,
@@ -89,7 +93,7 @@ export function ForecastChart({
     ),
   );
   const y = scaleLinear()
-    .domain([0, max * 1.15])
+    .domain([0, yMax ?? max * 1.15])
     .nice()
     .range([H - pad.bottom, pad.top]);
   const ticks = y.ticks(4);
@@ -120,6 +124,14 @@ export function ForecastChart({
           style={{ height: `${height}px` }}
         >
           <defs>
+            <clipPath id={`${fillId}-plot`}>
+              <rect
+                x={pad.left}
+                y={pad.top}
+                width={W - pad.left - pad.right}
+                height={H - pad.top - pad.bottom}
+              />
+            </clipPath>
             <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
               <stop
                 offset="0"
@@ -133,6 +145,42 @@ export function ForecastChart({
               />
             </linearGradient>
           </defs>
+          {markers.map((marker) => (
+            <g
+              key={marker.index}
+              className="chart-bottleneck-marker"
+              clipPath={`url(#${fillId}-plot)`}
+              data-period-index={marker.index}
+            >
+              <rect
+                x={Math.max(
+                  pad.left,
+                  x(marker.index) -
+                    Math.max(
+                      3,
+                      (W - pad.left - pad.right) /
+                        Math.max(1, rows.length - 1) /
+                        2,
+                    ),
+                )}
+                y={pad.top}
+                width={Math.max(
+                  4,
+                  (W - pad.left - pad.right) / Math.max(1, rows.length - 1),
+                )}
+                height={H - pad.bottom - pad.top}
+                fill="#d39427"
+                opacity={0.065}
+              />
+              <circle
+                cx={x(marker.index)}
+                cy={pad.top + 3}
+                r={3.5}
+                fill="#b77c15"
+              />
+              <title>{marker.label}</title>
+            </g>
+          ))}
           {ticks.map((t) => (
             <g key={t}>
               <line

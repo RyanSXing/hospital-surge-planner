@@ -1,5 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { comparisonResultPlan, finiteStatistic } from "./resultsMetrics";
+import {
+  comparisonResultPlan,
+  comparisonImprovementNumbers,
+  finiteStatistic,
+} from "./resultsMetrics";
+
+it("keeps missing paired improvement and probability unavailable, while retaining actual zero", () => {
+  expect(
+    comparisonImprovementNumbers({
+      evidence_available: false,
+      p50: null,
+      probability_of_improvement: null,
+    }),
+  ).toEqual({ median: null, p10: null, p90: null, probability: null });
+  expect(
+    comparisonImprovementNumbers({
+      p50: 0,
+      p10: 0,
+      p90: 0,
+      probability_of_improvement: 0,
+    }),
+  ).toEqual({ median: 0, p10: 0, p90: 0, probability: 0 });
+  expect(comparisonImprovementNumbers({ p50: 1 }).probability).toBeNull();
+});
 
 describe("finiteStatistic", () => {
   it("keeps zero distinct from an unobserved percentile", () => {

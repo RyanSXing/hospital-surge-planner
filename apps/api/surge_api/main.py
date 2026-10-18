@@ -8,6 +8,7 @@ import hashlib
 import hmac
 import io
 import json
+import math
 import os
 import secrets
 import threading
@@ -382,6 +383,7 @@ def job_view(job, *, include_scenario=False):
                             "conditions",
                             "interventions",
                             "updates",
+                            "hospital_operations",
                             "measurement_start_at",
                             "state_origin",
                             "branch_at",
@@ -628,6 +630,7 @@ def enqueue_run(session, user, scenario, replications=None):
         "source_draft_revision": draft_revision,
         "input_sha256": digest({"dataset": dataset.data, "scenario": value}),
         "model_version": MODEL_VERSION,
+        **({"hospital_operations_model_version": "1.0"} if value.get("hospital_operations") else {}),
         "compute_estimate": estimate,
     }
     job = Job(
@@ -1918,6 +1921,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "interventions",
             "updates",
             "description",
+            "hospital_operations",
         }
         if set(payload) - allowed:
             fail(
@@ -2151,6 +2155,57 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         if row.status != "SUCCEEDED":
             fail(409, "Final results are available after all replications succeed", "result_not_ready")
         return row, ArtifactStore().get_json_cached(row.result["aggregate_artifact"], mutable=True)
+
+    @router.get("/run-groups/{identity}/bottlenecks")
+    def ensemble_constraints(identity: str, user=Depends(current_user), session=Depends(db)):
+        from .bottlenecks import recorded_bottlenecks
+        from .responses import cached_response, json_response
+
+        row = owned_job(session, identity, user, "run")
+        if row.status != "SUCCEEDED":
+            fail(409, "Constraint conclusions require all replications to succeed", "result_not_ready")
+        selected_id = row.result.get("selected_replication_id")
+        selected = owned(session, selected_id, "replication", user) if selected_id else None
+        trace_artifact = selected.data.get("trace_artifact") if selected else None
+        key = (
+            "ensemble-bottlenecks-v1",
+            str(session.bind.url),
+            user["workspace_id"],
+            identity,
+            row.result["aggregate_artifact"]["sha256"],
+            (trace_artifact or {}).get("sha256"),
+        )
+        cached = cached_response(key)
+        if cached is not None:
+            return cached
+        aggregate = ArtifactStore().get_json_cached(row.result["aggregate_artifact"])
+        value = copy.deepcopy(aggregate.get("bottleneck_evidence") or {})
+        if not value.get("evidence_available"):
+            if trace_artifact:
+                trace = ArtifactStore().get_json_cached(trace_artifact)
+                dataset = owned(session, row.payload["dataset_version_id"], "dataset", user).data
+                value = recorded_bottlenecks(trace, dataset, row.payload["scenario"])
+                value.update(replications_completed=1, scope="selected_replication")
+                for table in ("categories", "units", "resources"):
+                    for item in value.get(table, []):
+                        item["first_replication_id"] = selected_id
+            else:
+                value = {
+                    "scope": "unavailable",
+                    "evidence_available": False,
+                    "categories": [],
+                    "units": [],
+                    "resources": [],
+                    "non_additive": True,
+                }
+        value["context"] = context(
+            row,
+            timezone=row.payload["scenario"].get("timezone", "America/Chicago"),
+            statistic="mean" if value.get("scope") == "ensemble" else "recorded",
+            start_at=value.get("start_at"),
+            end_at=value.get("end_at"),
+        )
+        return json_response(value, key)
 
     @router.get("/run-groups/{identity}/metrics")
     def metrics(
@@ -2772,12 +2827,13 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             rankings=[p["id"] for p in rankings],
             status=("FAILED" if failed else "SUCCEEDED") if all_done else "RUNNING",
         )
-        value["no_plan_improves"] = bool(
-            all_done
-            and reference
-            and not any(
-                p.get("improvement", {}).get("p50", 0) > 0 for p in value["plans"] if not p.get("reference")
-            )
+        tested = [p for p in value["plans"] if not p.get("reference") and p.get("status") != "INFEASIBLE"]
+        improvement_values = [p.get("improvement", {}).get("p50") for p in tested]
+        paired_complete = all(type(v) in (int, float) and math.isfinite(v) for v in improvement_values)
+        value["no_plan_improves"] = (
+            not any(v > 0 for v in improvement_values)
+            if all_done and reference and paired_complete and not failed
+            else None
         )
         from .series import bound_comparison_series
 

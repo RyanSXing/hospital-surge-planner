@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import threading
 from collections import OrderedDict
 from datetime import timedelta
@@ -17,16 +18,23 @@ _cache = OrderedDict()
 _lock = threading.Lock()
 
 
+def _finite_number(value):
+    return type(value) in (int, float) and math.isfinite(value)
+
+
+def _waiting(record):
+    metrics = record.get("scalar_metrics")
+    value = metrics.get("inpatient_waiting_patient_hours") if isinstance(metrics, dict) else None
+    return value if _finite_number(value) and value >= 0 else None
+
+
 def compact_summary(replications):
     return {
         "paired_waits": [
             {
                 "replication_index": r["replication_index"],
-                "scalar_metrics": {
-                    "inpatient_waiting_patient_hours": r["scalar_metrics"].get(
-                        "inpatient_waiting_patient_hours", 0
-                    )
-                },
+                "status": r.get("status", "SUCCEEDED"),
+                "scalar_metrics": {"inpatient_waiting_patient_hours": _waiting(r)},
             }
             for r in replications
         ],
@@ -52,6 +60,41 @@ def summary_for(metadata, aggregate):
 
 
 def paired_summary(reference, candidate):
+    def indexes(records):
+        if not isinstance(records, list) or not records:
+            return None
+        identities = []
+        for record in records:
+            if not isinstance(record, dict):
+                return None
+            index = record.get("replication_index")
+            if (
+                type(index) is not int
+                or index < 0
+                or record.get("status", "SUCCEEDED") != "SUCCEEDED"
+                or _waiting(record) is None
+            ):
+                return None
+            identities.append(index)
+        return set(identities) if len(set(identities)) == len(identities) else None
+
+    reference_indexes, candidate_indexes = indexes(reference), indexes(candidate)
+    if reference_indexes is None or candidate_indexes is None or reference_indexes != candidate_indexes:
+        missing = stats([])
+        return {
+            "evidence_available": False,
+            "unavailable_reason": "Comparison requires complete successful repetitions with finite waiting results and matching unique replication indexes.",
+            "absolute_change": missing,
+            **missing,
+            "relative_change_percent": None,
+            "probability_of_improvement": None,
+            "probability_improvement": None,
+            "percent_reduction": None,
+            "paired_replications": 0,
+            "relative_replications": 0,
+            "relative_undefined_replications": len(candidate) if isinstance(candidate, list) else None,
+            "relative_basis": "Unavailable: complete matching paired results are required.",
+        }
     value = paired_improvement(reference, candidate)
     by_index = {
         r["replication_index"]: r["scalar_metrics"]["inpatient_waiting_patient_hours"] for r in reference
@@ -66,6 +109,7 @@ def paired_summary(reference, candidate):
     relative_stats = stats(relative) if relative else None
     return {
         **value,
+        "evidence_available": True,
         **value["absolute_change"],
         "probability_improvement": value["probability_of_improvement"],
         "relative_change_percent": relative_stats,
@@ -102,12 +146,15 @@ def rank_plans(plans, scenario):
         eligible
         and len(currency) == 1
         and None not in currency
-        and all(isinstance(p.get("resource_cost"), (int, float)) for p in eligible)
+        and all(_finite_number(p.get("resource_cost")) for p in eligible)
     )
 
     def median(plan, key):
-        metric = plan.get("metrics", {}).get("scalar_metrics", {}).get(key, 0)
-        return metric.get("p50", 0) if isinstance(metric, dict) else metric
+        metrics = plan.get("metrics")
+        scalar = metrics.get("scalar_metrics") if isinstance(metrics, dict) else None
+        metric = scalar.get(key) if isinstance(scalar, dict) else None
+        value = metric.get("p50") if isinstance(metric, dict) else metric
+        return value if _finite_number(value) else math.inf
 
     for plan in eligible:
         plan["activation_at"] = activation_at(plan, scenario).isoformat()

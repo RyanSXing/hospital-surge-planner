@@ -6,13 +6,127 @@ when reasons change, so their snapshots cannot supply integrated patient counts.
 
 from __future__ import annotations
 
+import math
 from collections import Counter, defaultdict
 from datetime import timedelta
 
 from surge_engine.common import dt, iso
 
 
+def ensemble_bottlenecks(replications, run_group_id):
+    """Summarize compact per-run exposure, with zeros only for proven absence."""
+    from surge_engine.aggregate import stats
+
+    evidence = [r.get("bottleneck_evidence") for r in replications]
+
+    def valid(item, replication_index):
+        if not isinstance(item, dict) or item.get("evidence_available") is not True:
+            return False
+        try:
+            start, end = dt(item["start_at"]), dt(item["end_at"])
+            if start >= end:
+                return False
+        except (KeyError, ValueError, TypeError, OverflowError):
+            return False
+        for table in ("categories", "units", "resources"):
+            rows = item.get(table)
+            if not isinstance(rows, list):
+                return False
+            for row in rows:
+                if not isinstance(row, dict) or not isinstance(row.get("reason"), str):
+                    return False
+                required = (
+                    ("unit_id",)
+                    if table == "units"
+                    else ("unit_id", "kind", "code")
+                    if table == "resources"
+                    else ()
+                )
+                if any(not isinstance(row.get(field), str) or not row[field] for field in required):
+                    return False
+                if any(
+                    type(row.get(field)) not in (int, float)
+                    or not math.isfinite(row[field])
+                    or row[field] < 0
+                    for field in ("patient_hours", "peak_waiting")
+                ):
+                    return False
+                try:
+                    if not start <= dt(row["first_at"]) < end:
+                        return False
+                except (KeyError, ValueError, TypeError, OverflowError):
+                    return False
+                if row.get("first_replication_index") != replication_index:
+                    return False
+        return True
+
+    indexes = [r.get("replication_index") for r in replications]
+    complete = (
+        bool(evidence)
+        and all(type(index) is int and index >= 0 for index in indexes)
+        and len(set(indexes)) == len(indexes)
+        and all(r.get("status") == "SUCCEEDED" for r in replications)
+        and all(valid(e, index) for e, index in zip(evidence, indexes))
+    )
+    complete = complete and len({(e["start_at"], e["end_at"]) for e in evidence}) == 1
+    base = {
+        "scope": "ensemble",
+        "evidence_available": complete,
+        "non_additive": True,
+        "replications_completed": len(replications),
+    }
+    if not complete:
+        return {
+            **base,
+            "categories": [],
+            "units": [],
+            "resources": [],
+            "unavailable_reason": "Complete numeric constraint evidence for every simulation and the same measured period is required.",
+        }
+    base.update(start_at=evidence[0]["start_at"], end_at=evidence[0]["end_at"])
+    for table, fields in (
+        ("categories", ("reason",)),
+        ("units", ("unit_id", "reason")),
+        ("resources", ("unit_id", "reason", "kind", "code")),
+    ):
+        indexed = [{tuple(row.get(k) for k in fields): row for row in e.get(table, [])} for e in evidence]
+        rows = []
+        for key in sorted(set().union(*(set(items) for items in indexed))):
+            originals = [items.get(key) for items in indexed]
+            known = [row for row in originals if row is not None]
+            first = min(known, key=lambda row: (dt(row["first_at"]), row.get("first_replication_index", 0)))
+            index = first.get("first_replication_index", 0)
+            rows.append(
+                {
+                    **{
+                        field: first[field]
+                        for field in ("unit_id", "unit_kind", "reason", "kind", "code")
+                        if field in first
+                    },
+                    "patient_hours": stats([row["patient_hours"] if row else 0.0 for row in originals]),
+                    "peak_waiting": stats([row["peak_waiting"] if row else 0 for row in originals]),
+                    "first_at": first["first_at"],
+                    "first_replication_id": f"{run_group_id}_rep_{index:04d}",
+                    "first_replication_index": index,
+                    "replications_with_constraint": len(known),
+                    "first_at_basis": "Earliest recorded occurrence across completed simulations",
+                }
+            )
+        base[table] = sorted(
+            rows,
+            key=lambda row: (
+                -row["patient_hours"]["mean"],
+                row.get("unit_id", ""),
+                row["reason"],
+                row.get("code", ""),
+            ),
+        )
+    return base
+
+
 def recorded_bottlenecks(trace, dataset, scenario):
+    if trace.get("bottleneck_evidence", {}).get("evidence_available"):
+        return {**trace["bottleneck_evidence"], "replication_id": trace["replication_id"]}
     start = dt(trace["start_at"])
     horizon = float(trace["horizon_elapsed_minutes"])
     lower = max(
@@ -71,7 +185,7 @@ def recorded_bottlenecks(trace, dataset, scenario):
     policies = {p["capacity_policy_id"]: p for p in dataset.get("capacity_policies", [])}
     staff = {p["staff_id"]: p for p in dataset.get("staff", [])}
     queues, blockers, units, pools = Counter(), {}, {}, {}
-    categories, resources = {}, {}
+    categories, resources, unit_burdens = {}, {}, {}
 
     def add(target, key, metadata, count, begin, end):
         item = target.setdefault(
@@ -106,7 +220,7 @@ def recorded_bottlenecks(trace, dataset, scenario):
                 0,
                 pool["quantity"] - pool.get("failed", 0) - pool.get("pending_decommission", 0),
             )
-        category_counts, resource_counts = Counter(), Counter()
+        category_counts, resource_counts, unit_counts = Counter(), Counter(), Counter()
         resource_metadata = {}
         for group, count in queues.items():
             if count <= 0:
@@ -128,6 +242,8 @@ def recorded_bottlenecks(trace, dataset, scenario):
                 policy = policies.get(definition.get("capacity_policy_id"), {})
                 reasons = set(detail.get("reasons", []))
                 meta = {"unit_id": uid, "unit_kind": unit.get("kind", definition.get("kind"))}
+                for reason in reasons:
+                    unit_counts[(uid, reason)] += count
 
                 def resource(kind, code, reason, named=named, uid=uid, meta=meta):
                     named[(kind, code, uid, reason)] = {**meta, "kind": kind, "code": code, "reason": reason}
@@ -195,6 +311,15 @@ def recorded_bottlenecks(trace, dataset, scenario):
                 resource_metadata[key] = metadata
         for reason, count in category_counts.items():
             add(categories, reason, {"reason": reason}, count, begin, end)
+        for (uid, reason), count in unit_counts.items():
+            add(
+                unit_burdens,
+                (uid, reason),
+                {"unit_id": uid, "unit_kind": definitions.get(uid, {}).get("kind"), "reason": reason},
+                count,
+                begin,
+                end,
+            )
         for key, count in resource_counts.items():
             add(resources, key, resource_metadata[key], count, begin, end)
 
@@ -206,6 +331,9 @@ def recorded_bottlenecks(trace, dataset, scenario):
         "categories": sorted(categories.values(), key=lambda x: (-x["patient_hours"], x["reason"])),
         "resources": sorted(
             resources.values(), key=lambda x: (-x["patient_hours"], x["kind"], x["code"], x["unit_id"])
+        ),
+        "units": sorted(
+            unit_burdens.values(), key=lambda x: (-x["patient_hours"], x["unit_id"], x["reason"])
         ),
         "non_additive": True,
         "evidence_available": "blocker_history" in trace,

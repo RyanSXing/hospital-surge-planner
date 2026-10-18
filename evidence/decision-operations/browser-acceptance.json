@@ -1,0 +1,90 @@
+{
+  "checked_at": "2026-10-18T05:58:40.845659+00:00",
+  "passed": 8,
+  "skipped_mobile_only": 1,
+  "unresolved_failures": 0,
+  "checks": [
+    {
+      "test": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+      "project": "desktop",
+      "status": "expected",
+      "report": "browser-release.json",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "test": "Decision summary reviews a matched response, saves that plan, and rejects stale recommendations",
+      "project": "desktop",
+      "status": "expected",
+      "report": "browser-release.json",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "test": "View bottleneck reconstructs a real unretained source and opens its exact recorded state",
+      "project": "desktop",
+      "status": "expected",
+      "report": "browser-release.json",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "test": "desktop chart bookmarks share one graph and sparse Summary periods remain visible without shifting on seek",
+      "project": "desktop",
+      "status": "expected",
+      "report": "browser-bookmarks.json",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "test": "Overview setup to complete Analysis workflow preserves baseline and browser context",
+      "project": "desktop",
+      "status": "expected",
+      "report": "browser-regressions.json",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "test": "mobile touch navigation retains the Overview draft and source baseline",
+      "project": "desktop",
+      "status": "skipped",
+      "report": "browser-regressions.json",
+      "results": [
+        "skipped"
+      ]
+    },
+    {
+      "test": "root, legacy aliases and invalid navigation canonicalize without losing context",
+      "project": "desktop",
+      "status": "expected",
+      "report": "browser-regressions.json",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "test": "Analytics outcomes match recorded metrics and preserve trajectory context",
+      "project": "desktop",
+      "status": "expected",
+      "report": "browser-regressions.json",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "test": "saved custom replication counts stay visible and are submitted unchanged",
+      "project": "desktop",
+      "status": "expected",
+      "report": "browser-regressions.json",
+      "results": [
+        "passed"
+      ]
+    }
+  ],
+  "note": "The chart bookmark test required all12 names without an unspecified ordering assumption. Its corrected standalone rerun passed. The3 operations/navigation tests also passed against the final production bundle. Existing navigation and saved-result regressions passed; mobile-only coverage is intentionally out of scope."
+}

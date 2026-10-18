@@ -80,6 +80,43 @@ class Intervention(Command):
     assigned_staff_ids: list[str] | None = None
 
 
+class SeverityGroup(Command):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    percentage: float = Field(ge=0, le=100, allow_inf_nan=False)
+    average_stay_hours: float = Field(gt=0, le=87600, allow_inf_nan=False)
+
+
+class SeverityMix(Command):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    low: SeverityGroup
+    medium: SeverityGroup
+    high: SeverityGroup
+
+
+class SupplySettings(Command):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    initial_percent: float = Field(ge=0, le=100, allow_inf_nan=False)
+    capacity: float = Field(gt=0, le=1e12, allow_inf_nan=False)
+    usage_per_patient_day: float = Field(ge=0, le=1e9, allow_inf_nan=False)
+    refill_every_days: int = Field(ge=1, le=365)
+    refill_percent: float = Field(ge=0, le=100, allow_inf_nan=False)
+
+
+class TreatmentDisruption(Command):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    id: str = Field(min_length=1, max_length=128)
+    start_at: str
+    end_at: str
+    name: str | None = Field(default=None, max_length=160)
+
+
+class HospitalOperationsSettings(Command):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    severity_mix: SeverityMix | None = None
+    supplies: SupplySettings | None = None
+    disruptions: list[TreatmentDisruption] = Field(default_factory=list, max_length=365)
+
+
 class ScenarioPatch(Command):
     name: str | None = None
     dataset_version_id: str | None = None
@@ -92,6 +129,7 @@ class ScenarioPatch(Command):
     conditions: list[Condition] | None = None
     interventions: list[Intervention] | None = None
     updates: list["ScenarioEvent"] | None = None
+    hospital_operations: HospitalOperationsSettings | None = None
 
 
 class ScenarioCreate(ScenarioPatch):

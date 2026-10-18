@@ -58,6 +58,15 @@ def remaining_summary(patient, at, templates=None, *, simulated=False):
     if patient.get("state") in {"ed_boarding", "direct_waiting", "ed_waiting"} or pending(patient):
         return {"hours": None, "basis": "not_started", "label": "Next service has not started"}
     if simulated:
+        spec = patient.get("remaining_stage_spec") or {}
+        if patient.get("care_paused") and spec.get("kind") == "fixed_minutes":
+            minutes = spec.get("minutes")
+            if isinstance(minutes, (int, float)) and minutes >= 0:
+                return {
+                    "hours": minutes / 60,
+                    "basis": "paused_trajectory",
+                    "label": "Care paused · active care remaining",
+                }
         return {"hours": None, "basis": "unavailable", "label": "No retained remaining-stage value"}
     spec = patient.get("remaining_stage_spec") or {}
     if not spec:

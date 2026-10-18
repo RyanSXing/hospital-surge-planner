@@ -21,6 +21,7 @@ from scipy.stats import gamma as gamma_distribution
 
 from .common import *
 from .equipment_planning import apply_planned_equipment
+from .hospital_operations import ACCESS_METRIC_DEFINITIONS, ArrivalAccessMetrics, HospitalOperations
 from .pathways import (
     apply_stage_profile,
     begin_stepdown,
@@ -253,9 +254,17 @@ class HospitalSimulation:
         self._unit_slot_records = {
             uid: [self.slots[sid] for sid in unit["slots"]] for uid, unit in self.units.items()
         }
+        self.arrival_metrics = ArrivalAccessMetrics(self)
+        self.operations = (
+            HospitalOperations(self, scenario["hospital_operations"])
+            if scenario.get("hospital_operations")
+            else None
+        )
         self.conditions = copy.deepcopy(scenario.get("conditions", []))
         self.normalize_conditions()
         self.initialize()
+        if self.operations:
+            self.operations.setup()
 
     def at(self, minute):
         return iso(self.start + timedelta(minutes=float(minute)))
@@ -472,6 +481,14 @@ class HospitalSimulation:
                     "stage_status": p.get("stage_status"),
                     "cohort_template_id": p.get("cohort_template_id"),
                     "acuity_rank": p.get("acuity_rank"),
+                    **(
+                        {
+                            "care_paused": bool(p.get("care_paused")),
+                            "care_pause_reasons": copy.deepcopy(p.get("care_pause_reasons", [])),
+                        }
+                        if self.operations
+                        else {}
+                    ),
                     "sampled_stage_minutes": p.get("sampled_stage_minutes"),
                     "resource_profile_id": p.get("resource_profile_id"),
                     "clinic_policy_id": p.get("clinic_policy_id"),
@@ -696,6 +713,8 @@ class HospitalSimulation:
                 "ed_occupied_hours": 0.0,
                 "ed_staffed_hours": 0.0,
             }
+            if self.operations:
+                self.operations.daily_start(self.daily[date])
             self.schedule(self.minute(a), "day_boundary", date, 3)
         for t in np.arange(0, self.horizon, 60):
             self.schedule(float(t), "sample", None, 3)
@@ -1436,6 +1455,8 @@ class HospitalSimulation:
         p["unit_id"] = None
 
     def place(self, p, u, kind, reserved=False):
+        if self.operations and not self.operations.can_treat:
+            return False
         if not compatible(
             self, self.clinic_profile(p) if kind == "clinic" else stage_profile(self, p, kind), u
         ):
@@ -1554,10 +1575,16 @@ class HospitalSimulation:
                 remaining_stage_spec=copy.deepcopy(p.get("remaining_stage_spec")) if initial else None,
             )
         self.schedule(self.now + duration, "complete", (p["patient_id"], p["_token"]), 0)
+        if not self.operations or self.operations.can_treat:
+            self.arrival_metrics.treatment_started(p)
+        if self.operations:
+            self.operations.after_service_start(p)
 
     def complete(self, p, token):
         if p.get("_token") != token or p["state"] in ("discharged", "in_transit"):
             return
+        if self.operations:
+            self.operations.finish_service(p)
         if p.get("pending_transfer"):
             self.cancel_transfer(p, "service_completed_before_pickup")
         if p["state"] == "ed_assessment":
@@ -1584,6 +1611,8 @@ class HospitalSimulation:
             self.discharge(p)
 
     def discharge(self, p):
+        if self.operations:
+            self.operations.finish_service(p)
         source = p.get("unit_id")
         if p.get("_queue_group"):
             self.queue_members[p["_queue_group"]].discard(p["patient_id"])
@@ -1704,6 +1733,8 @@ class HospitalSimulation:
             raise ValueError(f"Clinic diversion infeasible without hospital fallback: {reason}")
 
     def divert_to_clinic(self, p, stream):
+        if self.operations and not self.operations.can_treat:
+            return False
         # This is called exactly once, at the new arrival. Existing ED patients
         # are never reconsidered, and failure must leave their ED bundle intact.
         if not p.get("eligible_for_clinic_diversion") or p.get("_outcome") != "discharge":
@@ -1910,7 +1941,10 @@ class HospitalSimulation:
                 p[field] = payload[field]
         p["_random_index"] = payload.get("random_index", self.stream_index(self.now))
         self.patients[pid] = p
+        self.arrival_metrics.arrival(p)
         self.choose_path(p, s)
+        if self.operations:
+            self.operations.configure_arrival(p)
         p["cohort_template_id"] = p.get("_ed_cohort", p["cohort_template_id"])
         self.metrics["arrivals"] += int(self.now >= self.measure_start)
         if self.current_day:
@@ -1940,7 +1974,11 @@ class HospitalSimulation:
 
     def allocate(self):
         for kind in ("icu", "ward", "ed"):
-            candidates = [u for u in self._ordered_staff_units_by_kind[kind] if self.free(u) > 0]
+            candidates = [
+                u
+                for u in self._ordered_staff_units_by_kind[kind]
+                if self.free(u) > 0 and (not self.operations or self.operations.can_treat)
+            ]
             if not candidates:
                 continue
             groups = [(profile, heap) for (care, profile), heap in self.qheap.items() if care == kind]
@@ -1973,8 +2011,12 @@ class HospitalSimulation:
                 entry, heap, destination = min(choices, key=lambda x: x[0])
                 heapq.heappop(heap)
                 self.place(self.patients[entry[2]], destination, kind)
-        if any(x["kind"] == "partner_transfer" for x in self.active_plans.values()):
+        if (not self.operations or self.operations.can_treat) and any(
+            x["kind"] == "partner_transfer" for x in self.active_plans.values()
+        ):
             self.allocate_transfers()
+        if self.operations:
+            self.operations.reconcile()
         self.update_blockers()
         queue_count = len(self.admission_pending)
         if self.now < self.measure_start:
@@ -2033,7 +2075,9 @@ class HospitalSimulation:
             required, declared = queue_spec(self, profile, kind)
             key = kind + ":" + ",".join(profile)
             count = len(members) - sum(pid in members for pid in self.transfer_pending)
-            inputs = (bool(count), tuple(resources[kind]))
+            inputs = (bool(count), tuple(resources[kind])) + (
+                (tuple(self.operations.reasons),) if self.operations else ()
+            )
             if inputs == self._blocker_inputs.get(key):
                 self.current_blockers[key]["patient_count"] = count
                 continue
@@ -2043,7 +2087,7 @@ class HospitalSimulation:
                 for unit in self._ordered_units:
                     if unit["kind"] != kind or unit["capacity_mode"] != "staff_derived":
                         continue
-                    reasons = []
+                    reasons = list(self.operations.reasons) if self.operations else []
                     if not compatible(self, declared, unit):
                         reasons.append("unsupported_care_capability")
                     if not unit["active"]:
@@ -2141,6 +2185,8 @@ class HospitalSimulation:
             remaining = (
                 p.get("_inpatient_duration", 0)
                 if p.get("_awaiting_new_stage") or p["state"] != "inpatient"
+                else self.operations.service_remaining(p)
+                if self.operations
                 else max(0, p.get("_service_end", self.now) - self.now)
             )
             if remaining < f.get("minimum_remaining_stage_minutes", 0):
@@ -2200,7 +2246,11 @@ class HospitalSimulation:
                     "expiry_at": self.at(expiry),
                     "prior_state": prior,
                     "source_unit_id": p.get("unit_id"),
-                    "remaining_stage_minutes": max(0, p.get("_service_end", self.now) - depart)
+                    "remaining_stage_minutes": (
+                        self.operations.service_remaining(p, depart)
+                        if self.operations
+                        else max(0, p.get("_service_end", self.now) - depart)
+                    )
                     if prior == "inpatient" and not p.get("_awaiting_new_stage")
                     else p["_inpatient_duration"],
                 }
@@ -2279,11 +2329,17 @@ class HospitalSimulation:
             return
         tr["status"] = "departed"
         tr["remaining_stage_minutes"] = (
-            max(0, p.get("_service_end", self.now) - self.now)
+            (
+                self.operations.service_remaining(p)
+                if self.operations
+                else max(0, p.get("_service_end", self.now) - self.now)
+            )
             if tr["prior_state"] == "inpatient" and not p.get("_awaiting_new_stage")
             else p["_inpatient_duration"]
         )
         p["_token"] += 1
+        if self.operations:
+            self.operations.finish_service(p)
         source = p.get("unit_id")
         self.release_slot(p)
         p["resource_requirements"] = []
@@ -2707,9 +2763,15 @@ class HospitalSimulation:
         return result
 
     def integrate(self, next_time):
+        self.arrival_metrics.integrate(next_time)
+        if self.operations:
+            self.operations.integrate(next_time)
         elapsed = next_time - max(self.now, self.measure_start)
         if elapsed <= 0:
             return
+        from .constraint_evidence import integrate_constraint_evidence
+
+        integrate_constraint_evidence(self, next_time)
         # Integration only consumes occupied/staffed counts. Avoid constructing
         # unrelated physical, available, reserved and cleaning sample fields.
         totals = {kind + suffix: 0 for kind in ("ward", "icu", "ed") for suffix in ("_occupied", "_staffed")}
@@ -2989,6 +3051,9 @@ class HospitalSimulation:
             for key, value in values.items():
                 self.unit_series[uid]["fields"][key].append(value)
         row = dict(at=self.at(self.now), elapsed_minutes=self.now, **self.totals())
+        if self.operations:
+            row.update(self.operations.fields())
+            self.operations.record()
         if self.keep:
             # record_state runs immediately before each sample. Its snapshot
             # values are immutable and already describe this exact timestamp.
@@ -3007,6 +3072,9 @@ class HospitalSimulation:
             )
 
     def handle(self, kind, payload):
+        if kind.startswith("operations_") and self.operations:
+            self.operations.handle(kind, payload)
+            return
         if kind == "measurement_start":
             self.measure_initial = sum(p["state"] != "discharged" for p in self.patients.values())
         elif kind == "arrival":
@@ -3091,6 +3159,9 @@ class HospitalSimulation:
         elif kind == "day_boundary":
             self.current_day = payload
             self.daily[payload]["start_occupancy"] = self.totals()
+            if self.operations and self.operations.supplies:
+                self.daily[payload]["medical_supply_min_percent"] = self.operations.percent()
+                self.daily[payload]["medical_supply_end_percent"] = self.operations.percent()
 
     def process(self):
         while self.heap:
@@ -3187,7 +3258,15 @@ class HospitalSimulation:
                     p["state_intervals"][-1]["end_at"] = self.at(self.horizon)
                     p["state_intervals"][-1]["end_elapsed_minutes"] = self.horizon
                 patients.append(_public_patient(p))
+        from .constraint_evidence import finish_constraint_evidence
+
+        self.arrival_metrics.finalize(scalar)
+        operations_result = self.operations.finalize(scalar, daily) if self.operations else {}
+        definitions = {**ACCESS_METRIC_DEFINITIONS, **operations_result.pop("metric_definitions", {})}
         return {
+            **operations_result,
+            "metric_definitions": definitions,
+            "bottleneck_evidence": finish_constraint_evidence(self),
             "replication_id": self.rid,
             "replication_index": self.index,
             "seed": self.repseed,

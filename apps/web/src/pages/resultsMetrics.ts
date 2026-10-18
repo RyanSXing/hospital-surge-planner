@@ -14,6 +14,25 @@ export function finiteStatistic(
   return typeof result === "number" && Number.isFinite(result) ? result : null;
 }
 
+/** Absent paired evidence is unavailable, including a missing probability. */
+export function comparisonImprovementNumbers(value: Entity | null | undefined) {
+  const empty = { median: null, p10: null, p90: null, probability: null };
+  if (!value || value.evidence_available === false) return empty;
+  const absolute = value.absolute_change || value;
+  const probability = finiteStatistic(
+    value.probability_of_improvement ?? value.probability_improvement,
+  );
+  return {
+    median: finiteStatistic(absolute),
+    p10: finiteStatistic(absolute, "p10"),
+    p90: finiteStatistic(absolute, "p90"),
+    probability:
+      probability !== null && probability >= 0 && probability <= 1
+        ? probability
+        : null,
+  };
+}
+
 /** Picks the truthful banner plan when ranking and paired improvement differ. */
 export function comparisonResultPlan<
   T extends { kind?: unknown; reference?: boolean },

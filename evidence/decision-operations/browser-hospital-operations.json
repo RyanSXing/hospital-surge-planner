@@ -1,0 +1,91 @@
+{
+  "scenario_id": "scenario_67eed81e9d9e4a92be84",
+  "run_id": "run_cdd7fe14e8524a45a718",
+  "hospital_operations": {
+    "severity_mix": {
+      "low": {
+        "percentage": 45,
+        "average_stay_hours": 12
+      },
+      "medium": {
+        "percentage": 35,
+        "average_stay_hours": 36
+      },
+      "high": {
+        "percentage": 20,
+        "average_stay_hours": 72
+      }
+    },
+    "supplies": {
+      "initial_percent": 100,
+      "capacity": 30,
+      "usage_per_patient_day": 1,
+      "refill_every_days": 1,
+      "refill_percent": 100
+    },
+    "disruptions": [
+      {
+        "id": "disruption-325700a2-d342-4b9f-b6ad-431de0df68fb",
+        "start_at": "2026-10-17T05:00:00.000Z",
+        "end_at": "2026-10-18T05:00:00.000Z",
+        "name": "Treatment disruption"
+      }
+    ]
+  },
+  "actual_disruption_events": {
+    "treatment_disruption_started": 1,
+    "medical_supplies_refilled": 1,
+    "blockers_changed": 4,
+    "arrival": 78,
+    "queue_entry": 78,
+    "staffing_change": 2
+  },
+  "supplies_daily": [
+    {
+      "at": "2026-10-16T05:00:00Z",
+      "percent": {
+        "max": 18.533067278566403,
+        "mean": 18.326420734936057,
+        "min": 18.119774191305716,
+        "p10": 18.161103500031786,
+        "p50": 18.326420734936057,
+        "p90": 18.491737969840333
+      }
+    },
+    {
+      "at": "2026-10-17T05:00:00Z",
+      "percent": {
+        "max": 100,
+        "mean": 99.99999999999997,
+        "min": 99.99999999999994,
+        "p10": 99.99999999999994,
+        "p50": 99.99999999999997,
+        "p90": 100
+      }
+    },
+    {
+      "at": "2026-10-18T05:00:00Z",
+      "percent": {
+        "max": 13.736403552451435,
+        "mean": 13.684290776689918,
+        "min": 13.632178000928402,
+        "p10": 13.642600556080705,
+        "p50": 13.684290776689918,
+        "p90": 13.725980997299132
+      }
+    }
+  ],
+  "replay_shortage_time": "2026-10-18T05:00:00Z",
+  "replay_shortage_replication": "run_cdd7fe14e8524a45a718_rep_0000",
+  "trace_initially_retained": true,
+  "replay_state_context": {
+    "replication_id": "run_cdd7fe14e8524a45a718_rep_0000",
+    "run_group_id": "run_cdd7fe14e8524a45a718",
+    "schema_version": "1.0",
+    "scope": "hospital",
+    "state_origin": "simulation",
+    "statistic": "p50",
+    "timezone": "America/Chicago"
+  },
+  "page_errors": []
+}

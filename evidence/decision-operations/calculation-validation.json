@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-18T05:57:34.151243+00:00",
+  "backend": {
+    "tests": 131.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 0.0,
+    "time": 146.469
+  },
+  "frontend": {
+    "numTotalTests": 244,
+    "numPassedTests": 244,
+    "numFailedTests": 0,
+    "success": true
+  },
+  "production_build": "tsc -b && vite build passed",
+  "static_checks": [
+    "ruff check passed",
+    "git diff --check passed"
+  ],
+  "scope": "Focused calculation, API, model-version, comparison, missing/stale result, configuration and aggregation checks. Desktop browser acceptance is recorded separately."
+}

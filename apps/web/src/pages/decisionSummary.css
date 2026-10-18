@@ -1,0 +1,99 @@
+.decision-summary {
+  margin: 0 24px 16px;
+  padding: 17px 20px 12px;
+  border: 1px solid var(--border, #dfe4ea);
+  border-left: 3px solid #327fbb;
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  color: var(--text, #172033);
+}
+.decision-summary > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 13px;
+}
+.decision-summary h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.decision-summary-content {
+  display: grid;
+  gap: 9px;
+}
+.decision-summary-line {
+  display: grid;
+  grid-template-columns: 126px minmax(0, 1fr);
+  gap: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.decision-summary-line > span {
+  color: var(--muted, #667085);
+}
+.decision-summary-line strong {
+  font-weight: 600;
+}
+.decision-summary-line p {
+  margin: 0;
+}
+.decision-summary-line p + p {
+  margin-top: 2px;
+}
+.decision-summary-line strong + p {
+  color: var(--muted, #667085);
+  font-size: 12px;
+  margin-top: 2px;
+}
+.decision-summary-improvement {
+  color: #217453;
+}
+.decision-summary > footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border, #dfe4ea);
+  font-size: 12px;
+}
+.decision-summary details {
+  flex: 1;
+}
+.decision-summary summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--accent, #176eac);
+}
+.decision-summary-evidence {
+  margin-top: 9px;
+  max-width: 960px;
+  color: var(--muted, #667085);
+  line-height: 1.55;
+}
+.decision-summary-evidence p {
+  margin: 0 0 7px;
+}
+.decision-summary-replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.decision-summary--stale {
+  border-left-color: #c78b32;
+}
+.summary-metrics article > strong.outcome-department {
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+.decision-summary-revision {
+  margin: -4px 0 13px;
+  color: #8a5b18;
+  font-size: 12px;
+  line-height: 1.5;
+}

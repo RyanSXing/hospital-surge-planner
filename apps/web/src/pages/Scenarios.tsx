@@ -15,6 +15,11 @@ import {
   reshapeArrivalPlan,
 } from "./arrivalPlanControls";
 import HospitalConfigurationControls from "./HospitalConfigurationControls";
+import HospitalOperationsControls from "./HospitalOperationsControls";
+import {
+  hospitalOperationsPatch,
+  operationsError,
+} from "./hospitalOperationsModel";
 import {
   applyConfigurationInputs,
   configurationTargets,
@@ -55,7 +60,7 @@ import {
   Users,
   Wind,
 } from "lucide-react";
-import type { Entity, PlanningContext } from "../types";
+import type { Entity, HospitalOperations, PlanningContext } from "../types";
 import { api, atDay, fmt, items, localDate, localDayIndex, post } from "../api";
 import { Badge, Busy, Button, ErrorBox, Modal } from "../components/ui";
 export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
@@ -82,6 +87,9 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   }, [planRequest]);
   const [draftInterventions, setDraftInterventions] = useState<Entity[]>([]);
   const [draftUpdates, setDraftUpdates] = useState<Entity[]>([]);
+  const [hospitalOperations, setHospitalOperations] = useState<
+    HospitalOperations | null | undefined
+  >();
   const [capacityTargets, setCapacityTargets] = useState<ConfigurationTargets>({
     units: {},
   });
@@ -227,6 +235,11 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setDraftConditions(s.conditions || []);
     setDraftInterventions(s.interventions || []);
     setDraftUpdates(s.updates || []);
+    setHospitalOperations(
+      s.hospital_operations === undefined
+        ? undefined
+        : structuredClone(s.hospital_operations),
+    );
     setCapacityTargets(
       configurationTargets({
         conditions: s.conditions || [],
@@ -280,6 +293,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     draftInterventions,
     draftUpdates,
     capacityTargets,
+    hospitalOperations,
     percent,
     days,
     horizonUnit,
@@ -322,6 +336,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setDraftInterventions(v.draftInterventions);
     setDraftUpdates(v.draftUpdates);
     setCapacityTargets(v.capacityTargets || { units: {} });
+    setHospitalOperations(v.hospitalOperations);
     setPercent(v.percent);
     setArrivalInput(displayArrivalPercent(v.percent));
     arrivalInputChanged.current = false;
@@ -388,6 +403,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
       ...(ctx.dataset
         ? applyConfigurationInputs(ctx.dataset, draft, capacityTargets)
         : draft),
+      ...hospitalOperationsPatch(hospitalOperations, startAt, exclusiveEnd),
     };
   }
   function switchStream(next: string) {
@@ -461,6 +477,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     draftInterventions,
     draftUpdates,
     capacityTargets,
+    hospitalOperations,
     arrivalEdited,
     legacyStaffEdited,
     customPoints,
@@ -626,6 +643,11 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   );
   const displayedPercent = displayArrivalPercent(percent);
   const invalidMix = mixError(mixMode, mix);
+  const invalidOperations = operationsError(
+    hospitalOperations,
+    startAt,
+    exclusiveEnd,
+  );
   const customArrivalSchedule =
     usesCustomArrivalSchedule(draftConditions, stream, shape) ||
     usesCustomArrivalSchedule(previewConditions, stream, shape);
@@ -964,18 +986,35 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             onChange={setCapacityTargets}
           />
         ) : null}
+        <HospitalOperationsControls
+          key={`operations:${ctx.scenario?.id}:${ctx.scenario?.revision}`}
+          value={hospitalOperations}
+          start={startAt}
+          end={exclusiveEnd}
+          timeZone={timeZone}
+          disabled={ctx.canWrite === false || !!ctx.busy}
+          onEditStart={remember}
+          onChange={setHospitalOperations}
+        />
       </div>
       <div className="simulation-run-row">
         <div
           role="status"
           className={
-            preflight?.valid === false || estimateError || invalidMix
+            preflight?.valid === false ||
+            estimateError ||
+            invalidMix ||
+            invalidOperations
               ? "setup-validation"
               : "simulation-ready"
           }
         >
-          {preflight?.valid === false || estimateError || invalidMix ? (
+          {preflight?.valid === false ||
+          estimateError ||
+          invalidMix ||
+          invalidOperations ? (
             invalidMix ||
+            invalidOperations ||
             estimateError ||
             preflight?.errors?.[0]?.message ||
             "Review your parameters before running."
@@ -995,7 +1034,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             !!ctx.busy ||
             estimating ||
             preflight?.valid === false ||
-            !!invalidMix
+            !!invalidMix ||
+            !!invalidOperations
           }
         >
           Run simulation <ArrowRight size={16} />

@@ -18,8 +18,10 @@ import { api, atDay, fmt, items, localDayIndex, num, post } from "../api";
 import { Badge, Button, Modal } from "../components/ui";
 import { ForecastChart, Timeline } from "../components/Charts";
 import { comparisonWardInventory } from "./comparisonCapacity";
+import { requestedComparisonPlan } from "./decisionSummaryModel";
 import {
   comparisonResultPlan,
+  comparisonImprovementNumbers,
   finiteStatistic,
   hospitalResponse,
   responseName,
@@ -63,6 +65,7 @@ export default function Compare({
   onComparisonSelect?: (id: string | null) => void;
 }) {
   const panels = usePlanningPanels(180);
+  const requestedPlanId = new URLSearchParams(location.search).get("plan");
   const [selected, setSelected] = useState([
       "staff_existing",
       "staffed_overflow",
@@ -164,7 +167,7 @@ export default function Compare({
     ctx.dataset?.id,
   ]);
   function accept(c: Entity) {
-    setChosen("");
+    setChosen(requestedComparisonPlan(c, requestedPlanId));
     if (c.scenario_id && c.scenario_id !== ctx.scenario?.id) {
       setComparison(null);
       return;
@@ -192,7 +195,11 @@ export default function Compare({
         ? comparisonId
         : new URLSearchParams(location.search).get("comparison") ||
           sessionStorage.getItem(`hospital.comparison.${ctx.scenario?.id}`);
-    if (stored === comparison?.id) return;
+    if (stored === comparison?.id) {
+      if (requestedPlanId)
+        setChosen(requestedComparisonPlan(comparison, requestedPlanId));
+      return;
+    }
     setComparison(null);
     setChosen("");
     setFetchError("");
@@ -207,7 +214,7 @@ export default function Compare({
     return () => {
       ignore = true;
     };
-  }, [ctx.scenario?.id, comparisonId]);
+  }, [ctx.scenario?.id, comparisonId, requestedPlanId]);
   useEffect(() => {
     if (
       !comparison?.id ||
@@ -909,7 +916,9 @@ export default function Compare({
                   waitMedian = finiteStatistic(wait),
                   has = waitMedian !== null,
                   peak = finiteStatistic(metrics.peak_inpatient_queue),
-                  improvement = p.improvement;
+                  improvement = p.improvement,
+                  improvementNumbers =
+                    comparisonImprovementNumbers(improvement);
                 return (
                   <div
                     key={p.id}
@@ -936,12 +945,14 @@ export default function Compare({
                       <div>
                         <dt>Less waiting</dt>
                         <dd
-                          className={num(improvement?.p50) > 0 ? "green" : ""}
+                          className={
+                            (improvementNumbers.median ?? 0) > 0 ? "green" : ""
+                          }
                         >
                           {i === 0
                             ? "Reference"
-                            : improvement
-                              ? `${fmt(num(improvement.absolute_change || improvement), 1)} h`
+                            : improvementNumbers.median !== null
+                              ? `${fmt(improvementNumbers.median, 1)} h`
                               : "—"}
                         </dd>
                       </div>
@@ -950,32 +961,18 @@ export default function Compare({
                           <div>
                             <dt>Typical range</dt>
                             <dd>
-                              {fmt(
-                                num(
-                                  improvement.absolute_change || improvement,
-                                  "p10",
-                                ),
-                              )}{" "}
-                              –{" "}
-                              {fmt(
-                                num(
-                                  improvement.absolute_change || improvement,
-                                  "p90",
-                                ),
-                              )}{" "}
-                              h
+                              {improvementNumbers.p10 !== null &&
+                              improvementNumbers.p90 !== null
+                                ? `${fmt(improvementNumbers.p10)} – ${fmt(improvementNumbers.p90)} h`
+                                : "—"}
                             </dd>
                           </div>
                           <div>
                             <dt>Runs with less waiting</dt>
                             <dd>
-                              {fmt(
-                                100 *
-                                  (improvement.probability_of_improvement ??
-                                    improvement.probability_improvement ??
-                                    0),
-                              )}
-                              %
+                              {improvementNumbers.probability !== null
+                                ? `${fmt(100 * improvementNumbers.probability)}%`
+                                : "—"}
                             </dd>
                           </div>
                         </>

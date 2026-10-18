@@ -805,6 +805,9 @@ def run_job(identity, Session, token, uploads):
 
         check_finalization()
         aggregate["comparison_summary"] = compact_summary(results)
+        from .bottlenecks import ensemble_bottlenecks
+
+        aggregate["bottleneck_evidence"] = ensemble_bottlenecks(results, identity)
         aggregate["periods"] = {
             grain: period_aggregation(results, grain, cancel_check=check_finalization)
             for grain in ("week", "month")
@@ -1137,12 +1140,17 @@ def period_aggregation(replications, grain, *, cancel_check=None):
                     continue
                 if "peak" in metric or metric.startswith("max_"):
                     metrics[metric] = max(values)
+                elif metric.endswith("_min_percent"):
+                    metrics[metric] = min(values)
+                elif metric.endswith("_end_percent"):
+                    metrics[metric] = values[-1]
                 elif (
                     "hours" in metric
                     or "arrivals" in metric
                     or "departures" in metric
                     or "discharges" in metric
                     or "transfers" in metric
+                    or metric.endswith("_units")
                 ):
                     metrics[metric] = sum(values)
                 elif metric.endswith("_start") or "_start_" in metric:
@@ -1154,6 +1162,12 @@ def period_aggregation(replications, grain, *, cancel_check=None):
                         (date(r["end_at"]) - date(r["start_at"])).total_seconds() for r in valid_rows
                     ]
                     metrics[metric] = sum(v * d for v, d in zip(values, durations)) / sum(durations)
+            reason_keys = {reason for row in rows for reason in row.get("blocker_patient_hours", {})}
+            if reason_keys:
+                metrics["blocker_patient_hours"] = {
+                    reason: sum(row.get("blocker_patient_hours", {}).get(reason, 0) for row in rows)
+                    for reason in reason_keys
+                }
             for care in ("ward", "icu", "ed"):
                 denominator = metrics.get(f"{care}_staffed_hours", 0)
                 metrics[f"{care}_utilization"] = (
@@ -1180,6 +1194,17 @@ def period_aggregation(replications, grain, *, cancel_check=None):
         keys = set().union(*(rep.get(key, {}) for rep in per_rep))
         item = {**meta}
         for metric in keys:
+            if metric == "blocker_patient_hours":
+                from surge_engine.aggregate import stats
+
+                reasons = {reason for rep in per_rep for reason in rep.get(key, {}).get(metric, {})}
+                item[metric] = {
+                    reason: stats(
+                        [rep.get(key, {}).get(metric, {}).get(reason, 0) for rep in per_rep if key in rep]
+                    )
+                    for reason in reasons
+                }
+                continue
             values = [
                 rep[key][metric]
                 for rep in per_rep

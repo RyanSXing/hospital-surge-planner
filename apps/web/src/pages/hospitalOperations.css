@@ -1,0 +1,239 @@
+.hospital-operations {
+  grid-column: 1 / -1;
+  border-top: 1px solid #e0e8ef;
+  padding-top: 20px;
+  min-width: 0;
+}
+.hospital-operations > header,
+.operations-panel > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+.hospital-operations h3,
+.hospital-operations h4 {
+  margin: 0;
+  color: #2c4355;
+  font-size: 15px;
+}
+.hospital-operations > header > span,
+.hospital-operations p,
+.operations-readback {
+  color: #607287;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.hospital-operations p {
+  margin: 6px 0 14px;
+}
+.hospital-operations-grid {
+  display: grid;
+  grid-template-columns: minmax(520px, 1.35fr) minmax(320px, 1fr);
+  gap: 20px;
+  margin-top: 16px;
+}
+.operations-panel {
+  border: 1px solid #e1e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 0;
+}
+.operations-panel h4,
+.disruption-controls h4 {
+  font-size: 14px;
+}
+.operations-panel .mantine-Switch-label {
+  font-size: 11px;
+  color: #526c81;
+}
+.severity-editor {
+  display: grid;
+  grid-template-columns: 146px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+.severity-chart-wrap {
+  text-align: center;
+}
+.severity-pie {
+  display: block;
+  width: 146px;
+  height: 146px;
+  overflow: visible;
+  touch-action: none;
+}
+.severity-pie-total {
+  fill: #2c4355;
+  font-size: 21px;
+  font-weight: 600;
+}
+.severity-pie-caption {
+  fill: #607287;
+  font-size: 11px;
+}
+.severity-pie-handle {
+  cursor: grab;
+}
+.severity-pie-handle:focus {
+  outline: none;
+  stroke: #147ac1;
+  stroke-width: 4;
+}
+.severity-pie-handle:active {
+  cursor: grabbing;
+}
+.severity-chart-wrap > span {
+  font-size: 10px;
+  color: #607287;
+}
+.severity-field-head,
+.severity-row {
+  display: grid;
+  grid-template-columns: 64px minmax(70px, 1fr) 84px;
+  gap: 10px;
+  align-items: center;
+}
+.severity-field-head {
+  font-size: 10px;
+  color: #607287;
+  margin-bottom: 6px;
+}
+.severity-field-head > span:last-child {
+  text-align: right;
+}
+.severity-row {
+  margin-bottom: 10px;
+}
+.severity-row > label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #3e566a;
+  font-size: 12px;
+}
+.severity-row > label i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.severity-share {
+  min-width: 0;
+}
+.severity-share .mantine-NumberInput-root {
+  max-width: 88px;
+  margin: 0 0 7px auto;
+}
+.severity-share .mantine-Slider-root {
+  margin: 0 6px;
+}
+.operations-panel .mantine-NumberInput-input {
+  font-size: 12px;
+}
+.operations-inactive {
+  opacity: 0.58;
+}
+.operations-inactive .severity-pie-handle {
+  cursor: default;
+}
+.operations-readback {
+  margin-top: 14px;
+  min-height: 18px;
+}
+.operations-readback strong {
+  color: #315b7c;
+}
+.supply-stock-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #3e566a;
+}
+.supply-stock-label .mantine-NumberInput-root {
+  width: 88px;
+}
+.supplies-panel > div > .mantine-Slider-root {
+  margin: 0 8px 16px;
+}
+.supply-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.supply-fields .mantine-NumberInput-label {
+  font-size: 11px;
+  margin-bottom: 4px;
+  color: #526c81;
+}
+.disruption-controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid #e1e8f0;
+  border-radius: 8px;
+}
+.disruption-controls p {
+  margin-bottom: 0;
+}
+.disruption-list {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.disruption-row {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  padding: 10px;
+  background: #f7f9fc;
+  border: 1px solid #e3eaf1;
+  border-radius: 6px;
+}
+.disruption-row > span {
+  font-size: 11px;
+  color: #607287;
+  padding-bottom: 6px;
+}
+.disruption-remove {
+  border: 0;
+  background: transparent;
+  padding: 7px;
+  color: #7890a3;
+  cursor: pointer;
+}
+.disruption-remove:hover {
+  background: #fff0f0;
+  color: #a54851;
+}
+.disruption-row .mantine-TextInput-label {
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.hospital-operations .operations-error {
+  grid-column: 1 / -1;
+  margin: 10px 0 0;
+  color: #a44242;
+  font-size: 12px;
+}
+.operations-definitions {
+  margin-top: 12px;
+  color: #607287;
+  font-size: 11px;
+}
+.operations-definitions summary {
+  width: fit-content;
+  cursor: pointer;
+}
+.operations-definitions p {
+  font-size: 11px;
+  max-width: 960px;
+  margin: 8px 0 0;
+}

@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T05:51:17.807342+00:00",
+  "sha256": "a08cee66526348142b4a3a022906e03500a600465ba31d4dee18608337863278",
+  "byte_size": 5601775,
+  "object_key": "backups/hospital-decision-operations-20261018T055112Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing workspace before hospital operations and decision summary deployment; no scenario mutations requested"
+}

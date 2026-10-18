@@ -29,19 +29,27 @@ test("stress census exposes initial boarding and actual patient blockers", async
   const format = (value: number) =>
     new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value);
   for (const [key, label, percent] of [
-    ["arrivals", "New arrivals", false],
-    ["discharges", "Completed discharges", false],
-    ["inpatient_waiting_patient_hours", "Placement waiting", false],
-    ["ward_utilization", "Ward utilization", true],
+    ["average_wait_per_patient_hours", "Average wait per patient", false],
+    ["success_score_percent", "Success score", true],
   ] as const) {
     const statistic = metrics.scalar_metrics[key];
-    const median = typeof statistic === "number" ? statistic : statistic.p50;
+    const median = typeof statistic === "number" ? statistic : statistic?.p50;
+    expect(Number.isFinite(median), key).toBe(true);
     await expect(
       page.locator(".summary-metrics article").filter({ hasText: label }),
-    ).toContainText(
-      `${format(median * (percent ? 100 : 1))}${percent ? "%" : ""}`,
-    );
+    ).toContainText(`${format(median)}${percent ? "%" : ""}`);
   }
+  await expect(
+    page
+      .locator(".summary-metrics article")
+      .filter({ hasText: "Average medical supplies" })
+      .locator("strong"),
+  ).toHaveText("—");
+  await expect(
+    page
+      .locator(".summary-metrics article")
+      .filter({ hasText: "Most constrained department" }),
+  ).toBeVisible();
   await expect(page.locator(".summary-metrics")).not.toContainText(
     "Ward occupancy",
   );

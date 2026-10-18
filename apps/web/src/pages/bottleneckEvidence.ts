@@ -10,6 +10,8 @@ const reasons: Record<string, string> = {
   place_turnover: "Beds being cleaned",
   incoming_reservation: "Beds reserved for incoming patients",
   destination_inactive: "Unit not open",
+  medical_supplies: "Out of medical supplies",
+  treatment_disruption: "Treatment interrupted",
 };
 
 export function bottleneckLabel(reason: string) {

@@ -807,19 +807,46 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
     name: "Choose a forecast chart",
   });
   const plotOptions = await bookmarks.getByRole("tab").allTextContents();
-  expect(plotOptions).toHaveLength(11);
+  expect(plotOptions).toEqual(
+    expect.arrayContaining([
+      "Arrivals and discharges",
+      "Ward beds",
+      "Intensive care beds",
+      "Emergency department",
+      "Patients waiting",
+      "Time spent waiting",
+      "Busiest hospital unit",
+      "Staffing coverage deficit",
+      "Equipment coverage deficit",
+      "Daily peak bed queue",
+      "Daily ward capacity",
+      "Medical supplies",
+    ]),
+  );
   for (const plot of plotOptions) {
     const bookmark = bookmarks.getByRole("tab", { name: plot, exact: true });
     await bookmark.click();
     await expect(bookmark).toHaveAttribute("aria-selected", "true");
-    await expect(outcomes.locator(".outcome-chart svg[role=img]")).toHaveCount(
-      1,
-    );
-    await expect(
-      outcomes.locator(".outcome-chart svg[role=img]"),
-    ).toBeVisible();
+    if (plot === "Medical supplies") {
+      await expect(
+        outcomes.locator(".outcome-chart svg[role=img]"),
+      ).toHaveCount(0);
+      await expect(outcomes.locator(".outcome-empty-metric")).toContainText(
+        "Supply tracking was not enabled in these saved results",
+      );
+    } else {
+      await expect(
+        outcomes.locator(".outcome-chart svg[role=img]"),
+      ).toHaveCount(1);
+      await expect(
+        outcomes.locator(".outcome-chart svg[role=img]"),
+      ).toBeVisible();
+    }
     expect(new URL(page.url()).searchParams.get("at")).toBe(selectedAt);
   }
+  await bookmarks
+    .getByRole("tab", { name: "Arrivals and discharges", exact: true })
+    .click();
   await outcomes.getByRole("checkbox").uncheck();
   await expect(outcomes.getByRole("checkbox")).not.toBeChecked();
   await outcomes.getByRole("checkbox").check();

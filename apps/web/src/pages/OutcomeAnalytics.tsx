@@ -28,6 +28,8 @@ import {
   OutcomeSummaryCards,
 } from "./OutcomeSummaryCards";
 import "./outcomeAnalytics.css";
+import { recordedConstraintMarkers } from "./constraintMarkers";
+import { bottleneckLabel } from "./bottleneckEvidence";
 
 type MetricField = {
   key: string;
@@ -36,6 +38,21 @@ type MetricField = {
   percent?: boolean;
 };
 const scalarFields: MetricField[] = [
+  {
+    key: "average_wait_per_patient_hours",
+    label: "Average wait per patient",
+    unit: "hours per measured arrival",
+  },
+  {
+    key: "medical_supply_average_percent",
+    label: "Average medical supplies",
+    unit: "percent of maximum stock",
+  },
+  {
+    key: "success_score_percent",
+    label: "Patients treated within 24 hours",
+    unit: "percent of eligible arrivals",
+  },
   { key: "arrivals", label: "New arrivals", unit: "patients" },
   {
     key: "expected_arrivals",
@@ -132,6 +149,15 @@ const scalarFields: MetricField[] = [
 ];
 
 const plots = {
+  supplies: {
+    title: "Medical supplies",
+    keys: ["medical_supply_average_percent", "medical_supply_min_percent"],
+    labels: ["Average supply stock", "Lowest supply stock"],
+    unit: "Percent of maximum supply stock",
+    basis:
+      "General medical supply stock each day, including consumption, scheduled refills, and shortages. Untracked supplies remain unavailable.",
+    daily: true,
+  },
   demand: {
     title: "Arrivals and discharges",
     keys: ["arrivals", "discharges"],
@@ -283,6 +309,13 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
       : originalRows;
   const selectedIndex = outcomeRowIndex(rows, selectedTime);
   const scalar = metrics?.scalar_metrics || {};
+  const constraintMarkers = recordedConstraintMarkers(rows, dailyRows);
+  const recordedReasons = [
+    ...new Set(constraintMarkers.flatMap((marker) => marker.reasons)),
+  ];
+  const chartAvailable = rows.some((row) =>
+    definition.keys.some((key) => finiteStatistic(row[key]) !== null),
+  );
   const fields = scalarFields.filter((field) =>
     isMeasurementScalar(field.key, window),
   );
@@ -396,7 +429,11 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
             </div>
           </div>
 
-          <OutcomeSummaryCards scalar={scalar} className="outcome-highlights" />
+          <OutcomeSummaryCards
+            ctx={ctx}
+            scalar={scalar}
+            className="outcome-highlights"
+          />
 
           <section className={`outcome-insight ${insight.tone}`}>
             <span className="outcome-insight-icon">
@@ -444,20 +481,59 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                     {definition.basis} Lines show the median across {completed}{" "}
                     runs. Calendar intervals use their actual elapsed hours.
                   </p>
-                  <ForecastChart
-                    rows={rows}
-                    timeZone={timeZone}
-                    keys={definition.keys}
-                    labels={definition.labels}
-                    height={300}
-                    selected={selectedIndex}
-                    onSelect={(index) =>
-                      selectTime(rows[index].at || rows[index].start_at)
-                    }
-                    showBand={band}
-                    bandKey={definition.keys[0]}
-                    yLabel={definition.unit}
-                  />
+                  {chartAvailable ? (
+                    <ForecastChart
+                      rows={rows}
+                      timeZone={timeZone}
+                      keys={definition.keys}
+                      labels={definition.labels}
+                      height={300}
+                      selected={selectedIndex}
+                      onSelect={(index) =>
+                        selectTime(rows[index].at || rows[index].start_at)
+                      }
+                      showBand={band}
+                      bandKey={definition.keys[0]}
+                      yLabel={definition.unit}
+                      markers={constraintMarkers}
+                      yMax={plot === "supplies" ? 100 : undefined}
+                    />
+                  ) : (
+                    <div className="outcome-empty-metric" role="status">
+                      {plot === "supplies"
+                        ? "Supply tracking was not enabled in these saved results. Enable Track supplies in Configuration and run a simulation to view daily stock."
+                        : "This measure was not recorded in the selected results."}
+                    </div>
+                  )}
+                  <div
+                    className="outcome-constraint-markers"
+                    data-testid="constraint-markers"
+                    aria-label="Recorded bottleneck indicators"
+                  >
+                    {recordedReasons.length ? (
+                      <>
+                        <span className="outcome-constraint-key">
+                          Amber marks: recorded constraints or care
+                          interruptions
+                        </span>
+                        <div>
+                          {recordedReasons.map((reason) => (
+                            <span key={reason}>{bottleneckLabel(reason)}</span>
+                          ))}
+                        </div>
+                        <small>
+                          Reasons can overlap. Marks identify the recorded date
+                          or period, not an exact start time. Open Summary to
+                          replay the first recorded bottleneck.
+                        </small>
+                      </>
+                    ) : (
+                      <small>
+                        No positive recorded constraint evidence is available
+                        for the periods shown.
+                      </small>
+                    )}
+                  </div>
                   <label className="outcome-band">
                     <input
                       type="checkbox"

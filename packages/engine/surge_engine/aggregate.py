@@ -98,6 +98,8 @@ def aggregate_results(replications, scenario=None, *, cancel_check=None):
                 regular_values = []
                 for row, rows in entries:
                     values = [r.get(field) for r in rows]
+                    if field in ("treatment_disrupted", "care_paused"):
+                        values = [int(value) if isinstance(value, bool) else value for value in values]
                     if len(values) == len(replications) and all(type(v) in (int, float) for v in values):
                         regular_rows.append(row)
                         regular_values.append(values)
@@ -164,6 +166,16 @@ def aggregate_results(replications, scenario=None, *, cancel_check=None):
             }
         unit_series[uid] = {"unit_id": uid, "fields": fields}
     return {
+        **(
+            {
+                "hospital_operations_model_version": selected["hospital_operations_model_version"],
+            }
+            if selected.get("hospital_operations_model_version")
+            else {}
+        ),
+        **(
+            {"metric_definitions": selected["metric_definitions"]} if "metric_definitions" in selected else {}
+        ),
         "unit_series": unit_series,
         "scalar_metrics": scalar,
         "series": aggregate_rows("series", "elapsed_minutes"),

@@ -47,6 +47,30 @@ export interface Scenario extends Entity {
   conditions: Entity[];
   interventions: Entity[];
   revision?: number;
+  hospital_operations?: HospitalOperations | null;
+}
+export type PatientSeverity = "low" | "medium" | "high";
+export type SeverityMix = Record<
+  PatientSeverity,
+  { percentage: number; average_stay_hours: number }
+>;
+export interface HospitalDisruption {
+  id: string;
+  start_at: string;
+  end_at: string;
+  name?: string;
+}
+export interface HospitalSupplies {
+  initial_percent: number;
+  capacity: number;
+  usage_per_patient_day: number;
+  refill_every_days: number;
+  refill_percent: number;
+}
+export interface HospitalOperations {
+  severity_mix?: SeverityMix;
+  disruptions?: HospitalDisruption[];
+  supplies?: HospitalSupplies;
 }
 export interface RunGroup extends Entity {
   id: string;
@@ -83,6 +107,7 @@ export interface PlanningContext {
   role?: string;
   activeReplicationId?: string;
   setReplication: (id: string) => void;
+  openReplayAt?: (id: string, at: string) => Promise<void>;
   stateLoading?: boolean;
   stateError?: string | null;
   busy: string | null;

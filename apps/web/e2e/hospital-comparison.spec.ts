@@ -92,19 +92,29 @@ test("one hospital can run, compare internal bed responses, save a plan, and reo
   const summaryCards = page.locator(".summary-metrics article");
   await expect(summaryCards).toHaveCount(4);
   await expect(summaryCards).toContainText([
-    "New arrivals",
-    "Completed discharges",
-    "Placement waiting",
-    "Ward utilization",
+    "Average wait per patient",
+    "Most constrained department",
+    "Average medical supplies",
+    "Success score",
   ]);
   const format = (value: number) =>
     new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value);
-  const wardUtilization = originalMetrics.scalar_metrics.ward_utilization;
-  const wardMedian =
-    typeof wardUtilization === "number" ? wardUtilization : wardUtilization.p50;
+  for (const [key, label, suffix] of [
+    ["average_wait_per_patient_hours", "Average wait per patient", ""],
+    ["success_score_percent", "Success score", "%"],
+  ]) {
+    const actual = median(originalMetrics.scalar_metrics[key]);
+    expect(Number.isFinite(actual)).toBe(true);
+    await expect(
+      summaryCards.filter({ hasText: label }).locator("strong"),
+    ).toHaveText(`${format(actual)}${suffix}`);
+  }
+  // Stock was not modeled: missing supply results must not look like zero stock.
   await expect(
-    summaryCards.filter({ hasText: "Ward utilization" }),
-  ).toContainText(`${format(wardMedian * 100)}%`);
+    summaryCards
+      .filter({ hasText: "Average medical supplies" })
+      .locator("strong"),
+  ).toHaveText("—");
   await expect(page.locator(".summary-dashboard")).not.toContainText(
     "FAC-MAIN",
   );

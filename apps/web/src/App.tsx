@@ -93,6 +93,7 @@ import {
 } from "./navigation";
 import type { AnalysisPage, AnalyticsSection } from "./navigation";
 import "./workspaceFlow.css";
+import { prepareRecordedReplay } from "./pages/replayTrace";
 import {
   actualInventory,
   searchEntityId,
@@ -638,6 +639,21 @@ export default function App() {
     activeReplicationId:
       page === "overview" || draftDatasetDiffers ? "" : activeReplicationId,
     setReplication,
+    openReplayAt: async (id, at) => {
+      const selection = historyRequest.current;
+      await action("Preparing recorded replay", async () => {
+        if (
+          !(await prepareRecordedReplay(
+            id,
+            () => historyRequest.current === selection,
+          ))
+        )
+          return;
+        setReplication(id);
+        setTime(at);
+        setPage("replay");
+      });
+    },
     metrics: page === "overview" || draftDatasetDiffers ? null : metrics,
     metricsLoading: run?.status === "SUCCEEDED" && metricsQuery.isFetching,
     metricsError: metricsQuery.error?.message || null,
@@ -1312,7 +1328,19 @@ export default function App() {
                   </div>
                 ) : page === "summary" ? (
                   run?.status === "SUCCEEDED" ? (
-                    <Summary ctx={ctx} onUpdate={() => openUpdate()} />
+                    <Summary
+                      ctx={ctx}
+                      onUpdate={() => openUpdate()}
+                      comparisonId={comparisonSelection}
+                      onReviewResponse={(comparisonId, planId) => {
+                        const target = new URL(location.href);
+                        target.searchParams.set("comparison", comparisonId);
+                        target.searchParams.set("plan", planId);
+                        history.replaceState({}, "", target);
+                        setComparisonSelection(comparisonId);
+                        setPage("comparison");
+                      }}
+                    />
                   ) : (
                     <div className="analysis-empty">
                       {active ? (

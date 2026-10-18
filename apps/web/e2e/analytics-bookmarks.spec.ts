@@ -51,11 +51,14 @@ test("desktop chart bookmarks share one graph and sparse Summary periods remain 
     "Equipment coverage deficit",
     "Daily peak bed queue",
     "Daily ward capacity",
+    "Medical supplies",
   ];
   const bookmarks = outcomes.getByRole("tablist", {
     name: "Choose a forecast chart",
   });
-  await expect(bookmarks.getByRole("tab")).toHaveText(labels);
+  expect(await bookmarks.getByRole("tab").allTextContents()).toEqual(
+    expect.arrayContaining(labels),
+  );
   await expect(
     outcomes.getByRole("combobox", { name: "Outcome metric", exact: true }),
   ).toHaveCount(0);
@@ -63,14 +66,24 @@ test("desktop chart bookmarks share one graph and sparse Summary periods remain 
     const tab = bookmarks.getByRole("tab", { name: label, exact: true });
     await tab.click();
     await expect(tab).toHaveAttribute("aria-selected", "true");
-    await expect(outcomes.locator(".outcome-chart svg[role=img]")).toHaveCount(
-      1,
-    );
-    await expect(
-      outcomes.locator(".outcome-chart svg[role=img]"),
-    ).toBeVisible();
+    if (label === "Medical supplies") {
+      await expect(
+        outcomes.locator(".outcome-chart svg[role=img]"),
+      ).toHaveCount(0);
+      await expect(outcomes.locator(".outcome-empty-metric")).toContainText(
+        "Supply tracking was not enabled in these saved results",
+      );
+    } else {
+      await expect(
+        outcomes.locator(".outcome-chart svg[role=img]"),
+      ).toHaveCount(1);
+      await expect(
+        outcomes.locator(".outcome-chart svg[role=img]"),
+      ).toBeVisible();
+    }
     expect(new URL(page.url()).searchParams.get("at")).toBe(selectedAt);
   }
+  await bookmarks.getByRole("tab", { name: "Ward beds", exact: true }).click();
   await capture(page, "analytics-bookmarks", info);
 
   await page

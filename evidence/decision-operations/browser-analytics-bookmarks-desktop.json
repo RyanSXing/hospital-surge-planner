@@ -1,0 +1,45 @@
+{
+  "run_id": "run_c66611439c814a09ab17",
+  "charts": [
+    "Arrivals and discharges",
+    "Ward beds",
+    "Intensive care beds",
+    "Emergency department",
+    "Patients waiting",
+    "Time spent waiting",
+    "Busiest hospital unit",
+    "Staffing coverage deficit",
+    "Equipment coverage deficit",
+    "Daily peak bed queue",
+    "Daily ward capacity",
+    "Medical supplies"
+  ],
+  "one_chart_at_a_time": true,
+  "selected_time_retained": "2026-10-17T05:00:00.000Z",
+  "month_interval_count": 1,
+  "visible_sparse_points": [
+    {
+      "x": 653,
+      "y": 80.54391718682476
+    },
+    {
+      "x": 653,
+      "y": 52.800000000000054
+    },
+    {
+      "x": 653,
+      "y": 176.43327733192004
+    },
+    {
+      "x": 653,
+      "y": 171.12
+    }
+  ],
+  "summary_chart_full_width": true,
+  "seek_layout": {
+    "frames": 25,
+    "delta": 0,
+    "banners": 0
+  },
+  "page_errors": []
+}

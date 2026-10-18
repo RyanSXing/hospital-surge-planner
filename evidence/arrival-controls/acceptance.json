@@ -1,0 +1,21 @@
+{
+  "status": "accepted",
+  "checked_at": "2026-10-18T04:23:56.344853+00:00",
+  "application_commit": "c33cca192e7d77cd3b35a4504db6ddb0468ce8de",
+  "frontend_tests": 184,
+  "desktop_browser_tests": 11,
+  "engine_regression_tests": 2,
+  "actual_long_horizon_simulations": 6,
+  "live_durations_verified": [
+    14,
+    30
+  ],
+  "tested_live_bundle_files": 43,
+  "protected_records_unchanged": 23,
+  "services_healthy": true,
+  "controls_stay_available": true,
+  "baseline_waiting_panel_removed": true,
+  "saved_scenarios_preserved": true,
+  "database_volumes_preserved": true,
+  "browser_errors_or_warnings": 0
+}

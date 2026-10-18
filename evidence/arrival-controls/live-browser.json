@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-18T04:23:38.791Z",
+  "duration_checks": [
+    {
+      "days": 14,
+      "points": 14,
+      "zero_day_preserved": true,
+      "slider_enabled": true,
+      "number_input_visible": true,
+      "custom_badge_removed": true,
+      "optional_parameters_stay_closed": true
+    },
+    {
+      "days": 30,
+      "points": 30,
+      "zero_day_preserved": true,
+      "slider_enabled": true,
+      "number_input_visible": true,
+      "custom_badge_removed": true,
+      "optional_parameters_stay_closed": true
+    }
+  ],
+  "all_controls_remain": true,
+  "waiting_panel_removed": true,
+  "saved_scenarios_modified": false,
+  "errors_or_warnings": []
+}

@@ -1,8 +1,18 @@
 # Hosted verification record
 
-[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) runs release **`46ca91eb6b084fd0680424cc817d886e0c61c799`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
+[AEGIS hospital planning](https://hospital-surge.131.186.0.156.sslip.io) runs application release **`e409cf10f3e27731ed562415df37b2ef37bbcb79`**, with base model/generator **1.1.0** and current hospital-operations model **1.3**. Frozen operations models 1.0–1.2 remain supported. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
 
-## Configuration, chart bookmarks and recorded constraints — 2026-10-18
+## Configuration polish and daily disruption chance — 2026-10-18
+
+Save status now sits beside **Save draft** in reserved inline space. Bed/staff inputs have centered values with minus/plus controls, severity colors are brighter, and Analytics uses narrow recorded-period ribbons rather than repeated dots or plot-wide constraint shading. The arrivals-chart header exposes daily treatment disruption chance. Model 1.3 samples reproducible independent local days; arrivals continue while care pauses. Zero chance preserves previous random trajectories and saved dated pauses remain available in a collapsed list.
+
+Local verification passed **436 frontend tests**, **132 focused simulation/API checks**, and **six desktop workflows**. These include actual edited 14/30-day arrival curves, typing and keyboard controls, Undo/Redo, save/reload, 0%/100%/intermediate chance, DST and partial dates, overlapping interruptions, historical-model reproduction, exact bottleneck Replay and saved-scenario Comparison. One obsolete browser wording assertion was replaced with recorded-ribbon/period checks and its affected case passed on rerun; application and bundle hashes stayed frozen. [Validation](../evidence/control-polish/validation.json), [browser attempts](../evidence/control-polish/browser-results.json), [backend checks](../evidence/control-polish/backend-tests.json).
+
+All **48 hosted frontend files** match that build. All six services run with healthy reported checks, unchanged named volumes and exact application image identity. The **four active scenarios, 23 protected stored records and workspace defaults** are unchanged. A fresh private backup preceded deployment. Read-only hosted API and browser checks confirm Configuration, Summary, the joined constraint ribbon, recorded playback using the edited 30-bed inventory, and honest missing-result Comparison. Probability behavior was tested in isolated local simulations; this acceptance created **no production simulations or scenario edits**. [Acceptance](../evidence/control-polish/acceptance.json), [source hashes](../evidence/control-polish/tested-build-manifest.json), [live API](../evidence/control-polish/live-api.json), [browser](../evidence/control-polish/live-browser.json), [stored records](../evidence/control-polish/stored-record-preservation.json).
+
+Earlier performance, image-security and restore results retain their original release attribution. This release reuses the existing host and storage and makes no new performance or restore claim.
+
+## Earlier configuration, chart bookmarks and recorded constraints — 2026-10-18
 
 Configuration now exposes hospital beds, staffed-bed limits and per-unit registered nurse, provider and support sliders beside a draggable daily-arrivals curve. Optional details remain under More parameters. Analytics uses eleven chart bookmarks and one full-width graph. Summary keeps one full-width timeline, visible sparse-period observations, exact recorded bottlenecks and first-occurrence links; normal state loading no longer inserts a shifting bar.
 

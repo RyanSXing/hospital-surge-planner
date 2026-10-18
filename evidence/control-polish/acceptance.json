@@ -1,0 +1,28 @@
+{
+  "accepted_at": "2026-10-18T09:41:07.477742+00:00",
+  "status": "accepted",
+  "code_commit": "e409cf10f3e27731ed562415df37b2ef37bbcb79",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "frontend_tests": 436,
+  "backend_tests": 132,
+  "desktop_browser_cases": 6,
+  "hosted_assets_match_tested_bundle": 48,
+  "protected_stored_records_unchanged": 23,
+  "active_scenarios_preserved": 4,
+  "named_volumes_preserved": true,
+  "all_six_services_healthy": true,
+  "existing_host_and_storage_reused": true,
+  "new_production_simulations": 0,
+  "scenario_mutations": 0,
+  "production_export_downloads": 0,
+  "evidence": {
+    "validation": "validation.json",
+    "browser": "browser-results.json",
+    "runtime": "runtime-preservation.json",
+    "stored_data": "stored-record-preservation.json",
+    "api": "live-api.json",
+    "live_browser": "live-browser.json",
+    "assets": "live-assets.json",
+    "tested_source": "tested-build-manifest.json"
+  }
+}

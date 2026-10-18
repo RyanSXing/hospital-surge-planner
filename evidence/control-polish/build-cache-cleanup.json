@@ -1,0 +1,7 @@
+{
+  "checked_at": "2026-10-18T09:39:22.745568+00:00",
+  "action": "Remove unused Docker build cache after completed release",
+  "volumes_or_running_images_removed": false,
+  "summary": [],
+  "filesystem": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1        48G   44G  4.4G  91% /"
+}

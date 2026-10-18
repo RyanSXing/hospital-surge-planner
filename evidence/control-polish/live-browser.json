@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-10-18T09:40:53.491Z",
+  "all_checks_passed": true,
+  "checks": [
+    {
+      "check": "save_status_beside_save_draft",
+      "passed": true
+    },
+    {
+      "check": "published_daily_chance_and_new_number_controls",
+      "passed": true
+    },
+    {
+      "check": "joined_recorded_constraint_ribbon",
+      "passed": true
+    },
+    {
+      "check": "saved_run_replay_uses_configured_beds",
+      "passed": true
+    },
+    {
+      "check": "recorded_playback_advances_and_pauses",
+      "passed": true
+    },
+    {
+      "check": "comparison_uses_library_and_labels_missing_result",
+      "passed": true
+    }
+  ],
+  "configuration_console_errors": [],
+  "summary_console_errors": [],
+  "analytics_console_errors": [],
+  "replay_console_errors": [],
+  "comparison_console_errors": [],
+  "scenario_mutations": 0,
+  "new_production_simulations": 0,
+  "configuration_screenshot": "configuration-live.png",
+  "analytics_screenshot": "analytics-live.png",
+  "local_actual_probability_evidence": "final-rerun-browser-results.json",
+  "probability_behavior_tested_on_isolated_local_scenarios": true
+}

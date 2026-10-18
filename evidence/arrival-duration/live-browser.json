@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-18T04:09:59.051Z",
+  "duration_checks": [
+    {
+      "days": 14,
+      "points": 14,
+      "every_day_matches": true
+    },
+    {
+      "days": 30,
+      "points": 30,
+      "every_day_matches": true
+    }
+  ],
+  "all_days_update": true,
+  "saved_scenarios_modified": false,
+  "errors_or_warnings": []
+}

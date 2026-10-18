@@ -1,0 +1,17 @@
+{
+  "status": "accepted",
+  "checked_at": "2026-10-18T04:10:12.170963+00:00",
+  "application_commit": "e6d02f7e3a0c81edf3a89a4f9ee68c44fadb627a",
+  "local_frontend_tests": 176,
+  "desktop_browser_regressions": 5,
+  "live_durations_verified": [
+    14,
+    30
+  ],
+  "tested_live_bundle_files": 43,
+  "protected_records_unchanged": 23,
+  "services_healthy": true,
+  "saved_scenarios_preserved": true,
+  "database_volumes_preserved": true,
+  "browser_errors_or_warnings": 0
+}

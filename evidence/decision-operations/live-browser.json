@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-18T06:03:19.073Z",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "selected_scenario": "scenario-demo-v1-1-0-hospital_baseline-41021-365",
+  "selected_saved_run": "run_d69728c5b6a9413ca4ae",
+  "checks": {
+    "configuration_severity_pie_and_stays_visible": true,
+    "configuration_general_supplies_and_disruptions_visible": true,
+    "existing_scenario_settings_unchanged": true,
+    "decision_summary_above_charts": true,
+    "stale_revision_explicit": true,
+    "legacy_example_evidence_explicit": true,
+    "missing_new_metrics_unavailable": true,
+    "why_conclusion_expands_and_collapses": true,
+    "supply_bookmark_legacy_unavailable_message": true,
+    "recorded_constraint_legend_visible": true
+  },
+  "warn_error_logs_since_deployment": [],
+  "mutations": "Read-only live acceptance; no scenario edits or simulation submissions."
+}

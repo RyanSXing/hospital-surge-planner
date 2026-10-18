@@ -1,0 +1,20 @@
+{
+  "accepted_at": "2026-10-18T06:03:46.244282+00:00",
+  "status": "accepted",
+  "application_commit": "a0b0ecee91beb9726838d513d521938a28ec10b9",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "checks": {
+    "backend_tests_passed": 131,
+    "frontend_tests_passed": 244,
+    "desktop_workflows_passed": 8,
+    "mobile_only_skipped": 1,
+    "hosted_assets_match_tested_bundle": 45,
+    "protected_records_unchanged": 24,
+    "services_running": 6,
+    "existing_named_volumes_preserved": true,
+    "existing_default_and_active_scenarios_preserved": true
+  },
+  "functional_scope": "Actual browser\u2192API\u2192simulation\u2192saved results in an isolated staging database and artifact directory, including 14/30-day modeled arrivals, severity stays, disruptions, supplies, exact replay reconstruction, matching response saving, and stale/missing-result states. No fabricated result responses.",
+  "live_scope": "Read-only hosted Configuration/Summary/Analytics checks, legacy unavailable values and evidence labels, static asset hashes, running image commits, readiness and saved-record/volume preservation.",
+  "legacy_behavior": "Existing saved results are retained. Measures that were not recorded remain unavailable until a new run; optional operations features stay disabled on unmodified legacy scenarios."
+}

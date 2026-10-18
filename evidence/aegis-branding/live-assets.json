@@ -1,0 +1,274 @@
+{
+  "checked_at": "2026-10-18T04:44:15.774592+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "tested_source_commit": "f1760cf81f5fe9af436c27f58f59c40068eeab89",
+  "deployed_commit": "f1760cf81f5fe9af436c27f58f59c40068eeab89",
+  "manifest": "output/playwright/aegis-branding/final-tested-build-manifest.json",
+  "files": [
+    {
+      "path": "/assets/Accordion-8f3Uiw0C.js",
+      "status": 200,
+      "sha256": "e7f97c557d724f5421f52e987f41a38f387199c80a433e2c2ad8341e2463679b",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Analytics-BtWsYUCw.js",
+      "status": 200,
+      "sha256": "2fd3b2ef448dcf56c2b0624df662cf4ef679c9c1f241b2596cc875d6c5555f1c",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Analytics-Do3VcGuu.css",
+      "status": 200,
+      "sha256": "e65314da9d3fcabeb21f3453b36492fb586f1d3444845fe0273bb02bf4585e33",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Charts-BQoT0hrQ.js",
+      "status": 200,
+      "sha256": "ab0609e8eccc002de157eb155e57304a65358f36991a5a47fba126e42998a24b",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Compare-BUV9UFzh.css",
+      "status": 200,
+      "sha256": "8554d7d5a7b59615d7bc2b920fcef718711e2f8bde49684d3c291dde6af31cf3",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Compare-CYRj-YlW.js",
+      "status": 200,
+      "sha256": "ea7104e90f4744301ad9f9a756b38b99e4c928b582ee6b707c9bdfb91215f8ad",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/DataSetup-pv4MmkHQ.js",
+      "status": 200,
+      "sha256": "2dfc3077b92b10e44cc2ea1e999c8ef593a1f78d3048c0516ab8b83cd0ccb34c",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/OutcomeAnalytics-BBR1e6ik.js",
+      "status": 200,
+      "sha256": "24cd9dde6844ce0c9c325cf2d361ea4bc58fb1c3b0380f641eddfc0947f91e37",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/OutcomeAnalytics-D-T_o74q.css",
+      "status": 200,
+      "sha256": "88d5d0738ed94d4546ece8f96cdd7bd1df38d70355f7bf7cf7d2c65b510e6f3d",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/OutcomeSummaryCards-BnYy1m_y.js",
+      "status": 200,
+      "sha256": "0f27bd8e0f3719a6154126d94ced174fb2d74b3d68c778c5b9bbd7e5d84c6e49",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Overview-CEi9aEAz.css",
+      "status": 200,
+      "sha256": "586a04d33847002af0f01093673a743c6f57a7d1008474accea4bf8f78196331",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Overview-Z6kIeNn4.js",
+      "status": 200,
+      "sha256": "7bec5af6de4139da821acf7f3dcd8b81a3dcafe8537be1880c8841dab24904aa",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Patients-BN3GHb61.css",
+      "status": 200,
+      "sha256": "62b6ba6934e1b3f82f0cddf84b13af2a19609a25b6f81284a532204bed5305d3",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Patients-BjG9dLBg.js",
+      "status": 200,
+      "sha256": "4d7392040c7e41340fbedc5456406ec25042ab4c1384970c3f9bfc15b51ae48d",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/PlanningOverview-CeHMVKWI.js",
+      "status": 200,
+      "sha256": "bd2d10d122e261083f4c15ec6bfba783cb1ce7adce191a52d07ec7f7195eb89e",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/PlanningOverview-sKqwgBw4.css",
+      "status": 200,
+      "sha256": "09d1b03c53eb329fb909b90069d57c61a9c47e18b8d5e3afa734ee4e9cdbf6e8",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/PlanningPanels-CQu-rZVi.js",
+      "status": 200,
+      "sha256": "5a26ca9936281856aa0ab83476fbe8149bcfa53395498715096c29a12271c3e0",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/PlanningPanels-dTYZPhGN.css",
+      "status": 200,
+      "sha256": "2b2ae411057cff5305d19dda5f417d97c6f373512fd529a82073714612c3379f",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Replay-9t96iGtY.js",
+      "status": 200,
+      "sha256": "71762bd8c0d5d868f0102641bc5b1339642a1ee59c9688fb2fdec671f2e9e70b",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Replay-DUjTZS8c.css",
+      "status": 200,
+      "sha256": "7be35f04586f22fd57f9166f37b823b096207bcaa98255f39e4dc1433e311017",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Scenarios-DFcRP6Ml.js",
+      "status": 200,
+      "sha256": "28684eb335fe03e8362def41e8eb0fc3d3fcf817229b926244f7762b4488beea",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Scenarios-DMETtZ1t.css",
+      "status": 200,
+      "sha256": "0812036c339ae49556b600fe6897c723ae8663dcd0b80b2fdc9227abf4cfa0f9",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/Tabs-BM_Kfjb8.js",
+      "status": 200,
+      "sha256": "cd8d490afdee068a3aea8d707737557314878b0e69b6715ec8e774822158b101",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/aegis-logo.png",
+      "status": 200,
+      "sha256": "1153eed881e35ab8fba34da52db40b84ec6ef5552e0b1ec2ff01637428aa95d3",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/campus.geojson",
+      "status": 200,
+      "sha256": "a3f2c3314bb7cc6129b2d44c673cda5c5eadd53607629832a3fa578c694345b1",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/chevron-left-BjDB1Y0x.js",
+      "status": 200,
+      "sha256": "081a66ee789a2a269b5545f0b00c4d02747100ab291b87f9675eef296b3077bd",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/clock-3-CnVrVBAS.js",
+      "status": 200,
+      "sha256": "77a279952fb0b425b58300811a20a524dee52e6620328615e1cd1ab658263fa2",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/get-safe-id-Bp3H8K0-.js",
+      "status": 200,
+      "sha256": "c71ac2e82c9ef749e8c0ede8d66ee6a9003a7b10e6163894ddb14819815bcf01",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/index-GG5HZRbJ.js",
+      "status": 200,
+      "sha256": "2be26d20684d95ce999e844c5f46626b3b0cf323f2c78d63d10e113ca6d57eb4",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/index-ustDuBH6.css",
+      "status": 200,
+      "sha256": "b8f0bb30e54f268f90a64377e46cc7a7683360d56648227cfb5528f259dca539",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/mark.svg",
+      "status": 200,
+      "sha256": "f3b38dfb3acce1bc75a3fa92f7e745bfa0c80b2e2659b4418ae2b9601ba6b98e",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/model-DzswsaMN.js",
+      "status": 200,
+      "sha256": "0bf1dc74a04eea1a24b82e100acbfe57ee77e163298eb02b216b7ad9ad6eaf4e",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/resultsMetrics-CqPKVmOW.js",
+      "status": 200,
+      "sha256": "a19c9e116138e69fe596fcf7345c7034fd337173d017a461e1608d1e9854b473",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/assets/usePatientPage-4MRrQFFv.js",
+      "status": 200,
+      "sha256": "60fe127b5afa22d725ab046790c7882f802a5169af9dbcb97b4f6290ace410f9",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/README.md",
+      "status": 200,
+      "sha256": "605a48be03ac11274da7901170b0a0a3be31d500393ac513869880fbd997e401",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/barlowcondensed-OFL.txt",
+      "status": 200,
+      "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/fonts.css",
+      "status": 200,
+      "sha256": "35e5e3b4e41f540d28ddf522cae8993f7708bf1b286e1d854187a976fe30eac7",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/hospital-font-1.ttf",
+      "status": 200,
+      "sha256": "cc9fb2539cf27df48255982e896d28f544483537cdb41f9fabd741af8992d719",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/hospital-font-2.ttf",
+      "status": 200,
+      "sha256": "0d85af813fc3ed87db0c6265515689b2eef5cbaf7aab17922528dfc95a2cd73f",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/hospital-font-3.ttf",
+      "status": 200,
+      "sha256": "6dbe082463cf749cfa057d45c3048c90f4df031496498e5b5bdfd0b6babb9d16",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/hospital-font-4.ttf",
+      "status": 200,
+      "sha256": "6f7a8c4219e021ff7c9131bc5f1f7af97bcd1436a59578d444a8cb92e9791742",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/hospital-font-5.ttf",
+      "status": 200,
+      "sha256": "5311c66fd6d04ae45671236f7eae667b671c06c1dc7e88d52c206e5fadd0fb21",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/fonts/ibmplexsans-OFL.txt",
+      "status": 200,
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+      "matches_tested_bundle": true
+    },
+    {
+      "path": "/index.html",
+      "status": 200,
+      "sha256": "48228e57532b249e57585aa5007a5c4ecd54e265be67d0d7b679a3455ed8e6f7",
+      "matches_tested_bundle": true
+    }
+  ],
+  "all_files_match_tested_production_bundle": true
+}

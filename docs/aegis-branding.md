@@ -9,3 +9,5 @@ Reduced motion retains the login-size wordmark and uses a brief fade. Session re
 Validation uses the actual staging authentication behavior, local generated credentials, Secure cookies on localhost and real backend responses. Three desktop browser tests cover invalid credentials and retry, actual animation geometry and destination, delayed authentication/workspace responses, duplicate submission, reduced motion, session reload and navigation. The latency tests delay and forward original responses; authentication is not mocked. All 184 frontend tests and the production build pass. Evidence is in evidence/aegis-branding/.
 
 No existing scenarios, results, defaults, datasets or private storage are changed by this release.
+
+Accepted live release: `f1760cf81f5fe9af436c27f58f59c40068eeab89`. All 44 hosted files match the tested bundle. A real hosted sign-out/sign-in verified the simplified login, expanded-logo hold, measured header handoff, focus restoration and interactive workspace; no unexpected browser errors were recorded. All 24 protected workspace records, saved defaults and service volumes remain unchanged.

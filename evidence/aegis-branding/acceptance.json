@@ -1,0 +1,18 @@
+{
+  "status": "accepted",
+  "checked_at": "2026-10-18T04:47:00.936757+00:00",
+  "application_commit": "f1760cf81f5fe9af436c27f58f59c40068eeab89",
+  "frontend_tests": 184,
+  "desktop_sign_in_tests": 3,
+  "real_live_sign_in_verified": true,
+  "supplied_logo_unchanged": true,
+  "expanded_logo_captured": true,
+  "header_handoff_verified": true,
+  "prefers_reduced_motion_verified_locally": true,
+  "tested_live_bundle_files": 44,
+  "protected_records_unchanged": 24,
+  "services_healthy": true,
+  "saved_scenarios_preserved": true,
+  "database_volumes_preserved": true,
+  "unexpected_browser_errors_or_warnings": 0
+}

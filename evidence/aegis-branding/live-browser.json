@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-10-18T04:46:27.202Z",
+  "real_hosted_sign_in_verified": true,
+  "expanded_phase_captured": "holding",
+  "header_logo_visible": true,
+  "transition_finished": true,
+  "workspace_interactive": true,
+  "old_header_copy_removed": true,
+  "saved_scenarios_modified": false,
+  "expected_unauthenticated_http_401_count": 0,
+  "unexpected_errors_or_warnings": []
+}

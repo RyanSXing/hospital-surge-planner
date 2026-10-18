@@ -1,0 +1,34 @@
+{
+  "recorded_at": "2026-10-18T06:28:20.086460+00:00",
+  "regression_backend": {
+    "tests": 92.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 0.0,
+    "time": 208.251
+  },
+  "operations_version_preservation_tests": {
+    "passed": 13,
+    "failed": 0
+  },
+  "frontend_tests": {
+    "passed": 254,
+    "failed": 0
+  },
+  "desktop_workflows": {
+    "startTime": "2026-10-18T06:25:13.519Z",
+    "duration": 39642.092,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "production_build": "passed",
+  "static_checks": [
+    "ruff check passed",
+    "git diff --check passed",
+    "private-value scan passed"
+  ],
+  "same_configuration_counterfactual": "10 frozen1.0 repetitions reproduce all stored scalar metrics; corrected1.1 uses the same saved input and seeds.",
+  "legacy_source_scope": "The focused13-test suite verifies the final absent-trace export dataset-order correction; normal run/replay and UI flows pass the92 backend and3 desktop regressions."
+}

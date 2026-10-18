@@ -337,7 +337,7 @@ export default function HospitalOperationsControls({
               }}
             />
           </header>
-          <p>Set the share of arriving patients and their average stay.</p>
+          <p>Set the patient mix and average stay after admission to a bed.</p>
           <div
             className={`severity-editor ${mixEnabled ? "" : "operations-inactive"}`}
           >
@@ -692,10 +692,11 @@ export default function HospitalOperationsControls({
       <details className="operations-definitions">
         <summary>How these settings affect the simulation</summary>
         <p>
-          Severity is assigned to new arrivals. Their stay varies around the
-          average you set; higher severity has a longer average stay. The
-          average is total active care time, including emergency assessment and
-          time in a bed. Waiting and interruptions add extra time. Patients
+          Severity is assigned to new arrivals. For patients admitted to a bed,
+          the average you set controls their total inpatient and step-down care
+          time. Emergency and clinic assessments keep their separate baseline
+          durations. Patients discharged from emergency care do not receive an
+          inpatient stay. Waiting and interruptions add extra time. Patients
           already in the hospital keep their remaining stay. Supplies are used
           by patients actively receiving care, measured per 24 hours. Refills
           follow local calendar days from the simulation start and add stock up

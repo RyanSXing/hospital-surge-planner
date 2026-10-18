@@ -1,0 +1,11 @@
+{
+  "scenario_id": "scenario_7e73f615e44b41e1ab54",
+  "run_id": "run_b35cd7d704e8428a9c01",
+  "comparison_id": "comparison_189b18605a9546cb95ac",
+  "selected_plan_id": "plan_9f85d223388e4b97ae30",
+  "saved_scenario_id": "scenario_9a87d2e112094839a2d4",
+  "matched_response_reviewed": true,
+  "existing_save_plan_used": true,
+  "stale_recommendation_hidden": true,
+  "stale_configuration_field": "hospital_operations.supplies.initial_percent"
+}

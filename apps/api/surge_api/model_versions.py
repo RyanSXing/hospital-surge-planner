@@ -15,6 +15,8 @@ SCENARIO_PROVENANCE_FIELDS = frozenset(
         "branch_replication_index",
         "measurement_start_at",
         "conditional_label",
+        "hospital_operations_model_version",
+        "_hospital_operations_model_version",
     }
 )
 
@@ -97,19 +99,68 @@ class ModelVersionMismatch(ValueError):
         )
 
 
+def operations_version(payload):
+    """Supported frozen operations semantics; absence is valid only without operations."""
+    if not payload.get("scenario", {}).get("hospital_operations"):
+        return None
+    from surge_engine.hospital_operations import (
+        OPERATIONS_MODEL_VERSION,
+        SUPPORTED_OPERATIONS_MODEL_VERSIONS,
+    )
+
+    version = payload.get("hospital_operations_model_version")
+    if not isinstance(version, str) or version not in SUPPORTED_OPERATIONS_MODEL_VERSIONS:
+        raise ModelVersionMismatch(
+            "hospital operations " + str(version or "unknown"),
+            "hospital operations " + OPERATIONS_MODEL_VERSION,
+        )
+    return version
+
+
+def require_matching_operations_history(payload, parent_payload):
+    """An inherited prefix cannot be replayed under a different operations implementation."""
+    version, parent_version = operations_version(payload), operations_version(parent_payload)
+    if version != parent_version:
+        raise ModelVersionMismatch(
+            "hospital operations " + str(version or "disabled"),
+            "hospital operations " + str(parent_version or "disabled"),
+        )
+
+
+def operations_version_for_new_run(scenario, parent_payload=None):
+    from surge_engine.hospital_operations import OPERATIONS_MODEL_VERSION
+
+    enabled = bool(scenario.get("hospital_operations"))
+    if parent_payload is None:
+        return OPERATIONS_MODEL_VERSION if enabled else None
+    inherited = operations_version(parent_payload)
+    if enabled != (inherited is not None):
+        raise ModelVersionMismatch(
+            "hospital operations " + (OPERATIONS_MODEL_VERSION if enabled else "disabled"),
+            "hospital operations " + str(inherited or "disabled"),
+        )
+    return inherited
+
+
+def execution_scenario(payload):
+    """Copy frozen public inputs after checksum verification; never persist dispatch metadata."""
+    from copy import deepcopy
+
+    require_current_model(payload)
+    scenario = deepcopy(payload["scenario"])
+    scenario.pop("_hospital_operations_model_version", None)
+    version = operations_version(payload)
+    if version is not None:
+        scenario["_hospital_operations_model_version"] = version
+    return scenario
+
+
 def require_current_model(payload):
     from surge_engine.common import MODEL_VERSION
 
     if payload.get("model_version") != MODEL_VERSION:
         raise ModelVersionMismatch(payload.get("model_version"), MODEL_VERSION)
-    if payload.get("scenario", {}).get("hospital_operations"):
-        from surge_engine.hospital_operations import OPERATIONS_MODEL_VERSION
-
-        if payload.get("hospital_operations_model_version") != OPERATIONS_MODEL_VERSION:
-            raise ModelVersionMismatch(
-                "hospital operations " + str(payload.get("hospital_operations_model_version", "unknown")),
-                "hospital operations " + OPERATIONS_MODEL_VERSION,
-            )
+    operations_version(payload)
 
 
 def require_current_run_context(payload, session, workspace_id):
@@ -132,3 +183,4 @@ def require_current_run_context(payload, session, workspace_id):
         if not parent or parent.workspace_id != workspace_id or parent.kind != "run":
             raise ValueError("Branch source requires an owned parent run")
         require_current_model(parent.payload)
+        require_matching_operations_history(payload, parent.payload)

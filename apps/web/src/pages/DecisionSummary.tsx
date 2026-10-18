@@ -115,11 +115,10 @@ export default function DecisionSummary({
           {model.action.label} <ArrowRight size={14} aria-hidden="true" />
         </Button>
       </header>
-      {model.state === "stale" ? (
+      {model.notice || model.state === "stale" ? (
         <p className="decision-summary-revision">
-          Showing saved revision{" "}
-          {ctx.run?.source_draft_revision ?? "unavailable"}. Run the current
-          configuration for an updated recommendation.
+          {model.notice ||
+            `Showing saved revision ${ctx.run?.source_draft_revision ?? "unavailable"}. Run the current configuration for an updated recommendation.`}
         </p>
       ) : null}
       <div className="decision-summary-content">

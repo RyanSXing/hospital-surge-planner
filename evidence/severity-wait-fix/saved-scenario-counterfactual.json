@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-18T06:20:27.936370+00:00",
+  "source_scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+  "source_scenario_name": "egg wo",
+  "source_run_group_id": "run_22230710c2b74bdea7e1",
+  "source_saved_revision": 5,
+  "horizon_calendar_days": 30,
+  "replications_per_model": 10,
+  "same_saved_inputs_and_random_seeds": true,
+  "legacy_reproduces_all_saved_scalar_metrics": true,
+  "scenario_or_live_results_mutated": false,
+  "median_results": {
+    "1.0": {
+      "arrivals": 2057.0,
+      "discharges": 1004.5,
+      "average_wait_per_patient_hours": 190.6607606569281,
+      "ed_waiting_patient_hours": 389797.05678330886,
+      "inpatient_waiting_patient_hours": 0.0,
+      "ed_utilization": 0.9790010072327215,
+      "ward_utilization": 0.21047964212975967,
+      "icu_utilization": 0.411281731941845,
+      "medical_supply_average_percent": 97.68667673557812,
+      "success_score_percent": 27.970987104980587,
+      "peak_inpatient_queue": 0.0
+    },
+    "1.1": {
+      "arrivals": 2057.0,
+      "discharges": 2107.5,
+      "average_wait_per_patient_hours": 0.0,
+      "ed_waiting_patient_hours": 0.0,
+      "inpatient_waiting_patient_hours": 0.0,
+      "ed_utilization": 0.26539732568563235,
+      "ward_utilization": 0.2184311074312625,
+      "icu_utilization": 0.4326862496322631,
+      "medical_supply_average_percent": 98.34883007560978,
+      "success_score_percent": 100.0,
+      "peak_inpatient_queue": 0.0
+    }
+  }
+}

@@ -3,6 +3,7 @@ import type { Entity, PlanningContext } from "../types";
 import {
   buildDecisionSummary,
   comparisonMatchesResult,
+  comparisonOperationsVersionsMatch,
   evidenceMatchesRun,
   followDecisionAction,
   mainRecordedConstraint,
@@ -696,5 +697,214 @@ describe("decision navigation contracts", () => {
         { interventions: [common] },
       ),
     ).toBe("2 additional nurses");
+  });
+});
+
+const severityMix = {
+  low: { percentage: 60, average_stay_hours: 24 },
+  medium: { percentage: 30, average_stay_hours: 72 },
+  high: { percentage: 10, average_stay_hours: 168 },
+};
+function operationsFixture(
+  version = "1.1",
+  operations: Entity = { severity_mix: severityMix },
+) {
+  const ctx = setup();
+  ctx.scenario!.hospital_operations = structuredClone(operations);
+  ctx.resultScenario!.hospital_operations = structuredClone(operations);
+  ctx.metrics!.hospital_operations_model_version = version;
+  const c = comparison();
+  c.source_scenario_snapshot.hospital_operations = structuredClone(operations);
+  c.hospital_operations_model_version = version;
+  for (const plan of c.plans) {
+    plan.hospital_operations_model_version = version;
+    plan.metrics.hospital_operations_model_version = version;
+  }
+  return { ctx, c };
+}
+
+describe("corrected severity model reporting", () => {
+  it("retains actual earlier-model numbers, but requires a corrected independent rerun before recommending", () => {
+    const { ctx, c } = operationsFixture("1.0");
+    ctx.metrics!.scalar_metrics.average_wait_per_patient_hours = { p50: 99.5 };
+    const model = buildDecisionSummary({
+      ctx,
+      ensemble: evidence,
+      comparison: c,
+    });
+    expect(model.state).toBe("stale");
+    expect(model.notice).toBe(
+      "These saved results use the earlier severity model. Run again with corrected inpatient stays.",
+    );
+    expect(model.impact).toContain("Average waiting per patient: 99.5 hours.");
+    expect(model.response).toBeNull();
+    expect(model.action).toEqual({
+      kind: "simulate",
+      label: "Run updated simulation",
+    });
+    expect(model.evidence.join(" ")).toContain(
+      "emergency-department assessment as well as inpatient beds",
+    );
+  });
+  it("does not promise that rerunning inherited simulation history will upgrade its model", () => {
+    for (const provenance of [
+      { parent_run_group_id: "parent-run" },
+      { parent_replication_id: "parent-rep" },
+      { state_origin: "simulation_branch" },
+    ]) {
+      const { ctx, c } = operationsFixture("1.0");
+      Object.assign(ctx.resultScenario!, provenance);
+      const model = buildDecisionSummary({ ctx, comparison: c });
+      expect(model.action).toEqual({
+        kind: "configure",
+        label: "Review configuration",
+      });
+      expect(model.notice).toContain("corrected independent simulation");
+      expect(model.evidence.join(" ")).toContain("does not upgrade");
+      followDecisionAction(model.action, ctx);
+      expect(ctx.setPage).toHaveBeenCalledWith("overview");
+      expect(ctx.runScenario).not.toHaveBeenCalled();
+    }
+  });
+  it("does not flag supplies-only or disruptions-only version1.0 trajectories as affected severity results", () => {
+    for (const operations of [
+      { supplies: { initial_percent: 80 } },
+      { disruptions: [{ id: "pause" }] },
+    ]) {
+      const { ctx, c } = operationsFixture("1.0", operations);
+      const model = buildDecisionSummary({ ctx, comparison: c });
+      expect(model.state).toBe("ready");
+      expect(model.notice).toBeNull();
+      expect(model.action.kind).toBe("review");
+    }
+    const { ctx, c } = operationsFixture("1.1");
+    expect(buildDecisionSummary({ ctx, comparison: c }).state).toBe("ready");
+  });
+  it("does not misattribute another run's version marker to the selected frozen result", () => {
+    const { ctx } = operationsFixture("1.0");
+    ctx.metrics!.context = { ...context, run_group_id: "other" };
+    const model = buildDecisionSummary({ ctx });
+    expect(model.notice).toBeNull();
+    expect(model.state).toBe("unavailable");
+  });
+});
+
+describe("operations comparison algorithm matching", () => {
+  it("accepts matching frozen, projected and artifact model versions", () => {
+    const { ctx, c } = operationsFixture();
+    expect(comparisonOperationsVersionsMatch(c, ctx)).toBe(true);
+    expect(comparisonMatchesResult(c, ctx)).toBe(true);
+  });
+  it("rejects cross-model or missing version evidence without a recommendation", () => {
+    for (const mismatch of [
+      "selected",
+      "comparison",
+      "artifact",
+      "projected",
+      "missing-selected",
+      "missing-comparison",
+      "missing-artifact",
+      "unknown",
+    ]) {
+      const { ctx, c } = operationsFixture();
+      if (mismatch === "selected")
+        ctx.metrics!.hospital_operations_model_version = "1.0";
+      if (mismatch === "comparison")
+        c.hospital_operations_model_version = "1.0";
+      if (mismatch === "artifact")
+        c.plans[1].metrics.hospital_operations_model_version = "1.0";
+      if (mismatch === "projected")
+        c.plans[1].hospital_operations_model_version = "1.0";
+      if (mismatch === "missing-selected")
+        delete ctx.metrics!.hospital_operations_model_version;
+      if (mismatch === "missing-comparison")
+        delete c.hospital_operations_model_version;
+      if (mismatch === "missing-artifact")
+        delete c.plans[1].metrics.hospital_operations_model_version;
+      if (mismatch === "unknown") {
+        ctx.metrics!.hospital_operations_model_version = "9.0";
+        c.hospital_operations_model_version = "9.0";
+      }
+      expect(comparisonOperationsVersionsMatch(c, ctx), mismatch).toBe(false);
+      expect(comparisonMatchesResult(c, ctx), mismatch).toBe(false);
+      expect(
+        buildDecisionSummary({ ctx, comparison: c }).action.kind,
+        mismatch,
+      ).not.toBe("review");
+    }
+  });
+  it("accepts unversioned legacy no-operations results only when all compared artifacts are also unversioned", () => {
+    const ctx = setup();
+    const c = comparison();
+    expect(comparisonOperationsVersionsMatch(c, ctx)).toBe(true);
+    c.plans[1].metrics.hospital_operations_model_version = "1.1";
+    expect(comparisonOperationsVersionsMatch(c, ctx)).toBe(false);
+  });
+});
+
+describe("emergency-assessment constraint impact", () => {
+  function edFixture(scope = "ensemble") {
+    const ctx = setup();
+    ctx.dataset!.units.push({
+      unit_id: "ED",
+      kind: "ed",
+      name: "Emergency department",
+    });
+    ctx.metrics!.scalar_metrics.peak_inpatient_queue = { p50: 0 };
+    ctx.metrics!.scalar_metrics.average_wait_per_patient_hours = { p50: 12.5 };
+    const e: Entity = {
+      ...evidence,
+      scope,
+      replication_id: scope === "ensemble" ? undefined : "example-1",
+      categories: [
+        { reason: "nursing_capacity", patient_hours: { mean: 500 } },
+      ],
+      units: [
+        {
+          unit_id: "ED",
+          unit_kind: "ed",
+          reason: "nursing_capacity",
+          patient_hours: { mean: 500 },
+          peak_waiting: scope === "ensemble" ? { p50: 1000, mean: 1100 } : 900,
+        },
+      ],
+    };
+    return { ctx, e };
+  }
+  it("shows recorded ED queue impact instead of the unrelated zero admission queue", () => {
+    const { ctx, e } = edFixture();
+    const model = buildDecisionSummary({ ctx, ensemble: e });
+    expect(model.main).toMatchObject({
+      unitKind: "ed",
+      peakWaiting: 1000,
+      peakStatistic: "median",
+    });
+    expect(model.impact).toContain(
+      "Typical recorded peak: 1,000 patients waiting for emergency assessment with this constraint.",
+    );
+    expect(model.impact.join(" ")).not.toContain(
+      "0 patients waiting for admission",
+    );
+    expect(model.impact).toContain("Average waiting per patient: 12.5 hours.");
+  });
+  it("labels an exact example-run peak and does not imply an ensemble statistic", () => {
+    const { ctx, e } = edFixture("selected_replication");
+    const model = buildDecisionSummary({ ctx, example: e });
+    expect(model.impact).toContain(
+      "Selected example run: up to 900 patients waiting for emergency assessment with this constraint.",
+    );
+    expect(model.evidence.join(" ")).toContain("selected example run only");
+  });
+  it("uses a recorded mean only with an explicit average label, and leaves absent peaks unavailable", () => {
+    const { ctx, e } = edFixture();
+    e.units[0].peak_waiting = { p50: null, mean: 1100 };
+    let model = buildDecisionSummary({ ctx, ensemble: e });
+    expect(model.impact).toContain(
+      "Average recorded peak: 1,100 patients waiting for emergency assessment with this constraint.",
+    );
+    e.units[0].peak_waiting = undefined;
+    model = buildDecisionSummary({ ctx, ensemble: e });
+    expect(model.impact.join(" ")).toContain("queue peak is unavailable");
+    expect(model.impact.join(" ")).not.toContain("0 patients");
   });
 });

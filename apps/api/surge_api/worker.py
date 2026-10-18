@@ -37,7 +37,7 @@ from sqlalchemy.exc import DBAPIError
 from .artifacts import ArtifactStore
 from .db import Document, Job, canonical, digest, make_database, now
 from .domain import date
-from .model_versions import require_current_run_context
+from .model_versions import execution_scenario, require_current_run_context
 
 
 def execution_started():
@@ -656,6 +656,7 @@ def run_job(identity, Session, token, uploads):
         scenario = payload["scenario"]
         if digest({"dataset": dataset, "scenario": scenario}) != payload["input_sha256"]:
             raise ValueError("Frozen input checksum mismatch")
+        scenario = execution_scenario(payload)
     store = uploads.store
     cancel_check = job_control(Session, identity, token)
 
@@ -818,7 +819,7 @@ def run_job(identity, Session, token, uploads):
         replications_artifact = store.put_json(workspace, identity, "replications", results)
         check_finalization()
         inputs_artifact = store.put_json(
-            workspace, identity, "inputs", {"dataset": dataset, "scenario": scenario}
+            workspace, identity, "inputs", {"dataset": dataset, "scenario": payload["scenario"]}
         )
         if trace_future is not None:
             while not trace_future.done():
@@ -843,6 +844,11 @@ def run_job(identity, Session, token, uploads):
             "dataset_version_id": payload["dataset_version_id"],
             "scenario_revision_id": payload["scenario_revision_id"],
             "model_version": trace.get("model_version", payload["model_version"]),
+            **(
+                {"hospital_operations_model_version": payload["hospital_operations_model_version"]}
+                if "hospital_operations_model_version" in payload
+                else {}
+            ),
             "code_commit": os.getenv("CODE_COMMIT", "local-working-tree"),
             "input_sha256": payload["input_sha256"],
             "generator_version": dataset.get("manifest", {}).get("generator_version", "synthetic-demo-1.0.0"),
@@ -919,7 +925,9 @@ def trace_job(identity, Session, token, uploads):
             raise ValueError("Trace replication does not belong to this run")
         require_current_run_context(run.payload, session, job.workspace_id)
         dataset = copy.deepcopy(session.get(Document, run.payload["dataset_version_id"]).data)
-        scenario = copy.deepcopy(run.payload["scenario"])
+        if digest({"dataset": dataset, "scenario": run.payload["scenario"]}) != run.payload["input_sha256"]:
+            raise ValueError("Frozen input checksum mismatch")
+        scenario = execution_scenario(run.payload)
         index = replication.data["replication_index"]
         replication_id = replication.id
         workspace = job.workspace_id
@@ -995,9 +1003,29 @@ def export_job(identity, Session, token, uploads):
                     from surge_engine import run_replication
 
                     require_current_run_context(run.payload, session, workspace)
+                    if (
+                        digest({"dataset": inputs["dataset"], "scenario": inputs["scenario"]})
+                        != run.payload["input_sha256"]
+                    ):
+                        raise ValueError("Frozen input checksum mismatch")
+                    dataset_row = session.get(Document, run.payload["dataset_version_id"])
+                    if (
+                        not dataset_row
+                        or dataset_row.kind != "dataset"
+                        or dataset_row.workspace_id != workspace
+                    ):
+                        raise ValueError("Trace regeneration requires the owned frozen dataset")
+                    dataset = copy.deepcopy(dataset_row.data)
+                    if (
+                        digest({"dataset": dataset, "scenario": run.payload["scenario"]})
+                        != run.payload["input_sha256"]
+                    ):
+                        raise ValueError("Frozen input checksum mismatch")
+                    # Preserve the original weighted-mixture declaration order. The
+                    # canonical export artifact sorts keys and is not an execution input.
                     trace = run_replication(
-                        inputs["dataset"],
-                        inputs["scenario"],
+                        dataset,
+                        execution_scenario(run.payload),
                         replication_index=replication.data["replication_index"],
                         keep_trace=True,
                         cancel_check=check,

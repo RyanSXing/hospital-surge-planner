@@ -86,10 +86,19 @@ def fail(status, message, code="invalid_request", fields=None):
 
 
 def require_recomputable_run(run, session=None, user=None):
-    from .model_versions import ModelVersionMismatch, require_current_model
+    from .model_versions import (
+        ModelVersionMismatch,
+        require_current_model,
+        require_matching_operations_history,
+    )
 
     try:
         require_current_model(run.payload)
+        if session is not None and user is not None:
+            branch_parent = scenario_branch_parent(session, user, run.payload.get("scenario", {}))
+            if branch_parent:
+                require_recomputable_run(branch_parent)
+                require_matching_operations_history(run.payload, branch_parent.payload)
     except ModelVersionMismatch as error:
         fail(
             409,
@@ -105,10 +114,6 @@ def require_recomputable_run(run, session=None, user=None):
                 }
             ],
         )
-    if session is not None and user is not None:
-        branch_parent = scenario_branch_parent(session, user, run.payload.get("scenario", {}))
-        if branch_parent:
-            require_recomputable_run(branch_parent)
 
 
 def scenario_branch_parent(session, user, scenario):
@@ -319,6 +324,8 @@ def context(job=None, **values):
             dataset_version_id=job.payload.get("dataset_version_id"),
             selected_replication_id=job.result.get("selected_replication_id"),
         )
+        if "hospital_operations_model_version" in job.payload:
+            base["hospital_operations_model_version"] = job.payload["hospital_operations_model_version"]
     return {**base, **values}
 
 
@@ -354,6 +361,11 @@ def job_view(job, *, include_scenario=False):
         "start_at": scenario.get("start_at"),
         "end_at": end,
         "model_version": job.payload.get("model_version"),
+        **(
+            {"hospital_operations_model_version": job.payload["hospital_operations_model_version"]}
+            if "hospital_operations_model_version" in job.payload
+            else {}
+        ),
         "input_sha256": job.payload.get("input_sha256"),
         "measurement_start_at": scenario.get("measurement_start_at"),
         "comparison_id": job.payload.get("comparison_id"),
@@ -387,6 +399,8 @@ def job_view(job, *, include_scenario=False):
                             "measurement_start_at",
                             "state_origin",
                             "branch_at",
+                            "parent_run_group_id",
+                            "parent_replication_id",
                         )
                         if key in scenario
                     },
@@ -619,8 +633,27 @@ def enqueue_run(session, user, scenario, replications=None):
     estimate = compute_estimate(session, user, dataset.data, value)
     reject_over_budget(estimate)
     enforce_job_quota(session, user)
-    revision = freeze(session, user, value)
     from surge_engine.common import MODEL_VERSION
+
+    from .model_versions import ModelVersionMismatch, operations_version_for_new_run
+
+    try:
+        operations_model = operations_version_for_new_run(
+            value, branch_parent.payload if branch_parent else None
+        )
+    except ModelVersionMismatch as error:
+        fail(
+            409,
+            str(error),
+            error.code,
+            [
+                {
+                    "field": "hospital_operations",
+                    "message": "An inherited history must use its parent's operations model. Clone the scenario or create an observed reset to change it.",
+                }
+            ],
+        )
+    revision = freeze(session, user, value)
 
     payload = {
         "scenario_id": value["id"],
@@ -630,7 +663,7 @@ def enqueue_run(session, user, scenario, replications=None):
         "source_draft_revision": draft_revision,
         "input_sha256": digest({"dataset": dataset.data, "scenario": value}),
         "model_version": MODEL_VERSION,
-        **({"hospital_operations_model_version": "1.0"} if value.get("hospital_operations") else {}),
+        **({"hospital_operations_model_version": operations_model} if operations_model is not None else {}),
         "compute_estimate": estimate,
     }
     job = Job(
@@ -2728,6 +2761,7 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         )
         reject_over_budget(estimate)
         for plan in alternatives:
+            plan.pop("hospital_operations_model_version", None)
             interventions = plan.get("interventions", [])
             report = validate_scenario({**source.data, "interventions": interventions}, dataset)
             if not report["valid"]:
@@ -2745,6 +2779,8 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             row = enqueue_run(session, user, value, payload.get("replications"))
             row.payload = {**row.payload, "comparison_id": comparison_id, "comparison_plan_id": plan["id"]}
             plan["run_group_id"] = row.id
+            if "hospital_operations_model_version" in row.payload:
+                plan["hospital_operations_model_version"] = row.payload["hospital_operations_model_version"]
         data = {
             "id": comparison_id,
             "scenario_id": source.id,
@@ -2755,6 +2791,18 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "status": "QUEUED",
             "context": context(scenario_id=source.id),
         }
+        reference_run = next(
+            (
+                session.get(Job, plan["run_group_id"])
+                for plan in alternatives
+                if plan.get("reference") and plan.get("run_group_id")
+            ),
+            None,
+        )
+        if reference_run and "hospital_operations_model_version" in reference_run.payload:
+            data["hospital_operations_model_version"] = reference_run.payload[
+                "hospital_operations_model_version"
+            ]
         row = add_document(session, user["workspace_id"], "comparison", data)
         remember(session, user, "comparisons", key, payload, row.id)
         audit(session, user, "comparison.created", row.id)
@@ -2782,13 +2830,21 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         from .comparisons import paired_summary, rank_plans, summary_for
 
         value = copy.deepcopy(row.data)
+        value.pop("hospital_operations_model_version", None)
         reference = None
         all_done = True
         failed = False
         for plan in value["plans"]:
+            plan.pop("hospital_operations_model_version", None)
             if not plan.get("run_group_id"):
                 continue
             job = owned_job(session, plan["run_group_id"], user)
+            if "hospital_operations_model_version" in job.payload:
+                plan["hospital_operations_model_version"] = job.payload["hospital_operations_model_version"]
+                if plan.get("reference"):
+                    value["hospital_operations_model_version"] = job.payload[
+                        "hospital_operations_model_version"
+                    ]
             plan["status"] = job.status
             plan["completed"] = job.completed
             plan["total"] = job.total

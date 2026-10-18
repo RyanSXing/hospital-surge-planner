@@ -6,12 +6,16 @@ import { humanLabel } from "../presentation";
 export type DecisionAction =
   | { kind: "compare"; label: string }
   | { kind: "simulate"; label: string }
+  | { kind: "configure"; label: string }
   | { kind: "review"; label: string; comparisonId: string; planId: string }
   | { kind: "replay"; label: string; at: string; replicationId: string };
 export interface MainConstraint {
   reason: string;
   label: string;
   unit: string | null;
+  unitKind: string | null;
+  peakWaiting: number | null;
+  peakStatistic: "median" | "mean" | "example" | null;
   burden: number;
   firstAt: string | null;
   replicationId: string | null;
@@ -21,6 +25,7 @@ export interface MainConstraint {
 export interface DecisionSummaryModel {
   state: "ready" | "stale" | "unavailable" | "loading";
   problem: string;
+  notice: string | null;
   impact: string[];
   response: string | null;
   improvement: string | null;
@@ -58,6 +63,58 @@ function stable(value: unknown): string {
       .join(",")}}`;
   return JSON.stringify(value) ?? "undefined";
 }
+const knownOperationsVersions = new Set(["1.0", "1.1"]);
+function operationsEnabled(scenario: Entity | null | undefined): boolean {
+  return Boolean(
+    scenario?.hospital_operations &&
+    Object.keys(scenario.hospital_operations).length,
+  );
+}
+function operationsVersion(value: unknown): string | null {
+  return typeof value === "string" && value.length ? value : null;
+}
+/** Match the algorithm as well as the frozen inputs before comparing outcomes. */
+export function comparisonOperationsVersionsMatch(
+  comparison: Entity,
+  ctx: PlanningContext,
+): boolean {
+  const enabled =
+    operationsEnabled(ctx.resultScenario || ctx.run?.scenario_context) ||
+    operationsEnabled(comparison.source_scenario_snapshot);
+  const resultVersion = operationsVersion(
+    ctx.metrics?.hospital_operations_model_version,
+  );
+  const comparisonVersion = operationsVersion(
+    comparison.hospital_operations_model_version,
+  );
+  const versioned =
+    enabled || resultVersion !== null || comparisonVersion !== null;
+  if (
+    versioned &&
+    (!metricsMatchRun(ctx) ||
+      !resultVersion ||
+      !knownOperationsVersions.has(resultVersion) ||
+      comparisonVersion !== resultVersion)
+  )
+    return false;
+  for (const plan of comparison.plans || []) {
+    if (plan.status !== "SUCCEEDED") continue;
+    const artifactVersion = operationsVersion(
+      plan.metrics?.hospital_operations_model_version,
+    );
+    const planVersion = operationsVersion(
+      plan.hospital_operations_model_version,
+    );
+    if (
+      versioned
+        ? artifactVersion !== resultVersion ||
+          (planVersion !== null && planVersion !== resultVersion)
+        : artifactVersion !== null || planVersion !== null
+    )
+      return false;
+  }
+  return true;
+}
 /** A revision alone is insufficient: a comparison also freezes horizon and inputs. */
 export function comparisonMatchesResult(
   comparison: Entity,
@@ -89,6 +146,7 @@ export function comparisonMatchesResult(
     (source.end_at && frozen.end_at && !sameTime(source.end_at, frozen.end_at))
   )
     return false;
+  if (!comparisonOperationsVersionsMatch(comparison, ctx)) return false;
   // Comparison plan runs contain their own interventions. Their baseline is still
   // checked against the frozen source revision before a response can be offered.
   if (ctx.run.comparison_id) return ctx.run.comparison_id === comparison.id;
@@ -275,6 +333,30 @@ export function mainRecordedConstraint(
         ? humanLabel(attributed.unit_kind)
         : null
     : null;
+  const unitKind = definition?.kind || attributed?.unit_kind || null;
+  const peakRecord =
+    attributed?.peak_waiting ??
+    (category.unit_kind === unitKind ? category.peak_waiting : undefined);
+  let peakWaiting = finiteStatistic(peakRecord);
+  let peakStatistic: MainConstraint["peakStatistic"] =
+    peakWaiting !== null
+      ? evidence.scope === "ensemble"
+        ? "median"
+        : "example"
+      : null;
+  if (
+    peakWaiting === null &&
+    evidence.scope === "ensemble" &&
+    typeof peakRecord?.mean === "number" &&
+    Number.isFinite(peakRecord.mean)
+  ) {
+    peakWaiting = peakRecord.mean;
+    peakStatistic = "mean";
+  }
+  if (peakWaiting !== null && peakWaiting < 0) {
+    peakWaiting = null;
+    peakStatistic = null;
+  }
   const namedLimit = fullyRecordedResourceLimit(
     evidence,
     attributed,
@@ -298,6 +380,9 @@ export function mainRecordedConstraint(
       )[category.reason] ||
       bottleneckLabel(category.reason),
     unit,
+    unitKind,
+    peakWaiting,
+    peakStatistic,
     burden: positive(category.patient_hours)!,
     firstAt,
     replicationId:
@@ -394,6 +479,7 @@ export function buildDecisionSummary({
   const model: DecisionSummaryModel = {
     state: "ready",
     problem: "Recorded constraint details are unavailable.",
+    notice: null,
     impact: [],
     response: null,
     improvement: null,
@@ -431,18 +517,48 @@ export function buildDecisionSummary({
     return model;
   }
   const revision = ctx.run.source_draft_revision;
-  const stale =
+  const legacySeverity =
+    metricsMatchRun(ctx) &&
+    ctx.metrics?.hospital_operations_model_version === "1.0" &&
+    Boolean(ctx.resultScenario.hospital_operations?.severity_mix);
+  const staleRevision =
     typeof revision !== "number" || revision !== ctx.scenario.revision;
+  const stale = staleRevision || legacySeverity;
   if (stale) {
     model.state = "stale";
-    model.evidence.push(
-      typeof revision === "number"
-        ? `These results describe saved revision ${revision}; the current configuration is revision ${ctx.scenario.revision ?? "unavailable"}.`
-        : "The saved configuration revision is unavailable, so a current-plan recommendation cannot be verified.",
-    );
+    if (staleRevision)
+      model.evidence.push(
+        typeof revision === "number"
+          ? `These results describe saved revision ${revision}; the current configuration is revision ${ctx.scenario.revision ?? "unavailable"}.`
+          : "The saved configuration revision is unavailable, so a current-plan recommendation cannot be verified.",
+      );
     model.remaining =
       "Run the current configuration before choosing a response.";
     model.action = { kind: "simulate", label: "Run updated simulation" };
+    if (legacySeverity) {
+      const inheritedHistory = Boolean(
+        ctx.resultScenario.parent_run_group_id ||
+        ctx.resultScenario.parent_replication_id ||
+        ctx.resultScenario.state_origin === "simulation_branch",
+      );
+      model.notice =
+        "These saved results use the earlier severity model. Run again with corrected inpatient stays.";
+      model.remaining =
+        "Run again with corrected inpatient stays before choosing a response.";
+      model.evidence.push(
+        "The earlier severity model applied configured inpatient stay durations to emergency-department assessment as well as inpatient beds. These saved waiting times and queues are the actual results of that earlier model; they have not been changed. Updated simulations preserve normal emergency-assessment durations and apply severity stay settings only to inpatient beds.",
+      );
+      if (inheritedHistory) {
+        model.notice =
+          "These saved results use the earlier severity model. Review configuration to create a corrected independent simulation.";
+        model.remaining =
+          "A simulation-history branch retains its earlier model. Create a new independent scenario or complete an observed reset for corrected inpatient stays.";
+        model.action = { kind: "configure", label: "Review configuration" };
+        model.evidence.push(
+          "Rerunning a branch of simulated history preserves its original model for reproducible replay; it does not upgrade the severity calculation. Use an independent scenario or a complete observed reset to use the corrected model. The saved run and its replay remain unchanged.",
+        );
+      }
+    }
   }
   const evidence = evidenceMatchesRun(ensemble, ctx)
     ? ensemble
@@ -456,15 +572,24 @@ export function buildDecisionSummary({
   const peak = finiteStatistic(scalar.peak_inpatient_queue);
   const wait = finiteStatistic(scalar.completed_wait_median_hours);
   const averageWait = finiteStatistic(scalar.average_wait_per_patient_hours);
-  if (peak !== null)
+  if (main?.unitKind === "ed") {
+    model.impact.push(
+      main.peakWaiting !== null
+        ? main.scope === "example"
+          ? `Selected example run: up to ${number(main.peakWaiting)} patients waiting for emergency assessment with this constraint.`
+          : `${main.peakStatistic === "mean" ? "Average" : "Typical"} recorded peak: ${number(main.peakWaiting)} patients waiting for emergency assessment with this constraint.`
+        : "The recorded emergency-assessment queue peak is unavailable for this constraint.",
+    );
+  } else if (peak !== null) {
     model.impact.push(
       `Typical peak: ${number(peak)} patients waiting for admission.`,
     );
+  }
   if (averageWait !== null)
     model.impact.push(
       `Average waiting per patient: ${number(averageWait)} hours.`,
     );
-  else if (wait !== null)
+  else if (wait !== null && main?.unitKind !== "ed")
     model.impact.push(
       `Typical admission wait: ${number(wait)} hours for patients admitted before the simulation ended.`,
     );
@@ -497,7 +622,9 @@ export function buildDecisionSummary({
     model.problem = "Checking recorded constraints for this simulation…";
   }
   model.evidence.push(
-    `Peak queue and admission waiting measures above are medians across ${ctx.run.replications_completed} completed simulation runs. A median peak is not the largest queue seen in every run.`,
+    main?.unitKind === "ed"
+      ? `${main.scope === "example" ? "The emergency-assessment constraint peak describes the selected example run only." : `The emergency-assessment constraint peak uses the recorded unit-level ${main.peakStatistic || "unavailable statistic"} across completed simulation runs.`} Hospitalwide average waiting, when available, is the median of per-run average patient waiting.`
+      : `Peak queue and admission waiting measures above are medians across ${ctx.run.replications_completed} completed simulation runs. A median peak is not the largest queue seen in every run.`,
   );
   if (!model.impact.length)
     model.impact.push(
@@ -517,8 +644,9 @@ export function buildDecisionSummary({
     return model;
   }
   if (!comparisonMatchesResult(comparison, ctx)) {
-    model.response =
-      "The saved comparison uses a different configuration or simulation period. Compare responses again.";
+    model.response = comparisonOperationsVersionsMatch(comparison, ctx)
+      ? "The saved comparison uses a different configuration or simulation period. Compare responses again."
+      : "The saved comparison uses a different or unrecorded simulation model. Compare responses again with matching results.";
     model.evidence.push(
       "A comparison must match scenario, saved revision, dataset, arrival and resource inputs, start time, horizon, and seed before it can support a recommendation.",
     );
@@ -687,6 +815,8 @@ export function followDecisionAction(
     onReview?.(action.comparisonId, action.planId);
   } else if (action.kind === "simulate") {
     void ctx.runScenario();
+  } else if (action.kind === "configure") {
+    ctx.setPage("overview");
   } else ctx.setPage("compare");
 }
 

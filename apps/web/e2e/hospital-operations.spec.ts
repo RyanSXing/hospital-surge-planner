@@ -253,7 +253,7 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
     .getByText("How these settings affect the simulation", { exact: true })
     .click();
   await expect(operations.locator(".operations-definitions")).toContainText(
-    "total active care time",
+    "total inpatient and step-down care time",
   );
   await expect(operations.locator(".operations-definitions")).toContainText(
     "Waiting and interruptions add extra time",

@@ -13,7 +13,8 @@ from zoneinfo import ZoneInfo
 
 from .common import dt, endpoint
 
-OPERATIONS_MODEL_VERSION = "1.0"
+OPERATIONS_MODEL_VERSION = "1.1"
+SUPPORTED_OPERATIONS_MODEL_VERSIONS = frozenset({"1.0", "1.1"})
 SEVERITIES = ("low", "medium", "high")
 
 
@@ -144,6 +145,9 @@ def validate_hospital_operations(config, start, end):
 class HospitalOperations:
     def __init__(self, sim, config):
         self.sim = sim
+        self.model_version = sim.scenario.get("_hospital_operations_model_version", OPERATIONS_MODEL_VERSION)
+        if self.model_version not in SUPPORTED_OPERATIONS_MODEL_VERSIONS:
+            raise ValueError("Unsupported hospital operations model version")
         self.config = validate_hospital_operations(config, sim.start, sim.end)
         self.mix = self.config.get("severity_mix")
         self.supplies = self.config.get("supplies")
@@ -192,10 +196,10 @@ class HospitalOperations:
         self.record()
 
     def configure_arrival(self, patient):
-        """Scale the whole declared care path to the severity's sampled care time.
+        """Scale inpatient bed care, preserving independent assessment clocks.
 
-        Waiting/transport/turnover time is excluded. Initial census is never
-        resampled: its recorded residual stage and future path remain intact.
+        Frozen model1.0 runs retain their original whole-path interpretation.
+        Initial census is never resampled in either model version.
         """
         if not self.mix:
             return
@@ -208,27 +212,41 @@ class HospitalOperations:
                 selected = severity
                 break
         mean = self.mix[selected]["average_stay_hours"]
-        # The same unit-mean gamma draw is retained between response plans.
-        target = (
-            max(1e-6, float(self.sim.random(patient["patient_id"], "operations-stay").gamma(2, 0.5)))
-            * mean
-            * 60
-        )
+        legacy = self.model_version == "1.0"
         fields = []
-        if patient.get("entry_type") == "ed":
+        if legacy and patient.get("entry_type") == "ed":
             fields.append("_assessment_duration")
         if patient.get("_outcome") in ("ward", "icu"):
             fields.append("_inpatient_duration")
         if patient.get("_stepdown_selected"):
             fields.append("_stepdown_duration")
+        if not legacy:
+            patient["severity"] = selected
+            patient["severity_average_inpatient_stay_hours"] = mean
+            patient["sampled_inpatient_care_hours"] = None
+            if not fields:
+                # An ED-only or clinic visit has no inpatient bed stay. Its
+                # original assessment/service distribution remains authoritative.
+                return
+        # Independent keyed draws preserve care routing and the unit-mean stay
+        # draw between response plans. Version1.0 deliberately keeps its exact
+        # previous arithmetic and public patient metadata for frozen replays.
+        target = (
+            max(1e-6, float(self.sim.random(patient["patient_id"], "operations-stay").gamma(2, 0.5)))
+            * mean
+            * 60
+        )
         original = sum(patient.get(field, 0) for field in fields)
         if original <= 0:
-            raise ValueError("Severity stay requires a declared positive care path")
+            raise ValueError("Severity stay requires a declared positive inpatient care path")
         for field in fields:
             patient[field] *= target / original
-        patient["severity"] = selected
-        patient["severity_average_stay_hours"] = mean
-        patient["sampled_total_care_hours"] = target / 60
+        if legacy:
+            patient["severity"] = selected
+            patient["severity_average_stay_hours"] = mean
+            patient["sampled_total_care_hours"] = target / 60
+        else:
+            patient["sampled_inpatient_care_hours"] = target / 60
 
     def service_remaining(self, patient, at=None):
         if patient.get("care_paused"):
@@ -442,11 +460,15 @@ class HospitalOperations:
             row.update(end_at=sim.at(sim.horizon), end_elapsed_minutes=sim.horizon)
         self.record()
         return {
-            "hospital_operations_model_version": OPERATIONS_MODEL_VERSION,
+            "hospital_operations_model_version": self.model_version,
             "operations_history": self.history,
             "operations_constraint_periods": self.periods,
             "metric_definitions": {
                 "medical_supply_average_percent": "Elapsed-time-weighted general medical supply stock percentage during the measured period. Supplies are used only while patients receive active care; refills add the configured fraction of maximum capacity, capped at capacity.",
-                "severity_stays": "For newly arriving patients, independent gamma(shape=2) total active care time has the configured severity mean and scales the declared ED/inpatient/stepdown stages proportionally. Waiting, interruption and transport time are additional. Initial census retains declared residual stays and future paths.",
+                "severity_stays": (
+                    "For newly arriving patients, independent gamma(shape=2) total active care time has the configured severity mean and scales the declared ED/inpatient/stepdown stages proportionally. Waiting, interruption and transport time are additional. Initial census retains declared residual stays and future paths."
+                    if self.model_version == "1.0"
+                    else "For newly arriving admitted patients, independent gamma(shape=2) total inpatient bed care has the configured severity mean and scales inpatient and stepdown stays proportionally. ED and clinic assessment durations and care routing remain unchanged; severity-tagged ED-only visits have no inpatient stay. Waiting, interruption and transport time are additional. Initial census retains declared residual stays and future paths."
+                ),
             },
         }

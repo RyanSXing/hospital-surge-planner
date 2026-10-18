@@ -1,0 +1,32 @@
+{
+  "recorded_at": "2026-10-18T06:26:33.017003+00:00",
+  "command": ".venv/bin/pytest tests/test_operations_versions_api.py -q",
+  "exit_code": 0,
+  "passed": 13,
+  "failed": 0,
+  "duration_seconds": 12.48,
+  "warning": "Existing Starlette httpx TestClient deprecation warning (1).",
+  "stdout_summary": "13 passed, 1 warning in 12.48s",
+  "earlier_regressions": {
+    "command": ".venv/bin/pytest tests/test_model_version_guards.py tests/test_operations_api.py -q",
+    "passed": 29,
+    "failed": 0,
+    "duration_seconds": 116.85,
+    "scope_note": "Completed before final non-string-version/comparison-projection guards and absent-trace export input-order fix. Final focused suite covers those changes."
+  },
+  "coverage": [
+    "New ordinary operations runs freeze model 1.1; dispatch marker never changes frozen public input/checksum.",
+    "Frozen model 1.0 traces and missing-trace exports regenerate identical clinical event sequences under 1.0 without rewriting parent payload/results.",
+    "Missing, unknown, and malformed operations version metadata rejects computation and automatic retry.",
+    "Inherited simulated history remains model 1.0 while an observed reset starts model 1.1.",
+    "Mismatched inherited history rejects at API retry and worker boundaries.",
+    "Comparison model provenance derives from actual frozen plan jobs without mutating historical comparison documents.",
+    "Clients cannot set server-owned operations dispatch fields; execution scenario is an independent copy."
+  ],
+  "source_sha256": {
+    "apps/api/surge_api/main.py": "d8ea1a3119b664e61ab3419214f625dbb9daaf686b24e7cb58707140705b5ac5",
+    "apps/api/surge_api/model_versions.py": "d5a8149d75792cc3629cfc6ff6dfe886a43340c9dd2a27e802f316067e881f2a",
+    "apps/api/surge_api/worker.py": "21d1e26a6caecc13a8847a295943a72e9190b66df44a09afefa49922f89c3c8d",
+    "tests/test_operations_versions_api.py": "10bc2e833387b2c1683554f38c74d031e1a7d720b29bcfcc02fd0e54263b5f88"
+  }
+}

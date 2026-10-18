@@ -136,7 +136,9 @@ def test_severity_changes_actual_stay_with_paired_randomness_and_preserves_arriv
     ]
     for first, second in zip(low["patients"], high["patients"]):
         assert first["severity"] == "low" and second["severity"] == "high"
-        assert second["sampled_total_care_hours"] == pytest.approx(first["sampled_total_care_hours"] * 4)
+        assert second["sampled_inpatient_care_hours"] == pytest.approx(
+            first["sampled_inpatient_care_hours"] * 4
+        )
         assert second["sampled_stage_minutes"] == pytest.approx(first["sampled_stage_minutes"] * 4)
     assert sum(row["ward_occupied"] for row in high["series"]) > sum(
         row["ward_occupied"] for row in low["series"]
@@ -313,7 +315,7 @@ def test_optional_model_has_same_metrics_with_and_without_replay_storage(hospita
     assert detailed["bottleneck_evidence"] == compact["bottleneck_evidence"]
     assert compact["scalar_metrics"]["patient_conservation_ok"]
     aggregate = aggregate_results([compact])
-    assert aggregate["hospital_operations_model_version"] == "1.0"
+    assert aggregate["hospital_operations_model_version"] == "1.1"
     assert aggregate["metric_definitions"] == detailed["metric_definitions"]
     assert any(row["care_paused"]["mean"] == 1 for row in aggregate["series"])
     assert any(row["treatment_disrupted"]["mean"] == 1 for row in aggregate["series"])
@@ -456,3 +458,163 @@ def test_generic_metrics_exclude_initial_queue_and_keep_no_arrivals_unavailable(
     assert trace["scalar_metrics"]["success_eligible_patients"] == 0
     assert trace["metric_definitions"]["average_wait_per_patient_hours"]
     assert "hospital_operations_model_version" not in trace
+
+
+def mixed_severities():
+    return {
+        "low": {"percentage": 68.82, "average_stay_hours": 24},
+        "medium": {"percentage": 24.18, "average_stay_hours": 72},
+        "high": {"percentage": 7, "average_stay_hours": 168},
+    }
+
+
+def ed_model(hospital, disposition, operations=None, count=12, legacy=False, days=3):
+    data = empty_hospital(hospital)
+    for path in data["pathway_profiles"]:
+        if path["entry_stream_id"] == "ED_MAIN":
+            path["ed_disposition_weights"] = disposition
+            path["icu_stepdown_probability"] = 1
+    scenario = {"horizon_calendar_days": days, "base_seed": 43121}
+    if operations:
+        scenario["hospital_operations"] = operations
+    if legacy:
+        scenario["_hospital_operations_model_version"] = "1.0"
+    sim = HospitalSimulation(data, scenario, 0, True)
+    stream = next(s for s in data["entry_streams"] if s["entry_type"] == "ed")
+    for index in range(count):
+        sim.schedule(
+            index * 60,
+            "arrival",
+            {"patient_id": f"ED-LEGACY-{index}", "source": "baseline_arrival", "stream": stream},
+            2,
+        )
+    return sim
+
+
+def test_frozen_model_1_0_reproduces_original_whole_path_trajectory(hospital):
+    from surge_engine.common import digest
+
+    # Recorded before the1.1 correction. This protects the actual previously
+    # generated trajectory, not merely two executions of the new implementation.
+    sim = ed_model(
+        hospital,
+        {"discharge": 0.5, "ward": 0.3, "icu": 0.2},
+        {"severity_mix": mixed_severities()},
+        legacy=True,
+    )
+    trace = sim.run()
+    assert trace["hospital_operations_model_version"] == "1.0"
+    assert (
+        digest(
+            {
+                key: trace[key]
+                for key in (
+                    "events",
+                    "scalar_metrics",
+                    "patients",
+                    "series",
+                    "daily",
+                    "unit_series",
+                    "operations_history",
+                    "operations_constraint_periods",
+                )
+            }
+        )
+        == "978b81e29d6ba19b5d35e7bc84ee86eccc9d6bfc9862ec43807d63334e13ae6f"
+    )
+    assert "total active care time" in trace["metric_definitions"]["severity_stays"]
+
+
+def test_severity_does_not_change_ed_only_assessment_clocks_or_routing(hospital):
+    normal = ed_model(hospital, {"discharge": 1}).run()
+    changed = ed_model(hospital, {"discharge": 1}, {"severity_mix": mix("high", 168)}).run()
+    assert normal["events"] == changed["events"]
+    assert normal["scalar_metrics"] == changed["scalar_metrics"]
+    assert normal["daily"] == changed["daily"]
+    for baseline, severity in zip(normal["patients"], changed["patients"]):
+        clinical_intervals = [
+            {
+                key: value
+                for key, value in interval.items()
+                if key not in {"care_paused", "care_pause_reasons"}
+            }
+            for interval in severity["state_intervals"]
+        ]
+        assert baseline["state_intervals"] == clinical_intervals
+        assert baseline["sampled_stage_minutes"] == severity["sampled_stage_minutes"]
+        assert severity["sampled_inpatient_care_hours"] is None
+        assert severity["severity"] == "high"
+        assert severity["severity_average_inpatient_stay_hours"] == 168
+        assert "sampled_total_care_hours" not in severity
+
+
+def test_severity_scales_inpatient_and_stepdown_but_preserves_assessment_and_pathway(hospital):
+    baseline = ed_model(hospital, {"icu": 1}, count=1)
+    changed = ed_model(hospital, {"icu": 1}, {"severity_mix": mix("high", 24)}, count=1)
+    # Run arrival/allocation through the real engine; inspect sampled future
+    # clocks before bed admission can replace the currently displayed stage.
+    for sim in (baseline, changed):
+        sim.env.process(sim.process())
+        sim.env.run(until=1)
+    original = baseline.patients["ED-LEGACY-0"]
+    patient = changed.patients["ED-LEGACY-0"]
+    assert patient["_assessment_duration"] == original["_assessment_duration"]
+    assert patient["_service_end"] == original["_service_end"]
+    for key in (
+        "_outcome",
+        "_cohort",
+        "_inpatient_profile_id",
+        "_inpatient_requirements",
+        "_stepdown_selected",
+        "_stepdown_cohort",
+        "_stepdown_profile",
+    ):
+        assert patient[key] == original[key]
+    assert patient["_stepdown_selected"]
+    assert patient["_inpatient_duration"] / patient["_stepdown_duration"] == pytest.approx(
+        original["_inpatient_duration"] / original["_stepdown_duration"]
+    )
+    assert patient["_inpatient_duration"] + patient["_stepdown_duration"] == pytest.approx(
+        patient["sampled_inpatient_care_hours"] * 60
+    )
+    assert patient["_inpatient_duration"] != original["_inpatient_duration"]
+
+
+def test_corrected_severity_does_not_manufacture_an_ed_queue_in_a_roomy_hospital(hospital):
+    data = empty_hospital(hospital)
+    data["arrival_profiles"]["ed_arrivals_per_local_day"] = 100
+    data["arrival_profiles"]["direct_ward_arrivals_per_local_day"] = 0
+    for path in data["pathway_profiles"]:
+        if path["entry_stream_id"] == "ED_MAIN":
+            path["ed_disposition_weights"] = {"discharge": 1}
+    scenario = {"horizon_calendar_days": 14, "base_seed": 43121}
+    original = run_replication(data, scenario)
+    corrected = run_replication(
+        data, {**scenario, "hospital_operations": {"severity_mix": mixed_severities()}}
+    )
+    assert corrected["scalar_metrics"] == original["scalar_metrics"]
+    assert corrected["events"] == original["events"]
+    assert corrected["scalar_metrics"]["average_wait_per_patient_hours"] < 0.1
+    assert corrected["scalar_metrics"]["success_score_percent"] == 100
+    assert corrected["scalar_metrics"]["patient_conservation_ok"]
+
+
+def test_corrected_inpatient_severity_still_pauses_for_disruption(hospital):
+    data = empty_hospital(hospital)
+    baseline = model(data, {"severity_mix": mix("medium", 12)}, days=3, arrivals=(0,)).run()
+    end = 8
+    paused = model(
+        data,
+        {"severity_mix": mix("medium", 12), "disruptions": [disruption(data, 0, end)]},
+        days=3,
+        arrivals=(0,),
+    ).run()
+    original_patient, paused_patient = baseline["patients"][0], paused["patients"][0]
+    assert original_patient["sampled_inpatient_care_hours"] == paused_patient["sampled_inpatient_care_hours"]
+    assert (
+        discharge_time(paused, paused_patient["patient_id"])
+        - discharge_time(baseline, original_patient["patient_id"])
+        == end * 60
+    )
+    assert paused["scalar_metrics"]["average_wait_per_patient_hours"] == end
+    assert paused["scalar_metrics"]["patient_conservation_ok"]

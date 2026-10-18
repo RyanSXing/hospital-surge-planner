@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-18T01:27:31.296655+00:00",
+  "default_scenario_id": "scenario-demo-v1-1-0-hospital_baseline-41021-365",
+  "default_scenario_name": "demo",
+  "only_demo_active": true,
+  "days": 7,
+  "replications": 10,
+  "completed_default_run_id": "run_d69728c5b6a9413ca4ae",
+  "comparison_id": "comparison_caf1e7ae9e4545a5ad35",
+  "no_additional_verification_scenarios_created": true,
+  "demo_conditions": [],
+  "demo_interventions": [],
+  "demo_updates": []
+}

@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T01:21:27.552701+00:00",
+  "sha256": "1fede230927fb3e0a50889a8df7b7bacf7c5f3a0725094255cd90a93beda09b2",
+  "byte_size": 5481050,
+  "object_key": "backups/hospital-single-refresh-20261018T012122Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_scenario_archiving": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Refresh to include newly frozen revision records; original scenario inputs remain unchanged"
+}

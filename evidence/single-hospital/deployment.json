@@ -1,0 +1,29 @@
+{
+  "deployed_at": "2026-10-18T00:41:49.407505+00:00",
+  "code_commit": "3e9f792d43339a08ea0673b1c272527c28df102a",
+  "image_tag": "3e9f792d43339a08ea0673b1c272527c28df102a",
+  "archive": {
+    "commit": "3e9f792d43339a08ea0673b1c272527c28df102a",
+    "members": 344,
+    "sha256": "4b478d820ac4de1f75909d33bfefc640b560b3288bb4fa2162e37deb863ff2cc"
+  },
+  "host": "131.186.0.156",
+  "directory": "/opt/hospital-surge-planner",
+  "steps": [
+    "(build_dir=$(mktemp -d /opt/hospital-surge-planner/.build-XXXXXX) || exit 1; trap 'rm -rf -- \"$build_dir\"' EXIT; tar -xzf release.tar.gz -C \"$build_dir\" && install -m 600 .env \"$build_dir/.env\" && CODE_COMMIT=3e9f792d43339a08ea0673b1c272527c28df102a docker compose --env-file \"$build_dir/.env\" -f \"$build_dir/infra/compose.yaml\" --profile tls build)",
+    "tar -xzf release.tar.gz",
+    "CODE_COMMIT=3e9f792d43339a08ea0673b1c272527c28df102a docker compose --env-file .env -f infra/compose.yaml up -d postgres redis",
+    "CODE_COMMIT=3e9f792d43339a08ea0673b1c272527c28df102a docker compose --env-file .env -f infra/compose.yaml run --rm api .venv/bin/alembic -c infra/alembic.ini upgrade head",
+    "CODE_COMMIT=3e9f792d43339a08ea0673b1c272527c28df102a docker compose --env-file .env -f infra/compose.yaml up -d api worker web",
+    "CODE_COMMIT=3e9f792d43339a08ea0673b1c272527c28df102a docker compose --env-file .env -f infra/compose.yaml --profile tls up -d tls",
+    "CODE_COMMIT=3e9f792d43339a08ea0673b1c272527c28df102a docker compose --env-file .env -f infra/compose.yaml ps"
+  ],
+  "status": "deployed_pending_acceptance",
+  "required_next": [
+    "authenticated smoke run",
+    "OCI artifact upload/download",
+    "full workflow verification",
+    "backup and restore test",
+    "record image digests and benchmark"
+  ]
+}

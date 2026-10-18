@@ -1,10 +1,29 @@
 # Hosted verification record
 
-[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) is running release **`9db04450f2f0dab35dc40fc1270b09370ff5ffb4`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
+[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) runs release **`3e9f792d43339a08ea0673b1c272527c28df102a`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
 
-## Light hospital-management interface — 2026-10-17
+## Single-hospital workflow — 2026-10-18
 
-The current release adds a white compact interface, collapsible navigation, three-step simulation setup, Mantine components, chart-led results and optional detailed tools. Replay uses smooth presentation transitions and an original Vanderbilt campus reference while preserving synthetic operational data and exact recorded evidence.
+Configuration now centers on duration, arrival level and arrival pattern beside a live demand chart. Optional edits are under **More parameters**. Summary, Analytics and Comparison use clearer labels and hospital charts; the separate Resources page and alternate-site planning controls are removed. Replay keeps a continuous presentation clock with exact pause and seek behavior. Operational data is generated; the campus reference is centered on Vanderbilt University Hospital.
+
+| Gate | Verified result |
+|---|---|
+| Local regression | **605 backend tests**, **129 frontend unit tests** and **91 distinct browser checks** passed, with 19 intentional device-specific skips and no unresolved failures. [Local verification](../evidence/single-hospital/local-verification.json) |
+| Browser attribution | The full frozen-build run had 85 passes, 19 skips and two initial failures. The final affected-flow run had **36 passes, two skips and zero failures**, resolving both initial failures and covering every listed later change. Unchanged full-suite cases were not all rerun against the final bundle. [Full run](../evidence/single-hospital/browser-full-initial.json), [final follow-up](../evidence/single-hospital/browser-followup.json), [change scope](../evidence/single-hospital/final-followup-scope.json) |
+| Exact deployed interface | All **43 frontend files** match the tested production bundle. API, worker and web identify the deployed commit; all six services run, configured health checks pass and named volumes are preserved. [Assets](../evidence/single-hospital/live-assets.json), [runtime](../evidence/single-hospital/runtime-preservation.json), [deployment](../evidence/single-hospital/deployment.json) |
+| Pre-reset backup | A refreshed private PostgreSQL backup was created before the requested scenario cleanup. [Backup](../evidence/single-hospital/backup-refreshed.json) |
+| Actual hosted demo | **demo** completed all **ten runs over seven days** on this release, with four private OCI artifacts. Worker start to durable completion was **20.840 s**; this is one smoke workload, not a new performance benchmark. [Computation](../evidence/single-hospital/cloud-smoke.json), [open demo](https://hospital-surge.131.186.0.156.sslip.io/?view=overview&scenario=scenario-demo-v1-1-0-hospital_baseline-41021-365), [completed results](https://hospital-surge.131.186.0.156.sslip.io/?view=analysis&analysis=summary&scenario=scenario-demo-v1-1-0-hospital_baseline-41021-365&run=run_d69728c5b6a9413ca4ae) |
+| Hosted comparison | The current setup and two hospital responses each completed **ten runs**, with all three plans feasible on this release. The single active demo was preserved. [Comparison evidence](../evidence/single-hospital/live-comparison.json), [open comparison](https://hospital-surge.131.186.0.156.sslip.io/?view=analysis&analysis=comparison&scenario=scenario-demo-v1-1-0-hospital_baseline-41021-365&comparison=comparison_caf1e7ae9e4545a5ad35) |
+| Live interface review | Overview/setup, the completed Summary, Replay play/pause, Analytics with its two sections, the completed comparison and the one-demo library were inspected in the signed-in browser. **Zero browser errors**; the handoff returns to Overview. [Browser proof](../evidence/single-hospital/live-browser.json), [hosted screenshots](../evidence/single-hospital/README.md#hosted-screenshots) |
+| Requested workspace cleanup | **39 previous scenarios** were archived recoverably, with zero hard deletions. **demo** is the only active scenario. Previous scenario inputs and **20 recent completed-run input/artifact references** were preserved. [Curation](../evidence/single-hospital/workspace-curation.json) |
+
+Local checks include real simulation, comparison/save/reopen, update/reforecast, replay, access roles, imports, history, 320px touch navigation and checksum-verified ZIP export. The hosted demo computation and requested cleanup are recorded above. Hosted export download is excluded. See [source and bundle hashes](../evidence/single-hospital/release.json), [interface evidence](../evidence/single-hospital/README.md) and the [workflow guide](single-hospital-workflow.md).
+
+Earlier performance, security and restore measurements below retain their original release attribution.
+
+## Previous light hospital-management interface — 2026-10-17
+
+Release `9db04450f2f0dab35dc40fc1270b09370ff5ffb4` added a white compact interface, collapsible navigation, three-step simulation setup, Mantine components, chart-led results and optional detailed tools. Replay uses smooth presentation transitions and an original Vanderbilt campus reference while preserving synthetic operational data and exact recorded evidence.
 
 | Gate | Verified result |
 |---|---|
@@ -14,7 +33,7 @@ The current release adds a white compact interface, collapsible navigation, thre
 | Live interface inspection | Overview/setup, Summary, Replay playback, Analytics outcomes and the preserved Comparison opened successfully; no browser errors. [Browser proof](../evidence/hospital-ui/live-browser.json), [gallery](../evidence/hospital-ui/README.md) |
 | Saved data | Eight full protected records remain unchanged: four scenarios, two completed runs, one comparison and the source dataset. Default remains the saved staffing proposal with no standalone run. Only the newly created verification scenario was archived; its run is retained. [Protection](../evidence/hospital-ui/protected-final.json), [curation](../evidence/hospital-ui/verification-curation.json), [backup](../evidence/hospital-ui/backup.json) |
 
-The model, API and infrastructure are unchanged. Earlier backend, large-workload, image-security and restore results below retain their original release attribution. Export download and ZIP checksums passed locally; this hosted smoke skipped export download. See the [release proof](../evidence/hospital-ui/hosted-verification.json), [source identity](../evidence/hospital-ui/release.json) and [interface guide](hospital-management-interface.md).
+That interface release left the model, API and infrastructure unchanged. Earlier backend, large-workload, image-security and restore results below retain their original release attribution. Export download and ZIP checksums passed locally; this hosted smoke skipped export download. See the [release proof](../evidence/hospital-ui/hosted-verification.json), [source identity](../evidence/hospital-ui/release.json) and [interface guide](hospital-management-interface.md).
 
 ## Previous Overview and Analysis release — 2026-10-17
 

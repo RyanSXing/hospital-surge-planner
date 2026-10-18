@@ -1,0 +1,29 @@
+{
+  "recorded_at": "2026-10-18T01:27:02.287Z",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "application_commit": "3e9f792d43339a08ea0673b1c272527c28df102a",
+  "demo_scenario_id": "scenario-demo-v1-1-0-hospital_baseline-41021-365",
+  "run_id": "run_d69728c5b6a9413ca4ae",
+  "comparison_id": "comparison_caf1e7ae9e4545a5ad35",
+  "verified_views": [
+    "Overview and main controls with optional settings closed",
+    "Summary of completed ten-run forecast",
+    "Replay playback and exact pause",
+    "Analytics with Outcomes and Patients & units only",
+    "Completed hospital-only response comparison",
+    "Scenario library with one active demo and Results available status"
+  ],
+  "replay_exact_pause_at": "2026-10-17T03:37:14.985Z",
+  "browser_errors": [],
+  "final_view": "Overview",
+  "screenshots": [
+    "live-demo-overview.jpg",
+    "live-demo-setup.jpg",
+    "live-demo-summary.jpg",
+    "live-demo-replay.jpg",
+    "live-demo-analytics.jpg",
+    "live-demo-comparison.jpg",
+    "live-demo-library.jpg"
+  ],
+  "hosted_export_download_performed": false
+}

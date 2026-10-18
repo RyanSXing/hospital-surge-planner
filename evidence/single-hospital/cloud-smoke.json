@@ -1,0 +1,162 @@
+{
+  "recorded_at": "2026-10-18T01:22:57.870811+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scope": "Actual public HTTPS, OCI A2 ARM8 physical cores/16GiB, PostgreSQL, Redis worker and private ObjectStorage",
+  "scenario_id": "scenario-demo-v1-1-0-hospital_baseline-41021-365",
+  "run_group_id": "run_d69728c5b6a9413ca4ae",
+  "dataset_version_id": "demo-v1-1-0-hospital_baseline-41021-365",
+  "input_sha256": "fe63db7a84272eb7febf5ba35597c27fcf1c1a87ac85c97b7e0c9b762a8cfe91",
+  "scenario_revision_id": "revision_ab5ae23a8ae74db5a397",
+  "start_at": "2026-10-16T05:00:00Z",
+  "end_at": "2026-10-23T05:00:00Z",
+  "horizon_days": 7,
+  "replications": 10,
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  },
+  "status": "SUCCEEDED",
+  "completed": 10,
+  "pipeline_seconds": 7.330490333028138,
+  "pipeline_timing_is_resumed": true,
+  "manifest": {
+    "schema_version": "1.0",
+    "run_group_id": "run_d69728c5b6a9413ca4ae",
+    "workspace_id": "workspace-main",
+    "dataset_version_id": "demo-v1-1-0-hospital_baseline-41021-365",
+    "scenario_revision_id": "revision_ab5ae23a8ae74db5a397",
+    "model_version": "1.1.0",
+    "code_commit": "3e9f792d43339a08ea0673b1c272527c28df102a",
+    "input_sha256": "fe63db7a84272eb7febf5ba35597c27fcf1c1a87ac85c97b7e0c9b762a8cfe91",
+    "generator_version": "1.1.0",
+    "timezone": "America/Chicago",
+    "start_at": "2026-10-16T05:00:00Z",
+    "end_at": "2026-10-23T05:00:00Z",
+    "created_at": "2026-10-18T01:22:42.911506Z",
+    "replications_requested": 10,
+    "replications_completed": 10,
+    "seed_policy": "keyed-streams-v1",
+    "base_seed": 20261016,
+    "selected_replication_id": "run_d69728c5b6a9413ca4ae_rep_0000",
+    "selected_replication_index": 0,
+    "status": "SUCCEEDED",
+    "data_origin": "synthetic",
+    "artifacts": [
+      {
+        "object_key": "workspace-main/run_d69728c5b6a9413ca4ae/artifact_ccbd85d8b05a4f4db373/aggregate.json.gz",
+        "sha256": "e6d102a3ca83c525c8dc9a30fa6e79002cd396a8397cfbcb89a140fdee43f360",
+        "byte_size": 47639,
+        "media_type": "application/gzip",
+        "name": "aggregate.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-18T01:23:02.740534Z"
+      },
+      {
+        "object_key": "workspace-main/run_d69728c5b6a9413ca4ae/artifact_a5e6e916858246e3946a/replications.json.gz",
+        "sha256": "e407547a4c4169454ad3d01cbb2ce62b47041d644f5cb1b44e431cdd02ed064f",
+        "byte_size": 81938,
+        "media_type": "application/gzip",
+        "name": "replications.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-18T01:23:02.822101Z"
+      },
+      {
+        "object_key": "workspace-main/run_d69728c5b6a9413ca4ae/artifact_5e3cec1a0d2d4d7b8cb6/selected-trace.json.gz",
+        "sha256": "121e83753103fc31e304f7296ab2e8c2426c0b15003ab8e2319fc563cfb8d315",
+        "byte_size": 395288,
+        "media_type": "application/gzip",
+        "name": "selected-trace.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-18T01:23:04.559424Z"
+      },
+      {
+        "object_key": "workspace-main/run_d69728c5b6a9413ca4ae/artifact_cb7f29324c90466f9648/inputs.json.gz",
+        "sha256": "56871faadb1acbe22304b9087bf6bdb0767d2d69c8023f6e53a1c928dd0df11d",
+        "byte_size": 885867,
+        "media_type": "application/gzip",
+        "name": "inputs.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-18T01:23:03.345486Z"
+      }
+    ],
+    "completed_at": "2026-10-18T01:23:04.562370Z",
+    "warnings": [
+      "Synthetic assumptions; simulation ranges are not clinical predictions."
+    ]
+  },
+  "reads": {
+    "metrics": {
+      "cold_seconds": 0.20532854204066098,
+      "warm_seconds": [
+        0.08463516703341156,
+        0.04930508299730718,
+        0.11663541698362678,
+        0.055320165934972465,
+        0.050142375053837895
+      ],
+      "warm_p95_seconds": 0.11663541698362678
+    },
+    "end_state": {
+      "cold_seconds": 0.1918280840618536,
+      "warm_seconds": [
+        0.04458883299957961,
+        0.04608166706748307,
+        0.1303523340029642,
+        0.045625500031746924,
+        0.04524641705211252
+      ],
+      "warm_p95_seconds": 0.1303523340029642,
+      "patient_total": 111,
+      "returned_patients": 111
+    },
+    "census": {
+      "cold_seconds": 0.04629141709301621,
+      "warm_seconds": [
+        0.046457791002467275,
+        0.040221625007689,
+        0.061777958064340055,
+        0.0729310839669779,
+        0.04288316692691296
+      ],
+      "warm_p95_seconds": 0.0729310839669779
+    },
+    "events": {
+      "cold_seconds": 0.11817987496033311,
+      "warm_seconds": [
+        0.045301291975192726,
+        0.038765582954511046,
+        0.04234770790208131,
+        0.04157925001345575,
+        0.040394832962192595
+      ],
+      "warm_p95_seconds": 0.045301291975192726
+    },
+    "checkpoints": {
+      "cold_seconds": 0.037342124967835844,
+      "warm_seconds": [
+        0.03595925006084144,
+        0.03501037496607751,
+        0.035427415976300836,
+        0.036312749958597124,
+        0.13787937501911074
+      ],
+      "warm_p95_seconds": 0.13787937501911074
+    }
+  },
+  "worker_execution_metrics": {
+    "wall_seconds": 20.839977871000883,
+    "cpu_seconds": 9.89367476,
+    "terminated_children_cpu_seconds": 82.712096,
+    "process_peak_rss_bytes": 339615744,
+    "largest_terminated_child_peak_rss_bytes": 316592128,
+    "cpu_scope": "current process plus separately reported terminated child CPU",
+    "memory_scope": "process-lifetime high-water RSS, not an incremental allocation or sum of child peaks"
+  },
+  "worker_started_to_durable_completion_seconds": 20.839977871000883
+}

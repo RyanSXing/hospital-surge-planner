@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-18T06:51:58.325545+00:00",
+  "application_commit": "db8ea09762e1dcd38b13a273edf3cb2929baafe1",
+  "application_files_unchanged": 192,
+  "production_bundle_files_unchanged": 45,
+  "verification_files_unchanged": 112,
+  "all_hashes_match_tested_build": true,
+  "only_post_deployment_evidence_added": true
+}

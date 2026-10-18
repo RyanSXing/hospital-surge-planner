@@ -1,0 +1,33 @@
+{
+  "deployed_at": "2026-10-18T06:50:04.823200+00:00",
+  "code_commit": "db8ea09762e1dcd38b13a273edf3cb2929baafe1",
+  "image_tag": "db8ea09762e1dcd38b13a273edf3cb2929baafe1",
+  "archive": {
+    "commit": "db8ea09762e1dcd38b13a273edf3cb2929baafe1",
+    "members": 413,
+    "sha256": "70ebed1029019fc0b59c3f853316d33dcc263f11597b215b8cb540e939422628"
+  },
+  "host": "131.186.0.156",
+  "directory": "/opt/hospital-surge-planner",
+  "steps": [
+    "(build_dir=$(mktemp -d /opt/hospital-surge-planner/.build-XXXXXX) || exit 1; trap 'rm -rf -- \"$build_dir\"' EXIT; tar -xzf release.tar.gz -C \"$build_dir\" && install -m 600 .env \"$build_dir/.env\" && CODE_COMMIT=db8ea09762e1dcd38b13a273edf3cb2929baafe1 docker compose --env-file \"$build_dir/.env\" -f \"$build_dir/infra/compose.yaml\" --profile tls build)",
+    "tar -xzf release.tar.gz",
+    "CODE_COMMIT=db8ea09762e1dcd38b13a273edf3cb2929baafe1 docker compose --env-file .env -f infra/compose.yaml up -d postgres redis",
+    "CODE_COMMIT=db8ea09762e1dcd38b13a273edf3cb2929baafe1 docker compose --env-file .env -f infra/compose.yaml run --rm api .venv/bin/alembic -c infra/alembic.ini upgrade head",
+    "CODE_COMMIT=db8ea09762e1dcd38b13a273edf3cb2929baafe1 docker compose --env-file .env -f infra/compose.yaml up -d api worker web",
+    "CODE_COMMIT=db8ea09762e1dcd38b13a273edf3cb2929baafe1 docker compose --env-file .env -f infra/compose.yaml --profile tls up -d tls",
+    "CODE_COMMIT=db8ea09762e1dcd38b13a273edf3cb2929baafe1 docker compose --env-file .env -f infra/compose.yaml ps"
+  ],
+  "status": "accepted",
+  "accepted_at": "2026-10-18T06:52:43.304023+00:00",
+  "initial_generic_follow_up_list": [
+    "authenticated smoke run",
+    "OCI artifact upload/download",
+    "full workflow verification",
+    "backup and restore test",
+    "record image digests and benchmark"
+  ],
+  "required_next": [],
+  "acceptance_evidence": "evidence/simulation-logic-audit/acceptance.json",
+  "acceptance_scope": "Varied7/14/30-day logic audit; completed-care shortage boundary correction; historic1.0/1.1 reproducibility and matching1.2 comparisons."
+}

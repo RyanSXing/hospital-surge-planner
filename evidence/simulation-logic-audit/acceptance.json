@@ -1,0 +1,39 @@
+{
+  "accepted_at": "2026-10-18T06:52:43.304023+00:00",
+  "status": "accepted",
+  "operations_model_version": "1.2",
+  "application_commit": "db8ea09762e1dcd38b13a273edf3cb2929baafe1",
+  "checks": {
+    "backend_and_frontend_and_desktop_passed": true,
+    "all_hosted_assets_match_tested_bundle": true,
+    "all_six_services_running_and_healthy": true,
+    "application_services_at_tested_commit": true,
+    "persistent_volumes_preserved": true,
+    "protected_api_records_preserved_before_live_smoke": true,
+    "protected_stored_records_unchanged_after_live_smoke": true,
+    "source_bundle_and_tests_unchanged": true,
+    "live_ten_replication_smoke_passed": true,
+    "saved_settings_and_previous_results_unchanged": true,
+    "live_patient_conservation_passed": true,
+    "no_new_browser_errors_or_warnings": true
+  },
+  "backend_unique_tests_passed": 314,
+  "frontend_tests_passed": 281,
+  "desktop_workflows_passed": 11,
+  "hosted_assets_checked": 45,
+  "protected_stored_records_preserved": 23,
+  "live_run_group_id": "run_2088efd055e04fac8875",
+  "live_run_saved_revision": 5,
+  "live_run_median_wait_hours": 0.0,
+  "evidence": "live-verified-summary.jpg",
+  "scope": "Varied7/14/30-day logic audit; completed-care shortage boundary correction; historic1.0/1.1 reproducibility and matching1.2 comparisons.",
+  "data_changes": "One new ten-replication run under unchanged egg wo settings was intentionally added after preservation checks. Existing scenario settings and stored protected records are unchanged.",
+  "limitations": [
+    "Finite engineering scenarios and seeded regressions cannot prove every possible input combination.",
+    "Synthetic durations, resource ratios and access targets were not calibrated against observed hospital operations."
+  ],
+  "metric_definitions_to_remember": [
+    "Success score is first treatment within24 elapsed hours among eligible arrivals; it does not mean admission within24h or clinical outcome.",
+    "Staff/equipment loss restricts new placements and reports existing occupied deficits without ejecting patients, as specified; supply outages and explicit disruptions pause care clocks."
+  ]
+}

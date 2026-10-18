@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-18T06:51:59.640070+00:00",
+  "status": "passed",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+  "scenario_name": "egg wo",
+  "saved_revision": 5,
+  "run_group_id": "run_2088efd055e04fac8875",
+  "prior_run_group_id": "run_c52206dca21e42d3ac02",
+  "operations_model_version": "1.2",
+  "replications_completed": 10,
+  "saved_settings_unchanged": true,
+  "all_scalar_metrics_match_prior_unaffected_scenario": true,
+  "prior_results_unchanged": true,
+  "all_patient_conservation_checks_passed": true,
+  "median_average_wait_per_patient_hours": 0.0,
+  "median_average_supplies_percent": 98.34883007560978,
+  "median_access_score_percent": 100.0,
+  "note": "This saved plan has no disruptions or exhausted supplies, so1.2 should preserve its corrected1.1 results. Boundary changes were verified independently in controlled local cases.",
+  "live_url": "https://hospital-surge.131.186.0.156.sslip.io/?view=analysis&analysis=summary&scenario=scenario_94af2d4fa6dc4d6f8863&run=run_2088efd055e04fac8875"
+}

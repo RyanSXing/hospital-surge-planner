@@ -1,0 +1,12 @@
+{
+  "question": "Where is the main bottleneck in the saved results for this scenario?",
+  "scenario_id": "scenario_434d49b7278c40e5a1c1",
+  "run_id": "run_0e24e7b6a42846d5928b",
+  "actual_provider": "openai.gpt-oss-120b through OCI",
+  "observed_answer": "Across the completed simulations, the main recorded bottleneck was no staffed bed available in Emergency department. First recorded: Oct 16, 2026, 5:54 PM CDT. This is the earliest occurrence across simulations. It had the greatest mean recorded waiting burden. Median peak queue for this constraint: 130.5 patients. Average wait per patient: 7.7 hours (median across simulations). Constraint categories can overlap. Review the recorded measures and source links below; no planning changes were applied.",
+  "independent_saved_metrics_wait_hours": 7.7248990403313105,
+  "displayed_wait_matches_saved_metrics": true,
+  "planning_changes_applied": 0,
+  "new_simulations": 0,
+  "source": "Visible browser answer and separate authenticated saved-metrics GET"
+}

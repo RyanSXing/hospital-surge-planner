@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-18T11:28:50.147540+00:00",
+  "status": {
+    "name": "Sunfire",
+    "guide_version": "sunfire-planning-v1",
+    "available": true,
+    "model": "openai.gpt-oss-120b",
+    "region": "us-chicago-1",
+    "code": "ready",
+    "retryable": false
+  },
+  "new_inference_pings": 0
+}

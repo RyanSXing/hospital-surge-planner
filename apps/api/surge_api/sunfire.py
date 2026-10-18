@@ -21,6 +21,7 @@ from .db import AuditEvent, Document, Idempotency, Job, digest, now, uid
 from .domain import add_document, date, serialize
 from .scenario_comparisons import scenario_end
 from .sunfire_diffs import configuration_rows
+from .sunfire_results import bottleneck_summary, recorded_main_constraint
 from .sunfire_schemas import (
     ApplyAction,
     ChatCreate,
@@ -398,7 +399,11 @@ def evidence_view(name, value, index):
                 }
                 for unit in snapshot["units"]
             ]
-        links = [{"kind": "run", "label": "View recorded results", "run_group_id": source["run_group_id"]}]
+        links = (
+            [{"kind": "run", "label": "View recorded results", "run_group_id": source["run_group_id"]}]
+            if source.get("run_group_id")
+            else []
+        )
         if snapshot:
             links.append(
                 {
@@ -409,24 +414,21 @@ def evidence_view(name, value, index):
                     "at": source["at"],
                 }
             )
-        bottlenecks = value.get("bottlenecks")
-        if isinstance(bottlenecks, dict) and bottlenecks.get("evidence_available") is True:
-            rows = bottlenecks.get("units") or bottlenecks.get("categories") or []
-            first = rows[0] if rows else None
-            if first and first.get("first_at"):
-                replication = first.get("first_replication_id") or source.get("replication_id")
-                if replication:
-                    links.append(
-                        {
-                            "kind": "replay",
-                            "label": "View recorded bottleneck",
-                            "run_group_id": source["run_group_id"],
-                            "replication_id": replication,
-                            "at": first["first_at"],
-                        }
-                    )
+        main = value["main_bottleneck"] if "main_bottleneck" in value else recorded_main_constraint(value)
+        if main and main.get("first_at") and main.get("replication_id"):
+            links.append(
+                {
+                    "kind": "replay",
+                    "label": "View recorded bottleneck",
+                    "run_group_id": source["run_group_id"],
+                    "replication_id": main["replication_id"],
+                    "at": main["first_at"],
+                }
+            )
         summary = value.get("reason") or source["evidence_label"]
-        if source.get("matches_current_draft") is False:
+        if value.get("answer_focus") == "bottleneck" and not period and not snapshot:
+            summary = bottleneck_summary(value, main)
+        elif source.get("matches_current_draft") is False:
             summary += ". These results use different saved settings from the current unsaved draft."
         return {
             "id": f"evidence_{index}",

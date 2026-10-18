@@ -1,8 +1,8 @@
 {
-  "verified_at": "2026-10-18T11:23:44.951020+00:00",
+  "verified_at": "2026-10-18T11:36:11.995428+00:00",
   "all_passed": true,
   "frontend_tests": 471,
-  "backend_tests": 231,
+  "backend_tests": 252,
   "backend_scopes": {
     "backend-regressions.xml": {
       "tests": 87,
@@ -10,8 +10,8 @@
       "errors": 0,
       "skipped": 0
     },
-    "backend-durable-run-history.xml": {
-      "tests": 144,
+    "backend-bottleneck-readback.xml": {
+      "tests": 165,
       "failures": 0,
       "errors": 0,
       "skipped": 0
@@ -49,6 +49,7 @@
   "scope_notes": [
     "New assistant orchestration/provider tests plus existing API, durable worker, manual configuration, arrivals and library-comparison regressions.",
     "The complete historical backend and browser suites were not repeated.",
+    "The final read-only bottleneck repair was covered by the latest backend/provider suite and an actual-provider UI question. The16 desktop planning/auth/manual cases retain their earlier successful attribution; their frontend and action execution logic are unchanged.",
     "Earlier failed real-provider attempts were retained privately and prompted fixes; final reported browser cases must pass without retries.",
     "No new performance, broad model benchmark, security-scan or restoration claim."
   ]

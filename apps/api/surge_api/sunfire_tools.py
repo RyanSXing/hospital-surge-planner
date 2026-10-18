@@ -25,9 +25,16 @@ from .scenario_comparisons import (
     compare_saved_scenarios,
     measurement_start,
     scenario_end,
+    scenario_side,
 )
 from .schemas import Condition, Intervention, ScenarioEvent, ScenarioPatch, command_dict
 from .sunfire_diffs import configuration_rows
+from .sunfire_results import (
+    bottleneck_question,
+    burden,
+    recorded_main_constraint,
+    whole_horizon_bottleneck_intent,
+)
 from .sunfire_schemas import TOOL_MODELS, DraftToken
 
 GUIDE_VERSION = "sunfire-planning-v1"
@@ -1285,6 +1292,18 @@ def run_evidence(session, user, capture, arguments):
         "scalar_metrics": None,
         "bottlenecks": None,
         "non_additive_constraints": True,
+        "unit_names": {
+            identity: (
+                {"ed": "Emergency department", "icu": "Intensive care", "ward": "Ward"}.get(
+                    unit["kind"], "Hospital unit"
+                )
+                if not unit.get("name")
+                or unit.get("name") == identity
+                or unit["name"].lower() in {"ed", "icu"}
+                else unit["name"]
+            )
+            for identity, unit in main_units(dataset.data).items()
+        },
     }
     if run.status != "SUCCEEDED":
         return {
@@ -1431,6 +1450,9 @@ def run_evidence(session, user, capture, arguments):
             "bottlenecks": None,
             "note": "These are original recorded daily measures; whole-horizon mean waiting/success and full-horizon bottlenecks are deliberately unavailable for this day.",
         }
+    # Rank from the complete recorded ledger before bounding tool transport;
+    # global top-N rows can otherwise omit every unit of the top category.
+    main = recorded_main_constraint({**base, "bottlenecks": bottlenecks})
     if isinstance(bottlenecks, dict):
         bottlenecks = {
             **{
@@ -1439,7 +1461,17 @@ def run_evidence(session, user, capture, arguments):
                 if key not in {"categories", "units", "resources"}
             },
             **{
-                key: copy.deepcopy(bottlenecks.get(key, [])[:6])
+                key: copy.deepcopy(
+                    sorted(bottlenecks[key], key=lambda row: -(burden(row.get("patient_hours")) or 0))[:6]
+                )
+                if isinstance(bottlenecks.get(key), list)
+                and all(
+                    isinstance(row, dict)
+                    and burden(row.get("patient_hours")) is not None
+                    and burden(row["patient_hours"]) >= 0
+                    for row in bottlenecks[key]
+                )
+                else None
                 for key in ("categories", "units", "resources")
             },
         }
@@ -1448,6 +1480,7 @@ def run_evidence(session, user, capture, arguments):
         "available": True,
         "scalar_metrics": copy.deepcopy(metrics),
         "bottlenecks": bottlenecks,
+        "main_bottleneck": main,
         "historical_or_draft_mismatch": not source["matches_current_draft"],
         "note": "Missing measures remain unavailable. Constraint categories can overlap and must not be added.",
     }
@@ -1524,7 +1557,42 @@ class ToolRuntime:
                 },
             }
         if name == "read_results":
-            return run_evidence(self.session, self.user, self.capture, arguments)
+            if whole_horizon_bottleneck_intent(self.message):
+                # A generic main-bottleneck question refers to the current saved
+                # scenario's full ensemble, not a day/moment invented by the
+                # model or implicitly inherited from a selected replay cursor.
+                side = scenario_side(self.session, self.user, row, self.project_job)
+                if side["state"] != "ready":
+                    return {
+                        "source": {
+                            "run_group_id": None,
+                            "scenario_id": row.id,
+                            "source_draft_revision": None,
+                            "requested_saved_revision": row.revision,
+                            "dataset_version_id": row.data["dataset_version_id"],
+                            "scope": "ensemble",
+                            "timezone": row.data.get("timezone"),
+                            "evidence_label": "Current saved scenario results",
+                        },
+                        "available": False,
+                        "status": side["state"],
+                        "reason": " ".join(item["message"] for item in side["reasons"][:3])
+                        or "Matching completed results for this saved configuration are unavailable.",
+                        "scalar_metrics": None,
+                        "bottlenecks": None,
+                        "answer_focus": "bottleneck",
+                    }
+                arguments = {
+                    "run_group_id": side["run"]["id"],
+                    "scope": "ensemble",
+                    "local_date": None,
+                    "at": None,
+                    "replication_id": None,
+                }
+            result = run_evidence(self.session, self.user, self.capture, arguments)
+            if bottleneck_question(self.message):
+                result["answer_focus"] = "bottleneck"
+            return result
         if name == "find_saved_scenarios":
             query = (
                 select(

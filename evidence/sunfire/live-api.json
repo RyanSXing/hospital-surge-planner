@@ -1,0 +1,157 @@
+{
+  "checked_at": "2026-10-18T11:28:28.270167+00:00",
+  "base_url": "https://aegisconsole.131.186.0.156.sslip.io",
+  "all_checks_passed": true,
+  "checks": [
+    {
+      "check": "saved_library_pair_uses_current_revisions",
+      "passed": true,
+      "sides": [
+        {
+          "position": "left",
+          "scenario_id": "scenario-demo-v1-1-0-hospital_baseline-41021-365",
+          "revision": 4,
+          "state": "ready",
+          "run_id": "run_7648202b2e6f4d5e9d6b"
+        },
+        {
+          "position": "right",
+          "scenario_id": "scenario_6cd01bff3f2e42fcbd59",
+          "revision": 2,
+          "state": "ready",
+          "run_id": "run_e4effd4adbdf4c54b019"
+        }
+      ],
+      "comparable": true
+    },
+    {
+      "check": "incompatible_horizons_do_not_fabricate_differences",
+      "passed": true,
+      "reasons": [
+        "different_horizon",
+        "different_end"
+      ]
+    },
+    {
+      "check": "edited_bed_inventory_matches_frozen_configuration",
+      "passed": true,
+      "run_id": "run_892e59f7876c492cb4b2",
+      "replication_id": "run_892e59f7876c492cb4b2_rep_0000",
+      "at": "2026-10-16T05:00:00Z",
+      "units": [
+        {
+          "unit_id": "UNIT-ED",
+          "physical": 30,
+          "staffed": 30,
+          "occupied": 12,
+          "available": 18,
+          "installed_slots": 30
+        },
+        {
+          "unit_id": "UNIT-ICU",
+          "physical": 12,
+          "staffed": 12,
+          "occupied": 8,
+          "available": 4,
+          "installed_slots": 12
+        },
+        {
+          "unit_id": "UNIT-WARD-A",
+          "physical": 32,
+          "staffed": 12,
+          "occupied": 26,
+          "available": 0,
+          "installed_slots": 32
+        },
+        {
+          "unit_id": "UNIT-WARD-B",
+          "physical": 40,
+          "staffed": 40,
+          "occupied": 25,
+          "available": 15,
+          "installed_slots": 40
+        },
+        {
+          "unit_id": "UNIT-WARD-C",
+          "physical": 20,
+          "staffed": 20,
+          "occupied": 13,
+          "available": 7,
+          "installed_slots": 20
+        }
+      ],
+      "flow_counts": {
+        "FAC-MAIN": {
+          "arrivals": 0,
+          "discharges": 0
+        }
+      },
+      "frozen_ward_a_capacity": 32
+    },
+    {
+      "check": "continuous_playback_is_complete_exact_and_frozen",
+      "passed": true,
+      "run_id": "run_892e59f7876c492cb4b2",
+      "replication_id": "run_892e59f7876c492cb4b2_rep_0000",
+      "windows": [
+        {
+          "start_at": "2026-10-16T05:00:00Z",
+          "end_at": "2026-10-16T09:00:00Z",
+          "frames": 29,
+          "physical_events": 15,
+          "exact_observations_checked": [
+            "2026-10-16T05:00:00+00:00",
+            "2026-10-16T05:15:15+00:00",
+            "2026-10-16T06:05:30+00:00",
+            "2026-10-16T08:30:00+00:00",
+            "2026-10-16T09:00:00+00:00"
+          ]
+        },
+        {
+          "start_at": "2026-10-16T09:00:00Z",
+          "end_at": "2026-10-16T13:00:00Z",
+          "frames": 16,
+          "physical_events": 11,
+          "exact_observations_checked": [
+            "2026-10-16T09:00:00+00:00",
+            "2026-10-16T09:15:15+00:00",
+            "2026-10-16T10:05:30+00:00",
+            "2026-10-16T12:30:00+00:00",
+            "2026-10-16T13:00:00+00:00"
+          ]
+        },
+        {
+          "start_at": "2026-10-17T05:00:00Z",
+          "end_at": "2026-10-17T09:00:00Z",
+          "frames": 2,
+          "physical_events": 0,
+          "exact_observations_checked": [
+            "2026-10-17T05:00:00+00:00",
+            "2026-10-17T05:15:15+00:00",
+            "2026-10-17T06:05:30+00:00",
+            "2026-10-17T08:30:00+00:00",
+            "2026-10-17T09:00:00+00:00"
+          ]
+        }
+      ],
+      "cross_window_boundary_matches": true,
+      "oversized_window_rejected": true,
+      "input_sha256_unchanged": true
+    },
+    {
+      "check": "read_only_scenario_preserved",
+      "passed": true,
+      "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+      "revision": 8
+    }
+  ],
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  },
+  "production_export_downloads": 0,
+  "scenario_mutations": 0,
+  "new_simulations": 0
+}

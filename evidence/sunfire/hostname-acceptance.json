@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-10-18T11:28:21.177450+00:00",
+  "primary_url": "https://aegisconsole.131.186.0.156.sslip.io",
+  "checks": [
+    {
+      "host": "aegisconsole.131.186.0.156.sslip.io",
+      "addresses": [
+        "131.186.0.156"
+      ],
+      "https_validated": true,
+      "page_status": 200,
+      "index_sha256": "15954a8dca6f6c8dac29307e0dce507e1aba63b1a8fbfd012e0cfa17922ab862",
+      "exact_origin_login_succeeded": true,
+      "unrelated_origin_rejected": true,
+      "unauthenticated_access_rejected": true,
+      "secure_http_only_host_only_cookie": true,
+      "workspace_loaded": true,
+      "logout_succeeded": true
+    },
+    {
+      "host": "hospital-surge.131.186.0.156.sslip.io",
+      "addresses": [
+        "131.186.0.156"
+      ],
+      "https_validated": true,
+      "page_status": 200,
+      "index_sha256": "15954a8dca6f6c8dac29307e0dce507e1aba63b1a8fbfd012e0cfa17922ab862",
+      "exact_origin_login_succeeded": true,
+      "unrelated_origin_rejected": true,
+      "unauthenticated_access_rejected": true,
+      "secure_http_only_host_only_cookie": true,
+      "workspace_loaded": true,
+      "logout_succeeded": true
+    }
+  ],
+  "all_checks_passed": true,
+  "same_application_on_both_hosts": true,
+  "new_resources_created": 0,
+  "scenario_mutations": 0,
+  "new_simulations": 0
+}

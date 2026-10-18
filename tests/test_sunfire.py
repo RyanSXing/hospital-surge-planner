@@ -11,7 +11,7 @@ from surge_api import sunfire_provider, worker
 from surge_api.db import AuditEvent, Document, Job
 from surge_api.domain import add_document, normalize_dataset
 from surge_api.main import create_app
-from surge_api.sunfire import configuration_overview, project_run
+from surge_api.sunfire import configuration_overview, evidence_view, project_run
 from surge_api.sunfire_schemas import PrepareArguments
 from surge_api.sunfire_tools import (
     PlanningError,
@@ -1378,3 +1378,121 @@ def test_configuration_overview_preserves_unknowns_and_does_not_swallow_specific
         "Explain this configuration in detail",
     ):
         assert configuration_overview(question, captured) is None
+
+
+def test_main_bottleneck_question_ignores_model_invented_day_and_example_filters_and_reads_actual_saved_ensemble(
+    sf, monkeypatch
+):
+    updated = sf.patch(
+        f"/api/scenarios/{sf.scenario['id']}",
+        headers={"If-Match": str(sf.scenario["revision"])},
+        json={"hospital_operations": {"disruption_chance_percent": 100}},
+    )
+    assert updated.status_code == 200, updated.text
+    sf.scenario = updated.json()
+    sf.capture = {**sf.capture, "saved_revision": sf.scenario["revision"], "draft": public_draft(sf.scenario)}
+    run = sf.post("/api/run-groups", json={"scenario_id": sf.scenario["id"]}).json()
+    worker.execute_job(run["id"], sf.database_url)
+    run = sf.get(f"/api/run-groups/{run['id']}").json()
+    session, tool = runtime(sf)
+    message = "Where is the main bottleneck in the saved results for this scenario?"
+    arguments = {
+        "run_group_id": run["id"],
+        "local_date": "2026-10-18",
+        "scope": "example_run",
+        "replication_id": run["selected_replication_id"],
+        "at": sf.scenario["start_at"],
+    }
+    try:
+        tool.message = message
+        actual = tool.call("read_results", arguments)
+        assert actual["available"] and actual["source"]["scope"] == "ensemble"
+        assert "period_metrics" not in actual and "snapshot" not in actual
+        assert actual["scalar_metrics"]["average_wait_per_patient_hours"]["p50"] is not None
+        expected = actual["main_bottleneck"]
+        assert expected and not expected.get("no_attributed_constraint")
+        assert actual["source"]["matches_current_draft"] is True
+        canonical = evidence_view("read_results", actual, 0)
+    finally:
+        session.close()
+    scripted(
+        monkeypatch,
+        [call("read_results", arguments)],
+        final="Nobody waits on October 18, so there is no bottleneck.",
+    )
+    answer = turn(sf, message)
+    assert answer["status"] == "SUCCEEDED" and answer["actions"] == []
+    assert answer["evidence"][0]["summary"] == canonical["summary"]
+    assert expected["label"] in answer["text"] and expected["unit"] in answer["text"]
+    assert "Across the completed simulations" in answer["text"]
+    assert "Nobody waits" not in answer["text"]
+
+
+@pytest.mark.parametrize("stale", [False, True])
+def test_main_bottleneck_without_current_saved_results_is_missing_or_stale_never_zero(sf, stale):
+    old_id = "unasked-model-run"
+    if stale:
+        queued = sf.post("/api/run-groups", json={"scenario_id": sf.scenario["id"]}).json()
+        old_id = queued["id"]
+        worker.execute_job(old_id, sf.database_url)
+        updated = sf.patch(
+            f"/api/scenarios/{sf.scenario['id']}",
+            headers={"If-Match": str(sf.scenario["revision"])},
+            json={"name": "Later saved revision"},
+        )
+        assert updated.status_code == 200
+        current = updated.json()
+        sf.capture = {**sf.capture, "saved_revision": current["revision"], "draft": public_draft(current)}
+    session, tool = runtime(sf)
+    try:
+        tool.message = "Where is the main bottleneck in the saved results for this scenario?"
+        value = tool.call("read_results", {"run_group_id": old_id, "local_date": "2026-10-18"})
+        assert value["available"] is False and value["scalar_metrics"] is None
+        assert value["status"] == ("stale" if stale else "missing")
+        answer = evidence_view("read_results", value, 0)
+        assert all(item["value"] is None for item in answer["values"])
+        assert answer["links"] == []
+        assert (
+            "different saved settings" in answer["summary"]
+            if stale
+            else "Run this saved configuration" in answer["summary"]
+        )
+    finally:
+        session.close()
+
+
+def test_bottleneck_question_preserves_actual_requested_day_exact_moment_and_example_scope(sf):
+    queued = sf.post("/api/run-groups", json={"scenario_id": sf.scenario["id"]}).json()
+    worker.execute_job(queued["id"], sf.database_url)
+    run = sf.get(f"/api/run-groups/{queued['id']}").json()
+    session, tool = runtime(sf)
+    try:
+        tool.message = "Where is the main bottleneck on 2026-10-16?"
+        day = tool.call("read_results", {"run_group_id": run["id"], "local_date": "2026-10-16"})
+        assert day["period_metrics"]["local_date"] == "2026-10-16" and day["scalar_metrics"] is None
+        assert "local-day results for 2026-10-16" in evidence_view("read_results", day, 0)["summary"]
+        tool.message = "Where is the main bottleneck in this one example run?"
+        example = tool.call(
+            "read_results",
+            {
+                "run_group_id": run["id"],
+                "scope": "example_run",
+                "replication_id": run["selected_replication_id"],
+            },
+        )
+        assert example["source"]["scope"] == "example_run"
+        assert "one example run" in evidence_view("read_results", example, 0)["summary"]
+        tool.message = "Where is the main bottleneck at this exact moment in the example run?"
+        exact = tool.call(
+            "read_results",
+            {
+                "run_group_id": run["id"],
+                "scope": "example_run",
+                "replication_id": run["selected_replication_id"],
+                "at": sf.scenario["start_at"],
+            },
+        )
+        assert exact["snapshot"]["at"] == sf.scenario["start_at"] and exact["scalar_metrics"] is None
+        assert exact["source"]["replication_id"] == run["selected_replication_id"]
+    finally:
+        session.close()

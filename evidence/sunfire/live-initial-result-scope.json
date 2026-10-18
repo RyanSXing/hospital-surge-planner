@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-18T11:32:38.839438+00:00",
+  "application_commit": "77c683426ce3bb796978667e18e35387930bf4ba",
+  "question": "Where is the main bottleneck in the saved results for this scenario?",
+  "observed_issue": "The model supplied an unrequested local_date filter, yielding one local day instead of the main full-forecast constraint. Canonical evidence only repeated the scope label, without naming a bottleneck.",
+  "observed_scope": "ensemble local day 2026-10-18",
+  "data_fabricated": false,
+  "planning_changes_applied": 0,
+  "simulation_jobs_created": 0,
+  "resolution": "Require the generic main-bottleneck intent to use matching full-horizon ensemble evidence, and generate a compact answer from ranked recorded categories/unit attribution."
+}

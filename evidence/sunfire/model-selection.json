@@ -1,0 +1,107 @@
+{
+  "at": "2026-10-18T10:55:50.167915+00:00",
+  "subscribed_regions": [
+    "us-chicago-1"
+  ],
+  "selection_unchanged": "openai.gpt-oss-120b",
+  "conclusion": "No newly found plausibly stronger tool-calling model is currently usable through this account without changing access, subscription or infrastructure. GPT-OSS-120B remains the strongest verified fit among the limited functional probes, not a proven universal best.",
+  "counts": {
+    "chat_catalog_rows": 49,
+    "unique_chat_names": 42
+  },
+  "usable_verified": [
+    {
+      "model": "openai.gpt-oss-120b",
+      "evidence": "Actual local adapter and production instance-principal native full typed-tool/history calls succeeded; planning cases required clarification appropriately."
+    },
+    {
+      "model": "meta.llama-4-maverick-17b-128e-instruct-fp8",
+      "evidence": "Actual native typed tool HTTP200; skipped material clarification for an undated100-patient batch."
+    },
+    {
+      "model": "meta.llama-3.3-70b-instruct",
+      "evidence": "Actual small native function call HTTP200; not a comparative benchmark."
+    }
+  ],
+  "on_demand_other_candidates": [
+    {
+      "model": "openai.gpt-oss-20b",
+      "status": "Unprobed smaller variant; no evidence of a stronger fit than120B."
+    },
+    {
+      "model": "meta.llama-4-scout-17b-16e-instruct",
+      "status": "Unprobed smaller-expert variant; no evidence of a stronger fit than already-probed Maverick."
+    },
+    {
+      "model": "cohere.command-a-03-2025",
+      "status": "Two actual native CohereV2 tool probes returnedHTTP500; catalog eligibility is not verified usable inference."
+    }
+  ],
+  "excluded": [
+    {
+      "models": "Current Grok4.7/4.6/4.3/4.20 families",
+      "reason": "All applicable model-specific quota values remain0; Grok4.7 request was explicitly rejected for quota0. Subsequent quota-increase submission was rejected403NotAllowed."
+    },
+    {
+      "models": "Gemini2.5Pro/Flash/FlashLite",
+      "reason": "All three model-specific tokens-per-minute limits are0."
+    },
+    {
+      "models": "Cohere Command A Reasoning",
+      "reason": "Chicago is dedicated-only; account dedicated capacity quotas are0; catalog records an earlier on-demand retirement."
+    },
+    {
+      "models": "Cohere Command A Vision",
+      "reason": "Cohere official limitations explicitly say tool use is unsupported; not suitable for the typed-action agent."
+    },
+    {
+      "models": "Llama3.1 405B and older retired Cohere/Grok aliases",
+      "reason": "Catalog on-demand retirement timestamps precede this check; ACTIVE catalog state alone is not sufficient."
+    },
+    {
+      "models": "Qwen, DeepSeek, Cohere Command A+",
+      "reason": "Not listed in the actual Chicago account catalog or current OCI regional model table."
+    },
+    {
+      "models": "Ashburn/Phoenix offerings",
+      "reason": "Account has no subscription to these regions; no subscriptions/resources were added."
+    }
+  ],
+  "relevant_limits": {
+    "dedicated-unit-a10-count": 0,
+    "dedicated-unit-a100-40g-count": 0,
+    "dedicated-unit-a100-80g-count": 0,
+    "dedicated-unit-b200-count": 0,
+    "dedicated-unit-b300-count": 0,
+    "dedicated-unit-embed-cohere-count": 0,
+    "dedicated-unit-h100-count": 0,
+    "dedicated-unit-h200-count": 0,
+    "dedicated-unit-large-cohere-count": 0,
+    "dedicated-unit-llama2-70-count": 0,
+    "dedicated-unit-rerank-cohere-count": 0,
+    "dedicated-unit-small-cohere-count": 0,
+    "endpoint-per-dedicated-unit-count": 0,
+    "gemini-2-5-flash-chat-tokens-per-minute-count": 0,
+    "gemini-2-5-flash-lite-chat-tokens-per-minute-count": 0,
+    "gemini-2-5-pro-chat-tokens-per-minute-count": 0,
+    "grok-4-2-multi-agent-tokens-per-minute-count": 0,
+    "grok-4-2-non-reasoning-tokens-per-minute-count": 0,
+    "grok-4-2-reasoning-tokens-per-minute-count": 0,
+    "grok-4-3-requests-per-minute-count": 0,
+    "grok-4-3-tokens-per-minute-count": 0,
+    "grok-4-6-requests-per-minute-count": 0,
+    "grok-4-6-tokens-per-minute-count": 0,
+    "grok-4-7-requests-per-minute-count": 0,
+    "grok-4-7-tokens-per-minute-count": 0,
+    "grok-4-chat-tokens-per-minute-count": 0,
+    "grok-4-fast-chat-tokens-per-minute-count": 0,
+    "max-on-demand-chat-request-per-minute-count": 500
+  },
+  "sources": {
+    "regional_availability": "https://docs.oracle.com/en-us/iaas/Content/generative-ai/model-endpoint-regions.htm",
+    "vision_no_tools": "https://docs.cohere.com/docs/command-a-vision",
+    "gptoss_capabilities": "https://docs.oracle.com/en-us/iaas/Content/generative-ai/openai-gpt-oss-120b.htm"
+  },
+  "new_inference_calls": 0,
+  "app_or_iam_mutations": false
+}

@@ -1,0 +1,586 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/configuration-controls.spec.ts",
+      "e2e/arrival-curve.spec.ts",
+      "e2e/hospital-comparison.spec.ts",
+      "--project=desktop",
+      "--output=../../output/playwright/sunfire/manual-test-results"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-browser-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "arrival-curve.spec.ts",
+      "file": "arrival-curve.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "14-day edited curve keeps controls available and drives actual simulated arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9259,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:59:32.455Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-controls-14-days",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-64f10ab935295a5343e0f5ecbe74856665bfdab7.png"
+                    },
+                    {
+                      "name": "arrival-controls-14-days-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-middle-91a9ff33f4ae50cbdc7a2cd8eff9d561b98a3297.png"
+                    },
+                    {
+                      "name": "arrival-controls-14-days-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-lower-3bcd5e45f8642e6adf9ad613c2305b6563ccfb69.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-25a2c530de57d89b2804",
+          "file": "arrival-curve.spec.ts",
+          "line": 21,
+          "column": 3
+        },
+        {
+          "title": "30-day edited curve keeps controls available and drives actual simulated arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10548,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:59:42.512Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-controls-30-days",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-ec9c1c03cce3410f9de7eaabf1d9db98ba7bc43e.png"
+                    },
+                    {
+                      "name": "arrival-controls-30-days-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-middle-2a4ed0ca27e17722b0034e5f4f70689985f8147a.png"
+                    },
+                    {
+                      "name": "arrival-controls-30-days-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-lower-9a49d20cf3e8e34359c6e499b7b4cb6ff401914d.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-3c4001714784d53a47bb",
+          "file": "arrival-curve.spec.ts",
+          "line": 21,
+          "column": 3
+        },
+        {
+          "title": "dragged daily arrivals keep a stable axis, one undo and exact saved simulation inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6556,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:59:53.065Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-curve-edited",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-8eec808d62b946bab39b17dfe261335a679705bb.png"
+                    },
+                    {
+                      "name": "arrival-curve-edited-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-middle-ea02ee2afed11a60e2e9566c3dac89f1f4994be6.png"
+                    },
+                    {
+                      "name": "arrival-curve-edited-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-lower-435386565637a3581c4cc1d6a69d96e72bc31f36.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-0a31090c5fe080900e88",
+          "file": "arrival-curve.spec.ts",
+          "line": 212,
+          "column": 1
+        },
+        {
+          "title": "daily arrival keyboard controls stop at the fixed scheduled-batch minimum",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2581,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:59:59.629Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-6fdb70f75fecac7c9361",
+          "file": "arrival-curve.spec.ts",
+          "line": 442,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "configuration-controls.spec.ts",
+      "file": "configuration-controls.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop configuration saves editable beds and all staff roles into a real immutable simulation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9618,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T11:00:02.239Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "configuration-capacity",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-e0f88bd635359e414a05ac8fbeeca3f7dae57efa.png"
+                    },
+                    {
+                      "name": "configuration-capacity-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-middle-a2eb6d08f390c6916fbb81ea188adfd01c2ddc4d.png"
+                    },
+                    {
+                      "name": "configuration-capacity-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-lower-ecaa45b247dab4a4337cc4aac7bb5bd6512eab20.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8046fb91dcc545788072-a8b7b1c5c4ca9fcfcbe5",
+          "file": "configuration-controls.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "hospital-comparison.spec.ts",
+      "file": "hospital-comparison.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "two library scenarios run explicitly, compare actual saved results, preserve settings, and navigate without automated presets",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-comparison.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12903,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T11:00:11.906Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-comparison.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "saved-scenario-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/hospital-comparison-two-li-e95fe-e-without-automated-presets-desktop/attachments/saved-scenario-comparison-e27d551f02470f3de6171ba524493ce3e5a66c1f.png"
+                    },
+                    {
+                      "name": "saved-scenario-comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/hospital-comparison-two-li-e95fe-e-without-automated-presets-desktop/attachments/saved-scenario-comparison-middle-1d01a959ef50b39b4901f252a456715c907fa297.png"
+                    },
+                    {
+                      "name": "saved-scenario-comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/hospital-comparison-two-li-e95fe-e-without-automated-presets-desktop/attachments/saved-scenario-comparison-lower-7db12c30d1562e1592db740f4f33050f1a6f7933.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-419932ede41c23a77727",
+          "file": "hospital-comparison.spec.ts",
+          "line": 79,
+          "column": 1
+        },
+        {
+          "title": "a changed saved revision is never silently run, and different horizons never receive a ranking or overlay",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-comparison.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16011,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T11:00:24.813Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-comparison.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "saved-comparison-incompatible-periods",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/hospital-comparison-a-chan-16853-eceive-a-ranking-or-overlay-desktop/attachments/saved-comparison-incompatible-periods-297ecf5d7d089d08ab3f5323b53fc1ff4c62583c.png"
+                    },
+                    {
+                      "name": "saved-comparison-incompatible-periods-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/hospital-comparison-a-chan-16853-eceive-a-ranking-or-overlay-desktop/attachments/saved-comparison-incompatible-periods-middle-b769ccc9a9c68ef987e8fd485aac0d866d0fd0c1.png"
+                    },
+                    {
+                      "name": "saved-comparison-incompatible-periods-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/manual-test-results/hospital-comparison-a-chan-16853-eceive-a-ranking-or-overlay-desktop/attachments/saved-comparison-incompatible-periods-lower-14845521239c3d65c8f9f513c877508d0ae449d7.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-14a58cee78134be3fb6e",
+          "file": "hospital-comparison.spec.ts",
+          "line": 317,
+          "column": 1
+        },
+        {
+          "title": "duplicate or historical comparison links fall back to two distinct library scenarios without legacy preset requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-comparison.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4456,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T11:00:40.832Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-comparison.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-07af5d353c3ffeca5ca2",
+          "file": "hospital-comparison.spec.ts",
+          "line": 427,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T10:59:32.162Z",
+    "duration": 73256.899,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

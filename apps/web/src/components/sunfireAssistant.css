@@ -1,0 +1,512 @@
+.app-shell.sunfire-open {
+  --sunfire-width: 340px;
+  grid-template-columns: var(--sidebar) minmax(0, 1fr) var(--sunfire-width);
+}
+.app-shell.sunfire-expanded {
+  --sunfire-width: 380px;
+}
+.sunfire-launcher {
+  position: fixed;
+  right: 20px;
+  bottom: 35px;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 9px 15px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 3px 16px #1b24311a;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+.sunfire-launcher small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+.sunfire-launcher[hidden],
+.sunfire-assistant[hidden] {
+  display: none;
+}
+.sunfire-assistant {
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface);
+  color: var(--text);
+  border-left: 1px solid var(--border);
+  font-size: 12px;
+}
+.sunfire-assistant--compact {
+  align-self: end;
+  height: min(560px, calc(100% - 24px));
+  margin: 12px 12px 28px 0;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  box-shadow: 0 3px 14px #1b24310c;
+}
+.sunfire-assistant--expanded {
+  height: 100%;
+}
+.sunfire-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 62px;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.sunfire-title,
+.sunfire-header-actions,
+.sunfire-message-heading,
+.sunfire-card-actions,
+.sunfire-action-card > header,
+.sunfire-run-card > header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.sunfire-title h2 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.3;
+}
+.sunfire-title p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+.sunfire-symbol,
+.sunfire-welcome-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.sunfire-header-actions {
+  gap: 2px;
+}
+.sunfire-header-actions .mantine-ActionIcon-root {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+}
+.sunfire-context {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  min-height: 35px;
+  padding: 8px 14px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.sunfire-context > i {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--success);
+}
+.sunfire-context > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.sunfire-context strong {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.sunfire-context small {
+  margin-left: auto;
+  white-space: nowrap;
+}
+.sunfire-conversation-picker {
+  flex-shrink: 0;
+  padding: 0 12px 10px;
+}
+.sunfire-conversation-picker .mantine-NativeSelect-input {
+  height: 28px;
+  min-height: 28px;
+  border-color: var(--border-subtle);
+  border-radius: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.sunfire-transcript {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 16px 14px;
+  scrollbar-width: thin;
+}
+.sunfire-welcome {
+  padding: 8px 0 18px;
+}
+.sunfire-welcome h3 {
+  margin: 12px 0 6px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.sunfire-welcome p,
+.sunfire-evidence-card p,
+.sunfire-action-card p,
+.sunfire-run-card p {
+  margin: 7px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.sunfire-welcome > div {
+  display: grid;
+  gap: 6px;
+  margin-top: 16px;
+}
+.sunfire-welcome > div > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  padding: 9px 10px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  text-align: left;
+}
+.sunfire-welcome > div > button:hover {
+  background: var(--accent-soft);
+}
+.sunfire-welcome > div > button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+.sunfire-message {
+  min-width: 0;
+  margin: 0 0 20px;
+}
+.sunfire-message-heading {
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+}
+.sunfire-message-heading svg {
+  color: var(--accent);
+}
+.sunfire-message-content {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.sunfire-message--user .sunfire-message-content {
+  padding: 10px 12px;
+  border-radius: 5px;
+  background: var(--accent-soft);
+}
+.sunfire-action-group {
+  margin-top: 12px;
+}
+.sunfire-action-card,
+.sunfire-run-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-top: 10px;
+  background: var(--surface);
+}
+.sunfire-action-card > header,
+.sunfire-run-card > header {
+  padding: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--accent);
+  font-size: 11px;
+}
+.sunfire-action-card > header strong,
+.sunfire-run-card > header strong {
+  font-weight: 600;
+}
+.sunfire-action-card p,
+.sunfire-run-card > p,
+.sunfire-run-card > progress {
+  margin: 8px 10px;
+}
+.sunfire-change-table {
+  font-size: 10px;
+  line-height: 1.55;
+}
+.sunfire-change-head,
+.sunfire-change-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr) 12px minmax(0, 0.8fr);
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+}
+.sunfire-change-head {
+  background: var(--raised);
+  color: var(--muted);
+  font-size: 9px;
+}
+.sunfire-change-row + .sunfire-change-row {
+  border-top: 1px solid var(--border-subtle);
+}
+.sunfire-change-row > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.sunfire-change-row small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+.sunfire-change-row strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+.sunfire-action-card > footer,
+.sunfire-card-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 9px 10px;
+}
+.sunfire-action-card > footer > small {
+  color: var(--muted);
+  font-size: 9px;
+}
+.sunfire-card-actions > button,
+.sunfire-text-action,
+.sunfire-turn-state > button,
+.sunfire-history-error button,
+.sunfire-connection button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 500;
+}
+.sunfire-action-details,
+.sunfire-evidence-card > details {
+  padding: 8px 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+.sunfire-action-details summary,
+.sunfire-evidence-card summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  cursor: pointer;
+}
+.sunfire-action-details summary svg,
+.sunfire-evidence-card summary svg {
+  margin-left: auto;
+}
+.sunfire-action-details p {
+  margin-inline: 0;
+}
+.sunfire-evidence-card {
+  margin-top: 10px;
+}
+.sunfire-evidence-card > details {
+  padding-inline: 0;
+}
+.sunfire-evidence-card summary > span {
+  color: var(--muted);
+  font-size: 9px;
+}
+.sunfire-historical-note {
+  padding-left: 8px;
+  border-left: 2px solid var(--warning);
+}
+.sunfire-result-measures {
+  margin: 4px 10px 10px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  line-height: 1.6;
+}
+.sunfire-result-measures > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.sunfire-result-measures dt {
+  color: var(--muted);
+}
+.sunfire-result-measures dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+.sunfire-run-card > progress {
+  display: block;
+  height: 5px;
+  width: calc(100% - 20px);
+  accent-color: var(--accent);
+}
+.sunfire-run-card > .sunfire-text-action {
+  margin: 0 10px 10px;
+}
+.sunfire-recorded-constraint {
+  font-size: 10px !important;
+}
+.sunfire-evidence-scope {
+  color: var(--muted);
+  font-size: 9px !important;
+}
+.sunfire-turn-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.sunfire-turn-state > button {
+  margin-left: auto;
+}
+.sunfire-turn-state p,
+.sunfire-history-error p {
+  margin: 0;
+}
+.sunfire-composer {
+  flex-shrink: 0;
+  padding: 0 12px 12px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface);
+}
+.sunfire-connection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 31px;
+  padding: 7px 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+.sunfire-connection > button {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.sunfire-compose-input {
+  position: relative;
+}
+.sunfire-compose-input .mantine-Textarea-input {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 43px 10px 11px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  line-height: 1.6;
+  background: var(--surface);
+}
+.sunfire-compose-input > .mantine-ActionIcon-root {
+  position: absolute;
+  right: 7px;
+  bottom: 8px;
+  background: var(--accent);
+  color: #fff;
+}
+.sunfire-compose-input > .mantine-ActionIcon-root:disabled {
+  background: var(--raised);
+  color: var(--muted);
+}
+.sunfire-composer-help {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 8px;
+  line-height: 1.5;
+}
+.sunfire-inline-error {
+  color: var(--danger) !important;
+  font-size: 10px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+/* Desktop split workspace: the assistant gets real space, never covers inputs. */
+.app-shell.sunfire-open .simulation-workspace {
+  grid-template-columns: minmax(190px, 0.7fr) minmax(0, 1.5fr);
+  gap: 16px;
+}
+.app-shell.sunfire-open .simulation-control-heading {
+  gap: 8px;
+}
+.app-shell.sunfire-open .simulation-control-heading h3 {
+  font-size: 13px;
+}
+.app-shell.sunfire-open .simulation-control-heading .mantine-NumberInput-root {
+  flex: 0 0 88px;
+  width: 88px;
+}
+.app-shell.sunfire-open .simulation-control .mantine-SegmentedControl-label {
+  padding-inline: 4px;
+  font-size: 11px;
+  white-space: normal;
+}
+.app-shell.sunfire-open .arrival-preview-heading {
+  flex-wrap: wrap;
+}
+.app-shell.sunfire-open .arrival-preview .arrival-disruption-control {
+  flex: 1 1 220px;
+  max-width: 280px;
+}
+.app-shell.sunfire-open .hospital-operations-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+.app-shell.sunfire-open .configuration-resource-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+.app-shell.sunfire-open .configuration-staff-control {
+  grid-template-columns: minmax(120px, 1fr) 100px minmax(100px, 1fr);
+  gap: 12px;
+}
+.app-shell.sunfire-open
+  .configuration-capacity-fields
+  .mantine-NumberInput-wrapper {
+  max-width: none;
+}
+.app-shell.sunfire-open .planning-overview-heading {
+  flex-wrap: wrap;
+}
+.app-shell.sunfire-open .scenario-name-row {
+  gap: 10px;
+}
+.app-shell.sunfire-open .hospital-operations-panel {
+  min-width: 0;
+}

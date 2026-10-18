@@ -1,0 +1,78 @@
+{
+  "scenario_id": "scenario_5fff99bc58384218a5e6",
+  "run_id": "run_e497dee87f6f4e018952",
+  "source_dataset_unchanged": true,
+  "saved_and_reloaded": true,
+  "undo_redo": true,
+  "equipment_cap_displayed": 16,
+  "frozen_configuration": {
+    "kind": "unit_configuration",
+    "unit_id": "UNIT-ICU",
+    "physical_capacity": 20,
+    "enabled_capacity": 20,
+    "staffed_capacity": 18,
+    "staff_counts": {
+      "rn": 9,
+      "provider": 3,
+      "support": 4
+    },
+    "id": "configuration-unit-UNIT-ICU",
+    "source": "user_assumption",
+    "configuration_control": {
+      "owner": "main_configuration"
+    }
+  },
+  "verified_shift_snapshots": [
+    {
+      "at": "2026-10-16T05:00:00.000Z",
+      "physical": 20,
+      "staffed": 16,
+      "qualified_staff_by_role": {
+        "provider": 3,
+        "rn": 9,
+        "support": 4
+      }
+    },
+    {
+      "at": "2026-10-16T12:00:00.000Z",
+      "physical": 20,
+      "staffed": 16,
+      "qualified_staff_by_role": {
+        "provider": 3,
+        "rn": 9,
+        "support": 4
+      }
+    },
+    {
+      "at": "2026-10-16T17:00:00.000Z",
+      "physical": 20,
+      "staffed": 16,
+      "qualified_staff_by_role": {
+        "provider": 3,
+        "rn": 9,
+        "support": 4
+      }
+    },
+    {
+      "at": "2026-10-17T00:00:00.000Z",
+      "physical": 20,
+      "staffed": 16,
+      "qualified_staff_by_role": {
+        "provider": 3,
+        "rn": 9,
+        "support": 4
+      }
+    },
+    {
+      "at": "2026-10-17T04:00:00.000Z",
+      "physical": 20,
+      "staffed": 16,
+      "qualified_staff_by_role": {
+        "provider": 3,
+        "rn": 9,
+        "support": 4
+      }
+    }
+  ],
+  "page_errors": []
+}

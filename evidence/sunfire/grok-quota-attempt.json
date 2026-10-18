@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-18T10:51:37.055002+00:00",
+  "model": "xai.grok-4.7",
+  "region": "us-chicago-1",
+  "attempted_increases": {
+    "grok-4-7-requests-per-minute-count": 10,
+    "grok-4-7-tokens-per-minute-count": 50000
+  },
+  "request_status": "rejected",
+  "http_status": 403,
+  "code": "NotAllowed",
+  "message": "Your tenancy is not eligible to submit a limit request. For more information, contact your tenancy administrator or Oracle sales.",
+  "post_attempt_request_count": 0,
+  "request_id": null,
+  "actual_limits": {
+    "grok-4-7-requests-per-minute-count": 0,
+    "grok-4-7-tokens-per-minute-count": 0
+  },
+  "selected_model_unchanged": "openai.gpt-oss-120b",
+  "iam_changed_by_request_attempt": false,
+  "infra_provisioned": false
+}

@@ -1,0 +1,20 @@
+{
+  "model": "openai.gpt-oss-120b",
+  "region": "us-chicago-1",
+  "auth": "instance_principal",
+  "schema_inlined": true,
+  "schema_bytes": 13388,
+  "app_data_sent": false,
+  "at": "2026-10-18T10:45:38.380007+00:00",
+  "validated_target_proposal": true,
+  "local_verified": true,
+  "host_http_statuses": [
+    200
+  ],
+  "native_full_typed_schema": true,
+  "strict_validation_passed": true,
+  "production_user_keys_copied": false,
+  "model_permission_scoped_to_project": true,
+  "no_infrastructure_provisioned": true,
+  "scope": "Functional access and typed tool checks, not a general model benchmark or security guarantee"
+}

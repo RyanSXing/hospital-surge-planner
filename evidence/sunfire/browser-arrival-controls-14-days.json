@@ -1,0 +1,31 @@
+{
+  "scenario_id": "scenario_225692ecb005443995c1",
+  "run_group_id": "run_3194d2b3735b4a5784ee",
+  "planned_ed_arrivals": [
+    27.45,
+    23.38,
+    21.86,
+    26.69,
+    26.69,
+    25.92,
+    25.92,
+    27.45,
+    23.38,
+    0,
+    26.69,
+    26.69,
+    25.92,
+    27.96
+  ],
+  "expected_total_arrivals": 392,
+  "engine_expected_total_arrivals": 392.00000000000244,
+  "actual_total_arrivals": 367,
+  "zero_ed_day": 10,
+  "actual_zero_day_ed_arrivals": 0,
+  "actual_last_day_ed_arrivals": 20,
+  "controls_remain_available": true,
+  "slider_preserves_daily_shape": true,
+  "reset_and_undo_verified": true,
+  "saved_reloaded_and_frozen_match": true,
+  "browser_errors": []
+}

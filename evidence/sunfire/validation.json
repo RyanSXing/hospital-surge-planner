@@ -1,0 +1,55 @@
+{
+  "verified_at": "2026-10-18T11:23:44.951020+00:00",
+  "all_passed": true,
+  "frontend_tests": 471,
+  "backend_tests": 231,
+  "backend_scopes": {
+    "backend-regressions.xml": {
+      "tests": 87,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "backend-durable-run-history.xml": {
+      "tests": 144,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "unique_desktop_browser_cases": 16,
+  "browser_scopes": {
+    "auth-final-browser-results.json": {
+      "startTime": "2026-10-18T11:11:05.135Z",
+      "duration": 8821.328,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "manual-browser-results.json": {
+      "startTime": "2026-10-18T10:59:32.162Z",
+      "duration": 73256.899,
+      "expected": 8,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "persistent-browser-results.json": {
+      "startTime": "2026-10-18T11:22:24.354Z",
+      "duration": 42694.015,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "actual_provider": "openai.gpt-oss-120b through OCI",
+  "simulation_engine_package_unchanged": true,
+  "scope_notes": [
+    "New assistant orchestration/provider tests plus existing API, durable worker, manual configuration, arrivals and library-comparison regressions.",
+    "The complete historical backend and browser suites were not repeated.",
+    "Earlier failed real-provider attempts were retained privately and prompted fixes; final reported browser cases must pass without retries.",
+    "No new performance, broad model benchmark, security-scan or restoration claim."
+  ]
+}

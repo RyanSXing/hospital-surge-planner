@@ -1,0 +1,24 @@
+.aegis-session-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: var(--canvas);
+  padding: 32px;
+}
+.aegis-session-check {
+  width: 320px;
+  max-width: 100%;
+  text-align: center;
+  color: var(--text-secondary);
+}
+.aegis-session-logo {
+  display: block;
+  width: 242px;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 28px;
+}
+.aegis-session-check p {
+  margin: 0 0 16px;
+  font-size: 13px;
+}

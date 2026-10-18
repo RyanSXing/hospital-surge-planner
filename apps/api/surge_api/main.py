@@ -4185,6 +4185,23 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             "next_cursor": str(offset + limit) if offset + limit < total else None,
         }
 
+    from types import SimpleNamespace
+    from .sunfire import install_sunfire_routes
+
+    install_sunfire_routes(
+        router,
+        db=db,
+        current_user=current_user,
+        services=SimpleNamespace(
+            preserve_operational_updates=preserve_operational_updates,
+            mutate=mutate,
+            audit=audit,
+            enqueue_run=enqueue_run,
+            job_view=job_view,
+            owned_job=owned_job,
+            enforce_job_quota=enforce_job_quota,
+        ),
+    )
     app.include_router(router, prefix="/api")
     app.include_router(router, prefix="/api/v1", include_in_schema=False)
 

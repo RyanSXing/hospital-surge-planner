@@ -2,13 +2,15 @@
 
 A planning workspace for configuring hospital surge scenarios, running constrained patient-flow simulations, comparing saved scenarios, and inspecting the events behind a forecast. The included operational data and medical parameters are synthetic engineering fixtures. The product does not dispatch patients or make clinical treatment decisions.
 
-The complete initial scope is P0 and P1 in [the build specification](docs/reference/hospital-surge-planner-build-spec.md). Current implementation and verification are tracked separately in [the acceptance ledger](docs/acceptance-tracker.md). Deferred P2 items include live hospital integrations, calibrated prediction, generalized optimization, AI assistance and 3D.
+The complete initial scope is P0 and P1 in [the build specification](docs/reference/hospital-surge-planner-build-spec.md). Current implementation and verification are tracked separately in [the acceptance ledger](docs/acceptance-tracker.md). Deferred P2 items include live hospital integrations, calibrated prediction, generalized optimization and 3D. Sunfire adds the subsequently requested conversational planning workflow.
 
 ## Hosted application
 
 Open [AEGIS Console](https://aegisconsole.131.186.0.156.sslip.io). The previous hospital-surge address remains available for saved links. Private sign-in details are saved locally in `data/deployment/access.md`, outside version control. [Hosted verification](docs/hosted-verification.md) records the deployed release, completed workloads, measured performance limits, recovery and backup evidence.
 
 The app has two primary pages: **Configuration** for the current hospital baseline and simulation inputs, and **Analysis** with **Summary**, **Replay**, **Analytics**, and **Comparison**. Analytics includes outcomes and patient/unit inspection. Main setup uses duration, draggable daily arrivals, editable bed counts and per-unit nurse/provider/support sliders. Exact optional settings are under **More parameters**. Summary identifies recorded bottlenecks; Analytics presents its charts in one bookmarked workspace. Replay shows recorded bed occupancy on a hospital floor plan; Comparison compares two saved library scenarios. See the [replay and comparison guide](docs/replay-and-scenario-comparison.md), [single-hospital workflow](docs/single-hospital-workflow.md), and [workflow guide](docs/overview-analysis-flow.md).
+
+**Sunfire** opens from the bottom-right launcher and expands into a reserved sidebar. It shares the existing configuration and Undo history, prepares validated changes, starts real simulation jobs when requested, and reads recorded results. Chats and action receipts are private and durable. Its OCI model must have verified access; manual planning remains available independently. See the [Sunfire guide](docs/sunfire.md) and [provider setup](docs/sunfire-provider.md).
 
 ## Start locally
 

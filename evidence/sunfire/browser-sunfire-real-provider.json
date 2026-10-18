@@ -1,0 +1,365 @@
+{
+  "model": "openai.gpt-oss-120b",
+  "scenario_id": "scenario_434d49b7278c40e5a1c1",
+  "clarification_turn_id": "sunfire_turn_54b90fb137e94f0a9d90",
+  "incident_turn_id": "sunfire_turn_50718f7560b243769715",
+  "run_turn_id": "sunfire_turn_45ac95e429d34b4a89d4",
+  "run_id": "run_0e24e7b6a42846d5928b",
+  "incident_patients": 100,
+  "enabled_counts": [
+    40,
+    30,
+    40
+  ],
+  "replay_navigation": {
+    "replication_id": "run_0e24e7b6a42846d5928b_rep_0001",
+    "at": "2026-10-16T22:54:08.065546Z",
+    "trace_ready": true
+  },
+  "saved_revision": 2,
+  "layout": {
+    "compact": {
+      "panel": {
+        "x": 940,
+        "right": 1268,
+        "width": 328
+      },
+      "chart": {
+        "x": 468.078125,
+        "right": 899,
+        "width": 430.921875
+      },
+      "controls": {
+        "x": 251,
+        "right": 452.078125,
+        "width": 201.078125
+      },
+      "workspace": {
+        "x": 210,
+        "right": 940,
+        "width": 730
+      },
+      "viewport": 1280,
+      "horizontalOverflow": 0
+    },
+    "expanded1280": {
+      "panel": {
+        "x": 900,
+        "right": 1280,
+        "width": 380
+      },
+      "chart": {
+        "x": 457,
+        "right": 859,
+        "width": 402
+      },
+      "controls": {
+        "x": 251,
+        "right": 441,
+        "width": 190
+      },
+      "workspace": {
+        "x": 210,
+        "right": 900,
+        "width": 690
+      },
+      "viewport": 1280,
+      "horizontalOverflow": 0
+    },
+    "expanded1440": {
+      "panel": {
+        "x": 1060,
+        "right": 1440,
+        "width": 380
+      },
+      "chart": {
+        "x": 506.265625,
+        "right": 1019,
+        "width": 512.734375
+      },
+      "controls": {
+        "x": 251,
+        "right": 490.265625,
+        "width": 239.265625
+      },
+      "workspace": {
+        "x": 210,
+        "right": 1060,
+        "width": 850
+      },
+      "viewport": 1440,
+      "horizontalOverflow": 0
+    },
+    "collapsedNavigation": {
+      "panel": {
+        "x": 1060,
+        "right": 1440,
+        "width": 380
+      },
+      "chart": {
+        "x": 506.265625,
+        "right": 1019,
+        "width": 512.734375
+      },
+      "controls": {
+        "x": 251,
+        "right": 490.265625,
+        "width": 239.265625
+      },
+      "workspace": {
+        "x": 210,
+        "right": 1060,
+        "width": 850
+      },
+      "viewport": 1440,
+      "horizontalOverflow": 0
+    }
+  },
+  "actual_metrics": {
+    "active_at_horizon": {
+      "max": 295,
+      "mean": 206,
+      "min": 117,
+      "p10": 134.8,
+      "p50": 206,
+      "p90": 277.2
+    },
+    "additional_staff_hours": {
+      "max": 0,
+      "mean": 0,
+      "min": 0,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+    },
+    "arrivals": {
+      "max": 410,
+      "mean": 380.5,
+      "min": 351,
+      "p10": 356.9,
+      "p50": 380.5,
+      "p90": 404.1
+    },
+    "average_wait_per_patient_hours": {
+      "max": 12.19364783556135,
+      "mean": 7.7248990403313105,
+      "min": 3.2561502451012716,
+      "p10": 4.1499000041472796,
+      "p50": 7.7248990403313105,
+      "p90": 11.299898076515342
+    },
+    "completed_admissions": {
+      "max": 69,
+      "mean": 68.5,
+      "min": 68,
+      "p10": 68.1,
+      "p50": 68.5,
+      "p90": 68.9
+    },
+    "completed_wait_median_hours": {
+      "max": 8.126714116466853e-11,
+      "mean": 4.1323270731178735e-11,
+      "min": 1.3794002976889411e-12,
+      "p10": 9.3681743843869e-12,
+      "p50": 4.1323270731178735e-11,
+      "p90": 7.327836707797057e-11
+    },
+    "completed_wait_p90_hours": {
+      "max": 15.537898325434943,
+      "mean": 7.7689491627819995,
+      "min": 1.290559718351385e-10,
+      "p10": 1.5537898326596447,
+      "p50": 7.7689491627819995,
+      "p90": 13.984108492904355
+    },
+    "discharges": {
+      "max": 318,
+      "mean": 258.5,
+      "min": 199,
+      "p10": 210.9,
+      "p50": 258.5,
+      "p90": 306.1
+    },
+    "ed_unserved_at_horizon": {
+      "max": 178,
+      "mean": 90,
+      "min": 2,
+      "p10": 19.6,
+      "p50": 90,
+      "p90": 160.4
+    },
+    "ed_utilization": {
+      "max": 0.7527472609657475,
+      "mean": 0.704499241134812,
+      "min": 0.6562512213038765,
+      "p10": 0.6659008252700636,
+      "p50": 0.704499241134812,
+      "p90": 0.7430976569995604
+    },
+    "ed_waiting_patient_hours": {
+      "max": 4358.909613993672,
+      "mean": 2675.612436311407,
+      "min": 992.3152586291413,
+      "p10": 1328.9746941655944,
+      "p50": 2675.612436311407,
+      "p90": 4022.2501784572187
+    },
+    "equipment_deficit_hours": {
+      "max": 0,
+      "mean": 0,
+      "min": 0,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+    },
+    "expected_arrivals": {
+      "max": 297.44000000000017,
+      "mean": 297.44000000000017,
+      "min": 297.44000000000017,
+      "p10": 297.44000000000017,
+      "p50": 297.44000000000017,
+      "p90": 297.44000000000017
+    },
+    "hours_with_unmet_placement_demand": {
+      "max": 34.744536815681776,
+      "mean": 34.63128900802856,
+      "min": 34.51804120037535,
+      "p10": 34.54069076190599,
+      "p50": 34.63128900802856,
+      "p90": 34.721887254151135
+    },
+    "icu_utilization": {
+      "max": 0.8863657103353577,
+      "mean": 0.8811906386829598,
+      "min": 0.8760155670305619,
+      "p10": 0.8770505813610415,
+      "p50": 0.8811906386829598,
+      "p90": 0.8853306960048781
+    },
+    "initial_patients": {
+      "max": 84,
+      "mean": 84,
+      "min": 84,
+      "p10": 84,
+      "p50": 84,
+      "p90": 84
+    },
+    "inpatient_waiting_patient_hours": {
+      "max": 640.4859985864833,
+      "mean": 395.53973799394396,
+      "min": 150.5934774014046,
+      "p10": 199.5827295199125,
+      "p50": 395.53973799394396,
+      "p90": 591.4967464679755
+    },
+    "over_capacity_patient_hours": {
+      "max": 10.441339872496,
+      "mean": 9.787336602914667,
+      "min": 9.133333333333335,
+      "p10": 9.2641339872496,
+      "p50": 9.787336602914667,
+      "p90": 10.310539218579734
+    },
+    "patients_transferred": {
+      "max": 0,
+      "mean": 0,
+      "min": 0,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+    },
+    "peak_inpatient_queue": {
+      "max": 25,
+      "mean": 16.5,
+      "min": 8,
+      "p10": 9.7,
+      "p50": 16.5,
+      "p90": 23.3
+    },
+    "staff_deficit_hours": {
+      "max": 10.441339872496,
+      "mean": 9.787336602914667,
+      "min": 9.133333333333335,
+      "p10": 9.2641339872496,
+      "p50": 9.787336602914667,
+      "p90": 10.310539218579734
+    },
+    "success_arrivals_with_insufficient_followup": {
+      "max": 91,
+      "mean": 46.5,
+      "min": 2,
+      "p10": 10.9,
+      "p50": 46.5,
+      "p90": 82.1
+    },
+    "success_eligible_patients": {
+      "max": 349,
+      "mean": 334,
+      "min": 319,
+      "p10": 322,
+      "p50": 334,
+      "p90": 346
+    },
+    "success_score_percent": {
+      "max": 100,
+      "mean": 85.26645768025078,
+      "min": 70.53291536050156,
+      "p10": 73.47962382445141,
+      "p50": 85.26645768025078,
+      "p90": 97.05329153605015
+    },
+    "success_treated_within_24h": {
+      "max": 349,
+      "mean": 287,
+      "min": 225,
+      "p10": 237.4,
+      "p50": 287,
+      "p90": 336.6
+    },
+    "temporary_site_patients_served": {
+      "max": 0,
+      "mean": 0,
+      "min": 0,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+    },
+    "time_to_first_shortage_hours": {
+      "max": 34.1970257219697,
+      "mean": 26.04963307572953,
+      "min": 17.90224042948936,
+      "p10": 19.531718958737393,
+      "p50": 26.04963307572953,
+      "p90": 32.56754719272167
+    },
+    "transfer_waiting_hours": {
+      "max": 0,
+      "mean": 0,
+      "min": 0,
+      "p10": 0,
+      "p50": 0,
+      "p90": 0
+    },
+    "unserved_at_horizon": {
+      "max": 22,
+      "mean": 15,
+      "min": 8,
+      "p10": 9.4,
+      "p50": 15,
+      "p90": 20.6
+    },
+    "ward_utilization": {
+      "max": 0.9198445947302583,
+      "mean": 0.902864404372979,
+      "min": 0.8858842140156998,
+      "p10": 0.8892802520871557,
+      "p50": 0.902864404372979,
+      "p90": 0.9164485566588024
+    }
+  },
+  "action_request_counts": [
+    "sunfire/actions/sunfire_action_e80f56da1e344232a8e0/ack",
+    "sunfire/actions/sunfire_action_86e0ac35863a4a87ab34/ack",
+    "sunfire/actions/sunfire_action_428a72d3cb9343bb93b5/apply"
+  ]
+}

@@ -547,6 +547,10 @@ def execute_job(identity, database_url=None):
             export_job(identity, Session, token, uploads)
         elif kind == "trace":
             trace_job(identity, Session, token, uploads)
+        elif kind == "sunfire":
+            from .sunfire import execute_sunfire_job
+
+            execute_sunfire_job(identity, Session, token)
         else:
             raise ValueError("Unknown job kind")
         outcome_committed = True

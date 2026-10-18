@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import {
   Accordion,
   NativeSelect,
@@ -61,10 +62,94 @@ import {
   Users,
   Wind,
 } from "lucide-react";
-import type { Entity, HospitalOperations, PlanningContext } from "../types";
+import type {
+  Entity,
+  HospitalOperations,
+  PlanningContext,
+  Scenario,
+} from "../types";
+import {
+  canonicalDraft,
+  createPlanningDraftBridge,
+  PlanningDraftConflict,
+  preparePlanningDraftAdoption,
+  type PlanningDraftBridge,
+  type PlanningDraftSource,
+} from "../planningDraft";
 import { api, atDay, fmt, items, localDate, localDayIndex, post } from "../api";
 import { Badge, Busy, Button, ErrorBox, Modal } from "../components/ui";
-export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
+export default function Scenarios({
+  ctx,
+  onDraftBridgeChange,
+}: {
+  ctx: PlanningContext;
+  onDraftBridgeChange?: (bridge: PlanningDraftBridge | null) => void;
+}) {
+  const [loadedIdentity, setLoadedIdentity] = useState("");
+  const sharedDraft = useRef<PlanningDraftSource | null>(null);
+  const sharedDraftError = useRef("");
+  // A fresh editor session must not revive a historical READY action whose
+  // old in-memory draft sequence happened to start at the same small integer.
+  const draftRevision = useRef(
+    Date.now() * 1000 + Math.floor(Math.random() * 1000),
+  );
+  const previousDraft = useRef("");
+  const publishedVersion = useRef(-1);
+  const draftListeners = useRef(new Set<() => void>());
+  const pendingEdit = useRef(false);
+  const editorMounted = useRef(false);
+  const savedAdoption = useRef<{
+    scenarioId: string;
+    revision: number;
+    draft: Entity;
+    dirty: boolean;
+  } | null>(null);
+  const writeSharedDraft = useRef<(draft: Entity) => void>(() => {
+    throw new PlanningDraftConflict("Configuration is still opening.");
+  });
+  const liveContext = useRef(ctx);
+  liveContext.current = ctx;
+  const [draftBridge] = useState(
+    () =>
+      ({
+        ...createPlanningDraftBridge(
+          () => {
+            const current = sharedDraft.current;
+            const context = liveContext.current;
+            if (
+              !editorMounted.current ||
+              pendingEdit.current ||
+              !current ||
+              current.scenario_id !== context.scenario?.id ||
+              current.saved_revision !== (context.scenario?.revision || 1) ||
+              current.dataset_version_id !== context.dataset?.id
+            )
+              throw new PlanningDraftConflict(
+                sharedDraftError.current ||
+                  "Configuration is updating. Try again in a moment.",
+              );
+            return { ...current, can_write: context.canWrite !== false };
+          },
+          (draft) => writeSharedDraft.current(draft),
+        ),
+        getVersion: () => draftRevision.current,
+        subscribe: (listener: () => void) => {
+          draftListeners.current.add(listener);
+          return () => {
+            draftListeners.current.delete(listener);
+          };
+        },
+      }) as PlanningDraftBridge,
+  );
+  useLayoutEffect(() => {
+    editorMounted.current = true;
+    onDraftBridgeChange?.(draftBridge);
+    return () => {
+      editorMounted.current = false;
+      sharedDraft.current = null;
+      onDraftBridgeChange?.(null);
+    };
+  }, [draftBridge, onDraftBridgeChange]);
   const [openSections, setOpenSections] = useState<string[]>([]);
   const [moreParameters, setMoreParameters] = useState(false);
   const [windowStartAt, setWindowStartAt] = useState<string | undefined>();
@@ -228,9 +313,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           : "preserve",
     );
   }
-  useEffect(() => {
-    const s = ctx.scenario;
-    if (!s) return;
+  function installScenarioDraft(s: Scenario, resetHistory = true) {
     setStartAt(s.start_at);
     setSeed(s.base_seed);
     setDraftConditions(s.conditions || []);
@@ -274,9 +357,22 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           ? Math.round((staffCondition.count / wardNurses) * 100)
           : 0),
     );
-    setDirty(false);
-    setUndo([]);
-    setRedo([]);
+    setDirty(!resetHistory);
+    if (resetHistory) {
+      setUndo([]);
+      setRedo([]);
+    }
+    setLoadedIdentity(`${s.id}:${s.revision}`);
+  }
+  useEffect(() => {
+    const s = ctx.scenario;
+    if (!s) return;
+    const adoption = savedAdoption.current;
+    savedAdoption.current = null;
+    if (adoption?.scenarioId === s.id && adoption.revision === s.revision) {
+      installScenarioDraft({ ...s, ...adoption.draft } as Scenario, false);
+      setDirty(adoption.dirty);
+    } else installScenarioDraft(s);
   }, [ctx.scenario?.id, ctx.scenario?.revision]);
   const snapshot = () => ({
     windowStartAt,
@@ -311,6 +407,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     mix: { ...mix },
   });
   function remember() {
+    pendingEdit.current = true;
+    draftRevision.current++;
     setUndo((a) => [...a.slice(-30), snapshot()]);
     setRedo([]);
     setDirty(true);
@@ -320,6 +418,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setArrivalEdited(true);
   }
   function restore(v: Entity) {
+    pendingEdit.current = true;
+    draftRevision.current++;
     setCustomPoints(v.customPoints);
     setCustomInterpolation(v.customInterpolation || "piecewise_linear");
     setArrivalPreset(v.arrivalPreset || "sustained");
@@ -407,6 +507,75 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
       ...hospitalOperationsPatch(hospitalOperations, startAt, exclusiveEnd),
     };
   }
+  useLayoutEffect(() => {
+    const s = ctx.scenario;
+    if (!s || loadedIdentity !== `${s.id}:${s.revision}`) {
+      sharedDraft.current = null;
+      return;
+    }
+    try {
+      const invalid =
+        mixError(mixMode, mix) ||
+        operationsError(hospitalOperations, startAt, exclusiveEnd);
+      if (invalid) throw new Error(invalid);
+      const draft = makePatch();
+      const identity = canonicalDraft({
+        scenario_id: s.id,
+        dataset_version_id: ctx.dataset?.id,
+        draft,
+      });
+      if (identity !== previousDraft.current) {
+        draftRevision.current++;
+        previousDraft.current = identity;
+      }
+      sharedDraft.current = {
+        scenario_id: s.id,
+        saved_revision: s.revision || 1,
+        dataset_version_id: ctx.dataset?.id || s.dataset_version_id,
+        draft_revision: draftRevision.current,
+        draft,
+        scenario_name: name,
+        dirty,
+        can_write: ctx.canWrite !== false,
+      };
+      sharedDraftError.current = "";
+      pendingEdit.current = false;
+      draftBridge.prepareSavedRevision = (saved, applied) => {
+        const current = sharedDraft.current;
+        if (pendingEdit.current) return false;
+        const adoption = preparePlanningDraftAdoption(current, saved, applied);
+        if (!adoption) return false;
+        if (saved.revision === applied.saved_revision) return true;
+        savedAdoption.current = adoption;
+        return true;
+      };
+      writeSharedDraft.current = (next) => {
+        const current = sharedDraft.current;
+        if (!current || canonicalDraft(next) === canonicalDraft(current.draft))
+          return;
+        if (liveContext.current.busy)
+          throw new PlanningDraftConflict(
+            "Finish the current operation before changing configuration.",
+          );
+        // This external, validated chat transaction uses the same undo stack as
+        // manual controls. Flush once so its acknowledgement describes the
+        // actual committed controls, rather than a queued React update.
+        flushSync(() => {
+          remember();
+          installScenarioDraft({ ...s, ...next } as Scenario, false);
+          setEditorError("");
+        });
+      };
+      if (publishedVersion.current !== draftRevision.current) {
+        publishedVersion.current = draftRevision.current;
+        draftListeners.current.forEach((listener) => listener());
+      }
+    } catch (error) {
+      sharedDraft.current = null;
+      sharedDraftError.current = (error as Error).message;
+      pendingEdit.current = false;
+    }
+  });
   function switchStream(next: string) {
     try {
       const staged = makePatch().conditions;

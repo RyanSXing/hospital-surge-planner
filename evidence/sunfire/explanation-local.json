@@ -1,0 +1,7 @@
+{
+  "read_only": true,
+  "words": 83,
+  "plain_text": true,
+  "no_internal_fields": true,
+  "displayed_text": "Your current draft covers Oct 16, 2026 to Oct 23, 2026 (CDT), with 10 simulation runs.\n- Enabled capacity: Ward A 40; Ward B 40; Ward C 20; Intensive care 12; Emergency department 30 places.\n- Nurses per shift: Ward A 8; Ward B 8; Ward C 4; Intensive care 6; Emergency department 6.\n- Arrivals: 0 configured demand adjustments; 0 additional one-time patients.\n- Daily treatment-disruption risk: 0% probability.\nStaff and equipment also limit usable capacity. These are inputs, not measured outcomes."
+}

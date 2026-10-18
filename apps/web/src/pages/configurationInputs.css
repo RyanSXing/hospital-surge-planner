@@ -215,11 +215,20 @@
 .configuration-staff-adjustment {
   padding: 5px 6px 0;
 }
+.configuration-staff-control[data-staff-role="rn"] {
+  --staff-accent: #347e83;
+}
+.configuration-staff-control[data-staff-role="provider"] {
+  --staff-accent: #61688d;
+}
+.configuration-staff-control[data-staff-role="support"] {
+  --staff-accent: #6c7c90;
+}
 .configuration-staff-adjustment .mantine-Slider-bar {
-  background: var(--accent, #164b75);
+  background: var(--staff-accent, var(--accent, #164b75));
 }
 .configuration-staff-adjustment .mantine-Slider-thumb {
-  border-color: var(--accent, #164b75);
+  border-color: var(--staff-accent, var(--accent, #164b75));
 }
 .configuration-slider-range {
   display: flex;

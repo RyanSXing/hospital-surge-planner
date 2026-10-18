@@ -1,0 +1,10 @@
+{
+  "left_scenario_id": "scenario_e2cda37dd4e947599668",
+  "right_scenario_id": "scenario_1038ba909c3f46b58be7",
+  "rejected_obsolete_revision_status": 409,
+  "previous_right_run_preserved": "run_19a2227be57641ca88a0",
+  "current_right_run": "run_b6fb6a620f0b400abba2",
+  "current_revision": 3,
+  "independent_results_preserved": true,
+  "invalid_delta_and_overlay_suppressed": true
+}

@@ -135,3 +135,9 @@ Applied cursors persist between runs and advance through a prefix before rotatin
 ### Artifact compression
 
 New JSON artifacts use deterministic gzip level 6 (`mtime=0`) over the same canonical JSON bytes. Existing level 9 artifacts remain readable. Input hashes and model calculations do not change; artifact SHA256 values continue to identify the actual compressed bytes. This fixed setting needs no environment variable. The annual read-only diagnostic measured 5.75 s / 30.26 MB at level 6 versus 18.87 s / 26.92 MB at level 9 for the combined replication artifact, with exact byte-for-byte decompression verified. These diagnostic timings do not replace a complete forecast benchmark.
+
+## Sunfire inference
+
+Sunfire uses the existing API, durable worker queue and document store; it requires no new infrastructure or database migration. Follow [provider setup](sunfire-provider.md) to verify the exact OCI model and the host's scoped instance permission before enabling it. `.env.example` starts disabled and unverified. Production must use instance authentication, never a copied user key. `/api/sunfire/status` reports matching verification and recent sanitized failures without issuing an inference request.
+
+The [planning contract](sunfire-contract.md) describes action receipts, draft conflicts, role checks and bounded tool calls. A conversation turn and a simulation are separate jobs with separate cancellation. Retrying a turn or recovering an action response must reuse its identity. Preserve saved scenarios, completed runs and existing volumes during upgrades. Disabling Sunfire leaves the manual workflow available.

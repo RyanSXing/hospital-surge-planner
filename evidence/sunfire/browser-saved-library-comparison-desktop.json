@@ -1,0 +1,13 @@
+{
+  "left_scenario_id": "scenario_ed663412db79401b9159",
+  "right_scenario_id": "scenario_306c6a1f64a8479a80f8",
+  "left_run_id": "run_3b90a74beba64db3b896",
+  "right_run_id": "run_0e0f2555b81849b7b553",
+  "explicit_simulations_only": 2,
+  "automated_comparison_requests": [],
+  "saved_settings_preserved": true,
+  "correct_descriptive_difference": 0.21679616958791345,
+  "hidden_query_paused": true,
+  "original_result_opened": "run_0e0f2555b81849b7b553",
+  "page_errors": []
+}

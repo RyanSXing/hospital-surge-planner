@@ -243,6 +243,7 @@ export default function ConfigurationInputs({
                 <div
                   className="configuration-staff-control"
                   key={`${unit.unit_id}-${key}`}
+                  data-staff-role={key}
                 >
                   <div className="configuration-staff-role">
                     <label htmlFor={`configuration-${unit.unit_id}-${key}`}>

@@ -1,0 +1,266 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/sunfire-assistant.spec.ts",
+      "--project=desktop",
+      "--workers=1",
+      "--output=/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "sunfire-assistant.spec.ts",
+      "file": "sunfire-assistant.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Sunfire clarifies an incident, edits the shared draft, undoes it, then saves and runs with measured outcomes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29590,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T11:22:24.621Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "sunfire-compact-real-provider",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-compact-real-provider-7ae9da2103e0dca35d05749bea58672faffd2fc8.png"
+                    },
+                    {
+                      "name": "sunfire-compact-real-provider-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-compact-real-provider-middle-9ad8c9b6700e8264221d27c7d4655d3f68cc1c45.png"
+                    },
+                    {
+                      "name": "sunfire-compact-real-provider-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-compact-real-provider-lower-0e1181b2dc52125fd498a5a163f312efa344e7a1.png"
+                    },
+                    {
+                      "name": "sunfire-expanded-incident-readback",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-expanded-incident-readback-1e2c82b0ba09667e09c44dcc1fc8881a9f494983.png"
+                    },
+                    {
+                      "name": "sunfire-expanded-incident-readback-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-expanded-incident-readback-middle-f0fbf616f030d41923a944c90ec0c17acd7c554d.png"
+                    },
+                    {
+                      "name": "sunfire-expanded-incident-readback-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-expanded-incident-readback-lower-2cb58b7e728176787652ea4ce34aa34914200c50.png"
+                    },
+                    {
+                      "name": "sunfire-measured-completed-results",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-measured-completed-results-7d62b2fc7c3d36fcca2207659d482a8595ea8a71.png"
+                    },
+                    {
+                      "name": "sunfire-measured-completed-results-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-measured-completed-results-middle-711a32fe30db63e7e9d1bb59d7e99430c17432c8.png"
+                    },
+                    {
+                      "name": "sunfire-measured-completed-results-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-measured-completed-results-lower-2ee46fb27aefd6e8aae677a5e054f5e4f0a49822.png"
+                    },
+                    {
+                      "name": "sunfire-recorded-bottleneck-navigation",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/sunfire/persistent-browser/sunfire-assistant-real-Sun-d542f-runs-with-measured-outcomes-desktop/attachments/sunfire-recorded-bottleneck-navigation-12709efc2879dc2b98636134935aebec204f4e12.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ff9df0ec3f5e0598e050-9bb08181182c99749c27",
+          "file": "sunfire-assistant.spec.ts",
+          "line": 134,
+          "column": 1
+        },
+        {
+          "title": "a delayed real model response cannot overwrite manual edits and a fresh request can recover",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11937,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T11:22:54.966Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ff9df0ec3f5e0598e050-d551b9cbc2ace8c082fd",
+          "file": "sunfire-assistant.spec.ts",
+          "line": 594,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T11:22:24.354Z",
+    "duration": 42694.015,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

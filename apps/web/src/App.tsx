@@ -81,10 +81,22 @@ import AlertsDialog from "./components/AlertsDialog";
 import SearchDialog from "./components/SearchDialog";
 import HospitalResourceDetails from "./components/HospitalResourceDetails";
 import Login from "./components/Login";
+import SessionGate from "./components/SessionGate";
 import type { LogoOrigin } from "./components/Login";
 import AegisLogo from "./components/AegisLogo";
 import BrandTransition from "./components/BrandTransition";
 import { resourceFacility } from "./entityLocation";
+import type {
+  PlanningDraftBridge,
+  PlanningDraftSnapshot,
+} from "./planningDraft";
+import type {
+  SunfireContext,
+  SunfireLink,
+  SunfireMode,
+  SunfireReceipt,
+} from "./components/sunfireTypes";
+import { usableEvidenceLink } from "./components/sunfireModel";
 import {
   destination,
   isAnalysisPage,
@@ -105,7 +117,8 @@ const Summary = lazy(() => import("./pages/Overview")),
   Scenarios = lazy(() => import("./pages/Scenarios")),
   Compare = lazy(() => import("./pages/Compare")),
   Replay = lazy(() => import("./pages/Replay")),
-  DataSetup = lazy(() => import("./pages/DataSetup"));
+  DataSetup = lazy(() => import("./pages/DataSetup")),
+  SunfireAssistant = lazy(() => import("./components/SunfireAssistant"));
 const analysisNav = [
   { id: "summary", name: "Summary", icon: Map },
   { id: "replay", name: "Replay", icon: Play },
@@ -154,6 +167,13 @@ export default function App() {
     page === "comparison",
   );
   const [overviewVisited, setOverviewVisited] = useState(page === "overview");
+  const [sunfireMode, setSunfireMode] = useState<SunfireMode>("closed");
+  const [configurationBridge, setConfigurationBridge] =
+    useState<PlanningDraftBridge | null>(null);
+  const changeSunfireMode = useCallback((mode: SunfireMode) => {
+    if (mode !== "closed") setOverviewVisited(true);
+    setSunfireMode(mode);
+  }, []);
   const [dataset, setDatasetState] = useState<Dataset | null>(null),
     [draftDataset, setDraftDataset] = useState<Dataset | null>(null),
     [scenario, setScenario] = useState<Scenario | null>(null),
@@ -180,7 +200,6 @@ export default function App() {
     [accountOpen, setAccountOpen] = useState(false),
     [adminOpen, setAdminOpen] = useState(false),
     [mobileNav, setMobileNav] = useState(false),
-    [user, setUser] = useState<Entity | null>(null),
     [activeReplicationId, setReplication] = useState("");
   const replaySelection = useRef({ replicationId: "", selectedTime });
   replaySelection.current = {
@@ -210,24 +229,25 @@ export default function App() {
     setUpdateTarget(target || null);
     setUpdateOpen(true);
   };
+  const sessionQuery = useQuery({
+    queryKey: ["session"],
+    queryFn: () => api("/me"),
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const user = sessionQuery.data || null;
   const summary = useQuery({
     queryKey: ["summary"],
+    enabled: Boolean(sessionQuery.data),
     queryFn: async () => {
       const params = new URLSearchParams(location.search);
       const selection = new URLSearchParams();
       if (params.get("scenario"))
         selection.set("scenario_id", params.get("scenario")!);
       if (params.get("run")) selection.set("run_group_id", params.get("run")!);
-      const [s] = await Promise.all([
-        api(
-          `/workspaces/workspace-main/summary${selection.size ? `?${selection}` : ""}`,
-        ),
-        api("/me").then((user) => {
-          setUser(user);
-          return user;
-        }),
-      ]);
-      return s;
+      return api(
+        `/workspaces/workspace-main/summary${selection.size ? `?${selection}` : ""}`,
+      );
     },
     retry: 1,
   });
@@ -755,13 +775,140 @@ export default function App() {
     stateLoading: stateQuery.isFetching,
     stateError: stateQuery.error?.message || null,
   };
+  const sunfireWorkspace = useRef({
+    scenario,
+    run,
+    bridge: configurationBridge,
+    ownerId: String(
+      user?.id || user?.user_id || user?.username || "current-account",
+    ),
+  });
+  sunfireWorkspace.current = {
+    scenario,
+    run,
+    bridge: configurationBridge,
+    ownerId: String(
+      user?.id || user?.user_id || user?.username || "current-account",
+    ),
+  };
+  const acceptSunfireReceipt = useCallback(
+    async (
+      receipt: SunfireReceipt,
+      applied: PlanningDraftSnapshot,
+      origin: SunfireContext | null,
+      ownerId: string,
+    ) => {
+      // Let a just-entered manual value commit before adopting a saved revision.
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => resolve()),
+      );
+      const current = sunfireWorkspace.current;
+      if (
+        current.ownerId !== ownerId ||
+        current.scenario?.id !== applied.scenario_id
+      )
+        return false;
+      if (receipt.saved_scenario) {
+        if (
+          !current.bridge?.prepareSavedRevision?.(
+            receipt.saved_scenario,
+            applied,
+          )
+        )
+          return false;
+        setScenario(receipt.saved_scenario);
+      }
+      if (
+        receipt.run_group &&
+        (!origin ||
+          current.run?.id === origin.selected_run_group_id ||
+          (!current.run && !origin.selected_run_group_id))
+      ) {
+        setRun(receipt.run_group);
+        setReplication("");
+        setPatient(null);
+        setSelectedResource(null);
+        setSelectedUnit("");
+        setSelectedTime(
+          receipt.run_group.start_at ||
+            receipt.saved_scenario?.start_at ||
+            current.scenario.start_at,
+        );
+      }
+      if (receipt.cancelled_run?.id === current.run?.id)
+        setRun(receipt.cancelled_run!);
+      await queryClient.invalidateQueries({ queryKey: ["run"] });
+      return true;
+    },
+    [queryClient],
+  );
+  const followSunfireEvidence = useCallback(
+    async (link: SunfireLink) => {
+      if (!usableEvidenceLink(link)) return;
+      if (link.kind === "comparison") {
+        const url = new URL(location.href);
+        url.searchParams.set("compare_left", link.left_scenario_id!);
+        url.searchParams.set("compare_right", link.right_scenario_id!);
+        url.searchParams.delete("comparison");
+        url.searchParams.delete("plan");
+        history.replaceState({}, "", url);
+        setComparisonSelection(null);
+        setPage("comparison");
+        return;
+      }
+      const runId = link.run_group_id || sunfireWorkspace.current.run?.id;
+      if (!runId) return;
+      const request = ++historyRequest.current;
+      await action("Opening recorded evidence", async () => {
+        const selected = await api(
+          `/workspaces/workspace-main/summary?run_group_id=${encodeURIComponent(runId)}`,
+        );
+        if (request !== historyRequest.current) return;
+        if (
+          link.kind === "replay" &&
+          !(await prepareRecordedReplay(
+            link.replication_id!,
+            () => request === historyRequest.current,
+          ))
+        )
+          return;
+        if (request !== historyRequest.current) return;
+        const chosenRun = (selected.run_group || selected.run) as RunGroup;
+        const chosenScenario = selected.scenario as Scenario;
+        setDataset(selected.dataset);
+        setDraftDataset(selected.draft_dataset || selected.dataset);
+        setScenario(chosenScenario);
+        setRun(chosenRun);
+        setSelectedResource(null);
+        setSelectedUnit("");
+        setPatient(null);
+        setReplication(link.kind === "replay" ? link.replication_id! : "");
+        setSelectedTime(
+          link.kind === "replay"
+            ? link.at!
+            : chosenRun.start_at || chosenScenario.start_at,
+        );
+        setPage(link.kind === "replay" ? "replay" : "summary");
+      });
+    },
+    [action, setDataset, setPage],
+  );
   useEffect(() => {
     document.title =
-      summary.error && (summary.error as ApiError).status === 401
+      (sessionQuery.error as ApiError)?.status === 401 ||
+      (summary.error as ApiError)?.status === 401
         ? "Sign in | AEGIS"
-        : `${page === "overview" ? "Configuration" : page === "data" ? "Data & setup" : `Analysis · ${analysisNav.find((item) => item.id === page)?.name}`} | AEGIS`;
+        : !sessionQuery.data
+          ? "AEGIS"
+          : `${page === "overview" ? "Configuration" : page === "data" ? "Data & setup" : `Analysis · ${analysisNav.find((item) => item.id === page)?.name}`} | AEGIS`;
     document.getElementById("main-content")?.scrollTo({ top: 0 });
-  }, [page, analyticsSection, summary.error]);
+  }, [
+    page,
+    analyticsSection,
+    summary.error,
+    sessionQuery.data,
+    sessionQuery.error,
+  ]);
   useEffect(() => {
     async function restoreHistory() {
       const request = ++historyRequest.current;
@@ -906,13 +1053,31 @@ export default function App() {
       onComplete={finishBrandTransition}
     />
   ) : null;
-  if (summary.error && (summary.error as ApiError).status === 401)
+  const signedOut =
+    (sessionQuery.error as ApiError)?.status === 401 ||
+    (summary.error as ApiError)?.status === 401;
+  if (!sessionQuery.data && !signedOut && !brandOrigin)
+    return (
+      <SessionGate
+        failed={sessionQuery.isError}
+        retry={() => void sessionQuery.refetch()}
+      />
+    );
+  if (signedOut || (brandOrigin && !summary.data))
     return (
       <>
         <Login
           blocked={Boolean(brandOrigin)}
           onLogin={async (origin) => {
             setBrandOrigin(origin);
+            const account = await sessionQuery.refetch();
+            if (account.error || !account.data) {
+              setBrandOrigin(null);
+              throw (
+                account.error ||
+                new Error("Your session could not be loaded. Please try again.")
+              );
+            }
             const result = await summary.refetch();
             if (result.error) {
               setBrandOrigin(null);
@@ -928,7 +1093,7 @@ export default function App() {
   return (
     <>
       <div
-        className={`app-shell${navCollapsed ? " navigation-collapsed" : ""}`}
+        className={`app-shell${navCollapsed ? " navigation-collapsed" : ""}${sunfireMode !== "closed" ? " sunfire-open" : ""}${sunfireMode === "expanded" ? " sunfire-expanded" : ""}`}
         data-role={user?.role}
         inert={Boolean(brandOrigin)}
       >
@@ -1284,33 +1449,43 @@ export default function App() {
             ) : dataset ? (
               <Suspense fallback={<Busy label="Opening workspace view" />}>
                 {overviewVisited ? (
-                  <div
-                    className="workspace-view planning-view"
-                    hidden={page !== "overview"}
+                  <Suspense
+                    fallback={
+                      page === "overview" ? (
+                        <Busy label="Opening configuration" />
+                      ) : null
+                    }
                   >
-                    <PlanningOverview
-                      ctx={{ ...ctx, dataset: draftDataset || dataset, run }}
-                      configuration={
-                        <Scenarios
-                          ctx={{
-                            ...ctx,
-                            dataset: draftDataset || dataset,
-                            run: null,
-                            metrics: null,
-                            state: null,
-                            stateLoading: false,
-                            stateError: null,
-                            resultScenario: null,
-                            selectedTime: (draftDataset || dataset).snapshot_at,
-                            selectedDay: 0,
-                            busy: active ? "Simulation in progress" : busy,
-                          }}
-                        />
-                      }
-                      onInspectBaseline={() => setPage("data")}
-                      onOpenAnalysis={() => setPage("summary")}
-                    />
-                  </div>
+                    <div
+                      className="workspace-view planning-view"
+                      hidden={page !== "overview"}
+                    >
+                      <PlanningOverview
+                        ctx={{ ...ctx, dataset: draftDataset || dataset, run }}
+                        configuration={
+                          <Scenarios
+                            onDraftBridgeChange={setConfigurationBridge}
+                            ctx={{
+                              ...ctx,
+                              dataset: draftDataset || dataset,
+                              run: null,
+                              metrics: null,
+                              state: null,
+                              stateLoading: false,
+                              stateError: null,
+                              resultScenario: null,
+                              selectedTime: (draftDataset || dataset)
+                                .snapshot_at,
+                              selectedDay: 0,
+                              busy: active ? "Simulation in progress" : busy,
+                            }}
+                          />
+                        }
+                        onInspectBaseline={() => setPage("data")}
+                        onOpenAnalysis={() => setPage("summary")}
+                      />
+                    </div>
+                  </Suspense>
                 ) : null}
                 {needsForecastMetrics ? (
                   <div
@@ -1442,6 +1617,22 @@ export default function App() {
             </button>
           </footer>
         </div>
+        <Suspense fallback={null}>
+          <SunfireAssistant
+            key={String(
+              user?.id || user?.user_id || user?.username || "current-account",
+            )}
+            ownerId={String(
+              user?.id || user?.user_id || user?.username || "current-account",
+            )}
+            mode={sunfireMode}
+            onModeChange={changeSunfireMode}
+            bridge={configurationBridge}
+            ctx={{ ...resultToolsCtx, dataset: draftDataset || dataset }}
+            onReceipt={acceptSunfireReceipt}
+            onNavigate={(link) => void followSunfireEvidence(link)}
+          />
+        </Suspense>
         {toast ? (
           <div
             className={`toast ${toastTone}`}

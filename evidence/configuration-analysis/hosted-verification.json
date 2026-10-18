@@ -1,0 +1,22 @@
+{
+  "application_commit": "46ca91eb6b084fd0680424cc817d886e0c61c799",
+  "live_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "all_hosted_gates_passed": true,
+  "tested_frontend_files_matched": 43,
+  "all_six_services_healthy_and_running": true,
+  "named_volumes_preserved": true,
+  "protected_records_unchanged": 21,
+  "active_scenarios_and_default_preserved": true,
+  "fresh_oci_run": "run_eb7a81c8242e40a9b8a5",
+  "frozen_configuration_and_five_shift_snapshots_verified": true,
+  "named_staff_shortages_verified": [
+    "Registered nurse",
+    "Medical provider",
+    "Support staff"
+  ],
+  "paused_replay_matches_recorded_state": true,
+  "browser_errors": 0,
+  "mobile": "Excluded at explicit user request",
+  "hosted_export_download": "Excluded",
+  "prior_benchmarks_security_scans_and_restore_trials": "Retain original release attribution; not repeated here"
+}

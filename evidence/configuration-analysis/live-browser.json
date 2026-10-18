@@ -1,0 +1,28 @@
+{
+  "recorded_at": "2026-10-18T03:48:32.927Z",
+  "code_commit": "46ca91eb6b084fd0680424cc817d886e0c61c799",
+  "signed_in_browser": "ChatGPT in-app browser",
+  "views_verified": [
+    "preserved demo Configuration and editable arrival/bed/staff controls",
+    "preserved demo full-width Summary with loaded constraint details",
+    "eleven Analytics bookmarks and full-width daily ward capacity chart",
+    "fresh OCI configured run: exact named ED shortages and first-occurrence selection",
+    "fresh OCI replay: play, exact pause, expansion and recorded 83-patient state"
+  ],
+  "forecast_bookmarks": 11,
+  "configuration_arrival_charts": 1,
+  "main_staff_slider_roles": [
+    "registered nurses",
+    "doctors and providers",
+    "support staff"
+  ],
+  "fresh_run_id": "run_eb7a81c8242e40a9b8a5",
+  "paused_at": "2026-10-16T11:45:23.877Z",
+  "paused_display": "Oct 16, 06:45:23 AM CDT",
+  "paused_active_patients": 83,
+  "browser_errors": [],
+  "browser_warnings": [],
+  "existing_scenario_inputs_changed": false,
+  "hosted_export_download": "excluded",
+  "final_view": "Configuration for the original preserved scenario"
+}

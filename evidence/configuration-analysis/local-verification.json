@@ -63,5 +63,6 @@
     "complete desktop simulation, comparisons, updates, replay/discharge and local ZIP checksums"
   ],
   "hosted_export_download": "excluded",
-  "patient_type_controls": "Removed from scope at explicit user request"
+  "patient_type_controls": "Removed from scope at explicit user request",
+  "application_commit": "46ca91eb6b084fd0680424cc817d886e0c61c799"
 }

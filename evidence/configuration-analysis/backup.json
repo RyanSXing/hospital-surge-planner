@@ -8,5 +8,5 @@
   "private_oci_storage": true,
   "existing_resources_reused": true,
   "retention_deletions": 0,
-  "reason": "Preserve existing workspace before Configuration and Analysis deployment; no scenario mutations requested"
+  "reason": "Preserve existing workspace before Configuration and Analysis deployment; existing scenarios are protected"
 }

@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-16T11:45:23.877Z",
+  "active_patients": 83,
+  "states": {
+    "inpatient": 71,
+    "ed_waiting": 12
+  },
+  "displayed_replay_patients": 83,
+  "displayed_matches_recorded_state": true,
+  "icu_staffed": 16
+}

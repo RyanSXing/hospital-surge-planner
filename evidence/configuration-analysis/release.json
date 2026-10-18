@@ -1,6 +1,6 @@
 {
   "recorded_at": "2026-10-18T03:33:45.169891+00:00",
-  "application_commit": null,
+  "application_commit": "46ca91eb6b084fd0680424cc817d886e0c61c799",
   "git_head_at_recording": "7ea321d23aac75d72495723f975271f48428f1d0",
   "application_files": {
     "apps/api/surge_api/__init__.py": "37a7fd3669b1fff1e894cacfc84f9e89a6aa931d690388d9197a2076ab352206",
@@ -263,5 +263,6 @@
     "apps/web/playwright.config.ts": "497507893403758c2739f9418885210043eb0abbe6766ef964fda2e2bdab84ce",
     "scripts/check-browser.mjs": "733673fc8ab8adf77ed695b4d6be0466cde3cfcceb66ae2634f1a5fb00f6eefb"
   },
-  "verification_scope": "Configuration and Analysis desktop interface; real editable stock/roster model, draggable arrivals, bookmarked charts, exact constraints, replay, comparisons, updates, and local export verification. Mobile is outside this release scope."
+  "verification_scope": "Configuration and Analysis desktop interface; real editable stock/roster model, draggable arrivals, bookmarked charts, exact constraints, replay, comparisons, updates, and local export verification. Mobile is outside this release scope.",
+  "commit_bound_at": "2026-10-18T03:40:57.342701+00:00"
 }

@@ -1,8 +1,24 @@
 # Hosted verification record
 
-[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) runs release **`53be1024647134cf3d58bf6a7165328500b4253f`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
+[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) runs release **`46ca91eb6b084fd0680424cc817d886e0c61c799`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
 
-## Summary timeline and recorded patient journeys — 2026-10-18
+## Configuration, chart bookmarks and recorded constraints — 2026-10-18
+
+Configuration now exposes hospital beds, staffed-bed limits and per-unit registered nurse, provider and support sliders beside a draggable daily-arrivals curve. Optional details remain under More parameters. Analytics uses eleven chart bookmarks and one full-width graph. Summary keeps one full-width timeline, visible sparse-period observations, exact recorded bottlenecks and first-occurrence links; normal state loading no longer inserts a shifting bar.
+
+| Gate | Verified result |
+|---|---|
+| Local model and interface | **640 backend tests**, **172 frontend unit tests**, and **60 distinct desktop workflow checks** pass. The complete desktop suite initially had one duplicate-chart failure; namespaced sibling keys fix it. The final affected-flow run has **17 passes, one intentional device skip, zero failures**. The complete suite was not repeated after the final UI corrections. [Results](../evidence/configuration-analysis/local-verification.json), [exact scope](../evidence/configuration-analysis/final-followup-scope.json) |
+| Exact live release | All **43 frontend files** match the tested production bundle. API, worker and web carry the application commit; all six services are healthy and running, with unchanged named volumes. [Assets](../evidence/configuration-analysis/live-assets.json), [runtime](../evidence/configuration-analysis/runtime-preservation.json), [source](../evidence/configuration-analysis/release.json) |
+| Real configured OCI execution | One day, one replication completed on this release and saved four private OCI artifacts. Bed counts, the equipment cap, and qualified nurse/provider/support counts agree at five shift times. Diagnostics name the intentionally missing emergency team. [Fresh computation](../evidence/configuration-analysis/cloud-smoke.json) |
+| Existing workspace | All **21 protected records**, the active scenario and the original workspace default remain unchanged. A private backup preceded deployment. Only the new verification scenario was archived recoverably; its run and artifacts remain. [Preservation](../evidence/configuration-analysis/preservation.json), [backup](../evidence/configuration-analysis/backup.json), [verification curation](../evidence/configuration-analysis/verification-curation.json) |
+| Signed-in browser | Configuration, Summary, eleven chart bookmarks, exact shortage navigation and configured replay work with **zero browser errors or warnings**. The paused 83-patient scene matches the recorded API state. The handoff returns to the preserved Configuration. [Browser proof](../evidence/configuration-analysis/live-browser.json), [screenshots](../evidence/configuration-analysis/README.md#hosted-verification) |
+
+This update targets desktop; patient-type controls were removed at the user's request. Hosted export download is excluded. The fresh short OCI execution is a smoke check, not a new performance benchmark. Earlier security scans, restore trials and performance measurements retain their original release attribution below. [Workflow guide](single-hospital-workflow.md).
+
+## Previous Summary timeline and recorded patient journeys — 2026-10-18
+
+Release `53be1024647134cf3d58bf6a7165328500b4253f` established the following Summary and replay behavior and verification record.
 
 Summary now shows the four Analytics outcome cards and the exact forecast timeline in its main chart slot. Replay follows recorded physical care stages through clear corridors, includes visits absent from both sampled census endpoints, and carries discharged patients into a visible discharge-bay dwell before they leave.
 

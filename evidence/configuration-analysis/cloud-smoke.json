@@ -1,0 +1,274 @@
+{
+  "recorded_at": "2026-10-18T03:41:24.765431+00:00",
+  "code_commit": "46ca91eb6b084fd0680424cc817d886e0c61c799",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scenario_id": "scenario_7304331aeca04d138ec5",
+  "run_group_id": "run_eb7a81c8242e40a9b8a5",
+  "scope": "One day, one replication; actual public HTTPS, PostgreSQL/Redis worker and private OCI artifacts. Smoke computation, not a performance benchmark.",
+  "status": "SUCCEEDED",
+  "manifest": {
+    "schema_version": "1.0",
+    "run_group_id": "run_eb7a81c8242e40a9b8a5",
+    "workspace_id": "workspace-main",
+    "dataset_version_id": "demo-v1-1-0-hospital_baseline-41021-365",
+    "scenario_revision_id": "revision_1e56b6bf1fde4a89b612",
+    "model_version": "1.1.0",
+    "code_commit": "46ca91eb6b084fd0680424cc817d886e0c61c799",
+    "input_sha256": "573fdd61c6ddbabc2739126180fa4ca3af4bed78c7cc65365a62d35bc0272b55",
+    "generator_version": "1.1.0",
+    "timezone": "America/Chicago",
+    "start_at": "2026-10-16T05:00:00Z",
+    "end_at": "2026-10-17T05:00:00Z",
+    "created_at": "2026-10-18T03:41:10.244893Z",
+    "replications_requested": 1,
+    "replications_completed": 1,
+    "seed_policy": "keyed-streams-v1",
+    "base_seed": 20261016,
+    "selected_replication_id": "run_eb7a81c8242e40a9b8a5_rep_0000",
+    "selected_replication_index": 0,
+    "status": "SUCCEEDED",
+    "data_origin": "synthetic",
+    "artifacts": [
+      {
+        "object_key": "workspace-main/run_eb7a81c8242e40a9b8a5/artifact_9706d9345e874e929141/aggregate.json.gz",
+        "sha256": "ac47ddd75ca7d90c197dde265d5b4aaa05d8af543d10362c55b8dd90c60cf40a",
+        "byte_size": 4111,
+        "media_type": "application/gzip",
+        "name": "aggregate.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-18T03:41:19.680911Z"
+      },
+      {
+        "object_key": "workspace-main/run_eb7a81c8242e40a9b8a5/artifact_7d9a904f833b41f0942b/replications.json.gz",
+        "sha256": "fc364673766bb65e13628e4c9ef6161bebf468aad0b8991c62ca65f0bef734a8",
+        "byte_size": 2223,
+        "media_type": "application/gzip",
+        "name": "replications.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-18T03:41:19.698058Z"
+      },
+      {
+        "object_key": "workspace-main/run_eb7a81c8242e40a9b8a5/artifact_19296e753b6e4f558b3f/selected-trace.json.gz",
+        "sha256": "5c8e7fe8dc57aeae83ab1cd2e6ce8d60631b1cc349043e9f31e1988ebedaaadd",
+        "byte_size": 36687,
+        "media_type": "application/gzip",
+        "name": "selected-trace.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-18T03:41:20.329774Z"
+      },
+      {
+        "object_key": "workspace-main/run_eb7a81c8242e40a9b8a5/artifact_581c5d7b57714eb78e24/inputs.json.gz",
+        "sha256": "3f47b832d1061d7608aac971c099fd15f8e01b5995164a24734be02e341948e1",
+        "byte_size": 886011,
+        "media_type": "application/gzip",
+        "name": "inputs.json.gz",
+        "backend": "oci",
+        "schema_version": "1.0",
+        "created_at": "2026-10-18T03:41:20.240197Z"
+      }
+    ],
+    "completed_at": "2026-10-18T03:41:20.329887Z",
+    "warnings": [
+      "Synthetic assumptions; simulation ranges are not clinical predictions."
+    ]
+  },
+  "frozen_conditions": [
+    {
+      "kind": "unit_configuration",
+      "unit_id": "UNIT-ICU",
+      "physical_capacity": 20,
+      "enabled_capacity": 20,
+      "staffed_capacity": 18,
+      "staff_counts": {
+        "rn": 9,
+        "provider": 3,
+        "support": 4
+      },
+      "source": "user_assumption"
+    },
+    {
+      "kind": "unit_configuration",
+      "unit_id": "UNIT-ED",
+      "staff_counts": {
+        "rn": 0,
+        "provider": 0,
+        "support": 0
+      },
+      "source": "user_assumption"
+    },
+    {
+      "kind": "arrival_multiplier",
+      "entry_stream_id": "ED_MAIN",
+      "control_points": [
+        {
+          "at": "2026-10-16T05:00:00Z",
+          "multiplier": 1.0
+        },
+        {
+          "at": "2026-10-16T17:00:00Z",
+          "multiplier": 1.3
+        },
+        {
+          "at": "2026-10-17T05:00:00Z",
+          "multiplier": 1.0
+        }
+      ],
+      "shape": "piecewise_linear"
+    }
+  ],
+  "verified_shift_snapshots": [
+    {
+      "at": "2026-10-16T05:00:00+00:00",
+      "icu_physical": 20,
+      "icu_staffed": 16,
+      "icu_qualified_staff": {
+        "provider": 3.0,
+        "rn": 9.0,
+        "support": 4.0
+      },
+      "ed_qualified_staff": {
+        "provider": 0,
+        "rn": 0,
+        "support": 0
+      }
+    },
+    {
+      "at": "2026-10-16T12:00:00+00:00",
+      "icu_physical": 20,
+      "icu_staffed": 16,
+      "icu_qualified_staff": {
+        "provider": 3.0,
+        "rn": 9.0,
+        "support": 4.0
+      },
+      "ed_qualified_staff": {
+        "provider": 0,
+        "rn": 0,
+        "support": 0
+      }
+    },
+    {
+      "at": "2026-10-16T17:00:00+00:00",
+      "icu_physical": 20,
+      "icu_staffed": 16,
+      "icu_qualified_staff": {
+        "provider": 3.0,
+        "rn": 9.0,
+        "support": 4.0
+      },
+      "ed_qualified_staff": {
+        "provider": 0,
+        "rn": 0,
+        "support": 0
+      }
+    },
+    {
+      "at": "2026-10-17T00:00:00+00:00",
+      "icu_physical": 20,
+      "icu_staffed": 16,
+      "icu_qualified_staff": {
+        "provider": 3.0,
+        "rn": 9.0,
+        "support": 4.0
+      },
+      "ed_qualified_staff": {
+        "provider": 0,
+        "rn": 0,
+        "support": 0
+      }
+    },
+    {
+      "at": "2026-10-17T04:00:00+00:00",
+      "icu_physical": 20,
+      "icu_staffed": 16,
+      "icu_qualified_staff": {
+        "provider": 3.0,
+        "rn": 9.0,
+        "support": 4.0
+      },
+      "ed_qualified_staff": {
+        "provider": 0,
+        "rn": 0,
+        "support": 0
+      }
+    }
+  ],
+  "bottlenecks": {
+    "categories": [
+      {
+        "first_at": "2026-10-16T05:53:14.397508Z",
+        "last_at": "2026-10-17T05:00:00Z",
+        "patient_hours": 1138.1617413681868,
+        "peak_waiting": 112,
+        "reason": "minimum_operating_team"
+      },
+      {
+        "first_at": "2026-10-16T05:53:14.397508Z",
+        "last_at": "2026-10-17T05:00:00Z",
+        "patient_hours": 1138.1617413681868,
+        "peak_waiting": 112,
+        "reason": "nursing_capacity"
+      }
+    ],
+    "context": {
+      "dataset_version_id": "demo-v1-1-0-hospital_baseline-41021-365",
+      "replication_id": "run_eb7a81c8242e40a9b8a5_rep_0000",
+      "run_group_id": "run_eb7a81c8242e40a9b8a5",
+      "scenario_id": "scenario_7304331aeca04d138ec5",
+      "scenario_revision_id": "revision_1e56b6bf1fde4a89b612",
+      "schema_version": "1.0",
+      "scope": "hospital",
+      "selected_replication_id": "run_eb7a81c8242e40a9b8a5_rep_0000",
+      "statistic": "p50",
+      "timezone": "America/Chicago"
+    },
+    "end_at": "2026-10-17T05:00:00Z",
+    "evidence_available": true,
+    "non_additive": true,
+    "replication_id": "run_eb7a81c8242e40a9b8a5_rep_0000",
+    "resources": [
+      {
+        "code": "provider",
+        "first_at": "2026-10-16T05:53:14.397508Z",
+        "kind": "staff",
+        "last_at": "2026-10-17T05:00:00Z",
+        "patient_hours": 1138.1617413681868,
+        "peak_waiting": 112,
+        "reason": "minimum_operating_team",
+        "unit_id": "UNIT-ED",
+        "unit_kind": "ed"
+      },
+      {
+        "code": "rn",
+        "first_at": "2026-10-16T05:53:14.397508Z",
+        "kind": "staff",
+        "last_at": "2026-10-17T05:00:00Z",
+        "patient_hours": 1138.1617413681868,
+        "peak_waiting": 112,
+        "reason": "nursing_capacity",
+        "unit_id": "UNIT-ED",
+        "unit_kind": "ed"
+      },
+      {
+        "code": "support",
+        "first_at": "2026-10-16T05:53:14.397508Z",
+        "kind": "staff",
+        "last_at": "2026-10-17T05:00:00Z",
+        "patient_hours": 1138.1617413681868,
+        "peak_waiting": 112,
+        "reason": "minimum_operating_team",
+        "unit_id": "UNIT-ED",
+        "unit_kind": "ed"
+      }
+    ],
+    "scope": "selected_replication",
+    "start_at": "2026-10-16T05:00:00Z"
+  },
+  "source_dataset_unchanged": true,
+  "hosted_export_download": "excluded",
+  "run_submission_through_result_verification_seconds": 15.49196758295875,
+  "timing_scope": "Submission, polling and result verification reads; excludes scenario creation and final archival. Not a compute benchmark."
+}

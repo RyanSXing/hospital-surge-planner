@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-18T03:34:17.963236+00:00",
+  "checked_at": "2026-10-18T03:45:57.902182+00:00",
   "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
   "records": [
     {
@@ -115,11 +115,12 @@
     "run": "run_3e4ba7b099cc4d8fa922"
   },
   "active_scenario_ids_preserved": true,
-  "no_scenario_mutations_by_release": true,
   "health": {
     "status": "ready",
     "database": "available",
     "queue": "available",
     "schema_version": "1.0"
-  }
+  },
+  "existing_scenarios_mutated_by_release": false,
+  "verification_scenario_curation": "verification-curation.json"
 }

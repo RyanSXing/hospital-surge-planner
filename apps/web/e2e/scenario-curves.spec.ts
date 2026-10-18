@@ -291,6 +291,8 @@ test("editing exact stepped arrivals preserves their step behavior", async ({
     curve.control_points[2],
   ]);
   const graph = page.getByTestId("arrival-preview-chart");
+  await expect(graph).toHaveCount(1);
+  await expect(graph).toHaveAttribute("role", "group");
   const planned = (await graph.getAttribute("data-planned-arrivals"))!
       .split(",")
       .map(Number),

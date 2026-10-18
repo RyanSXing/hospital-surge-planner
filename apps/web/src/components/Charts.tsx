@@ -6,6 +6,7 @@ import type { Entity, PlanningContext } from "../types";
 import { fmt, localDate, num } from "../api";
 import { Badge, EmptyState } from "./ui";
 import DayDetailDialog from "./DayDetailDialog";
+import { forecastXDomain, isolatedForecastIndexes } from "./forecastGeometry";
 const COLORS = ["#2684cc", "#ce5266", "#a87614", "#1a9b87"];
 export function ForecastChart({
   rows,
@@ -74,11 +75,12 @@ export function ForecastChart({
   const firstAt = rows[0]?.at || rows[0]?.start_at,
     lastAt = rows.at(-1)?.at || rows.at(-1)?.start_at,
     intraday =
+      rows.length > 1 &&
       firstAt &&
       lastAt &&
       Math.abs(Date.parse(lastAt) - Date.parse(firstAt)) <= 36 * 3600000;
   const x = scaleLinear()
-    .domain([0, Math.max(1, rows.length - 1)])
+    .domain(forecastXDomain(rows.length))
     .range([pad.left, W - pad.right]);
   const max = Math.max(
     5,
@@ -186,6 +188,37 @@ export function ForecastChart({
                   }
                   opacity={dashed ? 0.6 : 1}
                 />
+                {isolatedForecastIndexes(rows, (row) => valid(row?.[k])).map(
+                  (index) => (
+                    <g key={index} className="chart-isolated-observation">
+                      {showBand &&
+                      !dashed &&
+                      (bandKey ? k === bandKey : i === 0) &&
+                      valid(rows[index][k]?.p10) &&
+                      valid(rows[index][k]?.p90) ? (
+                        <line
+                          x1={x(index)}
+                          x2={x(index)}
+                          y1={y(num(rows[index][k], "p10"))}
+                          y2={y(num(rows[index][k], "p90"))}
+                          stroke={colorFor(k, i)}
+                          strokeWidth={6}
+                          opacity={0.2}
+                        />
+                      ) : null}
+                      <circle
+                        cx={x(index)}
+                        cy={y(num(rows[index][k]))}
+                        r={4}
+                        fill={dashed ? "white" : colorFor(k, i)}
+                        stroke={colorFor(k, i)}
+                        strokeWidth={2}
+                      >
+                        <title>{`${labels[i]}: ${fmt(num(rows[index][k]), 1)}`}</title>
+                      </circle>
+                    </g>
+                  ),
+                )}
               </g>
             );
           })}
@@ -302,6 +335,16 @@ export function ForecastChart({
       ) : null}
       {rows.length ? (
         <>
+          {rows.length === 1 ? (
+            <p className="small-copy muted chart-single-period-note">
+              One recorded interval
+              {rows[0].end_at
+                ? ` · ${dateLabel(rows[0].start_at || rows[0].at)}–${dateLabel(rows[0].end_at)}`
+                : ""}
+              . Points show its exact values; a trend needs more than one
+              interval.
+            </p>
+          ) : null}
           <div className="chart-accessibility-controls">
             {onSelect ? (
               <>
@@ -511,7 +554,12 @@ export function Timeline({
             if (rows[i]?.at || rows[i]?.start_at)
               ctx.setTime(rows[i].at || rows[i].start_at);
           }}
-          height={120}
+          height={220}
+          yLabel={
+            ctx.grain === "day"
+              ? "Patients / beds"
+              : "Patients / beds · time-weighted interval average"
+          }
         />
       ) : null}
       <div className="heatmap-heading">

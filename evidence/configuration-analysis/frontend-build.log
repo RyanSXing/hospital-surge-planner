@@ -1,0 +1,42 @@
+
+> hospital-surge-planner-web@1.0.0 build
+> tsc -b && vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 2987 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                0.67 kB │ gzip:   0.39 kB
+dist/assets/Analytics-Do3VcGuu.css             1.20 kB │ gzip:   0.51 kB
+dist/assets/PlanningPanels-dTYZPhGN.css        4.24 kB │ gzip:   0.98 kB
+dist/assets/OutcomeAnalytics-D-T_o74q.css      5.77 kB │ gzip:   1.44 kB
+dist/assets/PlanningOverview-DjCs7qs1.css      6.75 kB │ gzip:   1.58 kB
+dist/assets/Patients-BN3GHb61.css              7.97 kB │ gzip:   1.88 kB
+dist/assets/Overview-CEi9aEAz.css              9.22 kB │ gzip:   2.04 kB
+dist/assets/Compare-BUV9UFzh.css              11.41 kB │ gzip:   2.22 kB
+dist/assets/Replay-DUjTZS8c.css               15.06 kB │ gzip:   3.36 kB
+dist/assets/Scenarios-DMETtZ1t.css            21.91 kB │ gzip:   4.82 kB
+dist/assets/index-COsXxafU.css               323.05 kB │ gzip:  51.51 kB
+dist/assets/get-safe-id-Bp3H8K0-.js            0.12 kB │ gzip:   0.13 kB
+dist/assets/chevron-left-DnbcKuat.js           0.13 kB │ gzip:   0.14 kB
+dist/assets/clock-3-DivJeB2-.js                0.18 kB │ gzip:   0.17 kB
+dist/assets/OutcomeSummaryCards-BalXTqYi.js    0.84 kB │ gzip:   0.51 kB
+dist/assets/usePatientPage-BQdJC6zp.js         1.16 kB │ gzip:   0.69 kB
+dist/assets/resultsMetrics-CqPKVmOW.js         1.96 kB │ gzip:   0.85 kB
+dist/assets/Analytics-CSS0eeln.js              2.14 kB │ gzip:   1.00 kB
+dist/assets/model-B3DU6HD3.js                  3.20 kB │ gzip:   1.41 kB
+dist/assets/PlanningPanels-B0QDnD2_.js         3.22 kB │ gzip:   1.23 kB
+dist/assets/Tabs-C9wsbFij.js                   4.28 kB │ gzip:   1.76 kB
+dist/assets/PlanningOverview-BAltmOpP.js       5.47 kB │ gzip:   1.97 kB
+dist/assets/Accordion-hzqwVSjj.js              6.48 kB │ gzip:   2.61 kB
+dist/assets/Overview-BvjRhpbh.js              10.62 kB │ gzip:   3.98 kB
+dist/assets/OutcomeAnalytics-C8NMkMBP.js      15.76 kB │ gzip:   5.50 kB
+dist/assets/DataSetup-3vb2eYpG.js             29.38 kB │ gzip:  10.21 kB
+dist/assets/Compare-BUeevBtB.js               30.33 kB │ gzip:   9.76 kB
+dist/assets/Patients-CTQaZrgx.js              30.99 kB │ gzip:   8.91 kB
+dist/assets/Replay-CcFYe17M.js                61.70 kB │ gzip:  20.65 kB
+dist/assets/Charts-CfzfB5rW.js                72.21 kB │ gzip:  24.66 kB
+dist/assets/Scenarios-KKmnMgJk.js             97.13 kB │ gzip:  31.26 kB
+dist/assets/index-CPH8BYIt.js                555.90 kB │ gzip: 172.70 kB
+✓ built in 1.86s

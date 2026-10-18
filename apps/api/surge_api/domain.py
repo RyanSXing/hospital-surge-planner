@@ -75,6 +75,19 @@ def normalize_conditions(data, dataset):
     conditions = value.get("conditions", [])
     if not isinstance(conditions, list):
         return value
+    configured_nurses = {}
+    for condition in conditions:
+        if not isinstance(condition, dict) or condition.get("kind") != "unit_configuration":
+            continue
+        counts = condition.get("staff_counts")
+        nurses = counts.get("rn") if isinstance(counts, dict) else None
+        if (
+            isinstance(condition.get("unit_id"), str)
+            and isinstance(nurses, int)
+            and not isinstance(nurses, bool)
+            and 0 <= nurses <= 500
+        ):
+            configured_nurses[condition.get("unit_id")] = nurses
     for condition in conditions:
         if not isinstance(condition, dict):
             continue
@@ -87,15 +100,21 @@ def normalize_conditions(data, dataset):
                 (u for u in dataset.get("units", []) if u.get("unit_id") == condition.get("unit_id")), None
             )
             baseline = (unit or {}).get("baseline_staff", {}).get("rn", 0)
+            if isinstance(condition.get("unit_id"), str):
+                baseline = configured_nurses.get(condition["unit_id"], baseline)
             percent = condition.get("absence_percent", 0)
             if (
-                "count" not in condition
-                and not condition.get("staff_ids")
+                not condition.get("staff_ids")
                 and isinstance(percent, (int, float))
                 and not isinstance(percent, bool)
                 and math.isfinite(percent)
                 and 0 <= percent <= 100
             ):
+                # Percentages remain relative to the currently configured
+                # starting roster. A previously saved count is their cached
+                # materialization, not an absolute override after a staff edit.
+                # Count-only inputs and named-person absences retain their
+                # existing exact semantics.
                 condition["count"] = math.ceil(baseline * percent / 100)
         elif condition.get("kind") == "staff_absence":
             condition["kind"] = "staff_unavailability"
@@ -278,6 +297,12 @@ def validate_scenario(data, dataset=None):
             not isinstance(data[field], int) or isinstance(data[field], bool) or not 1 <= data[field] <= limit
         ):
             error(field, f"Must remain within the server maximum of {limit}")
+    from surge_engine.unit_configuration import apply_unit_configuration, unit_configuration_errors
+
+    configuration_errors = unit_configuration_errors(dataset, data) if not errors else []
+    errors.extend(configuration_errors)
+    if dataset is not None and not errors:
+        dataset = apply_unit_configuration(dataset, data)
     units = {u["unit_id"] for u in (dataset or {}).get("units", [])}
     sites = {f["facility_id"] for f in (dataset or {}).get("facilities", [])}
     staff = {s["staff_id"] for s in (dataset or {}).get("staff", [])}
@@ -295,8 +320,13 @@ def validate_scenario(data, dataset=None):
             "staff_absence",
             "arrival_batch",
             "stage_duration_multiplier",
+            "unit_configuration",
         }:
             error(key + ".kind", "Unsupported condition kind")
+            continue
+        if kind == "unit_configuration":
+            # Validated together above so later resource inputs use the
+            # configured initial inventory, not the immutable source stock.
             continue
         if kind in {"staff_unavailability", "staff_absence"}:
             interval(condition, key, True)

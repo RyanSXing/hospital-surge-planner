@@ -1,0 +1,63 @@
+.arrival-preview .arrival-curve-handle {
+  cursor: ns-resize;
+  outline: none;
+  touch-action: none;
+}
+.arrival-preview .arrival-curve-handle:focus .arrival-curve-dot {
+  stroke-width: 3;
+  fill: #d8ebfc;
+  filter: drop-shadow(0 0 2px #2378bf80);
+}
+.arrival-preview .arrival-curve-handle:hover .arrival-curve-dot {
+  fill: #d8ebfc;
+}
+.arrival-preview .arrival-curve-help {
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 1px 0 10px;
+  color: #315c7d;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.arrival-preview .arrival-curve-keyboard-hint {
+  color: #64778a;
+  font-size: 11px;
+}
+.arrival-preview .arrival-curve-window {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-height: 32px;
+  margin: 4px 0;
+  color: #607287;
+  font-size: 12px;
+}
+.arrival-preview .arrival-curve-window button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #d5e2ee;
+  border-radius: 5px;
+  background: #f4f8fc;
+  color: #2378bf;
+  cursor: pointer;
+}
+.arrival-preview .arrival-curve-window button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.arrival-preview .arrival-curve-window button:focus-visible {
+  outline: 2px solid #2378bf;
+  outline-offset: 2px;
+}
+@media (max-width: 400px) {
+  .arrival-preview .arrival-curve-help {
+    min-height: 54px;
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T03:19:53.469614+00:00",
+  "sha256": "c03cc1066032ef7534d0a09d7682ef4e9aead3a2ffb3cd281249d600cbfce941",
+  "byte_size": 5585328,
+  "object_key": "backups/hospital-configuration-analysis-20261018T031947Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing workspace before Configuration and Analysis deployment; no scenario mutations requested"
+}

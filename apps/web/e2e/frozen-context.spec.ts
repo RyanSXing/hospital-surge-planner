@@ -80,7 +80,7 @@ test("historical results retain frozen dates and assumptions beside an edited dr
     await page.getByRole("button", { name: "Toggle navigation" }).click();
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("button", { name: "Overview", exact: true })
+    .getByRole("button", { name: "Configuration", exact: true })
     .click();
   await expect(page.getByLabel("Scenario name", { exact: true })).toHaveValue(
     editedName,
@@ -208,7 +208,7 @@ test("completed comparisons and source search preserve distinct frozen and rebas
   await page.locator(".patient-table tbody .link-button").first().click();
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("button", { name: "Overview", exact: true })
+    .getByRole("button", { name: "Configuration", exact: true })
     .click();
   await expect(page.getByLabel("Scenario name", { exact: true })).toHaveValue(
     "Rebased live draft",

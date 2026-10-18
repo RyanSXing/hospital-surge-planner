@@ -1,0 +1,7 @@
+{
+  "run_id": "run_ea310e450a334636b709",
+  "input_sha256": "3f491e83e5b8956531cf1f0a03e0d63d4ac16e58c350f772a98fb410d111ada3",
+  "state_failures": 2,
+  "event_failures": 1,
+  "checkpoint_failures": 1
+}

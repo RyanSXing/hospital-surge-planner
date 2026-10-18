@@ -8,7 +8,7 @@ import {
   Info,
   ShieldCheck,
 } from "lucide-react";
-import { Accordion, NativeSelect } from "@mantine/core";
+import { Accordion, NativeSelect, Tabs } from "@mantine/core";
 import type { Entity, PlanningContext } from "../types";
 import { fmt, localDate } from "../api";
 import { Badge, Button } from "../components/ui";
@@ -75,7 +75,7 @@ const scalarFields: MetricField[] = [
   },
   {
     key: "time_to_first_shortage_hours",
-    label: "First bed queue (runs with a queue)",
+    label: "First care queue (runs with a queue)",
     unit: "hours after measurement start",
   },
   {
@@ -199,6 +199,23 @@ const plots = {
     basis:
       "Committed equipment demand above serviceable inventory, integrated over time.",
   },
+  queuePressure: {
+    title: "Daily peak bed queue",
+    keys: ["peak_inpatient_queue"],
+    labels: ["Most patients waiting for a bed"],
+    unit: "Patients · daily peak",
+    basis:
+      "The largest bed queue on each day, even when viewing a week or month.",
+    daily: true,
+  },
+  wardCapacity: {
+    title: "Daily ward capacity",
+    keys: ["ward_occupied", "ward_staffed"],
+    labels: ["Ward occupied", "Ward staffed"],
+    unit: "Beds · daily time-weighted average",
+    basis: "Daily occupied ward beds compared with staffed ward capacity.",
+    daily: true,
+  },
 };
 type Plot = keyof typeof plots;
 
@@ -246,11 +263,14 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
         basis: "Patients waiting at each hour, grouped by the care they need.",
       }
     : plots[plot];
-  const originalRows: Entity[] = hourlyQueues
-    ? sampledRows
-    : ctx.grain === "day"
+  const originalRows: Entity[] =
+    "daily" in definition && definition.daily
       ? dailyRows
-      : periodRows;
+      : hourlyQueues
+        ? sampledRows
+        : ctx.grain === "day"
+          ? dailyRows
+          : periodRows;
   const rows: Entity[] =
     plot === "utilization"
       ? originalRows.map((row) => ({
@@ -296,8 +316,8 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
     shortageMedian !== null
       ? {
           tone: "warning",
-          title: `Patients start waiting for beds after about ${fmt(shortageMedian, 1)} hours`,
-          body: "Some runs develop a queue. Compare staffing or extra hospital beds to see what helps.",
+          title: `Patients start waiting for care after about ${fmt(shortageMedian, 1)} hours`,
+          body: "Timing includes emergency assessment and inpatient queues. Review Summary’s recorded constraints to see what limited care.",
         }
       : {
           tone: noRecordedQueue ? "success" : "neutral",
@@ -337,7 +357,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
               ? "The completed simulation is saved, but its outcome data could not be loaded. Retry to retrieve the recorded results."
               : ctx.run?.status === "SUCCEEDED"
                 ? "Retrieving recorded outcomes and their possible range."
-                : "Configure the hospital scenario in Overview to see its outcomes."}
+                : "Set up the hospital in Configuration to see its outcomes."}
           </p>
           {ctx.metricsError && ctx.retryMetrics ? (
             <Button primary onClick={ctx.retryMetrics}>
@@ -345,7 +365,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
             </Button>
           ) : null}
           <Button onClick={() => ctx.setPage("overview")}>
-            Open Overview <ArrowRight size={15} />
+            Open Configuration <ArrowRight size={15} />
           </Button>
         </div>
       ) : (
@@ -400,91 +420,55 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
 
           <section className="outcome-chart-layout" aria-label="Outcome charts">
             <article className="outcome-chart outcome-primary-chart">
-              <div className="outcome-chart-heading">
-                <div>
-                  <span className="eyebrow">EXPLORE THE FORECAST</span>
-                  <h2>{definition.title}</h2>
-                </div>
-                <NativeSelect
-                  label="Outcome metric"
-                  value={plot}
-                  onChange={(event) =>
-                    setPlot(event.currentTarget.value as Plot)
-                  }
-                  data={Object.entries(plots).map(([value, item]) => ({
-                    value,
-                    label: item.title,
-                  }))}
-                />
-              </div>
-              <p>
-                {definition.basis} Lines show the median across {completed}{" "}
-                runs. Calendar intervals use their actual elapsed hours.
-              </p>
-              <ForecastChart
-                rows={rows}
-                timeZone={timeZone}
-                keys={definition.keys}
-                labels={definition.labels}
-                height={250}
-                selected={selectedIndex}
-                onSelect={(index) =>
-                  selectTime(rows[index].at || rows[index].start_at)
-                }
-                showBand={band}
-                bandKey={definition.keys[0]}
-                yLabel={definition.unit}
-              />
-              <label className="outcome-band">
-                <input
-                  type="checkbox"
-                  checked={band}
-                  onChange={(event) => setBand(event.target.checked)}
-                />
-                Show possible range for {definition.labels[0]}
-              </label>
+              <Tabs
+                className="outcome-chart-bookmarks"
+                value={plot}
+                onChange={(value) => value && setPlot(value as Plot)}
+                variant="pills"
+              >
+                <Tabs.List aria-label="Choose a forecast chart">
+                  {Object.entries(plots).map(([value, item]) => (
+                    <Tabs.Tab key={value} value={value}>
+                      {item.title}
+                    </Tabs.Tab>
+                  ))}
+                </Tabs.List>
+                <Tabs.Panel value={plot}>
+                  <div className="outcome-chart-heading">
+                    <div>
+                      <span className="eyebrow">EXPLORE THE FORECAST</span>
+                      <h2>{definition.title}</h2>
+                    </div>
+                  </div>
+                  <p>
+                    {definition.basis} Lines show the median across {completed}{" "}
+                    runs. Calendar intervals use their actual elapsed hours.
+                  </p>
+                  <ForecastChart
+                    rows={rows}
+                    timeZone={timeZone}
+                    keys={definition.keys}
+                    labels={definition.labels}
+                    height={300}
+                    selected={selectedIndex}
+                    onSelect={(index) =>
+                      selectTime(rows[index].at || rows[index].start_at)
+                    }
+                    showBand={band}
+                    bandKey={definition.keys[0]}
+                    yLabel={definition.unit}
+                  />
+                  <label className="outcome-band">
+                    <input
+                      type="checkbox"
+                      checked={band}
+                      onChange={(event) => setBand(event.target.checked)}
+                    />
+                    Show possible range for {definition.labels[0]}
+                  </label>
+                </Tabs.Panel>
+              </Tabs>
             </article>
-
-            <div className="outcome-supporting-charts">
-              <article className="outcome-chart">
-                <div className="outcome-chart-heading">
-                  <div>
-                    <span className="eyebrow">QUEUE PRESSURE</span>
-                    <h2>Most patients waiting for a bed</h2>
-                  </div>
-                </div>
-                <ForecastChart
-                  rows={dailyRows}
-                  timeZone={timeZone}
-                  keys={["peak_inpatient_queue"]}
-                  labels={["Most patients waiting for a bed"]}
-                  height={156}
-                  selected={outcomeRowIndex(dailyRows, selectedTime)}
-                  onSelect={(index) => selectTime(dailyRows[index].start_at)}
-                  showBand={false}
-                  yLabel="Patients"
-                />
-              </article>
-              <article className="outcome-chart">
-                <div className="outcome-chart-heading">
-                  <div>
-                    <span className="eyebrow">WARD CAPACITY</span>
-                    <h2>Occupancy and staffed beds</h2>
-                  </div>
-                </div>
-                <ForecastChart
-                  rows={dailyRows}
-                  timeZone={timeZone}
-                  keys={["ward_occupied", "ward_staffed"]}
-                  labels={["Ward occupied", "Ward staffed"]}
-                  height={156}
-                  selected={outcomeRowIndex(dailyRows, selectedTime)}
-                  onSelect={(index) => selectTime(dailyRows[index].start_at)}
-                  showBand={false}
-                  yLabel="Beds"
-                />
-              </article>
-            </div>
           </section>
 
           <Accordion

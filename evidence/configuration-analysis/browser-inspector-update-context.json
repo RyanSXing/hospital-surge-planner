@@ -1,0 +1,13 @@
+{
+  "project": "desktop",
+  "parent_run_id": "run_3fffb6244e15423b9cc9",
+  "update_id": "update_fe8c14e4f3db4090bb5e",
+  "branch_scenario_id": "scenario_52a29c6f6ba74898abfb",
+  "selected_unit": "UNIT-WARD-B",
+  "exact_effective_at": "2026-10-16T06:01:01.250Z",
+  "resource_types": [
+    "unit"
+  ],
+  "parent_preserved": true,
+  "viewer_disabled_and_api_403": true
+}

@@ -6,7 +6,7 @@ const names: Record<string, string> = {
   "ICU-VENTILATED": "Intensive care with a ventilator",
   "ED-BASIC": "Standard emergency assessment",
   "ED-MONITORED": "Emergency assessment with monitoring",
-  nursing_capacity: "Not enough nurses",
+  nursing_capacity: "No staffed bed available",
   minimum_operating_team: "More medical or support staff needed",
   required_equipment_unavailable: "Required equipment unavailable",
   no_matching_physical_place: "No suitable bed",

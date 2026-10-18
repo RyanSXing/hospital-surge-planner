@@ -1,0 +1,21 @@
+{
+  "application_files": [
+    "apps/web/src/pages/HospitalConfigurationControls.tsx",
+    "apps/web/src/pages/OutcomeAnalytics.tsx",
+    "apps/web/src/pages/Overview.tsx",
+    "apps/web/src/pages/Scenarios.tsx",
+    "apps/web/src/pages/SimulationBottlenecks.tsx",
+    "apps/web/src/pages/bottleneckEvidence.test.ts",
+    "apps/web/src/pages/bottleneckEvidence.ts",
+    "apps/web/src/presentation.ts"
+  ],
+  "verification_files": [
+    "apps/web/e2e/bottleneck-summary.spec.ts",
+    "apps/web/e2e/configuration-controls.spec.ts",
+    "apps/web/e2e/navigation-flow.spec.ts",
+    "apps/web/e2e/scenario-curves.spec.ts"
+  ],
+  "reason": "Final visual review preserves distinct ward names in constraint evidence, corrects ICU capitalization, and uses the truthful generic staffed-bed label consistently across inspection pages. The stepped-arrival regression exposed an actual duplicate chart after saving: arrival and capacity siblings shared the same React key. Namespaced keys remove the retained chart; the regression requires exactly one chart and verifies saved interpolation. First-shortage labels now cover both emergency assessment and inpatient queues. Simulation, API, routing, chart mathematics, replay and comparison source is unchanged after the complete desktop suite.",
+  "final_affected_flows": "All new Configuration/Analysis tests, all imported-curve cases, screen audit, navigation, Summary keyboard/calendar and comparison flows",
+  "full_suite_repeated_after_final_changes": false
+}

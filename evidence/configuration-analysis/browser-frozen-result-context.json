@@ -1,0 +1,10 @@
+{
+  "project": "desktop",
+  "run_id": "run_4872ae40cccc450bb086",
+  "frozen_days": 1,
+  "draft_days": 3,
+  "frozen_timezone": "America/Chicago",
+  "draft_timezone": "America/New_York",
+  "reloaded_frozen_dates": true,
+  "immutable_inputs": true
+}

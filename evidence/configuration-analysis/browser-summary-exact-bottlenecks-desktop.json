@@ -1,0 +1,65 @@
+{
+  "scenario_id": "scenario_cbc3707f28784e98b42a",
+  "run_group_id": "run_662802671f4a4ea0ad9a",
+  "replication_id": "run_662802671f4a4ea0ad9a_rep_0000",
+  "whole_measured_period": {
+    "start_at": "2026-10-16T05:00:00Z",
+    "end_at": "2026-10-17T05:00:00Z"
+  },
+  "categories": [
+    {
+      "first_at": "2026-10-16T05:53:14.397508Z",
+      "last_at": "2026-10-17T05:00:00Z",
+      "patient_hours": 940.9667355281433,
+      "peak_waiting": 93,
+      "reason": "minimum_operating_team"
+    },
+    {
+      "first_at": "2026-10-16T05:53:14.397508Z",
+      "last_at": "2026-10-17T05:00:00Z",
+      "patient_hours": 940.9667355281433,
+      "peak_waiting": 93,
+      "reason": "nursing_capacity"
+    }
+  ],
+  "named_roles": [
+    {
+      "code": "provider",
+      "first_at": "2026-10-16T05:53:14.397508Z",
+      "kind": "staff",
+      "last_at": "2026-10-17T05:00:00Z",
+      "patient_hours": 940.9667355281433,
+      "peak_waiting": 93,
+      "reason": "minimum_operating_team",
+      "unit_id": "UNIT-ED",
+      "unit_kind": "ed"
+    },
+    {
+      "code": "rn",
+      "first_at": "2026-10-16T05:53:14.397508Z",
+      "kind": "staff",
+      "last_at": "2026-10-17T05:00:00Z",
+      "patient_hours": 940.9667355281433,
+      "peak_waiting": 93,
+      "reason": "nursing_capacity",
+      "unit_id": "UNIT-ED",
+      "unit_kind": "ed"
+    },
+    {
+      "code": "support",
+      "first_at": "2026-10-16T05:53:14.397508Z",
+      "kind": "staff",
+      "last_at": "2026-10-17T05:00:00Z",
+      "patient_hours": 940.9667355281433,
+      "peak_waiting": 93,
+      "reason": "minimum_operating_team",
+      "unit_id": "UNIT-ED",
+      "unit_kind": "ed"
+    }
+  ],
+  "integrated_daily_means_match_full_run_categories": true,
+  "first_occurrence_link_selected_at": "2026-10-16T05:53:14.397508Z",
+  "full_run_report_retained_after_time_selection": true,
+  "source_and_saved_scenario_unchanged_by_inspection": true,
+  "browser_errors": []
+}

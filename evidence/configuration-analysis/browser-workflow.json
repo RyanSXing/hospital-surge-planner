@@ -1,0 +1,81 @@
+{
+  "scenario_id": "scenario_2da4449b9d41480488d7",
+  "horizon_calendar_days": 3,
+  "run_id": "run_7d1a2f06412f4a0d8b1b",
+  "comparison_id": "comparison_2cec0ece4dd9496a9948",
+  "saved_arrival_condition": {
+    "kind": "arrival_multiplier",
+    "start_at": "2026-10-16T05:00:00.000Z",
+    "end_at": "2026-10-19T05:00:00.000Z",
+    "entry_stream_id": "ED_MAIN",
+    "surge_percent": 70,
+    "control_points": [
+      {
+        "at": "2026-10-16T05:00:00.000Z",
+        "multiplier": 1.7
+      },
+      {
+        "at": "2026-10-19T05:00:00.000Z",
+        "multiplier": 1.7
+      }
+    ],
+    "id": "condition-arrivals-ED_MAIN",
+    "shape": "step",
+    "source": "user_assumption"
+  },
+  "frozen_scenario_revision_id": "revision_084180a7cc944b608f41",
+  "saved_and_frozen_conditions_equal": true,
+  "branch_run_id": "run_6118ed7653924a04a6d9",
+  "export_filename": "hospital-surge-planner.zip",
+  "export_checksums": {
+    "exported_arrival_condition": {
+      "control_points": [
+        {
+          "at": "2026-10-16T05:00:00.000Z",
+          "multiplier": 1.7
+        },
+        {
+          "at": "2026-10-19T05:00:00.000Z",
+          "multiplier": 1.7
+        }
+      ],
+      "end_at": "2026-10-19T05:00:00.000Z",
+      "entry_stream_id": "ED_MAIN",
+      "id": "condition-arrivals-ED_MAIN",
+      "kind": "arrival_multiplier",
+      "shape": "step",
+      "source": "user_assumption",
+      "start_at": "2026-10-16T05:00:00.000Z",
+      "surge_percent": 70
+    },
+    "all_checksums_verified": true,
+    "complete_member_coverage": true,
+    "files": [
+      "events.csv",
+      "events.jsonl",
+      "daily.csv",
+      "metrics.csv",
+      "manifest.json",
+      "model-manifest.json",
+      "dataset.json",
+      "scenario.json",
+      "metrics.json",
+      "inputs/patients.csv",
+      "inputs/facilities.csv",
+      "inputs/units.csv",
+      "inputs/slots.csv",
+      "inputs/staff.csv",
+      "inputs/assignments.csv",
+      "inputs/equipment_pools.csv",
+      "inputs/routes.csv",
+      "inputs/vehicles.csv",
+      "dataset-manifest.json",
+      "assumptions.csv",
+      "README.md",
+      "checksums.json"
+    ],
+    "archive_sha256": "0b6b429ca680df8e7de2c8eb078247fa3c1b2cdd51ab435a740d93d5f021418a",
+    "archive_bytes": 1327982
+  },
+  "page_errors": []
+}

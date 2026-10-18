@@ -696,7 +696,7 @@ export default function App() {
     stateError: stateQuery.error?.message || null,
   };
   useEffect(() => {
-    document.title = `${page === "overview" ? "Overview" : page === "data" ? "Data & setup" : `Analysis · ${analysisNav.find((item) => item.id === page)?.name}`} | Hospital Surge Planner`;
+    document.title = `${page === "overview" ? "Configuration" : page === "data" ? "Data & setup" : `Analysis · ${analysisNav.find((item) => item.id === page)?.name}`} | Hospital Surge Planner`;
     document.getElementById("main-content")?.scrollTo({ top: 0 });
   }, [page, analyticsSection]);
   useEffect(() => {
@@ -932,14 +932,14 @@ export default function App() {
         <div className="sidebar-section-label">WORKSPACE</div>
         <nav aria-label="Main navigation">
           <UnstyledButton
-            title={navCollapsed ? "Overview" : undefined}
-            aria-label="Overview"
+            title={navCollapsed ? "Configuration" : undefined}
+            aria-label="Configuration"
             className={page === "overview" ? "active" : ""}
             aria-current={page === "overview" ? "page" : undefined}
             onClick={() => setPage("overview")}
           >
             <Hospital size={18} />
-            <span>Overview</span>
+            <span>Configuration</span>
             {page === "overview" ? <i /> : null}
           </UnstyledButton>
           <UnstyledButton
@@ -1062,13 +1062,6 @@ export default function App() {
             </button>
           </div>
         ) : null}
-        {metricsQuery.isPlaceholderData &&
-        isAnalysisPage(page) &&
-        page !== "comparison" ? (
-          <div className="metrics-banner" role="status">
-            <LoaderCircle className="spin" size={13} /> Updating charts…
-          </div>
-        ) : null}
         {page !== "overview" && stateQuery.error ? (
           <div className="global-error">
             <ErrorBox
@@ -1139,21 +1132,6 @@ export default function App() {
                 Rerun updated scenario <ArrowRight size={12} />
               </button>
             ) : null}
-          </div>
-        ) : null}
-        {page !== "overview" &&
-        stateQuery.isFetching &&
-        run?.status === "SUCCEEDED" ? (
-          <div className="state-banner">
-            <LoaderCircle className="spin" size={12} />
-            Reconstructing selected run at{" "}
-            {localDate(selectedTime, {
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-            …
           </div>
         ) : null}
         {run?.status === "FAILED" || run?.status === "CANCELLED" ? (
@@ -1308,10 +1286,10 @@ export default function App() {
                     <p>
                       {active
                         ? "Computed outcomes will appear here as soon as all runs finish. You can continue reviewing your baseline while the simulation runs."
-                        : "Configure your hospital scenario in Overview and run a simulation to explore its results, replay, and analytics."}
+                        : "Configure your hospital scenario in Configuration and run a simulation to explore its results, replay, and analytics."}
                     </p>
                     <Button primary onClick={() => setPage("overview")}>
-                      Go to Overview <ArrowRight size={15} />
+                      Go to Configuration <ArrowRight size={15} />
                     </Button>
                   </div>
                 )
@@ -1366,11 +1344,13 @@ export default function App() {
             {busy ||
               (active
                 ? "Simulation worker active"
-                : stateQuery.isFetching
-                  ? "Reconstructing selected state"
-                  : summary.error || stateQuery.error || metricsQuery.error
-                    ? "Connection requires attention"
-                    : "Workspace connected")}
+                : metricsQuery.isPlaceholderData
+                  ? "Updating charts"
+                  : stateQuery.isFetching
+                    ? "Updating selected time"
+                    : summary.error || stateQuery.error || metricsQuery.error
+                      ? "Connection requires attention"
+                      : "Workspace connected")}
           </span>
           <span>
             {run?.status === "SUCCEEDED"

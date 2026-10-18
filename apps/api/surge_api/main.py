@@ -2423,6 +2423,36 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
             key,
         )
 
+    @router.get("/runs/{identity}/bottlenecks")
+    def run_bottlenecks(identity: str, user=Depends(current_user), session=Depends(db)):
+        from .bottlenecks import recorded_bottlenecks
+        from .responses import cached_response, json_response
+
+        row, trace = trace_for(session, user, identity)
+        run = owned_job(session, row.data["run_group_id"], user, "run")
+        scenario = run.payload["scenario"]
+        dataset_row = owned(session, run.payload["dataset_version_id"], "dataset", user)
+        artifact = row.data["trace_artifact"]
+        key = (
+            "recorded-bottlenecks-v1",
+            str(session.bind.url),
+            user["workspace_id"],
+            identity,
+            artifact["object_key"],
+            artifact["sha256"],
+            run.payload.get("scenario_revision_id"),
+        )
+        cached = cached_response(key)
+        if cached is not None:
+            return cached
+        return json_response(
+            {
+                **recorded_bottlenecks(trace, dataset_row.data, scenario),
+                "context": context(run, replication_id=identity),
+            },
+            key,
+        )
+
     @router.get("/runs/{identity}/events")
     def events(
         identity: str,
@@ -3398,6 +3428,10 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
                 end_at=end.astimezone(UTC).isoformat(),
                 horizon_calendar_days=max(1, math.ceil(remaining)),
                 updates=retained,
+                # A complete observed snapshot replaces initial planning
+                # availability. Reapplying the parent's configuration here
+                # would silently overwrite the newly reported stock/roster.
+                conditions=[c for c in value.get("conditions", []) if c.get("kind") != "unit_configuration"],
             )
             for field in (
                 "parent_run_group_id",

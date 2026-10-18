@@ -36,6 +36,7 @@ from .pathways import (
     stage_profile,
 )
 from .stage_clock import reserved_source_finishes_before_pickup
+from .unit_configuration import apply_unit_configuration
 
 
 class SimulationCancelled(Exception):
@@ -52,6 +53,7 @@ def _public_patient(p):
 
 class HospitalSimulation:
     def __init__(self, dataset, scenario, index, keep_trace, cancel_check=None):
+        dataset = apply_unit_configuration(dataset, scenario)
         self.data = dataset
         self.scenario = scenario
         self.index = index
@@ -1274,6 +1276,7 @@ class HospitalSimulation:
             u["staffed"] = (
                 min(
                     self.enabled(u),
+                    u.get("configured_staffed_limit", self.enabled(u)),
                     math.floor(nurses * policy.get("slots_per_nurse", 2 if kind == "icu" else 4)),
                 )
                 if u["active"]
@@ -2786,6 +2789,20 @@ class HospitalSimulation:
             "ready": len(u["_ready"]),
             "available": self.free(u),
             "staff_by_role": dict(Counter(self.staff[s]["role"] for s in u["active_staff"])),
+            "qualified_staff_by_role": {
+                role: sum(
+                    fraction
+                    for sid, fraction in u["active_staff"].items()
+                    if capability in self.staff[sid].get("capabilities", [])
+                )
+                for role, capability in {
+                    "rn": self.policies.get(u.get("capacity_policy_id"), {}).get(
+                        "nurse_capability", u["kind"].upper() + "_NURSING"
+                    ),
+                    "provider": u["kind"].upper() + "_PROVIDER",
+                    "support": "GENERAL_SUPPORT",
+                }.items()
+            },
             "active_staff_ids": sorted(u["active_staff"]),
             "equipment": equipment,
             "admission_gate": u["gate"],
@@ -2820,7 +2837,7 @@ class HospitalSimulation:
                 len(u["reservations"]),
                 len(u["cleaning"]),
                 len(u["_ready"]),
-                tuple(u["active_staff"]),
+                tuple(u["active_staff"].items()),
                 u["gate"],
                 u["active"],
                 tuple(equipment_inputs[uid]),

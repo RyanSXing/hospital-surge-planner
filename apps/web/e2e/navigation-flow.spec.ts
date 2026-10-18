@@ -48,7 +48,7 @@ async function expectRoute(
 }
 async function primary(
   page: Page,
-  name: "Overview" | "Analysis",
+  name: "Configuration" | "Analysis",
   touch = false,
 ) {
   const button = page
@@ -117,7 +117,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   );
   await open(page, context.scenario.id, "overview");
   await expect(
-    page.getByRole("heading", { name: "Hospital overview", exact: true }),
+    page.getByRole("heading", { name: "Configuration", exact: true }),
   ).toBeVisible();
   const source = await baseline(page),
     name = "E2E navigation surge " + Date.now();
@@ -138,7 +138,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
       .getByRole("navigation", { name: "Analysis navigation" })
       .getByRole("button"),
   ).toHaveText(["Summary", "Replay", "Analytics", "Comparison"]);
-  await primary(page, "Overview");
+  await primary(page, "Configuration");
   await expectRoute(page, "overview");
   await expect(page.getByLabel("Scenario name", { exact: true })).toHaveValue(
     name,
@@ -154,7 +154,9 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   await page.goBack();
   await expectRoute(page, "analysis", "summary");
   const mainNav = page.getByRole("navigation", { name: "Main navigation" });
-  await mainNav.getByRole("button", { name: "Overview", exact: true }).focus();
+  await mainNav
+    .getByRole("button", { name: "Configuration", exact: true })
+    .focus();
   await page.keyboard.press("Tab");
   await expect(
     mainNav.getByRole("button", { name: "Analysis", exact: true }),
@@ -203,7 +205,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
     .poll(() => Date.parse(new URL(page.url()).searchParams.get("at") || ""))
     .toBeGreaterThan(Date.parse(run.start_at));
   const selectedAt = new URL(page.url()).searchParams.get("at")!;
-  await primary(page, "Overview");
+  await primary(page, "Configuration");
   expect(await baseline(page)).toEqual(source);
   await exportResults(page);
   await expect(
@@ -309,7 +311,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   await analysis(page, "Summary");
   await expectRoute(page, "analysis", "summary");
   expect(selection(page)).toEqual(held);
-  await primary(page, "Overview");
+  await primary(page, "Configuration");
   expect(await baseline(page)).toEqual(source);
   await page.goBack();
   await expectRoute(page, "analysis", "summary");
@@ -623,7 +625,7 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
   await analysis(page, "Replay", true);
   await expectRoute(page, "analysis", "replay");
   expect(selection(page)).toEqual(retained);
-  await primary(page, "Overview", true);
+  await primary(page, "Configuration", true);
   await expectRoute(page, "overview");
   await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue(/42%?/);
   expect(await baseline(page)).toEqual(source);
@@ -665,7 +667,7 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
       }
     }
   }
-  await primary(page, "Overview", true);
+  await primary(page, "Configuration", true);
   await expectRoute(page, "overview");
   await expectNarrowWidth();
   await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue(/42%?/);
@@ -801,20 +803,21 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
     .getByRole("combobox", { name: "Selected outcome day", exact: true })
     .selectOption("1");
   const selectedAt = new URL(page.url()).searchParams.get("at");
-  const metric = outcomes.getByRole("combobox", {
-    name: "Outcome metric",
-    exact: true,
+  const bookmarks = outcomes.getByRole("tablist", {
+    name: "Choose a forecast chart",
   });
-  const plotOptions = await metric
-    .locator("option")
-    .evaluateAll((options) =>
-      options.map((option) => (option as HTMLOptionElement).value),
-    );
-  expect(plotOptions).toHaveLength(9);
+  const plotOptions = await bookmarks.getByRole("tab").allTextContents();
+  expect(plotOptions).toHaveLength(11);
   for (const plot of plotOptions) {
-    await metric.selectOption(plot);
-    await expect(metric).toHaveValue(plot);
-    await expect(outcomes.locator(".outcome-chart svg").first()).toBeVisible();
+    const bookmark = bookmarks.getByRole("tab", { name: plot, exact: true });
+    await bookmark.click();
+    await expect(bookmark).toHaveAttribute("aria-selected", "true");
+    await expect(outcomes.locator(".outcome-chart svg[role=img]")).toHaveCount(
+      1,
+    );
+    await expect(
+      outcomes.locator(".outcome-chart svg[role=img]"),
+    ).toBeVisible();
     expect(new URL(page.url()).searchParams.get("at")).toBe(selectedAt);
   }
   await outcomes.getByRole("checkbox").uncheck();
@@ -898,7 +901,7 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   await revealOutcomeMetrics(page);
   await expect(row("New arrivals").getByRole("cell").nth(2)).toHaveText("0");
   await expect(
-    row("First bed queue (runs with a queue)").getByRole("cell").nth(2),
+    row("First care queue (runs with a queue)").getByRole("cell").nth(2),
   ).toHaveText("—");
   await expect(outcomes).toContainText(
     "— means unavailable or undefined; zero remains 0.",
@@ -972,7 +975,7 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
     availableTimes.every((value) => Date.parse(value) >= Date.parse(cutoff)),
   ).toBe(true);
   expect(Date.parse(availableTimes[0])).toBe(Date.parse(cutoff));
-  await metric.selectOption("ward");
+  await bookmarks.getByRole("tab", { name: "Ward beds", exact: true }).click();
   await outcomes
     .locator(".outcome-primary-chart")
     .getByRole("button", { name: "View chart data table", exact: true })

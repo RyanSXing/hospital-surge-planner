@@ -87,7 +87,7 @@ test("one hospital can run, compare internal bed responses, save a plan, and reo
     page.getByRole("heading", { name: "Results summary", exact: true }),
   ).toBeVisible();
   await expect(page.locator(".summary-chart-grid svg[role=img]")).toHaveCount(
-    2,
+    1,
   );
   const summaryCards = page.locator(".summary-metrics article");
   await expect(summaryCards).toHaveCount(4);

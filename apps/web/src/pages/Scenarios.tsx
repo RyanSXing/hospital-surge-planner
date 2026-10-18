@@ -8,6 +8,13 @@ import {
   TextInput,
 } from "@mantine/core";
 import ArrivalPreview from "./ArrivalPreview";
+import { usesCustomArrivalSchedule } from "./arrivalControlMode";
+import HospitalConfigurationControls from "./HospitalConfigurationControls";
+import {
+  applyConfigurationInputs,
+  configurationTargets,
+} from "./hospitalConfigurationModel";
+import type { ConfigurationTargets } from "./hospitalConfigurationModel";
 import {
   clampArrivalPercent,
   completeArrivalPercent,
@@ -69,6 +76,9 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   }, [planRequest]);
   const [draftInterventions, setDraftInterventions] = useState<Entity[]>([]);
   const [draftUpdates, setDraftUpdates] = useState<Entity[]>([]);
+  const [capacityTargets, setCapacityTargets] = useState<ConfigurationTargets>({
+    units: {},
+  });
   const [arrivalEdited, setArrivalEdited] = useState(false);
   const [legacyStaffEdited, setLegacyStaffEdited] = useState(false);
   const [startAt, setStartAt] = useState("2026-10-16T05:00:00Z"),
@@ -113,11 +123,17 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   const [arrivalInput, setArrivalInput] = useState<number | string>(70);
   const arrivalInputChanged = useRef(false);
   const arrivalInputUndoCaptured = useRef(false);
+  const revealArrivalDetails = useRef(true);
   const exclusiveEnd = planningEnd(ctx.scenario, startAt, days);
   const timeZone =
     ctx.scenario?.timezone || ctx.dataset?.timezone || "America/Chicago";
-  function loadCondition(c: Entity | undefined, s = ctx.scenario) {
+  function loadCondition(
+    c: Entity | undefined,
+    s = ctx.scenario,
+    revealDetails = true,
+  ) {
     if (!s) return;
+    revealArrivalDetails.current = revealDetails;
     setStream(c?.entry_stream_id || "ED_MAIN");
     setConditionId(c?.id || "");
     const window = conditionWindow(s, c);
@@ -195,6 +211,13 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setDraftConditions(s.conditions || []);
     setDraftInterventions(s.interventions || []);
     setDraftUpdates(s.updates || []);
+    setCapacityTargets(
+      configurationTargets({
+        conditions: s.conditions || [],
+        interventions: s.interventions || [],
+        updates: s.updates || [],
+      }),
+    );
     setArrivalEdited(false);
     setLegacyStaffEdited(false);
     setName(s.name);
@@ -226,7 +249,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setRedo([]);
   }, [ctx.scenario?.id, ctx.scenario?.revision]);
   useEffect(() => {
-    if (shape === "custom") {
+    if (shape === "custom" && revealArrivalDetails.current) {
       setMoreParameters(true);
       setOpenSections((value) =>
         value.includes("demand") ? value : [...value, "demand"],
@@ -247,6 +270,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     legacyStaffEdited,
     draftInterventions,
     draftUpdates,
+    capacityTargets,
     percent,
     days,
     horizonUnit,
@@ -285,6 +309,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setLegacyStaffEdited(v.legacyStaffEdited);
     setDraftInterventions(v.draftInterventions);
     setDraftUpdates(v.draftUpdates);
+    setCapacityTargets(v.capacityTargets || { units: {} });
     setPercent(v.percent);
     setArrivalInput(displayArrivalPercent(v.percent));
     arrivalInputChanged.current = false;
@@ -341,10 +366,16 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
           : condition,
       );
     }
-    return {
-      ...patch,
+    const draft = {
+      conditions: patch.conditions,
       interventions: draftInterventions,
       updates: draftUpdates,
+    };
+    return {
+      ...patch,
+      ...(ctx.dataset
+        ? applyConfigurationInputs(ctx.dataset, draft, capacityTargets)
+        : draft),
     };
   }
   function switchStream(next: string) {
@@ -417,6 +448,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     draftConditions,
     draftInterventions,
     draftUpdates,
+    capacityTargets,
     arrivalEdited,
     legacyStaffEdited,
     customPoints,
@@ -540,6 +572,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     arrivalInputUndoCaptured.current = false;
   }
   function changePattern(value: string) {
+    revealArrivalDetails.current = true;
     rememberArrival();
     setShape(value);
     if (value === "wave")
@@ -563,6 +596,74 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   );
   const displayedPercent = displayArrivalPercent(percent);
   const invalidMix = mixError(mixMode, mix);
+  const customArrivalSchedule =
+    usesCustomArrivalSchedule(draftConditions, stream, shape) ||
+    usesCustomArrivalSchedule(previewConditions, stream, shape);
+  const arrivalPercentControls = (
+    <div className="simulation-control">
+      <div className="simulation-control-heading">
+        <h3>Patient arrivals</h3>
+        <NumberInput
+          id="surge-input"
+          aria-label={`Increase in ${stream === "ED_MAIN" ? "ED arrivals" : "direct ward admissions"}`}
+          value={arrivalInput}
+          min={-100}
+          max={10000}
+          clampBehavior="none"
+          trimLeadingZeroesOnBlur={false}
+          step={5}
+          suffix="%"
+          disabled={shape === "custom"}
+          onChange={typeArrival}
+          onBlur={finishArrivalInput}
+        />
+      </div>
+      <Slider
+        thumbLabel="Adjust arrival surge"
+        value={displayedPercent}
+        min={-100}
+        max={Math.max(200, Math.ceil(percent / 100) * 100)}
+        step={5}
+        disabled={shape === "custom"}
+        label={(value) => `${value > 0 ? "+" : ""}${value}%`}
+        marks={[
+          { value: -100, label: "Fewer" },
+          { value: 0, label: "Usual" },
+          {
+            value: Math.max(200, Math.ceil(percent / 100) * 100),
+            label: "More",
+          },
+        ]}
+        onChange={changeArrival}
+      />
+      <p>
+        {shape === "custom"
+          ? "Arrival levels follow your custom schedule."
+          : percent === 0
+            ? "Usual arrival levels"
+            : `${Math.abs(displayedPercent)}% ${percent > 0 ? "more" : "fewer"} ${stream === "ED_MAIN" ? "emergency arrivals" : "direct admissions"}${shape === "wave" || shape === "ramp" ? " at the peak" : ""}`}
+      </p>
+    </div>
+  );
+  const arrivalPatternControls = (
+    <div className="simulation-control">
+      <div className="simulation-control-heading">
+        <h3>Arrival pattern</h3>
+      </div>
+      <SegmentedControl
+        aria-label="Arrival pattern"
+        fullWidth
+        value={shape === "baseline" ? "sustained" : shape}
+        onChange={changePattern}
+        data={[
+          { value: "sustained", label: "Steady" },
+          { value: "ramp", label: "Builds up" },
+          { value: "wave", label: "Rises & falls" },
+          ...(shape === "custom" ? [{ value: "custom", label: "Custom" }] : []),
+        ]}
+      />
+    </div>
+  );
   return (
     <div
       className="scenarios-page guided-scenario"
@@ -671,71 +772,30 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               })}
             </p>
           </div>
-          <div className="simulation-control">
-            <div className="simulation-control-heading">
-              <h3>Patient arrivals</h3>
-              <NumberInput
-                id="surge-input"
-                aria-label={`Increase in ${stream === "ED_MAIN" ? "ED arrivals" : "direct ward admissions"}`}
-                value={arrivalInput}
-                min={-100}
-                max={10000}
-                clampBehavior="none"
-                trimLeadingZeroesOnBlur={false}
-                step={5}
-                suffix="%"
-                disabled={shape === "custom"}
-                onChange={typeArrival}
-                onBlur={finishArrivalInput}
-              />
+          {customArrivalSchedule ? (
+            <div
+              className="simulation-control custom-arrival-state"
+              data-testid="custom-arrival-state"
+            >
+              <div className="simulation-control-heading">
+                <h3>Patient arrivals</h3>
+              </div>
+              <Badge tone="cyan">Custom daily curve</Badge>
+              <p>
+                {ctx.canWrite === false
+                  ? "Daily arrival levels are shown in the blue curve."
+                  : "Drag a blue point to change that day’s arrivals."}
+              </p>
             </div>
-            <Slider
-              thumbLabel="Adjust arrival surge"
-              value={displayedPercent}
-              min={-100}
-              max={Math.max(200, Math.ceil(percent / 100) * 100)}
-              step={5}
-              disabled={shape === "custom"}
-              label={(value) => `${value > 0 ? "+" : ""}${value}%`}
-              marks={[
-                { value: -100, label: "Fewer" },
-                { value: 0, label: "Usual" },
-                {
-                  value: Math.max(200, Math.ceil(percent / 100) * 100),
-                  label: "More",
-                },
-              ]}
-              onChange={changeArrival}
-            />
-            <p>
-              {shape === "custom"
-                ? "Arrival levels follow your custom schedule."
-                : percent === 0
-                  ? "Usual arrival levels"
-                  : `${Math.abs(displayedPercent)}% ${percent > 0 ? "more" : "fewer"} ${stream === "ED_MAIN" ? "emergency arrivals" : "direct admissions"}${shape === "wave" || shape === "ramp" ? " at the peak" : ""}`}
-            </p>
-          </div>
-          <div className="simulation-control">
-            <div className="simulation-control-heading">
-              <h3>Arrival pattern</h3>
-            </div>
-            <SegmentedControl
-              aria-label="Arrival pattern"
-              fullWidth
-              value={shape === "baseline" ? "sustained" : shape}
-              onChange={changePattern}
-              data={[
-                { value: "sustained", label: "Steady" },
-                { value: "ramp", label: "Builds up" },
-                { value: "wave", label: "Rises & falls" },
-                ...(shape === "custom"
-                  ? [{ value: "custom", label: "Custom" }]
-                  : []),
-              ]}
-            />
-          </div>
+          ) : (
+            <>
+              {arrivalPercentControls}
+              {arrivalPatternControls}
+            </>
+          )}
         </section>
         <ArrivalPreview
+          key={`arrivals:${ctx.scenario?.id || "new"}:${ctx.scenario?.revision || 0}`}
           conditions={previewConditions}
           stream={stream}
           baselineRate={stream === "ED_MAIN" ? edRate : directRate}
@@ -753,7 +813,35 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               (item: Entity) => item.entry_stream_id === stream,
             )?.weekday_weights || baseline.weekday_weights
           }
+          editable={ctx.canWrite !== false && !ctx.busy}
+          onEditStart={remember}
+          onConditionsChange={(conditions, editedConditionId) => {
+            setDraftConditions(conditions);
+            const selected =
+              conditions.find(
+                (condition) => condition.id === editedConditionId,
+              ) ||
+              conditions.find(
+                (condition) =>
+                  condition.kind === "arrival_multiplier" &&
+                  (condition.entry_stream_id || "ED_MAIN") === stream,
+              );
+            loadCondition(selected, ctx.scenario, false);
+            if (!selected) setStream(stream);
+            setArrivalEdited(false);
+          }}
         />
+        {ctx.dataset ? (
+          <HospitalConfigurationControls
+            key={`capacity:${ctx.scenario?.id}:${ctx.scenario?.revision}`}
+            dataset={ctx.dataset}
+            start={startAt}
+            value={capacityTargets}
+            disabled={ctx.canWrite === false || !!ctx.busy}
+            onEditStart={remember}
+            onChange={setCapacityTargets}
+          />
+        ) : null}
       </div>
       <div className="simulation-run-row">
         <div
@@ -918,6 +1006,19 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                       ))}
                   </NativeSelect>
                 </label>
+                {customArrivalSchedule ? (
+                  <div
+                    className="arrival-window-controls"
+                    aria-label="Selected arrival interval parameters"
+                  >
+                    <p>
+                      These controls apply only to the arrival interval selected
+                      above.
+                    </p>
+                    {arrivalPercentControls}
+                    {arrivalPatternControls}
+                  </div>
+                ) : null}
                 <Button
                   small
                   onClick={() => {

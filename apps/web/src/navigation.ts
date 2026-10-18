@@ -33,6 +33,8 @@ export function resolvePage(
       return { page: "analytics", section: "patients" };
     case "compare":
       return { page: "comparison", section: selectedSection };
+    case "configuration":
+    case "parameters":
     case "scenarios":
       return { page: "overview", section: selectedSection };
     case "summary":

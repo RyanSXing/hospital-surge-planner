@@ -15,8 +15,52 @@ export interface ArrivalPreviewOptions {
 }
 export interface ArrivalPreviewDay {
   at: string;
+  endAt: string;
   baseline: number;
+  /** Arrivals generated from the usual rate and editable multiplier curves. */
+  variable: number;
+  /** Reported batches stay fixed when an arrival curve is edited. */
+  scheduled: number;
   planned: number;
+}
+export interface ArrivalCurvePoint {
+  at: string;
+  multiplier: number;
+}
+/** Resolve legacy inputs using exactly the same defaults as the preview/engine. */
+export function normalizedArrivalCurve(
+  condition: Entity,
+  options: ArrivalPreviewOptions,
+): { linear: boolean; points: ArrivalCurvePoint[] } {
+  const value = 1 + (condition.surge_percent ?? 70) / 100;
+  const points: Entity[] = condition.control_points?.length
+    ? condition.control_points
+    : condition.shape === "wave"
+      ? [
+          { at: options.start, multiplier: 1 },
+          {
+            at: atDay(
+              options.start,
+              Math.min(10, options.days),
+              0,
+              options.timeZone,
+            ),
+            multiplier: value,
+          },
+          { at: options.end, multiplier: 1 },
+        ]
+      : [
+          { at: condition.start_at || options.start, multiplier: value },
+          { at: condition.end_at || options.end, multiplier: value },
+        ];
+  return {
+    linear:
+      condition.shape === "piecewise_linear" || condition.shape === "wave",
+    points: points.map((point) => ({
+      at: point.at,
+      multiplier: Number(point.multiplier),
+    })),
+  };
 }
 /** Control points drive the engine; surge_percent is used only when no points exist. */
 export function arrivalControlPercent(condition: Entity | undefined) {
@@ -121,7 +165,7 @@ function calendarExposure(options: ArrivalPreviewOptions) {
 export function plannedArrivals(
   options: ArrivalPreviewOptions,
 ): ArrivalPreviewDay[] {
-  const { conditions, stream, baselineRate, start, end, timeZone } = options;
+  const { conditions, stream, baselineRate } = options;
   const arrivalConditions = conditions
     .filter(
       (condition) =>
@@ -129,25 +173,9 @@ export function plannedArrivals(
         (condition.entry_stream_id || "ED_MAIN") === stream,
     )
     .map((condition) => {
-      const value = 1 + (condition.surge_percent ?? 70) / 100;
-      const points: Entity[] = condition.control_points?.length
-        ? condition.control_points
-        : condition.shape === "wave"
-          ? [
-              { at: start, multiplier: 1 },
-              {
-                at: atDay(start, Math.min(10, options.days), 0, timeZone),
-                multiplier: value,
-              },
-              { at: end, multiplier: 1 },
-            ]
-          : [
-              { at: condition.start_at || start, multiplier: value },
-              { at: condition.end_at || end, multiplier: value },
-            ];
+      const { points, linear } = normalizedArrivalCurve(condition, options);
       return {
-        linear:
-          condition.shape === "piecewise_linear" || condition.shape === "wave",
+        linear,
         points: points.map((point) => ({
           at: Date.parse(point.at),
           value: Number(point.multiplier),
@@ -184,14 +212,15 @@ export function plannedArrivals(
   return calendarExposure(options).map((day) => {
     const daily = baselineRate * day.weekdayWeight;
     let usual = 0,
-      planned = 0;
+      variable = 0,
+      scheduled = 0;
     for (const hour of day.hours) {
       if (!day.total) continue;
       const base =
         (((daily * hour.weight) / day.total) * (hour.end - hour.start)) /
         hour.fullWidth;
       usual += base;
-      planned += base * multiplier(hour.start, hour.end);
+      variable += base * multiplier(hour.start, hour.end);
     }
     for (const condition of conditions) {
       if (
@@ -203,19 +232,22 @@ export function plannedArrivals(
         count = Number(condition.count || 0),
         spread = Number(condition.spread_minutes || 0) * 60_000;
       if (spread > 0)
-        planned +=
+        scheduled +=
           (count *
             Math.max(
               0,
               Math.min(day.end, at + spread) - Math.max(day.start, at),
             )) /
           spread;
-      else if (at >= day.start && at < day.end) planned += count;
+      else if (at >= day.start && at < day.end) scheduled += count;
     }
     return {
       at: new Date(day.start).toISOString(),
+      endAt: new Date(day.end).toISOString(),
       baseline: usual,
-      planned: Math.max(0, planned),
+      variable: Math.max(0, variable),
+      scheduled,
+      planned: Math.max(0, variable + scheduled),
     };
   });
 }

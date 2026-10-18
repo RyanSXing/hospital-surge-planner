@@ -18,6 +18,13 @@ class ControlPoint(Command):
     multiplier: float = Field(ge=0, allow_inf_nan=False)
 
 
+class ConfiguredStaffCounts(Command):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    rn: int | None = Field(default=None, ge=0, le=500)
+    provider: int | None = Field(default=None, ge=0, le=500)
+    support: int | None = Field(default=None, ge=0, le=500)
+
+
 class Condition(Command):
     kind: Literal[
         "arrival_multiplier",
@@ -26,6 +33,7 @@ class Condition(Command):
         "staff_absence",
         "arrival_batch",
         "stage_duration_multiplier",
+        "unit_configuration",
     ] = "arrival_multiplier"
     start_at: str | None = None
     end_at: str | None = None
@@ -39,6 +47,11 @@ class Condition(Command):
     at: str | None = None
     spread_minutes: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     care_mix: dict[str, float] | None = None
+    unit_id: str | None = None
+    physical_capacity: int | None = Field(default=None, ge=0, le=1000)
+    enabled_capacity: int | None = Field(default=None, ge=0, le=1000)
+    staffed_capacity: int | None = Field(default=None, ge=0, le=1000)
+    staff_counts: ConfiguredStaffCounts | None = None
 
 
 class EquipmentAllocation(Command):

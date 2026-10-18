@@ -45,7 +45,8 @@ export type Condition = {
     | "staff_unavailability"
     | "staff_absence"
     | "arrival_batch"
-    | "stage_duration_multiplier";
+    | "stage_duration_multiplier"
+    | "unit_configuration";
   start_at?: string | null;
   end_at?: string | null;
   entry_stream_id?: string | null;
@@ -58,7 +59,18 @@ export type Condition = {
   at?: string | null;
   spread_minutes?: number | null;
   care_mix?: { [key: string]: number } | null;
+  unit_id?: string | null;
+  physical_capacity?: number | null;
+  enabled_capacity?: number | null;
+  staffed_capacity?: number | null;
+  staff_counts?: ConfiguredStaffCounts | null;
   [key: string]: unknown;
+};
+
+export type ConfiguredStaffCounts = {
+  rn?: number | null;
+  provider?: number | null;
+  support?: number | null;
 };
 
 export type ControlPoint = {

@@ -1,0 +1,39 @@
+{
+  "run_id": "run_e8f70a6470a947849931",
+  "medians_match_actual_api": {
+    "arrivals": 280.5,
+    "inpatient_waiting_patient_hours": 34.52333387719768,
+    "ed_waiting_patient_hours": 1.0231956028452696
+  },
+  "charts_checked": [
+    "Arrivals and discharges",
+    "Ward beds",
+    "Intensive care beds",
+    "Emergency department",
+    "Patients waiting",
+    "Time spent waiting",
+    "Busiest hospital unit",
+    "Staffing coverage deficit",
+    "Equipment coverage deficit",
+    "Daily peak bed queue",
+    "Daily ward capacity"
+  ],
+  "grains_checked": [
+    "day",
+    "week",
+    "month"
+  ],
+  "selected_time_preserved": true,
+  "patient_inspector_context_preserved": true,
+  "null_zero_run_id": "run_c4f7f377121148f68b65",
+  "null_and_zero_distinguished": true,
+  "cutoff_branch_run_id": "run_a9cf1f6a504041e295c8",
+  "cutoff": "2026-10-17T13:00:15.250Z",
+  "cutoff_projection_matches_recorded_integrals": {
+    "day": 72.18969394805089,
+    "week": 74.363066398579,
+    "month": 74.363066398579
+  },
+  "pre_cutoff_controls_excluded": true,
+  "page_errors": []
+}

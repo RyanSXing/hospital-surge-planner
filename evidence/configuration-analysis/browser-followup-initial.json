@@ -1,0 +1,1141 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "analytics-bookmarks.spec.ts",
+      "arrival-curve.spec.ts",
+      "bottleneck-summary.spec.ts",
+      "configuration-controls.spec.ts",
+      "screens.spec.ts",
+      "navigation-flow.spec.ts",
+      "hospital-comparison.spec.ts",
+      "keyboard-alerts.spec.ts",
+      "scenario-curves.spec.ts",
+      "--project=desktop",
+      "--workers=1"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../output/playwright/configuration-analysis/browser-followup.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "analytics-bookmarks.spec.ts",
+      "file": "analytics-bookmarks.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop chart bookmarks share one graph and sparse Summary periods remain visible without shifting on seek",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6826,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:29:48.786Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "analytics-bookmarks",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/analytics-bookmarks-890a78ced98bf34cb4e95ec801bcff0aa46d3731.png"
+                    },
+                    {
+                      "name": "analytics-bookmarks-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/analytics-bookmarks-middle-ff0d7fdee4ab41cc8f32b628448ed06e692c874c.png"
+                    },
+                    {
+                      "name": "analytics-bookmarks-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/analytics-bookmarks-lower-afc63d2e28de542132a34901bdc65e0767dcdb90.png"
+                    },
+                    {
+                      "name": "summary-month-observation",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/summary-month-observation-cdeac4b2568e9cf52adfde0c198d9a69ebe94bae.png"
+                    },
+                    {
+                      "name": "summary-month-observation-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/summary-month-observation-middle-1b3b38ad2e0e08f77c6bc82ad5ece9c4d8a29bf4.png"
+                    },
+                    {
+                      "name": "summary-month-observation-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/analytics-bookmarks-deskto-bdfa1-le-without-shifting-on-seek-desktop/attachments/summary-month-observation-lower-c61420095b5d36c769364ce41fa41aa5b5fb7751.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cb5e0539f0311d2d3b85-61afd2c87a5f550dd9d3",
+          "file": "analytics-bookmarks.spec.ts",
+          "line": 12,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "arrival-curve.spec.ts",
+      "file": "arrival-curve.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "dragged daily arrivals keep a stable axis, one undo and exact saved simulation inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6935,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:29:56.002Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-curve-edited",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-6ae2b864eb1e2dd87f9c5d8b0373fed86240b30e.png"
+                    },
+                    {
+                      "name": "arrival-curve-edited-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-middle-5575481aa925565312461f9c1166d00b72a8fec2.png"
+                    },
+                    {
+                      "name": "arrival-curve-edited-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/arrival-curve-dragged-dail-2cb82-act-saved-simulation-inputs-desktop/attachments/arrival-curve-edited-lower-615dc64904f620ff7de98d55220fde69604adb73.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-0a31090c5fe080900e88",
+          "file": "arrival-curve.spec.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "title": "daily arrival keyboard controls stop at the fixed scheduled-batch minimum",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2361,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:30:02.942Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-6fdb70f75fecac7c9361",
+          "file": "arrival-curve.spec.ts",
+          "line": 252,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "bottleneck-summary.spec.ts",
+      "file": "bottleneck-summary.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Summary names the recorded nursing, medical and support constraints for the full simulation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6695,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:30:05.325Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "summary-exact-staffing-bottlenecks",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/bottleneck-summary-Summary-cec96-nts-for-the-full-simulation-desktop/attachments/summary-exact-staffing-bottlenecks-aecba0abc7b60e168bc8d1a4cba616c2f657ee2e.png"
+                    },
+                    {
+                      "name": "summary-exact-staffing-bottlenecks-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/bottleneck-summary-Summary-cec96-nts-for-the-full-simulation-desktop/attachments/summary-exact-staffing-bottlenecks-middle-574bc14754d98ffc8269a51e7bac18c87df1c984.png"
+                    },
+                    {
+                      "name": "summary-exact-staffing-bottlenecks-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/bottleneck-summary-Summary-cec96-nts-for-the-full-simulation-desktop/attachments/summary-exact-staffing-bottlenecks-lower-5b90ce8d0c0356581d32424191cc03384993e995.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0c00c28f5b1a0e40b3df-1867898adc4235b9496d",
+          "file": "bottleneck-summary.spec.ts",
+          "line": 11,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "configuration-controls.spec.ts",
+      "file": "configuration-controls.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop configuration saves editable beds and all staff roles into a real immutable simulation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9314,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:30:12.034Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "configuration-capacity",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-bbf48bf7d2420b16509f57e06790ea47861c39db.png"
+                    },
+                    {
+                      "name": "configuration-capacity-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-middle-15519eb997d31f8e2d12670e6a32d8e867babb1a.png"
+                    },
+                    {
+                      "name": "configuration-capacity-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-lower-69456fdf30e919ffa05d7cbcbcbe37461b228fa8.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8046fb91dcc545788072-a8b7b1c5c4ca9fcfcbe5",
+          "file": "configuration-controls.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "hospital-comparison.spec.ts",
+      "file": "hospital-comparison.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "one hospital can run, compare internal bed responses, save a plan, and reopen it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19103,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:30:21.445Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-c989f743944ee97bbb7f947af15c7d0e6aa5dbd6.png"
+                    },
+                    {
+                      "name": "hospital-comparison-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-middle-3ae636aa44a2b64ed455c0ead79ab656a19764bd.png"
+                    },
+                    {
+                      "name": "hospital-comparison-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/hospital-comparison-one-ho-2ead2-s-save-a-plan-and-reopen-it-desktop/attachments/hospital-comparison-lower-de6fdd87ba626e00021fbe60acdbc29c6231143f.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-ec2a619312ee6be289a5",
+          "file": "hospital-comparison.spec.ts",
+          "line": 32,
+          "column": 1
+        },
+        {
+          "title": "reevaluating a selected response requires a selection from the new results before saving",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7719,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:30:40.552Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "340df82a7601265cda7d-25c8d693ecc285c9a466",
+          "file": "hospital-comparison.spec.ts",
+          "line": 314,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "keyboard-alerts.spec.ts",
+      "file": "keyboard-alerts.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard entry, calendar drilldown, inspection, comparison and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26476,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:30:48.293Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "keyboard-export",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/keyboard-alerts-keyboard-e-b7427-ction-comparison-and-export-desktop/attachments/keyboard-export-e923580da5dea610a4d7604f58262ca1dffd86f4.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-6839bcfeb3b799c36268",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 21,
+          "column": 1
+        },
+        {
+          "title": "planning alert review preserves the completed result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4589,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:31:14.774Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "alert-review",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/keyboard-alerts-planning-a-e5a7d-serves-the-completed-result-desktop/attachments/alert-review-7bcf10afc5aa812334f28fb89ed438190e19f9d3.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f98a3fbbe3bb349f329-274861cf9c5a12652e1d",
+          "file": "keyboard-alerts.spec.ts",
+          "line": 202,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "navigation-flow.spec.ts",
+      "file": "navigation-flow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Overview setup to complete Analysis workflow preserves baseline and browser context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28947,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:31:19.385Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "navigation-flow-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Overview-s-1f748-aseline-and-browser-context-desktop/attachments/navigation-flow-replay-831c4350628c99535ef0eb45a941aa8a3ece2f17.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-4a02c560e6d23ae485a5",
+          "file": "navigation-flow.spec.ts",
+          "line": 102,
+          "column": 1
+        },
+        {
+          "title": "mobile touch navigation retains the Overview draft and source baseline",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Dedicated touch and narrow-screen coverage.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/navigation-flow.spec.ts",
+                    "line": 585,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 143,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:31:48.338Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Dedicated touch and narrow-screen coverage.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/navigation-flow.spec.ts",
+                        "line": 585,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-3977a1822b62ae68a1c4",
+          "file": "navigation-flow.spec.ts",
+          "line": 582,
+          "column": 1
+        },
+        {
+          "title": "root, legacy aliases and invalid navigation canonicalize without losing context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2206,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "root route",
+                      "duration": 213
+                    },
+                    {
+                      "title": "view=scenarios",
+                      "duration": 148
+                    },
+                    {
+                      "title": "view=patients",
+                      "duration": 144
+                    },
+                    {
+                      "title": "view=resources",
+                      "duration": 141
+                    },
+                    {
+                      "title": "view=analysis&analysis=analytics&section=resources",
+                      "duration": 142
+                    },
+                    {
+                      "title": "view=compare",
+                      "duration": 145
+                    },
+                    {
+                      "title": "view=replay",
+                      "duration": 161
+                    },
+                    {
+                      "title": "view=summary",
+                      "duration": 396
+                    },
+                    {
+                      "title": "view=not-a-view",
+                      "duration": 142
+                    },
+                    {
+                      "title": "view=analysis&analysis=not-a-page",
+                      "duration": 142
+                    },
+                    {
+                      "title": "view=analysis&analysis=analytics&section=not-a-section",
+                      "duration": 146
+                    }
+                  ],
+                  "startTime": "2026-10-18T03:31:48.490Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-380ab651e138a531ecd2",
+          "file": "navigation-flow.spec.ts",
+          "line": 691,
+          "column": 1
+        },
+        {
+          "title": "Analytics outcomes match recorded metrics and preserve trajectory context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15111,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:31:50.702Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "outcome-analytics",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Analytics--6c9eb-preserve-trajectory-context-desktop/attachments/outcome-analytics-52a1565ec7323eae0ec4bacbbf577c4b451295e5.png"
+                    },
+                    {
+                      "name": "outcome-analytics-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Analytics--6c9eb-preserve-trajectory-context-desktop/attachments/outcome-analytics-middle-41892e7587d5b4df59749a2741e60c7d0c2792c4.png"
+                    },
+                    {
+                      "name": "outcome-analytics-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/navigation-flow-Analytics--6c9eb-preserve-trajectory-context-desktop/attachments/outcome-analytics-lower-33e66cb9182f710d5996b4cf595cb48846384034.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "072cd416208e88d2a4d1-c1aecc71b5ee8a5f7434",
+          "file": "navigation-flow.spec.ts",
+          "line": 750,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "scenario-curves.spec.ts",
+      "file": "scenario-curves.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "cohort edit and stream changes retain compatible visible mix semantics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2007,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:32:05.839Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-3fd00fe26a1ea40c86d2",
+          "file": "scenario-curves.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "custom imported curves, multiple windows and exact time edits retain canonical inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2449,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:32:07.852Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-39e8c2907c03fa1d2bbe",
+          "file": "scenario-curves.spec.ts",
+          "line": 83,
+          "column": 1
+        },
+        {
+          "title": "legacy arrival inputs show the engine default and survive unrelated saves",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1638,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:32:10.308Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-3537ffb2efc58456b876",
+          "file": "scenario-curves.spec.ts",
+          "line": 196,
+          "column": 1
+        },
+        {
+          "title": "editing exact stepped arrivals preserves their step behavior",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 21717,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('arrival-preview-chart').visible()\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByTestId('arrival-preview-chart').visible() with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('arrival-preview-chart').visible()\u001b[22m\n\u001b[2m    44 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('arrival-preview-chart').visible()\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByTestId('arrival-preview-chart').visible() with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('arrival-preview-chart').visible()\u001b[22m\n\u001b[2m    44 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts:296:23",
+                    "location": {
+                      "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts",
+                      "column": 23,
+                      "line": 296
+                    },
+                    "snippet": "  294 |     .getByTestId(\"arrival-preview-chart\")\n  295 |     .filter({ visible: true });\n> 296 |   await expect(graph).toHaveCount(1);\n      |                       ^\n  297 |   await expect(graph).toHaveAttribute(\"role\", \"group\");\n  298 |   const planned = (await graph.getAttribute(\"data-planned-arrivals\"))!\n  299 |       .split(\",\")"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts",
+                        "column": 23,
+                        "line": 296
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('arrival-preview-chart').visible()\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByTestId('arrival-preview-chart').visible() with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('arrival-preview-chart').visible()\u001b[22m\n\u001b[2m    44 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n\n\n  294 |     .getByTestId(\"arrival-preview-chart\")\n  295 |     .filter({ visible: true });\n> 296 |   await expect(graph).toHaveCount(1);\n      |                       ^\n  297 |   await expect(graph).toHaveAttribute(\"role\", \"group\");\n  298 |   const planned = (await graph.getAttribute(\"data-planned-arrivals\"))!\n  299 |       .split(\",\")\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts:296:23"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:32:11.953Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-curves-editing-ex-34cbf-eserves-their-step-behavior-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-curves-editing-ex-34cbf-eserves-their-step-behavior-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/scenario-curves-editing-ex-34cbf-eserves-their-step-behavior-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/scenario-curves.spec.ts",
+                    "column": 23,
+                    "line": 296
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-d19a501382d2c2e16bd9",
+          "file": "scenario-curves.spec.ts",
+          "line": 252,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "screens.spec.ts",
+      "file": "screens.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "the two-page workspace and analysis sections render actual run context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13616,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T03:32:34.191Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overview",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-709f9d6977f1ac263e912740ae5cc9e42538d2fa.png"
+                    },
+                    {
+                      "name": "overview-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-middle-6a3e5057086076830fe17c1bb0f7d40840b91b6c.png"
+                    },
+                    {
+                      "name": "overview-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/overview-lower-00e41986bbff9358b95fd0462cba399e7d648c47.png"
+                    },
+                    {
+                      "name": "summary",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/summary-99b81a90d9ba491d8cbd36488380083e3bb36b3a.png"
+                    },
+                    {
+                      "name": "summary-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/summary-middle-ef246fde006ee60f8a21ddde15485f5465b2ef7f.png"
+                    },
+                    {
+                      "name": "summary-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/summary-lower-bf98fb4ba65a85aa06c4f7e513c65a97c5c36531.png"
+                    },
+                    {
+                      "name": "replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/replay-1b30aad7da87df6c2f7732f01550537fe80464a8.png"
+                    },
+                    {
+                      "name": "analytics-outcomes",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-outcomes-b9eecc7e32d888ab2c13b2e4f78da9cbcd2b8c20.png"
+                    },
+                    {
+                      "name": "analytics-outcomes-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-outcomes-middle-929dd6217355adf43ca0945e806cf6c948a1c0cd.png"
+                    },
+                    {
+                      "name": "analytics-outcomes-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-outcomes-lower-15649424c6a8f93e4dbd08eb59156e4fe3ab005e.png"
+                    },
+                    {
+                      "name": "analytics-patients",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/analytics-patients-86a6c447fbb3b95eec184263dcc583ca3a2e9d43.png"
+                    },
+                    {
+                      "name": "comparison",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/comparison-20b9796a5340cb3de24b4b4a1302b416bb5a50ab.png"
+                    },
+                    {
+                      "name": "data",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-afef83c5e2ee7b9abf98d0c944708343eb9867b5.png"
+                    },
+                    {
+                      "name": "data-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-middle-1a609c4eba8b111fd99c350f9092dea02f7f7992.png"
+                    },
+                    {
+                      "name": "data-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/results/screens-the-two-page-works-c7e00-s-render-actual-run-context-desktop/attachments/data-lower-676ae869ca5c6118c22de51354d3d31c3c9526ea.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2676ef668c5398eed988-c48dd46c543d0d106029",
+          "file": "screens.spec.ts",
+          "line": 13,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T03:29:48.330Z",
+    "duration": 179912.07900000003,
+    "expected": 16,
+    "skipped": 1,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "project": "desktop",
+  "run_id": "run_c711853987b64f59a6f9",
+  "resource_types": [
+    "staff",
+    "equipment_pool",
+    "slot"
+  ],
+  "parent_preserved": true,
+  "separate_resource_page": false
+}

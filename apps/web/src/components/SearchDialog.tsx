@@ -25,7 +25,7 @@ import {
 } from "./workspaceSearch";
 
 const pages: [PageId, string][] = [
-  ["overview", "Overview"],
+  ["overview", "Configuration"],
   ["summary", "Analysis · Summary"],
   ["replay", "Analysis · Replay"],
   ["analytics", "Analysis · Analytics"],

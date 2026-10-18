@@ -1,0 +1,27 @@
+{
+  "recorded_at": "2026-10-18T03:24:44.582934+00:00",
+  "review_scope": [
+    "canonical configured stock and dedicated qualified shift identities",
+    "immutable source and frozen run inputs",
+    "observed reset authority",
+    "bed/equipment/staff bottleneck attribution and non-additive scope",
+    "React hooks, accessible Mantine controls, drag lifecycle and request caching"
+  ],
+  "independent_review": "Parallel source review with separate implementation agents",
+  "resolved_findings": [
+    "Exclude unavailable and unqualified source assignments in staffing readback",
+    "Include allocation fractions in unit snapshot cache keys",
+    "Reject non-string unit IDs even without a source dataset",
+    "Name blanket per-bed equipment constraints even when the patient has no extra equipment profile",
+    "Sum duplicate per-bed equipment requirements before calculating preview capacity",
+    "Use the configured nurse roster for percentage absences and recalculate after edits",
+    "Keep distinct ward names in displayed staffing/equipment evidence",
+    "Give sibling arrival and capacity editors distinct React keys so saving never retains a duplicate chart",
+    "Label first-shortage timing as care queues because it includes emergency assessment, not only inpatient beds"
+  ],
+  "scope_corrections": {
+    "patient_type_controls": "Removed at explicit user request; existing optional care mix remains",
+    "mobile": "Outside the current user-requested scope"
+  },
+  "remaining_source_correctness_blockers": []
+}

@@ -1160,3 +1160,17 @@
   width: 100%;
   min-width: 0;
 }
+
+.arrival-window-controls {
+  display: grid;
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid #e0e8ef;
+  border-radius: 6px;
+}
+.arrival-window-controls > p {
+  margin: 0;
+  color: #607287;
+  font-size: 12px;
+  line-height: 1.5;
+}

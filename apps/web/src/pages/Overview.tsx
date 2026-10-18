@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { BedGrid, BedLegend, Button, CapacityBar } from "../components/ui";
-import { ForecastChart, Timeline } from "../components/Charts";
+import { Timeline } from "../components/Charts";
 import { OutcomeSummaryCards } from "./OutcomeSummaryCards";
+import SimulationBottlenecks from "./SimulationBottlenecks";
 import { fmt, localDate } from "../api";
 import {
   nameOf,
@@ -24,19 +25,6 @@ import {
 } from "../model";
 import { finiteStatistic } from "./resultsMetrics";
 import "./summaryDashboard.css";
-
-function selectedRow(rows: Entity[], at: string) {
-  if (!rows.length) return 0;
-  const target = Date.parse(at);
-  if (!Number.isFinite(target)) return 0;
-  let closest = 0;
-  for (let index = 1; index < rows.length; index += 1) {
-    const current = Date.parse(rows[index].at || rows[index].start_at);
-    const prior = Date.parse(rows[closest].at || rows[closest].start_at);
-    if (Math.abs(current - target) < Math.abs(prior - target)) closest = index;
-  }
-  return closest;
-}
 
 export default function Overview({
   ctx,
@@ -51,8 +39,6 @@ export default function Overview({
   const ed = statsFor(ctx, "ed");
   const queue = queueStats(ctx);
   const selectedStateUnavailable = stateUnavailable(ctx);
-  const rows: Entity[] = ctx.metrics?.series || ctx.metrics?.daily || [];
-  const rowIndex = selectedRow(rows, ctx.selectedTime);
   const metric = ctx.metrics?.scalar_metrics || {};
   const firstShortage = metric.time_to_first_shortage_hours;
   const peakQueue = metric.peak_inpatient_queue;
@@ -90,8 +76,8 @@ export default function Overview({
     : predictedShortage !== null
       ? {
           tone: "warning" as const,
-          title: `Patients may start waiting for beds after ${fmt(predictedShortage, 1)} hours`,
-          body: "Timing includes only runs with a bed queue. Compare staffing and extra hospital beds.",
+          title: `Patients may start waiting for care after ${fmt(predictedShortage, 1)} hours`,
+          body: "Timing includes emergency assessment and inpatient queues. Review the recorded constraints below before comparing responses.",
         }
       : {
           tone: noRecordedQueue ? ("success" as const) : ("neutral" as const),
@@ -175,31 +161,9 @@ export default function Overview({
         <article className="summary-chart-card summary-chart-card-wide summary-timeline-card">
           <Timeline ctx={ctx} title="Forecast timeline" />
         </article>
-        <article className="summary-chart-card">
-          <div className="summary-card-heading">
-            <div>
-              <span className="eyebrow">WAITING PRESSURE</span>
-              <h2>Patients waiting</h2>
-            </div>
-          </div>
-          <ForecastChart
-            rows={rows}
-            keys={["inpatient_queue", "ed_queue"]}
-            labels={["Waiting for a bed", "Waiting for emergency assessment"]}
-            height={220}
-            selected={rowIndex}
-            onSelect={(index) =>
-              ctx.setTime(rows[index].at || rows[index].start_at)
-            }
-            showBand={false}
-            yLabel="Patients waiting"
-          />
-          <p>
-            See the people waiting for a bed and those waiting for emergency
-            assessment.
-          </p>
-        </article>
       </section>
+
+      <SimulationBottlenecks ctx={ctx} />
 
       <details
         className="summary-details"

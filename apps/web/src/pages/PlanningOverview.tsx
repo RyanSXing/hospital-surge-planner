@@ -83,7 +83,7 @@ export default function PlanningOverview({
     <div className="planning-overview-page">
       <header className="page-heading planning-overview-heading">
         <div>
-          <h1>Hospital overview</h1>
+          <h1>Configuration</h1>
         </div>
         <div className="heading-actions">
           <Button onClick={onInspectBaseline} disabled={!dataset}>
@@ -132,6 +132,12 @@ export default function PlanningOverview({
           >
             <div className="baseline-chart-heading">
               <h3>Capacity at a glance</h3>
+              <a
+                className="baseline-edit-capacity"
+                href="#hospital-capacity-parameters"
+              >
+                Edit beds & staffing
+              </a>
               <div className="baseline-chart-legend">
                 <span>
                   <i />

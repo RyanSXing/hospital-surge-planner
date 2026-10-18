@@ -1,0 +1,18 @@
+{
+  "dataset_id": "demo-v1-1-0-hospital_baseline-41021-365",
+  "scenario_id": "scenario_03ac5824044146b68f57",
+  "original_run_id": "run_efa87b5ff84745c39b71",
+  "comparison_id": "comparison_f9369a2eb2ef40e18413",
+  "saved_scenario_id": "scenario_26d158cdf1c8492a8957",
+  "run_count_per_plan": 10,
+  "hospital_only_targets": true,
+  "actual_plan_capacity": {
+    "staff_existing": 88,
+    "extra_beds": 112,
+    "staffed_extra_beds": 96
+  },
+  "saved_plan_reopened": true,
+  "selected_run_reopened": true,
+  "controls_within_viewport": true,
+  "page_errors": []
+}

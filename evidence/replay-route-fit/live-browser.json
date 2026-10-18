@@ -1,0 +1,125 @@
+{
+  "checked_at": "2026-10-18T08:30:51.400Z",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "all_checks_passed": true,
+  "checks": {
+    "normalMapFits": true,
+    "actualHundredBeds": true,
+    "quickBedTransition": true,
+    "fullMapInsideFullscreen": true,
+    "fullscreenExitVisible": true,
+    "fullscreenExitReturnsToWorkspace": true,
+    "zoomAndFit": true,
+    "actualRecordedMotion": true,
+    "comparisonMissingResultsRemainUnavailable": true,
+    "consoleClean": true
+  },
+  "normal": {
+    "bedFillTransition": "0.09s",
+    "canvasHasNoOverflow": true,
+    "fitMode": "fit",
+    "height": 720,
+    "map": {
+      "height": 367.015625,
+      "width": 796.4140625,
+      "x": 346.796875,
+      "y": 290.7578125
+    },
+    "mapInsideViewport": true,
+    "recordedAt": "2026-10-19T05:00:00Z",
+    "replication": "run_2088efd055e04fac8875_rep_0000",
+    "scale": 0.7808,
+    "wardABeds": 100,
+    "width": 1280
+  },
+  "fullscreen": {
+    "width": 1512,
+    "height": 949,
+    "mapInsideViewport": true,
+    "verification": "Native screenshot, visible Exit full screen and successful return to the workspace; read-only DOM fullscreen property is not used."
+  },
+  "recorded_motion": {
+    "from": "2026-10-20T01:00:00.000Z",
+    "markers": [
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001861",
+        "from": "UNIT-ED",
+        "patient": "PAT-ED_MAIN-20261019-005340-b-0001",
+        "to": "UNIT-WARD-A"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001864",
+        "from": "UNIT-ED",
+        "patient": "PAT-ED_MAIN-20261019-005340-b-0000",
+        "to": "discharge"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001874,RUN-9f2d78e3b9104ad273ed-E00001876,RUN-9f2d78e3b9104ad273ed-E00001969",
+        "from": "entrance",
+        "patient": "PAT-ED_MAIN-20261019-005520-b-0001",
+        "to": "discharge"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001881",
+        "from": "UNIT-ED",
+        "patient": "PAT-ED_MAIN-20261019-005340-b-0004",
+        "to": "UNIT-WARD-A"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001890",
+        "from": "UNIT-ED",
+        "patient": "PAT-ED_MAIN-20261019-005460-b-0005",
+        "to": "discharge"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001898",
+        "from": "UNIT-WARD-A",
+        "patient": "PAT-ED_MAIN-20261018-003120-b-0000",
+        "to": "discharge"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001903,RUN-9f2d78e3b9104ad273ed-E00001905",
+        "from": "entrance",
+        "patient": "PAT-ED_MAIN-20261019-005580-b-0001",
+        "to": "UNIT-ED"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001910,RUN-9f2d78e3b9104ad273ed-E00001912",
+        "from": "entrance",
+        "patient": "PAT-DIRECT_WARD_MAIN-20261019-005580-b-0000",
+        "to": "UNIT-WARD-A"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001916,RUN-9f2d78e3b9104ad273ed-E00001918,RUN-9f2d78e3b9104ad273ed-E00001975",
+        "from": "entrance",
+        "patient": "PAT-ED_MAIN-20261019-005640-b-0002",
+        "to": "discharge"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001930,RUN-9f2d78e3b9104ad273ed-E00001932",
+        "from": "entrance",
+        "patient": "PAT-ED_MAIN-20261019-005640-b-0000",
+        "to": "UNIT-ED"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001947",
+        "from": "UNIT-WARD-A",
+        "patient": "PAT-PLAN-000012",
+        "to": "discharge"
+      },
+      {
+        "events": "RUN-9f2d78e3b9104ad273ed-E00001959,RUN-9f2d78e3b9104ad273ed-E00001961",
+        "from": "entrance",
+        "patient": "PAT-ED_MAIN-20261019-005700-b-0002",
+        "to": "UNIT-ED"
+      }
+    ],
+    "to": "2026-10-20T05:00:00.000Z",
+    "trails": 12
+  },
+  "replay_console_errors": [],
+  "comparison_console_errors": [],
+  "scenario_mutations": 0,
+  "new_production_simulations": 0,
+  "production_export_downloads": 0
+}

@@ -1,0 +1,55 @@
+{
+  "code_commit": "4e410f8d45e8bf0e9cbda2274e40e773c836d5d6",
+  "checks": [
+    {
+      "service": "api",
+      "running": true,
+      "health": "healthy",
+      "healthy_when_reported": true,
+      "same_named_volumes": true,
+      "expected_code_commit": true
+    },
+    {
+      "service": "postgres",
+      "running": true,
+      "health": "healthy",
+      "healthy_when_reported": true,
+      "same_named_volumes": true
+    },
+    {
+      "service": "redis",
+      "running": true,
+      "health": "healthy",
+      "healthy_when_reported": true,
+      "same_named_volumes": true
+    },
+    {
+      "service": "tls",
+      "running": true,
+      "health": null,
+      "healthy_when_reported": true,
+      "same_named_volumes": true
+    },
+    {
+      "service": "web",
+      "running": true,
+      "health": "healthy",
+      "healthy_when_reported": true,
+      "same_named_volumes": true,
+      "expected_code_commit": true
+    },
+    {
+      "service": "worker",
+      "running": true,
+      "health": null,
+      "healthy_when_reported": true,
+      "same_named_volumes": true,
+      "expected_code_commit": true
+    }
+  ],
+  "expected_service_set": true,
+  "all_services_running": true,
+  "reported_services_healthy": true,
+  "volumes_preserved": true,
+  "application_services_at_release": true
+}

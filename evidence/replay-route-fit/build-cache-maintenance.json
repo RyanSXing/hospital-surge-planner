@@ -5,5 +5,8 @@
   "scope": "Unused Docker build cache only",
   "image_pruning": false,
   "volume_pruning": false,
-  "new_resources": false
+  "new_resources": false,
+  "post_release_cleanup_at": "2026-10-18T08:31:29.107311+00:00",
+  "post_release_reclaimed_build_cache": "3.8GB",
+  "final_host_available_space": "4.9 GiB (df -h)"
 }

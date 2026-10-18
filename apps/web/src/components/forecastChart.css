@@ -1,0 +1,20 @@
+.chart-legend .chart-constraint-key {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.chart-legend .chart-constraint-key i {
+  width: 18px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--warning);
+  opacity: 0.8;
+}
+
+.chart-legend .chart-constraint-key.disruption i {
+  background: var(--danger);
+}
+
+.chart-constraint-period {
+  cursor: help;
+}

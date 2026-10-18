@@ -1,10 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { NumberInput, Slider, Switch, TextInput } from "@mantine/core";
-import { CalendarPlus, Trash2 } from "lucide-react";
-import { Button } from "../components/ui";
-import { utcToWall } from "../zonedTime";
+import { useEffect, useRef, useState } from "react";
+import { NumberInput, Slider, Switch } from "@mantine/core";
 import type {
-  HospitalDisruption,
   HospitalOperations,
   PatientSeverity,
   SeverityMix,
@@ -14,9 +10,6 @@ import {
   changeSeverityShare,
   defaultSeverityMix,
   defaultSupplies,
-  disruptionForDate,
-  disruptionWithinHorizon,
-  firstDisruptionDate,
   moveSeverityBoundary,
   operationsError,
   severityOrder,
@@ -30,11 +23,10 @@ const severityLabels: Record<PatientSeverity, string> = {
   high: "High",
 };
 const severityColors: Record<PatientSeverity, string> = {
-  low: "var(--success)",
-  medium: "var(--warning)",
-  high: "var(--danger)",
+  low: "var(--severity-low)",
+  medium: "var(--severity-medium)",
+  high: "var(--severity-high)",
 };
-const noDisruptions: HospitalDisruption[] = [];
 
 function NumericField({
   value,
@@ -263,14 +255,8 @@ export default function HospitalOperationsControls({
   onChange: (value: HospitalOperations | null) => void;
 }) {
   const editing = useRef<string | null>(null);
-  const [dateError, setDateError] = useState("");
   const mix = value?.severity_mix || defaultSeverityMix();
   const supplies = value?.supplies || defaultSupplies();
-  const disruptions = value?.disruptions || noDisruptions;
-  const availableDate = useMemo(
-    () => firstDisruptionDate(start, end, timeZone, disruptions),
-    [start, end, timeZone, disruptions],
-  );
   const mixEnabled = Boolean(value?.severity_mix),
     suppliesEnabled = Boolean(value?.supplies);
   const finish = () => {
@@ -293,11 +279,6 @@ export default function HospitalOperationsControls({
       withOperation(value, "supplies", { ...supplies, [key]: next }),
     );
   }
-  const minimumDate = utcToWall(start, timeZone).slice(0, 10);
-  const maximumDate = utcToWall(
-    new Date(Date.parse(end) - 1).toISOString(),
-    timeZone,
-  ).slice(0, 10);
   const error = operationsError(value, start, end);
   return (
     <section
@@ -565,125 +546,6 @@ export default function HospitalOperationsControls({
           </div>
         </section>
       </div>
-      <section
-        className="disruption-controls"
-        aria-labelledby="disruption-title"
-      >
-        <div>
-          <h4 id="disruption-title">Treatment disruptions</h4>
-          <p>Choose a day when treatment stops. Patients continue arriving.</p>
-        </div>
-        <Button
-          disabled={disabled || !availableDate}
-          onClick={() => {
-            const date = availableDate;
-            if (!date) return;
-            edit(
-              "add-disruption",
-              withOperation(value, "disruptions", [
-                ...disruptions,
-                disruptionForDate(
-                  date,
-                  timeZone,
-                  `disruption-${crypto.randomUUID()}`,
-                ),
-              ]),
-            );
-            setDateError("");
-            finish();
-          }}
-        >
-          <CalendarPlus size={15} />
-          Add disruption
-        </Button>
-        {disruptions.length > 0 && (
-          <div className="disruption-list">
-            {disruptions.map((disruption, index) => (
-              <div className="disruption-row" key={disruption.id}>
-                <TextInput
-                  size="xs"
-                  type="date"
-                  label={`Disruption ${index + 1}`}
-                  aria-label={`Disruption ${index + 1} date`}
-                  value={utcToWall(disruption.start_at, timeZone).slice(0, 10)}
-                  min={minimumDate}
-                  max={maximumDate}
-                  disabled={disabled}
-                  onChange={(event) => {
-                    if (!event.currentTarget.value) return;
-                    try {
-                      const interval = disruptionForDate(
-                        event.currentTarget.value,
-                        timeZone,
-                        disruption.id,
-                      );
-                      const next = {
-                        ...disruption,
-                        start_at: interval.start_at,
-                        end_at: interval.end_at,
-                      };
-                      if (!disruptionWithinHorizon(next, start, end))
-                        throw new Error(
-                          "Choose a complete day within the simulation.",
-                        );
-                      if (
-                        disruptions.some(
-                          (item) =>
-                            item.id !== next.id &&
-                            item.start_at === next.start_at,
-                        )
-                      )
-                        throw new Error(
-                          "There is already a disruption on this date.",
-                        );
-                      edit(
-                        `disruption-${disruption.id}`,
-                        withOperation(
-                          value,
-                          "disruptions",
-                          disruptions.map((item) =>
-                            item.id === next.id ? next : item,
-                          ),
-                        ),
-                      );
-                      setDateError("");
-                      finish();
-                    } catch (reason) {
-                      setDateError((reason as Error).message);
-                    }
-                  }}
-                />
-                <span>No treatment · full local day</span>
-                <button
-                  type="button"
-                  className="disruption-remove"
-                  aria-label={`Remove disruption ${index + 1}`}
-                  disabled={disabled}
-                  onClick={() => {
-                    edit(
-                      `remove-${disruption.id}`,
-                      withOperation(
-                        value,
-                        "disruptions",
-                        disruptions.filter((item) => item.id !== disruption.id),
-                      ),
-                    );
-                    setDateError("");
-                    finish();
-                  }}
-                >
-                  <Trash2 size={15} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-        {dateError && (
-          <p className="operations-error" role="alert">
-            {dateError}
-          </p>
-        )}
-      </section>
       {error && (
         <p className="operations-error" role="alert">
           {error}

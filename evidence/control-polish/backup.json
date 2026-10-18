@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T09:20:54.733288+00:00",
+  "sha256": "92a32fd24f836ec146d9026e16b87540415cf16578fa338b584dd3993c76ad06",
+  "byte_size": 5702277,
+  "object_key": "backups/hospital-control-polish-20261018T092049Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing scenarios and saved results before configuration polish and daily disruption probability release"
+}

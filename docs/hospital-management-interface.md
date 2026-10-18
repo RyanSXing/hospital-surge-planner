@@ -16,6 +16,8 @@ The sidebar collapses by choice and remembers the preference in the browser. Rep
 
 Mantine 8 supplies shared buttons, badges, alerts, dialogs, native selects, tabs, sliders, expandable sections, and replay drawers. Lucide supplies the established icon set. D3/SVG charts and the hospital floor plan remain application-specific visualizations; their data tables and recorded evidence remain accessible. The desktop shell uses white surfaces, dark navy actions, neutral borders, compact rows, clear selected states, and visible focus indicators. Inter variable fonts are hosted locally with their OFL license. Stronger heading weights, darker labels and tabular numbers provide a consistent clinical appearance across forms, charts, tables, navigation and replay.
 
+Bed and staff number controls use centered values with separate minus/plus buttons while retaining typing, arrow keys and existing limits. Severity colors use brighter green, amber and red accents. Save status sits beside **Save draft** in reserved inline space, keeping the scenario-name row and editor stable. The arrivals-chart header contains the optional daily treatment disruption percentage; the chart remains devoted to editing arrivals. Analytics uses a thin recorded-constraint ribbon rather than repeated dots or full-height shading.
+
 Dataset timestamps and units remain visible where they explain the result. Technical IDs, execution estimates, individual resource ledgers, and reproducibility details are secondary. A failed forecast read displays an explicit retry action; missing or unobserved statistics remain distinct from zero. A selected-time reconstruction error cannot silently substitute the starting census.
 
 ## Vanderbilt campus context and original artwork

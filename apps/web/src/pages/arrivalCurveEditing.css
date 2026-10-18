@@ -3,6 +3,48 @@
   outline: none;
   touch-action: none;
 }
+.arrival-preview .arrival-preview-heading-main {
+  min-width: 0;
+}
+.arrival-preview-heading-main .preview-live {
+  margin-top: 6px;
+  color: var(--muted);
+}
+.arrival-preview .arrival-disruption-control {
+  flex: 0 0 260px;
+  width: 260px;
+  min-width: 0;
+  padding: 0 0 4px;
+}
+.arrival-disruption-value {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 76px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.arrival-disruption-value > label {
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.arrival-disruption-value .mantine-NumberInput-input {
+  padding-left: 7px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.arrival-disruption-control .mantine-Slider-root {
+  margin: 0 6px;
+}
+.arrival-disruption-help {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
 .arrival-preview .arrival-curve-handle:focus .arrival-curve-dot {
   stroke-width: 3;
   fill: #d8ebfc;

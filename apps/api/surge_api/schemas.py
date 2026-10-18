@@ -115,6 +115,7 @@ class HospitalOperationsSettings(Command):
     severity_mix: SeverityMix | None = None
     supplies: SupplySettings | None = None
     disruptions: list[TreatmentDisruption] = Field(default_factory=list, max_length=365)
+    disruption_chance_percent: float = Field(default=0, ge=0, le=100, allow_inf_nan=False)
 
 
 class ScenarioPatch(Command):

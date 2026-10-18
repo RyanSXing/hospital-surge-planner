@@ -114,6 +114,8 @@ def operations_version(payload):
             "hospital operations " + str(version or "unknown"),
             "hospital operations " + OPERATIONS_MODEL_VERSION,
         )
+    if payload["scenario"]["hospital_operations"].get("disruption_chance_percent", 0) and version != "1.3":
+        raise ModelVersionMismatch("hospital operations " + version, "hospital operations 1.3")
     return version
 
 
@@ -124,6 +126,19 @@ def require_matching_operations_history(payload, parent_payload):
         raise ModelVersionMismatch(
             "hospital operations " + str(version or "disabled"),
             "hospital operations " + str(parent_version or "disabled"),
+        )
+    _require_matching_disruption_chance(payload["scenario"], parent_payload)
+
+
+def _require_matching_disruption_chance(scenario, parent_payload):
+    chance = (scenario.get("hospital_operations") or {}).get("disruption_chance_percent", 0)
+    inherited = (parent_payload["scenario"].get("hospital_operations") or {}).get(
+        "disruption_chance_percent", 0
+    )
+    if chance != inherited:
+        raise ModelVersionMismatch(
+            f"inherited daily disruption chance {inherited}%",
+            f"daily disruption chance {chance}% (clone or use an observed reset to change it)",
         )
 
 
@@ -139,6 +154,7 @@ def operations_version_for_new_run(scenario, parent_payload=None):
             "hospital operations " + (OPERATIONS_MODEL_VERSION if enabled else "disabled"),
             "hospital operations " + str(inherited or "disabled"),
         )
+    _require_matching_disruption_chance(scenario, parent_payload)
     return inherited
 
 

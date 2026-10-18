@@ -145,7 +145,7 @@ def test_new_runs_freeze_current_version_and_keep_dispatch_out_of_public_inputs(
     assert metrics["context"]["hospital_operations_model_version"] == OPERATIONS_MODEL_VERSION
 
 
-@pytest.mark.parametrize("historical_version", ["1.0", "1.1"])
+@pytest.mark.parametrize("historical_version", ["1.0", "1.1", "1.2"])
 def test_frozen_trace_and_export_regeneration_preserve_historical_version(
     ops_client, monkeypatch, historical_version
 ):
@@ -265,7 +265,7 @@ def branch_from(client, parent, *, enqueue_branch=True, origin="simulation_branc
     return applied.json()
 
 
-@pytest.mark.parametrize("historical_version", ["1.0", "1.1"])
+@pytest.mark.parametrize("historical_version", ["1.0", "1.1", "1.2"])
 def test_inherited_history_retains_version_and_observed_reset_uses_current(ops_client, historical_version):
     client = ops_client
     old = complete(client, enqueue(client, version=historical_version)["id"])
@@ -322,7 +322,7 @@ def test_mismatched_inherited_version_is_rejected_at_api_and_worker(ops_client, 
         assert session.get(Job, identity).result["retry"]["error_category"] == "ModelVersionMismatch"
 
 
-@pytest.mark.parametrize("historical_version", ["1.0", "1.1"])
+@pytest.mark.parametrize("historical_version", ["1.0", "1.1", "1.2"])
 def test_comparison_version_is_frozen_and_old_comparisons_are_projected_without_mutation(
     ops_client, historical_version
 ):

@@ -111,6 +111,9 @@
   font-weight: 600;
   line-height: 1.4;
 }
+.configuration-capacity-fields .mantine-NumberInput-wrapper {
+  max-width: 172px;
+}
 .configuration-capacity-fields .mantine-NumberInput-description {
   min-height: 28px;
   margin: 3px 0 5px;
@@ -182,7 +185,7 @@
 }
 .configuration-staff-control {
   display: grid;
-  grid-template-columns: minmax(140px, 1fr) 76px minmax(110px, 1.3fr);
+  grid-template-columns: minmax(140px, 1fr) 112px minmax(110px, 1.3fr);
   align-items: center;
   gap: 14px;
   min-height: 62px;

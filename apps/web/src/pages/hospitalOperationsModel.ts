@@ -172,6 +172,7 @@ export function withOperation<K extends keyof HospitalOperations>(
   const next = { ...current };
   if (
     value === undefined ||
+    (key === "disruption_chance_percent" && value === 0) ||
     (key === "disruptions" && Array.isArray(value) && !value.length)
   )
     delete next[key];
@@ -184,6 +185,13 @@ export function operationsError(
   end: string,
 ) {
   if (!value) return "";
+  if (
+    value.disruption_chance_percent !== undefined &&
+    (!Number.isFinite(value.disruption_chance_percent) ||
+      value.disruption_chance_percent < 0 ||
+      value.disruption_chance_percent > 100)
+  )
+    return "Daily disruption chance must be between 0% and 100%.";
   if (value.severity_mix) {
     const mix = value.severity_mix;
     if (

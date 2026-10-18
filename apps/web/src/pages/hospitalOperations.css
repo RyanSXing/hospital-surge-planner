@@ -1,4 +1,7 @@
 .hospital-operations {
+  --severity-low: #139c69;
+  --severity-medium: #c18108;
+  --severity-high: #dc4049;
   grid-column: 1 / -1;
   border-top: 1px solid var(--border);
   padding-top: 20px;

@@ -7,6 +7,15 @@ import { fmt, localDate, num } from "../api";
 import { Badge, EmptyState } from "./ui";
 import DayDetailDialog from "./DayDetailDialog";
 import { forecastXDomain, isolatedForecastIndexes } from "./forecastGeometry";
+import "./forecastChart.css";
+
+type ForecastConstraintMarker = {
+  index: number;
+  label: string;
+  at?: string | null;
+  endAt?: string | null;
+  kind?: "constraint" | "disruption";
+};
 const COLORS = [
   "var(--accent)",
   "var(--danger)",
@@ -42,7 +51,7 @@ export function ForecastChart({
   bandKey?: string;
   lineDashes?: (string | undefined)[];
   timeZone?: string;
-  markers?: { index: number; label: string }[];
+  markers?: ForecastConstraintMarker[];
   yMax?: number;
   dateLabelMode?: "auto" | "date";
 }) {
@@ -94,6 +103,59 @@ export function ForecastChart({
   const x = scaleLinear()
     .domain(forecastXDomain(rows.length))
     .range([pad.left, W - pad.right]);
+  const recordedPeriods = markers
+    .filter(
+      (marker) =>
+        Number.isInteger(marker.index) &&
+        marker.index >= 0 &&
+        marker.index < rows.length,
+    )
+    .sort((a, b) => a.index - b.index);
+  const constraintBands: ForecastConstraintMarker[][] = [];
+  for (const marker of recordedPeriods) {
+    const previousBand = constraintBands.at(-1);
+    const previous = previousBand?.at(-1);
+    const previousEnd = Date.parse(previous?.endAt || "");
+    const nextStart = Date.parse(marker.at || "");
+    if (
+      previous &&
+      marker.index === previous.index + 1 &&
+      (marker.kind || "constraint") === (previous.kind || "constraint") &&
+      Number.isFinite(previousEnd) &&
+      Number.isFinite(nextStart) &&
+      nextStart <= previousEnd
+    )
+      previousBand!.push(marker);
+    else constraintBands.push([marker]);
+  }
+  const periodLeft = (index: number) => Math.max(pad.left, x(index - 0.5));
+  const periodRight = (index: number) =>
+    Math.min(W - pad.right, x(index + 0.5));
+  const bandBounds = (periods: ForecastConstraintMarker[]) => {
+    const left = periodLeft(periods[0].index);
+    const right = periodRight(periods.at(-1)!.index);
+    const inset = Math.min(0.5, (right - left) / 4);
+    return { x: left + inset, width: right - left - inset * 2 };
+  };
+  const constraintKinds = ["constraint", "disruption"] as const;
+  const periodTitle = (marker: ForecastConstraintMarker) => {
+    const at =
+      marker.at || rows[marker.index]?.start_at || rows[marker.index]?.at;
+    const endAt = marker.endAt || rows[marker.index]?.end_at;
+    const options: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZoneName: "short",
+    };
+    const period =
+      at && Number.isFinite(Date.parse(at))
+        ? `${dateLabel(at, options)}${endAt && Number.isFinite(Date.parse(endAt)) ? ` to ${dateLabel(endAt, options)}` : ""}`
+        : `Chart period ${marker.index + 1}`;
+    return `Recorded period: ${period}. ${marker.label}. Period evidence does not identify exact onset or duration.`;
+  };
   const max = Math.max(
     5,
     ...rows.flatMap((r) =>
@@ -121,6 +183,22 @@ export function ForecastChart({
               {labels[i] || k}
             </span>
           ))}
+          {constraintKinds.map((kind) =>
+            recordedPeriods.some(
+              (marker) => (marker.kind || "constraint") === kind,
+            ) ? (
+              <span
+                key={kind}
+                className={`chart-constraint-key ${kind}`}
+                title="Recorded in one or more simulations during the marked periods. The ribbon does not show exact onset or duration."
+              >
+                <i aria-hidden="true" />
+                {kind === "disruption"
+                  ? "Treatment interruptions"
+                  : "Recorded constraints"}
+              </span>
+            ) : null,
+          )}
         </div>
       </div>
       {rows.length ? (
@@ -153,40 +231,43 @@ export function ForecastChart({
               />
             </linearGradient>
           </defs>
-          {markers.map((marker) => (
+          {constraintBands.map((periods) => (
             <g
-              key={marker.index}
-              className="chart-bottleneck-marker"
-              clipPath={`url(#${fillId}-plot)`}
-              data-period-index={marker.index}
+              key={periods[0].index}
+              className="chart-constraint-band"
+              data-kind={periods[0].kind || "constraint"}
+              data-first-period={periods[0].index}
+              data-last-period={periods.at(-1)!.index}
             >
               <rect
-                x={Math.max(
-                  pad.left,
-                  x(marker.index) -
-                    Math.max(
-                      3,
-                      (W - pad.left - pad.right) /
-                        Math.max(1, rows.length - 1) /
-                        2,
-                    ),
-                )}
-                y={pad.top}
-                width={Math.max(
-                  4,
-                  (W - pad.left - pad.right) / Math.max(1, rows.length - 1),
-                )}
-                height={H - pad.bottom - pad.top}
-                fill="var(--warning)"
-                opacity={0.065}
+                className="chart-constraint-ribbon"
+                {...bandBounds(periods)}
+                y={pad.top - 10}
+                height={4}
+                rx={2}
+                fill={
+                  periods[0].kind === "disruption"
+                    ? "var(--danger)"
+                    : "var(--warning)"
+                }
+                opacity={0.8}
               />
-              <circle
-                cx={x(marker.index)}
-                cy={pad.top + 3}
-                r={3.5}
-                fill="var(--warning)"
-              />
-              <title>{marker.label}</title>
+              {periods.map((marker) => (
+                <rect
+                  key={marker.index}
+                  className="chart-constraint-period"
+                  data-period-index={marker.index}
+                  data-recorded-at={marker.at || undefined}
+                  data-recorded-end-at={marker.endAt || undefined}
+                  x={periodLeft(marker.index)}
+                  y={pad.top - 14}
+                  width={periodRight(marker.index) - periodLeft(marker.index)}
+                  height={12}
+                  fill="transparent"
+                >
+                  <title>{periodTitle(marker)}</title>
+                </rect>
+              ))}
             </g>
           ))}
           {ticks.map((t) => (

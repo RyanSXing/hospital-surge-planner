@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-18T09:34:26.591821+00:00",
+  "frontend_tests": 436,
+  "backend_tests": 132,
+  "unique_desktop_browser_cases": 6,
+  "all_passed": true,
+  "production_build": "TypeScript and Vite passed",
+  "formatting": "Prettier and Ruff passed",
+  "frozen_application_and_bundle_unchanged": true,
+  "browser_assertion_maintenance": "Initial batch5passed/1obsolete text assertion; only that test assertion was updated and its case passed on rerun. Application and production bundle hashes remained unchanged.",
+  "scope": [
+    "Brighter severity colors, Mantine plus/minus bed and staff controls, integrated stable save status and arrivals-chart disruption chance.",
+    "Save/reload, Undo/Redo, all staff roles, immutable submitted inputs, edited14/30-day arrivals drive actual simulation events.",
+    "Seeded daily chance0/100/intermediate,7/14/30-day horizons, DST23/25-hour dates, clipped horizons, independent random streams and legacy schedule union.",
+    "Recorded red/amber constraint ribbons preserve evidence periods; Summary to exact Replay and saved-scenario Comparison navigation.",
+    "Historical operations models1.0\u20131.2, missing evidence, frozen lineage, stale comparisons and unsupported chance mutation remain guarded."
+  ]
+}

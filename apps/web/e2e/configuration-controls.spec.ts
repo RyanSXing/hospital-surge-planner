@@ -52,6 +52,39 @@ test("desktop configuration saves editable beds and all staff roles into a real 
     exact: true,
   });
   await expect(totalBeds).toHaveValue("12");
+  await controls
+    .getByRole("button", {
+      name: `Increase ${sourceIcu.name} installed beds`,
+      exact: true,
+    })
+    .click();
+  await expect(totalBeds).toHaveValue("13");
+  await controls
+    .getByRole("button", {
+      name: `Decrease ${sourceIcu.name} installed beds`,
+      exact: true,
+    })
+    .click();
+  await expect(totalBeds).toHaveValue("12");
+  await controls
+    .getByRole("button", {
+      name: `Increase ${sourceIcu.name} registered nurses`,
+      exact: true,
+    })
+    .click();
+  await expect(nurses).toHaveValue("7");
+  await controls
+    .getByRole("button", {
+      name: `Decrease ${sourceIcu.name} registered nurses`,
+      exact: true,
+    })
+    .click();
+  await expect(nurses).toHaveValue("6");
+  await nurses.press("ArrowUp");
+  await expect(nurses).toHaveValue("7");
+  await nurses.press("ArrowDown");
+  await expect(nurses).toHaveValue("6");
+  await nurses.press("Tab");
   await totalBeds.fill("20");
   await totalBeds.press("Tab");
   await staffedBeds.fill("18");

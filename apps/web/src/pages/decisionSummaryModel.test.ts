@@ -797,18 +797,23 @@ describe("corrected severity model reporting", () => {
 });
 
 describe("operations comparison algorithm matching", () => {
-  it("accepts matching corrected1.2 results without calling them earlier severity results", () => {
-    const { ctx, c } = operationsFixture("1.2");
-    expect(comparisonOperationsVersionsMatch(c, ctx)).toBe(true);
-    expect(comparisonMatchesResult(c, ctx)).toBe(true);
-    const model = buildDecisionSummary({ ctx, comparison: c });
-    expect(model.state).toBe("ready");
-    expect(model.notice).toBeNull();
-    expect(model.action.kind).toBe("review");
-  });
+  it.each(["1.2", "1.3"])(
+    "accepts matching corrected%s results without calling them earlier severity results",
+    (version) => {
+      const { ctx, c } = operationsFixture(version);
+      expect(comparisonOperationsVersionsMatch(c, ctx)).toBe(true);
+      expect(comparisonMatchesResult(c, ctx)).toBe(true);
+      const model = buildDecisionSummary({ ctx, comparison: c });
+      expect(model.state).toBe("ready");
+      expect(model.notice).toBeNull();
+      expect(model.action.kind).toBe("review");
+    },
+  );
   it.each([
     ["1.1", "1.2"],
     ["1.2", "1.1"],
+    ["1.2", "1.3"],
+    ["1.3", "1.2"],
   ])(
     "rejects a%s result compared with%s plans",
     (resultVersion, comparisonVersion) => {

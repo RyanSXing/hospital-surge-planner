@@ -205,14 +205,71 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
       .fill(value);
     await operations.getByRole("textbox", { name: label, exact: true }).blur();
   }
-  await operations
-    .getByRole("button", { name: "Add disruption", exact: true })
-    .click();
-  await operations
-    .getByLabel("Disruption 1 date", { exact: true })
-    .fill("2026-10-17");
-  await expect(operations).toContainText("Patients continue arriving");
+  // Daily chance belongs to the arrival chart, but remains independent of the
+  // number of patients in every blue point. 100% gives a deterministic care
+  // pause for the complete simulated horizon without choosing fixed dates.
+  const arrivals = page.locator(".arrival-preview").first(),
+    chart = arrivals.getByTestId("arrival-preview-chart"),
+    chanceInput = arrivals.getByRole("textbox", {
+      name: "Daily treatment disruption chance percentage",
+      exact: true,
+    }),
+    chanceSlider = arrivals.getByRole("slider", {
+      name: "Daily treatment disruption chance",
+      exact: true,
+    }),
+    plannedBeforeDisruption = await chart.getAttribute("data-planned-arrivals"),
+    normalArrivalValues = await chart
+      .getByRole("slider")
+      .evaluateAll((handles) =>
+        handles.map((handle) => ({
+          at: handle.getAttribute("data-at"),
+          value: handle.getAttribute("aria-valuenow"),
+        })),
+      );
+  expect(normalArrivalValues).toHaveLength(3);
+  const assertArrivalsUnchanged = async () => {
+    await expect(chart).toHaveAttribute(
+      "data-planned-arrivals",
+      plannedBeforeDisruption!,
+    );
+    await expect
+      .poll(() =>
+        chart.getByRole("slider").evaluateAll((handles) =>
+          handles.map((handle) => ({
+            at: handle.getAttribute("data-at"),
+            value: handle.getAttribute("aria-valuenow"),
+          })),
+        ),
+      )
+      .toEqual(normalArrivalValues);
+  };
+  await arrivals.scrollIntoViewIfNeeded();
+  await expect(chanceSlider).toHaveAttribute("aria-valuenow", "0");
+  await chanceInput.fill("50");
+  await chanceInput.blur();
+  await expect(chanceSlider).toHaveAttribute("aria-valuenow", "50");
+  await assertArrivalsUnchanged();
+
+  // One numeric gesture is one draft-history entry.
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await expect(chanceSlider).toHaveAttribute("aria-valuenow", "0");
+  await assertArrivalsUnchanged();
+  await page.getByRole("button", { name: "Redo", exact: true }).click();
+  await expect(chanceSlider).toHaveAttribute("aria-valuenow", "50");
+  await assertArrivalsUnchanged();
+
+  await chanceSlider.focus();
+  await chanceSlider.press("End");
+  await expect(chanceSlider).toHaveAttribute("aria-valuenow", "100");
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await expect(chanceSlider).toHaveAttribute("aria-valuenow", "50");
+  await assertArrivalsUnchanged();
+  await page.getByRole("button", { name: "Redo", exact: true }).click();
+  await expect(chanceSlider).toHaveAttribute("aria-valuenow", "100");
+  await assertArrivalsUnchanged();
   const saved = await saveDraft(page, context.scenario.id);
+  expect(saved.conditions).toEqual(legacy.conditions);
   expect(saved.hospital_operations.supplies).toEqual({
     initial_percent: 100,
     capacity: 30,
@@ -220,10 +277,8 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
     refill_every_days: 1,
     refill_percent: 100,
   });
-  expect(saved.hospital_operations.disruptions[0]).toMatchObject({
-    start_at: "2026-10-17T05:00:00.000Z",
-    end_at: "2026-10-18T05:00:00.000Z",
-  });
+  expect(saved.hospital_operations.disruption_chance_percent).toBe(100);
+  expect(saved.hospital_operations.disruptions ?? []).toEqual([]);
   expect(saved.hospital_operations.severity_mix.low.percentage).toBeCloseTo(
     45,
     0,
@@ -235,9 +290,14 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
   await expect(
     operations.getByRole("switch", { name: "Track supplies" }),
   ).toBeChecked();
+  await expect(chanceSlider).toHaveAttribute("aria-valuenow", "100");
+  await expect
+    .poll(async () => valueNumber(await chanceInput.inputValue()))
+    .toBe(100);
+  await assertArrivalsUnchanged();
   await expect(
-    operations.getByLabel("Disruption 1 date", { exact: true }),
-  ).toHaveValue("2026-10-17");
+    page.getByLabel("Disruption 1 date", { exact: true }),
+  ).toHaveCount(0);
   for (const [severity, hours] of [
     ["Low", 12],
     ["Medium", 36],
@@ -288,6 +348,7 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
       0,
     );
     expect(median(day.medical_supply_average_percent)).toBeLessThanOrEqual(100);
+    expect(median(day.treatment_disruption_hours)).toBeCloseTo(24, 8);
   }
   const disruptionEvents = await api(
     page.request,
@@ -312,7 +373,12 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
   expect(evidence.scope).toBe("ensemble");
   expect(evidence.evidence_available).toBe(true);
   expect(evidence.categories.map((row: any) => row.reason)).toEqual(
-    expect.arrayContaining(["medical_supplies", "treatment_disruption"]),
+    expect.arrayContaining(["treatment_disruption"]),
+  );
+  // No supplies are consumed while treatment is continuously paused; do not
+  // fabricate a supplies shortage merely because supply settings are enabled.
+  expect(evidence.categories.map((row: any) => row.reason)).not.toContain(
+    "medical_supplies",
   );
 
   await open(page, context.scenario.id, "summary", run.id);
@@ -390,7 +456,28 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
   ).toBeVisible();
   await expect(
     outcomes.locator("[data-testid=constraint-markers]"),
-  ).toContainText(/suppl|disruption/i);
+  ).toContainText("Treatment interrupted");
+  const disruptionRibbon = outcomes.locator(
+    '.chart-constraint-band[data-kind="disruption"]',
+  );
+  await expect(disruptionRibbon).toHaveCount(1);
+  await expect(disruptionRibbon).toHaveAttribute("data-first-period", "0");
+  await expect(disruptionRibbon).toHaveAttribute("data-last-period", "2");
+  const recordedPeriods = disruptionRibbon.locator(".chart-constraint-period");
+  await expect(recordedPeriods).toHaveCount(metrics.data.length);
+  expect(
+    await recordedPeriods.evaluateAll((periods) =>
+      periods.map((period) => ({
+        start: Date.parse(period.getAttribute("data-recorded-at") || ""),
+        end: Date.parse(period.getAttribute("data-recorded-end-at") || ""),
+      })),
+    ),
+  ).toEqual(
+    metrics.data.map((day: any) => ({
+      start: Date.parse(day.start_at || day.at),
+      end: Date.parse(day.end_at),
+    })),
+  );
   await assertPageHealthy(page);
   await capture(page, "operations-supplies-analytics", info);
   expect(errors).toEqual([]);
@@ -398,6 +485,13 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
     scenario_id: context.scenario.id,
     run_id: run.id,
     hospital_operations: saved.hospital_operations,
+    graph_disruption_chance: {
+      chance_percent: 100,
+      planned_arrivals_unchanged: plannedBeforeDisruption,
+      normal_arrival_values: normalArrivalValues,
+      numeric_and_slider_undo_redo_verified: true,
+      saved_chance_restored: true,
+    },
     actual_disruption_events: disruptionEvents.event_type_counts,
     supplies_daily: metrics.data.map((row: any) => ({
       at: row.at || row.start_at,

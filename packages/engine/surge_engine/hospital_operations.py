@@ -11,10 +11,10 @@ import math
 from datetime import timedelta
 from zoneinfo import ZoneInfo
 
-from .common import dt, endpoint
+from .common import day_intervals, dt, endpoint, iso, rng
 
-OPERATIONS_MODEL_VERSION = "1.2"
-SUPPORTED_OPERATIONS_MODEL_VERSIONS = frozenset({"1.0", "1.1", "1.2"})
+OPERATIONS_MODEL_VERSION = "1.3"
+SUPPORTED_OPERATIONS_MODEL_VERSIONS = frozenset({"1.0", "1.1", "1.2", "1.3"})
 SEVERITIES = ("low", "medium", "high")
 
 
@@ -76,7 +76,7 @@ def validate_hospital_operations(config, start, end):
         return None
     if not isinstance(config, dict):
         raise ValueError("Hospital operations must be an object")  # noqa: TRY004 -- public validation uses ValueError
-    if set(config) - {"severity_mix", "disruptions", "supplies"}:
+    if set(config) - {"severity_mix", "disruptions", "supplies", "disruption_chance_percent"}:
         raise ValueError("Unknown hospital operations setting")
 
     def number(value, label, minimum=0, maximum=None, positive=False):
@@ -92,6 +92,8 @@ def validate_hospital_operations(config, start, end):
             raise ValueError(f"{label} must be a finite number in its allowed range")
         return float(value)
 
+    if "disruption_chance_percent" in config:
+        number(config["disruption_chance_percent"], "Daily disruption chance percentage", maximum=100)
     mix = config.get("severity_mix")
     if mix is not None:
         if not isinstance(mix, dict) or set(mix) != set(SEVERITIES):
@@ -151,7 +153,53 @@ class HospitalOperations:
         self.config = validate_hospital_operations(config, sim.start, sim.end)
         self.mix = self.config.get("severity_mix")
         self.supplies = self.config.get("supplies")
-        self.disruptions = self.config.get("disruptions", [])
+        self.disruptions = copy.deepcopy(self.config.get("disruptions", []))
+        self.disruption_chance = self.config.get("disruption_chance_percent", 0)
+        self.sampled_disruption_days = []
+        if self.disruption_chance:
+            if self.model_version != "1.3":
+                raise ValueError("Daily disruption chance requires hospital operations model 1.3")
+            identities = {row["id"] for row in self.disruptions}
+            zone = ZoneInfo(sim.zone)
+            for start, end, local_date in day_intervals(sim.start, sim.end, sim.zone):
+                midnight = start.astimezone(zone).replace(hour=0, minute=0, second=0, microsecond=0)
+                next_midnight = midnight + timedelta(days=1)
+                # A local date has its own independent keyed draw. Its original
+                # midnight also keeps the current day's decision in an inherited
+                # branch; future local dates use that branch's normal stream.
+                affected = bool(
+                    rng(
+                        sim.seed,
+                        sim.stream_index(sim.minute(midnight)),
+                        "operations-daily-disruption",
+                        local_date,
+                    ).random()
+                    < self.disruption_chance / 100
+                )
+                day = {
+                    "local_date": local_date,
+                    "affected": affected,
+                    "chance_percent": self.disruption_chance,
+                    "start_at": iso(start),
+                    "end_at": iso(end),
+                    "local_day_start_at": iso(midnight),
+                    "local_day_end_at": iso(next_midnight),
+                    "clipped_to_horizon": start != dt(midnight) or end != dt(next_midnight),
+                }
+                self.sampled_disruption_days.append(day)
+                if affected:
+                    identity = f"daily-disruption-{local_date}"
+                    while identity in identities:
+                        identity += "-sampled"
+                    identities.add(identity)
+                    self.disruptions.append(
+                        {
+                            "id": identity,
+                            "name": "Sampled daily treatment disruption",
+                            "source": "daily_disruption_chance",
+                            **day,
+                        }
+                    )
         self.stock = (
             self.supplies["capacity"] * self.supplies["initial_percent"] / 100 if self.supplies else None
         )
@@ -184,7 +232,12 @@ class HospitalOperations:
     def setup(self):
         sim = self.sim
         for disruption in self.disruptions:
-            sim.schedule(sim.minute(disruption["start_at"]), "operations_disruption_start", disruption, -3)
+            sim.schedule(
+                sim.minute(disruption["start_at"]),
+                "operations_disruption_start",
+                disruption,
+                -4 if self.model_version == "1.3" else -3,
+            )
             sim.schedule(sim.minute(disruption["end_at"]), "operations_disruption_end", disruption, -3)
         if self.supplies:
             interval = self.supplies["refill_every_days"]
@@ -285,7 +338,7 @@ class HospitalOperations:
     def pause(self, patient):
         if not patient.get("care_paused"):
             remaining = self.service_remaining(patient)
-            if self.model_version == "1.2" and remaining <= 1e-9:
+            if self.model_version in {"1.2", "1.3"} and remaining <= 1e-9:
                 # Care already completed before this instant. Keep the pending
                 # completion event valid; the shortage still blocks new starts.
                 return
@@ -383,7 +436,7 @@ class HospitalOperations:
                 daily["medical_supply_end_percent"] = self.percent()
                 daily["medical_supply_min_percent"] = min(daily["medical_supply_min_percent"], self.percent())
                 daily["medical_supplies_shortage_hours"] += measured_elapsed / 60 * (before <= 1e-9)
-        if sim.current_day and self.disruptions:
+        if sim.current_day and (self.disruptions or self.disruption_chance):
             sim.daily[sim.current_day]["treatment_disruption_hours"] += (
                 measured_elapsed / 60 * bool(self.active_disruptions)
             )
@@ -445,7 +498,7 @@ class HospitalOperations:
                 _medical_supply_percent_minutes=0.0,
                 _medical_supply_measured_minutes=0.0,
             )
-        if self.disruptions:
+        if self.disruptions or self.disruption_chance:
             row["treatment_disruption_hours"] = 0.0
 
     def finalize(self, scalar, daily):
@@ -466,9 +519,17 @@ class HospitalOperations:
         self.record()
         return {
             "hospital_operations_model_version": self.model_version,
+            **({"sampled_disruption_days": self.sampled_disruption_days} if self.disruption_chance else {}),
             "operations_history": self.history,
             "operations_constraint_periods": self.periods,
             "metric_definitions": {
+                **(
+                    {
+                        "daily_disruption_chance": "Each hospital local-calendar date has an independent seeded Bernoulli disruption draw. Selected days pause active treatment and new treatment starts while arrivals continue. Full local days, including 23/25-hour daylight-saving days, are clipped only to the simulation horizon. Explicit saved disruptions combine with sampled days as a union; overlapping constraints are not added as independent effects."
+                    }
+                    if self.disruption_chance
+                    else {}
+                ),
                 "medical_supply_average_percent": "Elapsed-time-weighted general medical supply stock percentage during the measured period. Supplies are used only while patients receive active care; refills add the configured fraction of maximum capacity, capped at capacity.",
                 "severity_stays": (
                     "For newly arriving patients, independent gamma(shape=2) total active care time has the configured severity mean and scales the declared ED/inpatient/stepdown stages proportionally. Waiting, interruption and transport time are additional. Initial census retains declared residual stays and future paths."

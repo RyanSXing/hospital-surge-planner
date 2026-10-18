@@ -1,0 +1,516 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "e2e/configuration-controls.spec.ts",
+      "e2e/hospital-operations.spec.ts",
+      "e2e/arrival-curve.spec.ts",
+      "--project=desktop",
+      "--workers=1",
+      "--grep",
+      "desktop configuration saves|severity pie, disruptions|Summary opens saved-scenario|View bottleneck reconstructs|14-day edited curve|30-day edited curve",
+      "--output=../../output/playwright/control-polish/final-browser-artifacts"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../output/playwright/control-polish/final-browser-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "arrival-curve.spec.ts",
+      "file": "arrival-curve.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "14-day edited curve keeps controls available and drives actual simulated arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9740,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T09:31:35.465Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-controls-14-days",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-af08b648a5685b218f5573f604daf444b1fa7d97.png"
+                    },
+                    {
+                      "name": "arrival-controls-14-days-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-middle-3249ae1975c4c4fbc13b1cf6d579209a7b85baf1.png"
+                    },
+                    {
+                      "name": "arrival-controls-14-days-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/arrival-curve-14-day-edite-4514b-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-14-days-lower-09dfc8ea0bab1de00a0810242fc884e58e31dbf5.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-25a2c530de57d89b2804",
+          "file": "arrival-curve.spec.ts",
+          "line": 21,
+          "column": 3
+        },
+        {
+          "title": "30-day edited curve keeps controls available and drives actual simulated arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10305,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T09:31:46.012Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-controls-30-days",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-46d407d0c630ee63e69b99f451fb784a2c2b0336.png"
+                    },
+                    {
+                      "name": "arrival-controls-30-days-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-middle-79a38b9d0d57fbb9367843383c77ed81044f3e5c.png"
+                    },
+                    {
+                      "name": "arrival-controls-30-days-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/arrival-curve-30-day-edite-598c0-s-actual-simulated-arrivals-desktop/attachments/arrival-controls-30-days-lower-95cb361d8d681a7bdcbb2d3c75ec2c388706b511.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f191fb085d694ccfbf13-3c4001714784d53a47bb",
+          "file": "arrival-curve.spec.ts",
+          "line": 21,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "configuration-controls.spec.ts",
+      "file": "configuration-controls.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop configuration saves editable beds and all staff roles into a real immutable simulation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9241,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T09:31:56.347Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "configuration-capacity",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-f91a261dab97327a5359e65253df5631e69dc763.png"
+                    },
+                    {
+                      "name": "configuration-capacity-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-middle-d4cd81d8925e30bb07355042ab89efeb13a7c29c.png"
+                    },
+                    {
+                      "name": "configuration-capacity-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/configuration-controls-des-0a467-a-real-immutable-simulation-desktop/attachments/configuration-capacity-lower-eac3a2c551853abeb8ca8c95b378c8c14194ca33.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8046fb91dcc545788072-a8b7b1c5c4ca9fcfcbe5",
+          "file": "configuration-controls.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "hospital-operations.spec.ts",
+      "file": "hospital-operations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 29530,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]')\nExpected pattern: \u001b[32m/suppl|disruption/i\u001b[39m\nReceived string:  \u001b[31m\"Treatment interruptedAbout these periodsAmber shows recorded constraints; red shows recorded treatment interruptions. Each marked period has evidence in one or more simulations. Adjacent periods of the same type join together, and reasons can overlap. Hover for the recorded dates and reasons; the ribbon does not show exact onset or duration. Open Summary to replay the first recorded bottleneck.\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]')\u001b[22m\n\u001b[2m    44 × locator resolved to <div data-testid=\"constraint-markers\" class=\"outcome-constraint-markers\" aria-label=\"Recorded bottleneck indicators\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Treatment interruptedAbout these periodsAmber shows recorded constraints; red shows recorded treatment interruptions. Each marked period has evidence in one or more simulations. Adjacent periods of the same type join together, and reasons can overlap. Hover for the recorded dates and reasons; the ribbon does not show exact onset or duration. Open Summary to replay the first recorded bottleneck.\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]')\nExpected pattern: \u001b[32m/suppl|disruption/i\u001b[39m\nReceived string:  \u001b[31m\"Treatment interruptedAbout these periodsAmber shows recorded constraints; red shows recorded treatment interruptions. Each marked period has evidence in one or more simulations. Adjacent periods of the same type join together, and reasons can overlap. Hover for the recorded dates and reasons; the ribbon does not show exact onset or duration. Open Summary to replay the first recorded bottleneck.\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]')\u001b[22m\n\u001b[2m    44 × locator resolved to <div data-testid=\"constraint-markers\" class=\"outcome-constraint-markers\" aria-label=\"Recorded bottleneck indicators\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Treatment interruptedAbout these periodsAmber shows recorded constraints; red shows recorded treatment interruptions. Each marked period has evidence in one or more simulations. Adjacent periods of the same type join together, and reasons can overlap. Hover for the recorded dates and reasons; the ribbon does not show exact onset or duration. Open Summary to replay the first recorded bottleneck.\"\u001b[22m\n\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-operations.spec.ts:459:5",
+                    "location": {
+                      "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-operations.spec.ts",
+                      "column": 5,
+                      "line": 459
+                    },
+                    "snippet": "  457 |   await expect(\n  458 |     outcomes.locator(\"[data-testid=constraint-markers]\"),\n> 459 |   ).toContainText(/suppl|disruption/i);\n      |     ^\n  460 |   await assertPageHealthy(page);\n  461 |   await capture(page, \"operations-supplies-analytics\", info);\n  462 |   expect(errors).toEqual([]);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-operations.spec.ts",
+                        "column": 5,
+                        "line": 459
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]')\nExpected pattern: \u001b[32m/suppl|disruption/i\u001b[39m\nReceived string:  \u001b[31m\"Treatment interruptedAbout these periodsAmber shows recorded constraints; red shows recorded treatment interruptions. Each marked period has evidence in one or more simulations. Adjacent periods of the same type join together, and reasons can overlap. Hover for the recorded dates and reasons; the ribbon does not show exact onset or duration. Open Summary to replay the first recorded bottleneck.\"\u001b[39m\nTimeout: 20000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('outcome-analytics').locator('[data-testid=constraint-markers]')\u001b[22m\n\u001b[2m    44 × locator resolved to <div data-testid=\"constraint-markers\" class=\"outcome-constraint-markers\" aria-label=\"Recorded bottleneck indicators\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Treatment interruptedAbout these periodsAmber shows recorded constraints; red shows recorded treatment interruptions. Each marked period has evidence in one or more simulations. Adjacent periods of the same type join together, and reasons can overlap. Hover for the recorded dates and reasons; the ribbon does not show exact onset or duration. Open Summary to replay the first recorded bottleneck.\"\u001b[22m\n\n\n  457 |   await expect(\n  458 |     outcomes.locator(\"[data-testid=constraint-markers]\"),\n> 459 |   ).toContainText(/suppl|disruption/i);\n      |     ^\n  460 |   await assertPageHealthy(page);\n  461 |   await capture(page, \"operations-supplies-analytics\", info);\n  462 |   expect(errors).toEqual([]);\n    at /Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-operations.spec.ts:459:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T09:32:05.640Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "operations-configuration",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-3a1fe3739cc5043d85c6aafc05114019fecf3aa6.png"
+                    },
+                    {
+                      "name": "operations-configuration-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-middle-04968c96eb2964184d9a03f2231dc1c50ff70a2e.png"
+                    },
+                    {
+                      "name": "operations-configuration-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-lower-557c40955b11e01648b835976933e4f7aa3e490d.png"
+                    },
+                    {
+                      "name": "decision-summary-operations",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-8795a9e08dc7c2543bd507df5f87d4ef9b2aa78a.png"
+                    },
+                    {
+                      "name": "decision-summary-operations-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-middle-ba59931b566b0b9f63803ea8073d376d70d41dd9.png"
+                    },
+                    {
+                      "name": "decision-summary-operations-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-lower-29adf1262a8d66e4d6e2a4f57d94a89c6e62a6d1.png"
+                    },
+                    {
+                      "name": "operations-exact-bottleneck-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-exact-bottleneck-replay-5fc0a5b1b15c6364a72fa875c98b8ce5f2eba9af.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/hospital-operations.spec.ts",
+                    "column": 5,
+                    "line": 459
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-64171581d0a3e4ec580d",
+          "file": "hospital-operations.spec.ts",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "Summary opens saved-scenario comparison and keeps historical comparisons intact",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14949,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T09:32:35.829Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "summary-library-comparison-entry",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-Summar-2f2dc-storical-comparisons-intact-desktop/attachments/summary-library-comparison-entry-79a445d64ed448f530008515de099c93b63c5a96.png"
+                    },
+                    {
+                      "name": "summary-library-comparison-entry-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-Summar-2f2dc-storical-comparisons-intact-desktop/attachments/summary-library-comparison-entry-middle-97366f219fa047f0b0d994a3aed014eff5e07b2c.png"
+                    },
+                    {
+                      "name": "summary-library-comparison-entry-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-Summar-2f2dc-storical-comparisons-intact-desktop/attachments/summary-library-comparison-entry-lower-ed4ba4968d14b8b2a304d59c5bb9b8af8375d438.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-d6aa9da1f4a8ab78d65b",
+          "file": "hospital-operations.spec.ts",
+          "line": 487,
+          "column": 1
+        },
+        {
+          "title": "View bottleneck reconstructs a real unretained source and opens its exact recorded state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9050,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T09:32:51.242Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "decision-summary-unretained-source-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-browser-artifacts/hospital-operations-View-b-c8f5f-ns-its-exact-recorded-state-desktop/attachments/decision-summary-unretained-source-replay-84cce3a53c4a834d3ff3642c28a5058c20ecc9fb.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-2dc1c868cebcc6163c74",
+          "file": "hospital-operations.spec.ts",
+          "line": 670,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T09:31:35.185Z",
+    "duration": 85185.935,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

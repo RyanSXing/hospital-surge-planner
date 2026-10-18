@@ -41,7 +41,7 @@ def execute_with_version(data, operations, version, days=2):
     ).run()
 
 
-@pytest.mark.parametrize("version", ["1.0", "1.1", "1.2"])
+@pytest.mark.parametrize("version", ["1.0", "1.1", "1.2", "1.3"])
 @pytest.mark.parametrize("constraint", ["supplies", "disruption"])
 def test_exact_completion_boundary_has_no_remaining_care_to_pause(hospital, version, constraint):
     data, pid = initial_patient(hospital, hours=12)
@@ -51,13 +51,13 @@ def test_exact_completion_boundary_has_no_remaining_care_to_pause(hospital, vers
         else {"disruptions": [disruption(data, 12, 24)]}
     )
     trace = execute_with_version(data, operations, version)
-    assert discharge_time(trace, pid) == (12 if version == "1.2" else 24) * 60
+    assert discharge_time(trace, pid) == (12 if version in {"1.2", "1.3"} else 24) * 60
     assert trace["hospital_operations_model_version"] == version
     intervals = next(p for p in trace["patients"] if p["patient_id"] == pid)["state_intervals"]
     zero_pauses = [
         row for row in intervals if row.get("care_paused") and row["remaining_stage_spec"]["minutes"] == 0
     ]
-    assert bool(zero_pauses) == (version != "1.2")
+    assert bool(zero_pauses) == (version not in {"1.2", "1.3"})
     assert trace["scalar_metrics"]["patient_conservation_ok"]
 
 

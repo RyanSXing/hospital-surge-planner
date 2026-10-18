@@ -1,0 +1,155 @@
+{
+  "all_final_cases_passed": true,
+  "unique_desktop_cases": 6,
+  "cases": [
+    {
+      "file": "arrival-curve.spec.ts",
+      "title": "14-day edited curve keeps controls available and drives actual simulated arrivals",
+      "project": "desktop",
+      "status": "expected",
+      "attempt_statuses": [
+        "passed"
+      ]
+    },
+    {
+      "file": "arrival-curve.spec.ts",
+      "title": "30-day edited curve keeps controls available and drives actual simulated arrivals",
+      "project": "desktop",
+      "status": "expected",
+      "attempt_statuses": [
+        "passed"
+      ]
+    },
+    {
+      "file": "configuration-controls.spec.ts",
+      "title": "desktop configuration saves editable beds and all staff roles into a real immutable simulation",
+      "project": "desktop",
+      "status": "expected",
+      "attempt_statuses": [
+        "passed"
+      ]
+    },
+    {
+      "file": "hospital-operations.spec.ts",
+      "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+      "project": "desktop",
+      "status": "expected",
+      "attempt_statuses": [
+        "passed"
+      ]
+    },
+    {
+      "file": "hospital-operations.spec.ts",
+      "title": "Summary opens saved-scenario comparison and keeps historical comparisons intact",
+      "project": "desktop",
+      "status": "expected",
+      "attempt_statuses": [
+        "passed"
+      ]
+    },
+    {
+      "file": "hospital-operations.spec.ts",
+      "title": "View bottleneck reconstructs a real unretained source and opens its exact recorded state",
+      "project": "desktop",
+      "status": "expected",
+      "attempt_statuses": [
+        "passed"
+      ]
+    }
+  ],
+  "attempts": [
+    {
+      "report": "final-browser-results.json",
+      "stats": {
+        "startTime": "2026-10-18T09:31:35.185Z",
+        "duration": 85185.935,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "arrival-curve.spec.ts",
+          "title": "14-day edited curve keeps controls available and drives actual simulated arrivals",
+          "project": "desktop",
+          "status": "expected",
+          "attempt_statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "arrival-curve.spec.ts",
+          "title": "30-day edited curve keeps controls available and drives actual simulated arrivals",
+          "project": "desktop",
+          "status": "expected",
+          "attempt_statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "configuration-controls.spec.ts",
+          "title": "desktop configuration saves editable beds and all staff roles into a real immutable simulation",
+          "project": "desktop",
+          "status": "expected",
+          "attempt_statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "hospital-operations.spec.ts",
+          "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+          "project": "desktop",
+          "status": "unexpected",
+          "attempt_statuses": [
+            "failed"
+          ]
+        },
+        {
+          "file": "hospital-operations.spec.ts",
+          "title": "Summary opens saved-scenario comparison and keeps historical comparisons intact",
+          "project": "desktop",
+          "status": "expected",
+          "attempt_statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "hospital-operations.spec.ts",
+          "title": "View bottleneck reconstructs a real unretained source and opens its exact recorded state",
+          "project": "desktop",
+          "status": "expected",
+          "attempt_statuses": [
+            "passed"
+          ]
+        }
+      ]
+    },
+    {
+      "report": "final-rerun-browser-results.json",
+      "stats": {
+        "startTime": "2026-10-18T09:33:46.191Z",
+        "duration": 11239.351,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "hospital-operations.spec.ts",
+          "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+          "project": "desktop",
+          "status": "expected",
+          "attempt_statuses": [
+            "passed"
+          ]
+        }
+      ]
+    }
+  ],
+  "test_maintenance": {
+    "file": "apps/web/e2e/hospital-operations.spec.ts",
+    "reason": "Replace obsolete text-only amber-marker assertion with actual red treatment-interruption ribbon and recorded period checks; application and bundle hashes unchanged."
+  }
+}

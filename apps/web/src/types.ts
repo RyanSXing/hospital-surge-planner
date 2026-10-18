@@ -70,6 +70,7 @@ export interface HospitalSupplies {
 export interface HospitalOperations {
   severity_mix?: SeverityMix;
   disruptions?: HospitalDisruption[];
+  disruption_chance_percent?: number;
   supplies?: HospitalSupplies;
 }
 export interface RunGroup extends Entity {

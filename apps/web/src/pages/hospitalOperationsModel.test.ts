@@ -21,6 +21,42 @@ const start = "2026-10-16T05:00:00Z",
   zone = "America/Chicago";
 const total = (mix: ReturnType<typeof defaultSeverityMix>) =>
   severityOrder.reduce((sum, key) => sum + mix[key].percentage, 0);
+describe("daily disruption probability configuration", () => {
+  it("does not enable an operations model when a zero chance is selected", () => {
+    expect(withOperation(undefined, "disruption_chance_percent", 0)).toBeNull();
+    expect(withOperation(undefined, "disruption_chance_percent", 27.5)).toEqual(
+      {
+        disruption_chance_percent: 27.5,
+      },
+    );
+  });
+  it("preserves exact saved schedules and unrelated settings when changing chance", () => {
+    const original: HospitalOperations = {
+      disruptions: [disruptionForDate("2026-10-20", zone, "legacy")],
+      supplies: defaultSupplies(),
+    };
+    const next = withOperation(original, "disruption_chance_percent", 35);
+    expect(hospitalOperationsPatch(next, start, end)).toEqual({
+      hospital_operations: { ...original, disruption_chance_percent: 35 },
+    });
+    expect(withOperation(next, "disruption_chance_percent", 0)).toEqual(
+      original,
+    );
+    expect(original).not.toHaveProperty("disruption_chance_percent");
+  });
+  it.each([-1, 101, NaN, Infinity, -Infinity])(
+    "rejects an invalid chance %s",
+    (chance) => {
+      expect(() =>
+        hospitalOperationsPatch(
+          { disruption_chance_percent: chance },
+          start,
+          end,
+        ),
+      ).toThrow("between 0% and 100%");
+    },
+  );
+});
 describe("editable patient severity mix", () => {
   it("redistributes unedited shares proportionally, without mutating the saved mix", () => {
     const before = defaultSeverityMix();

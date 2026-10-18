@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
-import type { KeyboardEvent, PointerEvent } from "react";
+import type { KeyboardEvent, PointerEvent, ReactNode } from "react";
 import { useElementSize } from "@mantine/hooks";
+import { NumberInput, Slider } from "@mantine/core";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { localDate, fmt } from "../api";
 import type { Entity } from "../types";
@@ -11,6 +12,9 @@ import "./arrivalCurveEditing.css";
 
 export interface ArrivalPreviewProps extends ArrivalPreviewOptions {
   editable?: boolean;
+  disruptionChance?: number;
+  onDisruptionChanceChange?: (percent: number) => void;
+  children?: ReactNode;
   /** Called once before the first changed value, so one gesture is one undo. */
   onEditStart?: () => void;
   onConditionsChange?: (
@@ -34,7 +38,9 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
   const { ref, width } = useElementSize();
   const id = useId();
   const headingId = `arrival-preview-heading-${id}`,
-    descriptionId = `arrival-preview-help-${id}`;
+    descriptionId = `arrival-preview-help-${id}`,
+    chanceId = `arrival-disruption-chance-${id}`,
+    chanceHelpId = `arrival-disruption-chance-help-${id}`;
   const gesture = useRef<EditGesture | null>(null),
     frame = useRef<number | null>(null),
     pendingValue = useRef<number | null>(null);
@@ -42,6 +48,14 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
     [activeAt, setActiveAt] = useState<string | null>(null),
     [windowStart, setWindowStart] = useState(0),
     [editError, setEditError] = useState("");
+  const [chanceInput, setChanceInput] = useState<number | string | null>(null);
+  const chanceEditing = useRef<ArrivalPreviewProps | null>(null);
+  const chance = options.disruptionChance ?? 0;
+  const showChance =
+    options.disruptionChance !== undefined ||
+    !!options.onDisruptionChanceChange;
+  const chanceEditable =
+    !!options.editable && !!options.onDisruptionChanceChange;
   const editable = !!options.editable && !!options.onConditionsChange;
   const W = Math.max(200, Math.round(width || 640)),
     H = 230;
@@ -127,6 +141,7 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
     () => () => {
       if (frame.current !== null) cancelAnimationFrame(frame.current);
       if (gesture.current?.changed) gesture.current.options.onEditEnd?.();
+      chanceEditing.current?.onEditEnd?.();
     },
     [],
   );
@@ -154,6 +169,21 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
     } catch (error) {
       setEditError((error as Error).message);
     }
+  }
+  function changeChance(value: number) {
+    if (!chanceEditable || !Number.isFinite(value) || value < 0 || value > 100)
+      return;
+    if (value === chance) return;
+    if (!chanceEditing.current) {
+      options.onEditStart?.();
+      chanceEditing.current = options;
+    }
+    options.onDisruptionChanceChange?.(value);
+  }
+  function finishChance() {
+    setChanceInput(null);
+    chanceEditing.current?.onEditEnd?.();
+    chanceEditing.current = null;
   }
   function flushPending() {
     if (frame.current !== null) {
@@ -272,18 +302,81 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
       aria-labelledby={headingId}
     >
       <div className="arrival-preview-heading">
-        <div>
+        <div className="arrival-preview-heading-main">
           <h3 id={headingId}>Expected daily arrivals</h3>
           <p>
             {options.stream === "ED_MAIN"
               ? "Emergency department"
               : "Direct hospital admissions"}
           </p>
+          {showChance && (
+            <span className="preview-live">
+              <i aria-hidden="true" />
+              {editable ? "Drag blue points to edit" : "Updates as you edit"}
+            </span>
+          )}
         </div>
-        <span className="preview-live">
-          <i aria-hidden="true" />
-          {editable ? "Drag blue points to edit" : "Updates as you edit"}
-        </span>
+        {showChance ? (
+          <div className="arrival-disruption-control">
+            <div className="arrival-disruption-value">
+              <label htmlFor={chanceId}>
+                Daily treatment disruption chance
+              </label>
+              <NumberInput
+                id={chanceId}
+                aria-label="Daily treatment disruption chance percentage"
+                aria-describedby={chanceHelpId}
+                size="xs"
+                suffix="%"
+                min={0}
+                max={100}
+                step={1}
+                decimalScale={1}
+                allowNegative={false}
+                hideControls
+                value={chanceInput ?? chance}
+                disabled={!chanceEditable}
+                onChange={(next) => {
+                  setChanceInput(next);
+                  if (typeof next === "number") changeChance(next);
+                }}
+                onBlur={() => {
+                  if (chanceInput !== null && chanceInput !== "") {
+                    const next = Number(chanceInput);
+                    if (Number.isFinite(next))
+                      changeChance(Math.max(0, Math.min(100, next)));
+                  }
+                  finishChance();
+                }}
+              />
+            </div>
+            <Slider
+              thumbLabel="Daily treatment disruption chance"
+              aria-describedby={chanceHelpId}
+              value={chance}
+              min={0}
+              max={100}
+              step={1}
+              size="xs"
+              thumbSize={12}
+              disabled={!chanceEditable}
+              label={(value) => `${value}% per day`}
+              onChange={(value) => {
+                setChanceInput(null);
+                changeChance(value);
+              }}
+              onChangeEnd={finishChance}
+            />
+            <span id={chanceHelpId} className="arrival-disruption-help">
+              A disruption pauses treatment for the day. Arrivals continue.
+            </span>
+          </div>
+        ) : (
+          <span className="preview-live">
+            <i aria-hidden="true" />
+            {editable ? "Drag blue points to edit" : "Updates as you edit"}
+          </span>
+        )}
       </div>
       {allPoints.length > windowSize && (
         <div
@@ -508,6 +601,7 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
           <strong>{fmt(average, 0)}</strong> patients / day on average
         </p>
       </div>
+      {options.children}
     </section>
   );
 }

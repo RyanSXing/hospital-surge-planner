@@ -1,0 +1,234 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "e2e/hospital-operations.spec.ts",
+      "--project=desktop",
+      "--workers=1",
+      "--grep",
+      "severity pie, disruptions, and supplies survive save/reload and change actual care",
+      "--output=../../output/playwright/control-polish/final-rerun-browser-artifacts"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../output/playwright/control-polish/final-rerun-browser-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "hospital-operations.spec.ts",
+      "file": "hospital-operations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10048,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T09:33:46.581Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "operations-configuration",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-90abb0ef5f3097587f6de0d80ab3622a196d369a.png"
+                    },
+                    {
+                      "name": "operations-configuration-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-middle-fb855d31df7f35706ab105f1d45467beb27e022f.png"
+                    },
+                    {
+                      "name": "operations-configuration-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-lower-01957f73f53d1083ae5c9b0bdbefd0a46fb61060.png"
+                    },
+                    {
+                      "name": "decision-summary-operations",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-35c9ee2a577be7e53369c19a89e7ee666d90c39e.png"
+                    },
+                    {
+                      "name": "decision-summary-operations-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-middle-58c925a7f98e0c09fdf2774a9e8f6b97f68a8840.png"
+                    },
+                    {
+                      "name": "decision-summary-operations-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-lower-df6c280e04be9da9fcd6c99fd6f0321c79e49e46.png"
+                    },
+                    {
+                      "name": "operations-exact-bottleneck-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-exact-bottleneck-replay-5be6836cde2f09b4a60f2c26362705b93a0036f6.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-ee42353dd15b549a442ba888c4ac6c1f145b9f6f.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-middle-497f7df387cc5bf5c36a9bd949b22fa16125e740.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/control-polish/final-rerun-browser-artifacts/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-lower-81251bf2c20724c9c69fc25ea63061d12e5537ca.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-64171581d0a3e4ec580d",
+          "file": "hospital-operations.spec.ts",
+          "line": 67,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T09:33:46.191Z",
+    "duration": 11239.351,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

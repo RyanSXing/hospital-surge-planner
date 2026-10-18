@@ -309,7 +309,29 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
       : originalRows;
   const selectedIndex = outcomeRowIndex(rows, selectedTime);
   const scalar = metrics?.scalar_metrics || {};
-  const constraintMarkers = recordedConstraintMarkers(rows, dailyRows);
+  const constraintMarkers = recordedConstraintMarkers(rows, dailyRows).map(
+    (marker) => {
+      const kind = marker.reasons.includes("treatment_disruption")
+        ? ("disruption" as const)
+        : ("constraint" as const);
+      // Hourly samples inherit recorded daily evidence, not an hourly onset.
+      // Keep that source period in the ribbon title instead of implying precision.
+      if (rows[marker.index].blocker_patient_hours) return { ...marker, kind };
+      const recordedDay = dailyRows.find(
+        (day) =>
+          Date.parse(day.start_at) <= Date.parse(marker.at || "") &&
+          Date.parse(marker.at || "") < Date.parse(day.end_at),
+      );
+      return recordedDay
+        ? {
+            ...marker,
+            kind,
+            at: recordedDay.start_at,
+            endAt: recordedDay.end_at,
+          }
+        : { ...marker, kind };
+    },
+  );
   const recordedReasons = [
     ...new Set(constraintMarkers.flatMap((marker) => marker.reasons)),
   ];
@@ -517,20 +539,24 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                   >
                     {recordedReasons.length ? (
                       <>
-                        <span className="outcome-constraint-key">
-                          Amber marks: recorded constraints or care
-                          interruptions
-                        </span>
-                        <div>
+                        <div className="outcome-recorded-reasons">
                           {recordedReasons.map((reason) => (
                             <span key={reason}>{bottleneckLabel(reason)}</span>
                           ))}
                         </div>
-                        <small>
-                          Reasons can overlap. Marks identify the recorded date
-                          or period, not an exact start time. Open Summary to
-                          replay the first recorded bottleneck.
-                        </small>
+                        <details>
+                          <summary>About these periods</summary>
+                          <small>
+                            Amber shows recorded constraints; red shows recorded
+                            treatment interruptions. Each marked period has
+                            evidence in one or more simulations. Adjacent
+                            periods of the same type join together, and reasons
+                            can overlap. Hover for the recorded dates and
+                            reasons; the ribbon does not show exact onset or
+                            duration. Open Summary to replay the first recorded
+                            bottleneck.
+                          </small>
+                        </details>
                       </>
                     ) : (
                       <small>

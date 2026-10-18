@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { NumberInput, Progress, SegmentedControl, Slider } from "@mantine/core";
+import { Progress, SegmentedControl, Slider } from "@mantine/core";
+import NumberStepper from "../components/NumberStepper";
 import type { Dataset, Entity } from "../types";
 import { fmt } from "../api";
 import { humanLabel } from "../presentation";
@@ -148,7 +149,7 @@ export default function ConfigurationInputs({
             <span>{humanLabel(unit.name || unit.kind)}</span>
           </div>
           <div className="configuration-capacity-fields">
-            <NumberInput
+            <NumberStepper
               label={`Installed ${noun}`}
               aria-label={`${unit.name} installed ${noun}`}
               description="Physical capacity in this unit"
@@ -165,7 +166,7 @@ export default function ConfigurationInputs({
                 finishNumber("beds", physical, minimum, 1000, changeBeds)
               }
             />
-            <NumberInput
+            <NumberStepper
               label={`Staffed ${noun}`}
               aria-label={`${unit.name} staffed ${noun}`}
               description="Adjusts nurses to match"
@@ -253,7 +254,7 @@ export default function ConfigurationInputs({
                         : `At least ${key === "provider" ? minimumProvider : minimumSupport} per shift`}
                     </span>
                   </div>
-                  <NumberInput
+                  <NumberStepper
                     id={`configuration-${unit.unit_id}-${key}`}
                     aria-label={`${unit.name} ${label.toLowerCase()}`}
                     size="sm"

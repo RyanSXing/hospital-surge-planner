@@ -19,6 +19,7 @@ import HospitalOperationsControls from "./HospitalOperationsControls";
 import {
   hospitalOperationsPatch,
   operationsError,
+  withOperation,
 } from "./hospitalOperationsModel";
 import {
   applyConfigurationInputs,
@@ -835,13 +836,27 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             <Layers size={15} />
             Scenario library
           </Button>
-          <Button
-            onClick={() => save()}
-            disabled={ctx.canWrite === false || !!ctx.busy}
-          >
-            <Save size={15} />
-            Save draft
-          </Button>
+          <div className="scenario-save-group">
+            <span
+              className={`scenario-save-status${dirty ? " is-dirty" : ""}`}
+              role="status"
+              aria-live="polite"
+            >
+              {dirty ? (
+                <i aria-hidden="true" />
+              ) : (
+                <Check size={12} aria-hidden="true" />
+              )}
+              {dirty ? "Unsaved changes" : "Saved draft"}
+            </span>
+            <Button
+              onClick={() => save()}
+              disabled={ctx.canWrite === false || !!ctx.busy}
+            >
+              <Save size={15} />
+              Save draft
+            </Button>
+          </div>
         </div>
       </div>
       {editorError || invalidMix ? (
@@ -859,9 +874,6 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             setName(e.target.value);
           }}
         />
-        <Badge tone={dirty ? "warning" : "success"}>
-          {dirty ? "Unsaved changes" : "Saved draft"}
-        </Badge>
         <div className="undo-actions">
           <button
             disabled={!undo.length}
@@ -952,6 +964,16 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             )?.weekday_weights || baseline.weekday_weights
           }
           editable={ctx.canWrite !== false && !ctx.busy}
+          disruptionChance={hospitalOperations?.disruption_chance_percent ?? 0}
+          onDisruptionChanceChange={(next) =>
+            setHospitalOperations(
+              withOperation(
+                hospitalOperations,
+                "disruption_chance_percent",
+                next,
+              ),
+            )
+          }
           onEditStart={remember}
           onConditionsChange={(conditions, editedConditionId) => {
             const editedPlan = conditions.map((condition) =>
@@ -974,7 +996,60 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             if (!selected) setStream(stream);
             setArrivalEdited(false);
           }}
-        />
+        >
+          {!!hospitalOperations?.disruptions?.length && (
+            <details className="arrival-legacy-pauses">
+              <summary>
+                Previously scheduled pauses (
+                {hospitalOperations.disruptions.length})
+              </summary>
+              <p>
+                These saved pauses also apply, in addition to the daily chance.
+              </p>
+              {hospitalOperations.disruptions.map((pause, index) => (
+                <div key={pause.id}>
+                  <span>
+                    {localDate(pause.start_at, {
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      timeZone,
+                    })}
+                    {" – "}
+                    {localDate(pause.end_at, {
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      timeZone,
+                    })}
+                  </span>
+                  <button
+                    type="button"
+                    className="link-button"
+                    aria-label={`Remove previously scheduled pause ${index + 1}`}
+                    disabled={ctx.canWrite === false || !!ctx.busy}
+                    onClick={() => {
+                      remember();
+                      setHospitalOperations(
+                        withOperation(
+                          hospitalOperations,
+                          "disruptions",
+                          hospitalOperations.disruptions!.filter(
+                            (item) => item.id !== pause.id,
+                          ),
+                        ),
+                      );
+                    }}
+                  >
+                    <Trash2 size={12} /> Remove
+                  </button>
+                </div>
+              ))}
+            </details>
+          )}
+        </ArrivalPreview>
         {ctx.dataset ? (
           <HospitalConfigurationControls
             key={`capacity:${ctx.scenario?.id}:${ctx.scenario?.revision}`}

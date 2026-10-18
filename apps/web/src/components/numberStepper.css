@@ -1,0 +1,33 @@
+body .number-stepper .mantine-NumberInput-input {
+  height: 36px;
+  min-height: 36px;
+  padding-inline: 34px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+body .number-stepper-button {
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  background: var(--raised);
+}
+
+body .number-stepper-button:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+body .number-stepper-button:active:not(:disabled) {
+  background: #dfe8f0;
+}
+
+body .number-stepper-button:disabled {
+  color: #a3aeba;
+  border-color: transparent;
+  background: transparent;
+}

@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-18T04:41:47.044801+00:00",
+  "frontend_tests": {
+    "passed": 184,
+    "failed": 0
+  },
+  "desktop_authentication_tests": {
+    "startTime": "2026-10-18T04:40:53.549Z",
+    "duration": 12392.789999999999,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "actual_authentication": {
+    "mode": "staging",
+    "unauthenticated_reads_require_sign_in": true,
+    "credentials": "local generated test administrator",
+    "requests_mocked": false,
+    "workspace_latency_held_then_original_response_forwarded": true,
+    "secure_session_cookie": true
+  },
+  "production_build_passed": true,
+  "supplied_logo_unchanged": true,
+  "logo_sha256": "1153eed881e35ab8fba34da52db40b84ec6ef5552e0b1ec2ff01637428aa95d3",
+  "verified": [
+    "minimal centered login",
+    "actual failed credentials then successful retry",
+    "one transition and one POST despite repeated submission",
+    "expansion and hold for workspace readiness",
+    "wordmark lands on measured header logo",
+    "reduced motion avoids zoom and travel",
+    "session reload and navigation do not replay animation"
+  ],
+  "backend_changed": false,
+  "mobile_out_of_scope": true
+}

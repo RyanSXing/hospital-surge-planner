@@ -1,0 +1,55 @@
+.aegis-logo {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.aegis-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  isolation: isolate;
+  pointer-events: auto;
+  cursor: progress;
+}
+.aegis-transition-backdrop {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 1;
+}
+.aegis-transition-symbol,
+.aegis-transition-wordmark {
+  position: fixed;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: left, top, width, height, opacity;
+}
+.aegis-transition-symbol {
+  opacity: 0;
+}
+.aegis-transition-symbol .aegis-logo,
+.aegis-transition-wordmark .aegis-logo {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+.aegis-transition-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aegis-transition-symbol,
+  .aegis-transition-wordmark {
+    will-change: opacity;
+  }
+}

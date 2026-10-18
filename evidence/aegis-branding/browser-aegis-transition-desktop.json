@@ -1,0 +1,37 @@
+{
+  "real_login_posts": 1,
+  "delayed_workspace_reads": 1,
+  "original_logo": {
+    "x": 679,
+    "y": 336.375,
+    "width": 242,
+    "height": 28.78125
+  },
+  "expanded_logo": {
+    "x": 580,
+    "y": 585.40625,
+    "width": 440,
+    "height": 52.328125
+  },
+  "header_logo": {
+    "x": 16,
+    "y": 19.34375,
+    "width": 154,
+    "height": 18.3125
+  },
+  "phases": [
+    "growing",
+    "holding",
+    "settling",
+    "fading"
+  ],
+  "last_settling_frame": {
+    "phase": "settling",
+    "x": 16,
+    "y": 19.34375,
+    "width": 154,
+    "height": 18.3125,
+    "at": 3263
+  },
+  "one_transition_for_successful_authentication": true
+}

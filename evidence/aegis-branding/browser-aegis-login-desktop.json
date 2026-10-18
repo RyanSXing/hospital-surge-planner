@@ -1,0 +1,15 @@
+{
+  "real_login_statuses": [
+    401,
+    200
+  ],
+  "invalid_credentials_did_not_animate": true,
+  "transition_starts": 1,
+  "phases": [
+    "growing",
+    "holding",
+    "settling",
+    "fading"
+  ],
+  "header_logo_visible": true
+}

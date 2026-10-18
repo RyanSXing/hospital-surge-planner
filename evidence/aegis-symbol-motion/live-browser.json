@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-10-18T05:03:38.584Z",
+  "actual_hosted_sign_in": true,
+  "holding": {
+    "letters_clip": "inset(0px 0px 0px 24%)",
+    "letters_opacity": "0",
+    "phase": "holding",
+    "symbol_bounds": {
+      "height": 200.8828125,
+      "width": 320,
+      "x": 480,
+      "y": 259.5546875
+    },
+    "symbol_viewbox": "80 610 180 113"
+  },
+  "header": {
+    "bounds": {
+      "height": 22.59375,
+      "width": 36,
+      "x": 16,
+      "y": 17.203125
+    },
+    "class": "aegis-logo aegis-logo--symbol aegis-header-logo",
+    "focus_restored": true,
+    "opacity": "1",
+    "viewbox": "80 610 180 113"
+  },
+  "browser_warnings_or_errors": []
+}

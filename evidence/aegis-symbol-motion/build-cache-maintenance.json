@@ -1,0 +1,9 @@
+{
+  "deployment_first_attempt": "stopped during image build before replacing running services",
+  "reason": "no space left on device",
+  "action": "prune unused Docker build cache only",
+  "volumes_or_running_containers_removed": false,
+  "before_free_bytes": 752005120,
+  "after_free_bytes": 18113540096,
+  "docker_reported_reclaimed": "20.23GB"
+}

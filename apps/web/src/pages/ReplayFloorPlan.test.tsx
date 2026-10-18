@@ -54,6 +54,10 @@ describe("floor plan presentation", () => {
     for (const part of [
       "floor-plan-building",
       "floor-plan-upper-wing",
+      "hospital-footprint",
+      "floor-plan-front-spine",
+      "floor-plan-admission-zone",
+      "floor-plan-ed-zone",
       "floor-plan-corridor",
       "floor-plan-door",
       "Main entrance",
@@ -86,7 +90,9 @@ describe("floor plan presentation", () => {
     const html = renderToStaticMarkup(
       <ReplayFloorPlan plan={plan()} {...handlers} />,
     );
-    expect(html).toContain('data-unit-id="WARD-A" data-pressure="1"');
+    expect(html).toContain(
+      'data-unit-id="WARD-A" data-unit-kind="ward" data-door-side="south" data-pressure="1"',
+    );
     expect(html).toContain(
       'data-testid="floor-plan-ed-waiting" data-count="10"',
     );

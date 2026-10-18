@@ -1,6 +1,147 @@
 import { expect, type Page } from "@playwright/test";
 import { api } from "./helpers";
 
+/** Verify the architectural routes against rendered rooms, including resized run inventories. */
+export async function expectHospitalFlowGeometry(page: Page) {
+  await expect(page.getByTestId("hospital-footprint-outline")).toHaveAttribute(
+    "d",
+    /^M/,
+  );
+  const geometry = await page
+    .locator(".floor-plan-building")
+    .evaluate((node) => {
+      const bounds = node.getBoundingClientRect(),
+        scale = bounds.width / (node as HTMLElement).offsetWidth;
+      const box = (element: Element) => {
+        const r = element.getBoundingClientRect();
+        return {
+          x: (r.left - bounds.left) / scale,
+          y: (r.top - bounds.top) / scale,
+          width: r.width / scale,
+          height: r.height / scale,
+        };
+      };
+      const footprint = [...node.querySelectorAll("[data-footprint]")].map(box);
+      const rooms = [
+        ...node.querySelectorAll<HTMLElement>(".floor-plan-unit"),
+      ].map((room) => ({
+        ...box(room),
+        id: room.dataset.unitId,
+        kind: room.dataset.unitKind,
+      }));
+      const svg = node.querySelector<SVGElement>(
+        '[data-testid="hospital-footprint"]',
+      )!;
+      const nodes = JSON.parse(svg.dataset.corridorNodes || "{}") as Record<
+        string,
+        { x: number; y: number }
+      >;
+      const edges = [
+        ...svg.querySelectorAll<SVGElement>("[data-corridor-edge]"),
+      ].map((edge) => edge.dataset.corridorEdge!.split("|"));
+      const route = (from: string, to: string) => {
+        const queue = [[from]],
+          seen = new Set<string>();
+        while (queue.length) {
+          const path = queue.shift()!,
+            current = path.at(-1)!;
+          if (current === to) return path;
+          if (seen.has(current)) continue;
+          seen.add(current);
+          for (const [a, b] of edges) {
+            const next = a === current ? b : b === current ? a : null;
+            if (next && !seen.has(next)) queue.push([...path, next]);
+          }
+        }
+        return [];
+      };
+      const violations: string[] = [];
+      for (const [from, to] of edges) {
+        const a = nodes[from],
+          b = nodes[to];
+        if (Math.abs(a.x - b.x) > 0.02 && Math.abs(a.y - b.y) > 0.02)
+          violations.push(`diagonal:${from}|${to}`);
+        for (let i = 0; i <= 30; i++) {
+          const x = a.x + ((b.x - a.x) * i) / 30,
+            y = a.y + ((b.y - a.y) * i) / 30;
+          if (
+            !footprint.some(
+              (r) =>
+                x >= r.x - 0.03 &&
+                x <= r.x + r.width + 0.03 &&
+                y >= r.y - 0.03 &&
+                y <= r.y + r.height + 0.03,
+            )
+          )
+            violations.push(`outside:${from}|${to}`);
+          if (
+            rooms.some(
+              (r) =>
+                x > r.x + 0.03 &&
+                x < r.x + r.width - 0.03 &&
+                y > r.y + 0.03 &&
+                y < r.y + r.height - 0.03,
+            )
+          )
+            violations.push(`wall:${from}|${to}`);
+        }
+      }
+      const outline = svg
+        .querySelector(".floor-plan-outline")!
+        .getAttribute("d")!;
+      return {
+        nodes,
+        edges,
+        rooms,
+        violations,
+        wardRoute: route(
+          "entrance",
+          rooms.find((room) => room.kind === "ward")!.id!,
+        ),
+        edRoute: route(
+          "entrance",
+          rooms.find((room) => room.kind === "ed")!.id!,
+        ),
+        criticalRoute: route(
+          rooms.find((room) => room.kind === "ed")!.id!,
+          rooms.find((room) => room.kind === "icu")!.id!,
+        ),
+        dischargeRoute: route(
+          rooms.find((room) => room.kind === "ed")!.id!,
+          "discharge",
+        ),
+        outlinePaths: (outline.match(/M/g) || []).length,
+        outlineXCoordinates: new Set(
+          [...outline.matchAll(/[ML]([\d.]+),([\d.]+)/g)].map(
+            (point) => point[1],
+          ),
+        ).size,
+        mapHeight: bounds.height,
+      };
+    });
+  expect(geometry.violations).toEqual([]);
+  expect(geometry.outlinePaths).toBe(1);
+  expect(geometry.outlineXCoordinates).toBeGreaterThan(4);
+  const { nodes, wardRoute, edRoute, criticalRoute, dischargeRoute } = geometry;
+  expect(nodes.entrance.y).toBeGreaterThan(nodes["ed-waiting"].y);
+  expect(nodes["ed-waiting"].y).toBeGreaterThan(nodes["bed-waiting"].y);
+  expect(nodes["bed-waiting"].y).toBeGreaterThan(nodes["junction:wards"].y);
+  expect(wardRoute.indexOf("ed-waiting")).toBeLessThan(
+    wardRoute.indexOf("bed-waiting"),
+  );
+  expect(wardRoute.indexOf("bed-waiting")).toBeLessThan(
+    wardRoute.indexOf("junction:wards"),
+  );
+  expect(edRoute).toContain("ed-waiting");
+  expect(edRoute).not.toContain("bed-waiting");
+  expect(criticalRoute).toContain("bed-waiting");
+  expect(dischargeRoute).toContain("junction:exit");
+  expect(dischargeRoute).not.toContain("entrance");
+  expect(dischargeRoute).not.toContain("bed-waiting");
+  expect(nodes.discharge.x).toBeGreaterThan(nodes["ed-waiting"].x);
+  return geometry;
+}
+
 export async function seekFloorPlan(page: Page, run: any, minutes: number) {
   const at = new Date(Date.parse(run.start_at) + minutes * 60000).toISOString();
   await page

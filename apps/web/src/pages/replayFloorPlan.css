@@ -88,17 +88,122 @@
 }
 .floor-plan-building {
   position: relative;
-  min-width: 850px;
-  padding: 15px;
-  border: 3px solid #9eafbd;
-  border-radius: 2px;
-  background: #f5f7f9;
-}
-.floor-plan-upper-wing,
-.floor-plan-lower-wing {
   display: grid;
-  gap: 16px;
+  grid-template-columns: minmax(250px, 1fr) 30px 210px 30px minmax(250px, 1fr);
+  grid-template-rows: auto 42px minmax(132px, auto) minmax(132px, auto) 36px;
+  min-width: 1000px;
+  padding: 12px 18px 24px;
+  isolation: isolate;
+  background: #fff;
+}
+.floor-plan-building > :not(.floor-plan-architecture):not(.floor-plan-transit) {
+  position: relative;
+  z-index: 1;
+}
+.floor-plan-architecture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+.floor-plan-outline {
+  fill: #f5f7f9;
+  stroke: #9eafbd;
+  stroke-width: 3;
+  stroke-linejoin: miter;
+}
+.floor-plan-network-edge {
+  fill: none;
+  stroke: #cbd8e2;
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+}
+.floor-plan-upper-wing {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: grid;
+  gap: 12px;
   align-items: stretch;
+  min-height: 132px;
+}
+.floor-plan-ward-hall {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+.floor-plan-front-spine {
+  grid-column: 3;
+  grid-row: 2 / 6;
+  pointer-events: none;
+}
+.floor-plan-lobby-label {
+  position: absolute;
+  bottom: 40px;
+  left: 16px;
+  color: #95a7b4;
+  font-size: 9px;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+.floor-plan-admission-zone {
+  grid-column: 3;
+  grid-row: 3;
+}
+.floor-plan-critical-hall {
+  grid-column: 4;
+  grid-row: 3;
+}
+.floor-plan-critical-wing {
+  grid-column: 5;
+  grid-row: 3;
+}
+.floor-plan-emergency-wing {
+  grid-column: 1;
+  grid-row: 4;
+}
+.floor-plan-critical-wing,
+.floor-plan-emergency-wing {
+  display: grid;
+  gap: 12px;
+  margin-block: 16px;
+}
+.floor-plan-critical-hall,
+.floor-plan-emergency-hall,
+.floor-plan-exit-hall {
+  align-self: center;
+  min-height: 28px;
+}
+.floor-plan-critical-hall,
+.floor-plan-emergency-hall {
+  height: 28px;
+}
+.floor-plan-critical-hall[data-stacked="true"],
+.floor-plan-emergency-hall[data-stacked="true"] {
+  height: 100%;
+}
+.floor-plan-emergency-hall {
+  grid-column: 2;
+  grid-row: 4;
+}
+.floor-plan-ed-zone {
+  grid-column: 3;
+  grid-row: 4;
+}
+.floor-plan-exit-hall {
+  grid-column: 4;
+  grid-row: 4;
+}
+.floor-plan-count-area--discharge {
+  grid-column: 5;
+  grid-row: 4;
+  align-self: center;
+  min-height: 86px;
+}
+.floor-plan-entrance {
+  grid-column: 3;
+  grid-row: 5;
 }
 .floor-plan-unit {
   position: relative;
@@ -151,6 +256,12 @@
   gap: 6px;
   margin: 4px 0 12px;
   align-content: start;
+}
+.floor-plan-unit[data-door-side="west"] .floor-plan-beds {
+  margin-left: 30px;
+}
+.floor-plan-unit[data-door-side="east"] .floor-plan-beds {
+  margin-right: 30px;
 }
 .floor-plan-bed {
   display: block;
@@ -255,7 +366,7 @@
 }
 .floor-plan-door {
   position: absolute;
-  left: 45%;
+  left: calc(50% - 18px);
   bottom: -3px;
   width: 36px;
   height: 32px;
@@ -280,70 +391,71 @@
   stroke: #9eafbd;
   stroke-width: 1;
 }
-.floor-plan-lower-wing .floor-plan-door {
-  top: -3px;
+.floor-plan-unit[data-door-side="west"] .floor-plan-door {
+  left: -3px;
   bottom: auto;
-  transform: rotate(180deg);
+  top: calc(50% - 16px);
+  transform: rotate(90deg);
+}
+.floor-plan-unit[data-door-side="east"] .floor-plan-door {
+  left: auto;
+  right: -3px;
+  bottom: auto;
+  top: calc(50% - 16px);
+  transform: rotate(-90deg);
 }
 .floor-plan-corridor {
-  position: relative;
   display: flex;
-  height: 54px;
   align-items: center;
   justify-content: center;
-  color: #96a6b3;
+  color: #94a5b2;
   font-size: 9px;
   letter-spacing: 1.8px;
   text-transform: uppercase;
-}
-.floor-plan-corridor > span:not(.floor-plan-entrance) {
-  background: #f5f7f9;
-}
-.floor-plan-corridor::before {
-  content: "";
-  position: absolute;
-  left: 14%;
-  right: 3%;
-  top: 50%;
-  border-top: 1px dashed #d2dce4;
+  pointer-events: none;
 }
 .floor-plan-corridor > span {
-  position: relative;
   padding: 0 12px;
-}
-.floor-plan-corridor > .floor-plan-corridor-arrow {
-  position: absolute;
-  right: 1%;
-  font-size: 18px;
-  padding: 0 3px;
-  line-height: 1;
+  background: #f5f7f9;
 }
 .floor-plan-entrance {
-  position: absolute !important;
-  left: -19px;
-  min-height: 30px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 8px !important;
-  border-left: 3px solid #fff;
-  background: #f5f7f9;
-  color: #607d91;
-  font-size: 17px;
-  letter-spacing: 0;
-  text-transform: none;
+  justify-content: flex-start;
+  gap: 7px;
+  margin-top: 2px;
+  padding: 0 14px;
+  color: #668195;
+  font-size: 10px;
 }
 .floor-plan-entrance b {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 550;
 }
-.floor-plan-support-areas {
-  display: grid;
-  grid-template-rows: repeat(3, minmax(36px, 1fr));
-  gap: 9px;
-  min-width: 0;
-  padding-left: 18px;
-  border-left: 1px dashed #c7d3dc;
+.floor-plan-hospital-mark {
+  color: #b46a73;
+  font-size: 21px;
+  font-weight: 550;
+  line-height: 1;
+}
+.floor-plan-entry-door {
+  position: absolute;
+  bottom: -3px;
+  left: calc(50% - 24px);
+  width: 48px;
+  height: 6px;
+  background: #fff;
+  border-top: 1px solid #8ba6ba;
+  border-bottom: 1px solid #8ba6ba;
+}
+.floor-plan-entry-door::before {
+  content: "";
+  position: absolute;
+  height: 6px;
+  width: 1px;
+  left: 50%;
+  top: -1px;
+  background: #8ba6ba;
 }
 .floor-plan-count-area {
   position: relative;
@@ -353,51 +465,72 @@
   text-align: left;
   gap: 10px;
   min-width: 0;
-  padding: 7px 12px !important;
+  padding: 15px 20px !important;
   border: 2px solid #a6b6c4 !important;
   border-radius: 0 !important;
   background: #fff !important;
   color: #49687f;
 }
-.floor-plan-count-area::before {
-  content: "";
-  position: absolute;
-  left: -3px;
-  top: calc(50% - 8px);
-  width: 4px;
-  height: 16px;
-  background: #f5f7f9;
-}
-.floor-plan-count-area::after {
-  content: "";
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border-top: 1px solid #a6b6c4;
-  border-right: 1px solid #a6b6c4;
-  border-radius: 0 100% 0 0;
-  top: calc(50% - 8px);
-  left: -1px;
-  pointer-events: none;
-}
 .floor-plan-count-area strong {
   font-size: 11px;
   font-weight: 550;
-  padding-left: 12px;
 }
 .floor-plan-count-area > b {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 600;
+}
+.floor-plan-count-area--waiting {
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  padding: 15px 20px !important;
+  border: 0 !important;
+  background: linear-gradient(
+    90deg,
+    #edf3f8aa 0,
+    #edf3f8aa 65%,
+    transparent 65%
+  ) !important;
+}
+.floor-plan-count-area--waiting strong {
+  max-width: 115px;
 }
 .floor-plan-count-area--discharge {
   background: #f8fcfa !important;
 }
+.floor-plan-count-area--discharge::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: calc(50% - 16px);
+  width: 4px;
+  height: 32px;
+  background: #f5f7f9;
+}
+.floor-plan-count-area--discharge::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: calc(50% - 16px);
+  width: 28px;
+  height: 28px;
+  border-top: 1px solid #9eafbd;
+  border-right: 1px solid #9eafbd;
+  border-radius: 0 100% 0 0;
+  pointer-events: none;
+}
+.floor-plan-count-area--discharge strong {
+  padding-left: 16px;
+}
 .floor-plan-exit {
   position: absolute;
-  right: -13px;
-  top: calc(100% + 2px);
-  padding: 0 10px;
-  background: #f5f7f9;
+  right: -18px;
+  top: calc(50% - 8px);
+  padding: 2px 4px;
+  background: #fff;
   color: #789385;
   font-size: 9px;
   white-space: nowrap;

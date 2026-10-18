@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-18T07:30:18.615637+00:00",
+  "checked_at": "2026-10-18T07:43:30.492594+00:00",
   "unique_desktop_cases": 28,
   "all_latest_case_results_passed": true,
   "mobile_requested": false,
@@ -137,80 +137,80 @@
       "project": "desktop",
       "title": "replay displays actual separate hospital capacity and no offsite inventory",
       "status": "passed",
-      "duration_ms": 5209,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+      "duration_ms": 4822,
+      "evidence_report": "output/playwright/hospital-shaped-replay/interrupted-case-rerun.json"
     },
     {
       "file": "replay-clinical-capacity.spec.ts",
       "project": "desktop",
       "title": "replay holds a stepdown patient in the recorded ICU bed until actual ward entry",
       "status": "passed",
-      "duration_ms": 3995,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+      "duration_ms": 5843,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "replay-controls.spec.ts",
       "project": "desktop",
       "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
       "status": "passed",
-      "duration_ms": 7338,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+      "duration_ms": 5064,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "replay-evidence.spec.ts",
       "project": "desktop",
       "title": "replay exposes complete filtered events, patient history and recorded resources",
       "status": "passed",
-      "duration_ms": 7051,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-corrected-browser.json"
+      "duration_ms": 7024,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "replay-floorplan.spec.ts",
       "project": "desktop",
       "title": "a 100-bed ward reflows inside a compact architectural map without overflowing its walls",
       "status": "passed",
-      "duration_ms": 2413,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+      "duration_ms": 4616,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "replay-floorplan.spec.ts",
       "project": "desktop",
       "title": "current shortage pressure follows actual paused care and clears after recovery and backward seeks",
       "status": "passed",
-      "duration_ms": 5208,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+      "duration_ms": 4995,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "replay-floorplan.spec.ts",
       "project": "desktop",
       "title": "editable bed and staffed-bed parameters rebuild replay inventory per frozen run",
       "status": "passed",
-      "duration_ms": 12366,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+      "duration_ms": 13969,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "replay-floorplan.spec.ts",
       "project": "desktop",
       "title": "floor plan separates actual wards and every bed, with meaningful bed, area and patient inspection",
       "status": "passed",
-      "duration_ms": 5649,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-corrected-browser.json"
+      "duration_ms": 5924,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "replay-journey.spec.ts",
       "project": "desktop",
       "title": "recorded arrivals occupy an actual ED bed only during care and increment cumulative discharges",
       "status": "passed",
-      "duration_ms": 5341,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-final-browser.json"
+      "duration_ms": 5700,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "replay-simple.spec.ts",
       "project": "desktop",
       "title": "recorded floor plan stays stable through buffered playback, delayed seek and backwards seek",
       "status": "passed",
-      "duration_ms": 13119,
-      "evidence_report": "output/playwright/floorplan-library-comparison/replay-motion-final-browser.json"
+      "duration_ms": 14256,
+      "evidence_report": "output/playwright/hospital-shaped-replay/browser.json"
     },
     {
       "file": "saved-replication-count.spec.ts",
@@ -264,17 +264,6 @@
       }
     },
     {
-      "report": "output/playwright/floorplan-library-comparison/replay-final-browser.json",
-      "stats": {
-        "startTime": "2026-10-18T07:25:25.789Z",
-        "duration": 132477.742,
-        "expected": 8,
-        "skipped": 0,
-        "unexpected": 2,
-        "flaky": 0
-      }
-    },
-    {
       "report": "output/playwright/floorplan-library-comparison/root-final-navigation.json",
       "stats": {
         "startTime": "2026-10-18T07:25:30.360Z",
@@ -282,17 +271,6 @@
         "expected": 3,
         "skipped": 0,
         "unexpected": 0,
-        "flaky": 0
-      }
-    },
-    {
-      "report": "output/playwright/floorplan-library-comparison/replay-corrected-browser.json",
-      "stats": {
-        "startTime": "2026-10-18T07:27:55.776Z",
-        "duration": 45509.25,
-        "expected": 2,
-        "skipped": 0,
-        "unexpected": 1,
         "flaky": 0
       }
     },
@@ -308,10 +286,21 @@
       }
     },
     {
-      "report": "output/playwright/floorplan-library-comparison/replay-motion-final-browser.json",
+      "report": "output/playwright/hospital-shaped-replay/browser.json",
       "stats": {
-        "startTime": "2026-10-18T07:29:11.042Z",
-        "duration": 13915.881,
+        "startTime": "2026-10-18T07:41:20.710Z",
+        "duration": 74010.505,
+        "expected": 9,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/hospital-shaped-replay/interrupted-case-rerun.json",
+      "stats": {
+        "startTime": "2026-10-18T07:42:50.658Z",
+        "duration": 5651.868,
         "expected": 1,
         "skipped": 0,
         "unexpected": 0,
@@ -324,6 +313,7 @@
     "Equivalent ISO instants are compared as instants.",
     "Existing empty-slot state label is Ready.",
     "Native macOS select uses keyboard type-ahead.",
-    "Reduced-motion setting intentionally pauses playback before resume."
+    "Reduced-motion setting intentionally pauses playback before resume.",
+    "The first hospital-shaped browser navigation was rerun successfully after a preview build interrupted it."
   ]
 }

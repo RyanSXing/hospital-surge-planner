@@ -1,5 +1,5 @@
 {
-  "run": "run_1d6ba5d28cc244cb96a3",
+  "run": "run_29cfadbc42634654bb6e",
   "continuity": {
     "blanks": 0,
     "banners": 0,
@@ -13,67 +13,82 @@
       "2026-10-17T12:00:00Z",
       "2026-10-16T05:00:00Z"
     ],
-    "motion_sample_count": 1005,
+    "motion_sample_count": 993,
     "motion_samples": [
       {
-        "at": 1792.1,
-        "x": 476.70001220703125,
-        "y": 735.3985595703125,
+        "at": 1903.9,
+        "x": 789.2757568359375,
+        "y": 964.9287109375,
         "patient": "PAT-PLAN-000078",
         "from": "UNIT-ED",
         "to": "UNIT-WARD-A",
-        "events": "RUN-510599f2ee6a0b648a86-E00000005",
-        "path": "M220.20,228.64 L220.20,201.64 L220.20,174.64",
+        "events": "RUN-c1b7b0d80da3f30cd2c0-E00000005",
+        "path": "M513.00,459.96 L528.00,459.96 L729.00,459.96 L729.00,292.64 L729.00,189.64 L224.00,189.64 L224.00,168.64",
+        "pathOnGraph": true,
         "windowFrom": "2026-10-16T05:00:00.000Z",
         "windowTo": "2026-10-16T09:00:00.000Z",
         "inside": true
       },
       {
-        "at": 1808.8,
-        "x": 476.70001220703125,
-        "y": 734.319091796875,
+        "at": 1920.5,
+        "x": 809.390869140625,
+        "y": 964.9287109375,
         "patient": "PAT-PLAN-000078",
         "from": "UNIT-ED",
         "to": "UNIT-WARD-A",
-        "events": "RUN-510599f2ee6a0b648a86-E00000005",
-        "path": "M220.20,228.64 L220.20,201.64 L220.20,174.64",
+        "events": "RUN-c1b7b0d80da3f30cd2c0-E00000005",
+        "path": "M513.00,459.96 L528.00,459.96 L729.00,459.96 L729.00,292.64 L729.00,189.64 L224.00,189.64 L224.00,168.64",
+        "pathOnGraph": true,
         "windowFrom": "2026-10-16T05:00:00.000Z",
         "windowTo": "2026-10-16T09:00:00.000Z",
         "inside": true
       },
       {
-        "at": 4092.1,
-        "x": 342.4429016113281,
-        "y": 709.6087646484375,
+        "at": 4220.4,
+        "x": 921.9580688476562,
+        "y": 1069.248779296875,
         "patient": "PAT-ED_MAIN-20261016-000600-b-0002",
         "from": "entrance",
         "to": "UNIT-ED",
-        "events": "RUN-510599f2ee6a0b648a86-E00000224,RUN-510599f2ee6a0b648a86-E00000226",
-        "path": "M0.00,201.64 L877.66,201.64 L877.66,250.81 L887.66,250.81 L877.66,250.81 L877.66,201.64 L220.20,201.64 L220.20,228.64",
+        "events": "RUN-c1b7b0d80da3f30cd2c0-E00000224,RUN-c1b7b0d80da3f30cd2c0-E00000226",
+        "path": "M648.00,564.28 L729.00,564.28 L729.00,459.96 L528.00,459.96 L513.00,459.96",
+        "pathOnGraph": true,
         "windowFrom": "2026-10-16T13:00:00.000Z",
         "windowTo": "2026-10-16T17:00:00.000Z",
         "inside": true
       },
       {
-        "at": 4092.1,
-        "x": 313.4307861328125,
-        "y": 709.6087646484375,
+        "at": 4220.4,
+        "x": 915.0283203125,
+        "y": 1069.248779296875,
         "patient": "PAT-ED_MAIN-20261016-000600-b-0003",
         "from": "entrance",
         "to": "UNIT-ED",
-        "events": "RUN-510599f2ee6a0b648a86-E00000233,RUN-510599f2ee6a0b648a86-E00000235",
-        "path": "M0.00,201.64 L877.66,201.64 L877.66,250.81 L887.66,250.81 L877.66,250.81 L877.66,201.64 L220.20,201.64 L220.20,228.64",
+        "events": "RUN-c1b7b0d80da3f30cd2c0-E00000233,RUN-c1b7b0d80da3f30cd2c0-E00000235",
+        "path": "M648.00,564.28 L729.00,564.28 L729.00,459.96 L528.00,459.96 L513.00,459.96",
+        "pathOnGraph": true,
         "windowFrom": "2026-10-16T13:00:00.000Z",
         "windowTo": "2026-10-16T17:00:00.000Z",
         "inside": true
       }
     ]
   },
-  "requests": 10,
+  "requests": 12,
   "delayed_state_ms": 400,
+  "sidebar_resize": {
+    "before": {
+      "width": 1296,
+      "to": "2026-10-16T13:00:00.000Z"
+    },
+    "after": {
+      "to": "2026-10-16T13:00:00.000Z",
+      "markers": 0
+    },
+    "follows_new_corridor_graph": true
+  },
   "errors": [],
   "complete_evidence": {
-    "path": "output/playwright/floorplan-library-comparison/replay-motion-final-browser/browser-replay-stable-floor-plan.json",
-    "sha256": "25c672fb33cce6a15fe31910fadfbfcd12fce6cd9efb6f967d115d3df1f6f9b7"
+    "path": "output/playwright/hospital-shaped-replay/evidence/browser-replay-stable-floor-plan.json",
+    "sha256": "6bc4ba6ca73ce154082c9bcd4f50af807983d8ec27b5608d9c145e4f9b0b6056"
   }
 }

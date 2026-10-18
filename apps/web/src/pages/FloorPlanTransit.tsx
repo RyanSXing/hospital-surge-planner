@@ -5,11 +5,11 @@ import {
   useState,
   type RefObject,
 } from "react";
+import type { FloorJourney } from "./floorPlanTransitModel";
 import {
-  floorJourneyPath,
-  type FloorAnchor,
-  type FloorJourney,
-} from "./floorPlanTransitModel";
+  floorGraphJourneyPath,
+  measureFloorCorridorGraph,
+} from "./floorPlanGeometry";
 
 export default function FloorPlanTransit({
   building,
@@ -42,47 +42,11 @@ export default function FloorPlanTransit({
     }
     if (lastWindow.current === windowKey) return;
     lastWindow.current = windowKey;
-    const bounds = node.getBoundingClientRect(),
-      scale = bounds.width / node.offsetWidth;
-    const corridor = node
-      .querySelector<HTMLElement>(".floor-plan-corridor")
-      ?.getBoundingClientRect();
-    if (!corridor || !scale) return;
-    const corridorY = (corridor.top + corridor.height / 2 - bounds.top) / scale;
-    const anchors = new Map<string, FloorAnchor>([
-      ["entrance", { x: 0, y: corridorY }],
-    ]);
-    node.querySelectorAll<HTMLElement>(".floor-plan-unit").forEach((room) => {
-      const rect = room.getBoundingClientRect();
-      anchors.set(room.dataset.unitId!, {
-        x: (rect.left - bounds.left + rect.width * 0.45) / scale + 18,
-        y:
-          (room.closest(".floor-plan-upper-wing")
-            ? rect.bottom - bounds.top
-            : rect.top - bounds.top) / scale,
-      });
-    });
-    const support = node
-      .querySelector<HTMLElement>(".floor-plan-support-areas")
-      ?.getBoundingClientRect();
-    for (const [location, testId] of [
-      ["ed-waiting", "floor-plan-ed-waiting"],
-      ["bed-waiting", "floor-plan-bed-waiting"],
-      ["discharge", "floor-plan-discharges"],
-    ]) {
-      const rect = node
-        .querySelector<HTMLElement>(`[data-testid="${testId}"]`)
-        ?.getBoundingClientRect();
-      if (rect && support)
-        anchors.set(location, {
-          x: (rect.left - bounds.left) / scale,
-          y: (rect.top + rect.height / 2 - bounds.top) / scale,
-          corridorX: (support.left - bounds.left + 9) / scale,
-        });
-    }
+    const graph = measureFloorCorridorGraph(node);
+    if (!graph) return;
     setRoutes(
       journeys.flatMap((journey) => {
-        const path = floorJourneyPath(journey, anchors, corridorY);
+        const path = floorGraphJourneyPath(journey, graph);
         const fraction =
           (Date.parse(journey.moves[0].at) - Date.parse(from)) /
           (Date.parse(to) - Date.parse(from));
@@ -123,9 +87,24 @@ export default function FloorPlanTransit({
   }, [routes]);
   useEffect(() => {
     const clear = () => setRoutes([]);
+    const node = building.current;
+    let width = node?.offsetWidth,
+      height = node?.offsetHeight;
+    const observer = new ResizeObserver(() => {
+      if (node && (node.offsetWidth !== width || node.offsetHeight !== height)) {
+        width = node.offsetWidth;
+        height = node.offsetHeight;
+        // Keep the last window consumed: a resize must not replay earlier moves.
+        clear();
+      }
+    });
+    if (node) observer.observe(node);
     window.addEventListener("resize", clear);
-    return () => window.removeEventListener("resize", clear);
-  }, []);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", clear);
+    };
+  }, [building]);
   return (
     <div
       ref={overlay}

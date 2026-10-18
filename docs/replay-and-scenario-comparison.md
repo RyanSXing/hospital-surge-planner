@@ -2,13 +2,13 @@
 
 ## Replay
 
-Analysis → Replay shows an illustrative top-down hospital map with connected wards, emergency care, intensive care, waiting and discharge areas. Beds are compact rectangles. Blue means occupied; white means a ready physical bed. Reserved, cleaning and unavailable beds have separate states in the legend. Selecting a bed opens its recorded patient or slot; selecting a unit opens its capacity evidence.
+Analysis → Replay shows an illustrative top-down hospital footprint with distinct clinical wings and a central entrance spine. ED waiting precedes emergency treatment near the entrance. Admission waiting sits before the ward and ICU corridors; discharge has a separate exit branch. Beds are compact rectangles. Blue means occupied; white means a ready physical bed. Reserved, cleaning and unavailable beds have separate states in the legend. Selecting a bed opens its recorded patient or slot; selecting a unit opens its capacity evidence.
 
 The map uses the selected run and replication's reconstructed `state.slots` and `state.units`. It does not substitute the editable draft or baseline dataset's bed slots. Editing installed or staffed bed capacity and running again produces a new replay with that run's inventory. Older saved results keep their original inventory. Uninstalled planned beds remain in the capacity inspector and do not inflate the map's bed count.
 
 Staffing and equipment are shared unit constraints. A ready physical bed is not necessarily available for another admission; each area therefore also shows its recorded supported capacity and admission availability. Red intensity follows occupancy relative to supported capacity and recorded constraints. Constraint categories can overlap and are never summed as separate contributions.
 
-Noncapacity areas show counts. Waiting counts use the complete aggregate state, not a bounded patient sample. “Discharged so far” counts actual discharge events since the run began; the model does not invent a discharge-bay capacity or dwell time. Missing evidence is unavailable, not zero. Corridor movement illustrates recorded patient location changes during playback. Seeking, changing runs or enabling reduced motion clears movement.
+Noncapacity areas show counts. Waiting counts use the complete aggregate state, not a bounded patient sample. “Discharged so far” counts actual discharge events since the run began; the model does not invent a discharge-bay capacity or dwell time. Missing evidence is unavailable, not zero. Corridor movement illustrates recorded patient location changes during playback. Routes follow measured corridor junctions and room doors. Seeking, changing runs, resizing the map or enabling reduced motion clears movement.
 
 ## Comparison
 

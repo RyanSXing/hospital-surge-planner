@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { api, capture, open, record, scenario, waitRun } from "./helpers";
-import { expectFloorPlanAt, seekFloorPlan } from "./replay-floorplan-helpers";
+import {
+  expectFloorPlanAt,
+  expectHospitalFlowGeometry,
+  seekFloorPlan,
+} from "./replay-floorplan-helpers";
 
 test("floor plan separates actual wards and every bed, with meaningful bed, area and patient inspection", async ({
   page,
@@ -25,6 +29,8 @@ test("floor plan separates actual wards and every bed, with meaningful bed, area
     run.selected_replication_id,
     run.start_at,
   );
+  const geometry = await expectHospitalFlowGeometry(page);
+  await capture(page, "replay-hospital-footprint", info);
   for (const id of [
     "UNIT-WARD-A",
     "UNIT-WARD-B",
@@ -107,6 +113,7 @@ test("floor plan separates actual wards and every bed, with meaningful bed, area
     actual_wards: ["A", "B", "C"],
     patient_and_empty_bed_inspection: true,
     numeric_queue_and_discharge_areas: true,
+    hospital_geometry: geometry,
     errors,
   });
 });
@@ -228,6 +235,7 @@ test("editable bed and staffed-bed parameters rebuild replay inventory per froze
   const ward = page.locator('.floor-plan-unit[data-unit-id="UNIT-WARD-A"]');
   await expect(ward.locator(".floor-plan-bed")).toHaveCount(48);
   await expect(ward).toHaveAttribute("data-staffed", "36");
+  await expectHospitalFlowGeometry(page);
   const firstWard = firstState.units.find(
     (unit: any) => unit.unit_id === "UNIT-WARD-A",
   );
@@ -246,6 +254,7 @@ test("editable bed and staffed-bed parameters rebuild replay inventory per froze
   );
   await expect(ward.locator(".floor-plan-bed")).toHaveCount(44);
   await expect(ward).toHaveAttribute("data-staffed", "32");
+  await expectHospitalFlowGeometry(page);
   const secondWard = secondState.units.find(
     (unit: any) => unit.unit_id === "UNIT-WARD-A",
   );
@@ -258,6 +267,7 @@ test("editable bed and staffed-bed parameters rebuild replay inventory per froze
   await expectFloorPlanAt(page, first.selected_replication_id, first.start_at);
   await expect(ward.locator(".floor-plan-bed")).toHaveCount(48);
   await expect(ward).toHaveAttribute("data-staffed", "36");
+  await expectHospitalFlowGeometry(page);
   await expect(ward).toHaveAttribute(
     "data-available",
     String(firstWard.available),
@@ -336,6 +346,11 @@ test("a 100-bed ward reflows inside a compact architectural map without overflow
   });
   expect(geometry).toMatchObject({ overflow: 0, detail: false });
   expect(geometry.mapHeight).toBeLessThan(700);
+  const hospitalGeometry = await expectHospitalFlowGeometry(page);
   await capture(page, "replay-100-bed-map", info);
-  record("replay-100-bed-map", { run: run.id, ...geometry });
+  record("replay-100-bed-map", {
+    run: run.id,
+    ...geometry,
+    hospital_geometry: hospitalGeometry,
+  });
 });

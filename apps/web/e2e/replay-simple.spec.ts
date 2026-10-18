@@ -76,11 +76,42 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
       const map = document
         .querySelector<HTMLElement>(".floor-plan-building")
         ?.getBoundingClientRect();
+      const architecture = document.querySelector<SVGElement>(
+        '[data-testid="hospital-footprint"]',
+      );
+      const graphNodes = JSON.parse(
+        architecture?.dataset.corridorNodes || "{}",
+      ) as Record<string, { x: number; y: number }>;
+      const graphEdges = [
+        ...(architecture?.querySelectorAll<SVGElement>(
+          "[data-corridor-edge]",
+        ) || []),
+      ].map((edge) => edge.dataset.corridorEdge!.split("|"));
+      const samePoint = (
+        a: { x: number; y: number },
+        b: { x: number; y: number },
+      ) => Math.abs(a.x - b.x) < 0.03 && Math.abs(a.y - b.y) < 0.03;
       overlay
         ?.querySelectorAll<HTMLElement>(".floor-transit-marker")
         .forEach((marker) => {
           if (Number(getComputedStyle(marker).opacity) < 0.2 || !map) return;
           const box = marker.getBoundingClientRect();
+          const points = [
+            ...(marker.dataset.path || "").matchAll(/[ML]([\d.]+),([\d.]+)/g),
+          ].map((point) => ({ x: Number(point[1]), y: Number(point[2]) }));
+          const pathOnGraph =
+            points.length > 1 &&
+            points.every(
+              (point, index) =>
+                !index ||
+                graphEdges.some(
+                  ([a, b]) =>
+                    (samePoint(graphNodes[a], points[index - 1]) &&
+                      samePoint(graphNodes[b], point)) ||
+                    (samePoint(graphNodes[b], points[index - 1]) &&
+                      samePoint(graphNodes[a], point)),
+                ),
+            );
           monitor.motion.push({
             at: now,
             x: box.x,
@@ -90,6 +121,7 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
             to: marker.dataset.to,
             events: marker.dataset.events,
             path: marker.dataset.path,
+            pathOnGraph,
             windowFrom: overlay.dataset.windowFrom,
             windowTo: overlay.dataset.windowTo,
             inside:
@@ -199,6 +231,9 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
   expect(requests).toBeGreaterThanOrEqual(5);
   expect(continuity.motion.length).toBeGreaterThan(10);
   expect(continuity.motion.every((sample: any) => sample.inside)).toBe(true);
+  expect(continuity.motion.every((sample: any) => sample.pathOnGraph)).toBe(
+    true,
+  );
   expect(
     continuity.motion.some((sample: any) => sample.to === "discharge"),
   ).toBe(true);
@@ -258,6 +293,84 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
         ),
     )
     .toBeGreaterThan(0);
+  // A sidebar change resizes the map without firing window.resize. Old paths
+  // must be discarded, and only a later recorded window may animate again.
+  const beforeResize = await page.evaluate(() => {
+    const building = document.querySelector<HTMLElement>(
+      ".floor-plan-building",
+    )!;
+    const overlay = document.querySelector<HTMLElement>(
+      '[data-testid="floor-plan-transit"]',
+    )!;
+    (window as any).__beforeSidebarResizeMarkers = [
+      ...overlay.querySelectorAll(".floor-transit-marker"),
+    ];
+    return { width: building.offsetWidth, to: overlay.dataset.windowTo };
+  });
+  await page
+    .getByRole("button", { name: /^(Collapse|Expand) navigation$/ })
+    .click();
+  await expect
+    .poll(() =>
+      page
+        .locator(".floor-plan-building")
+        .evaluate((node) => (node as HTMLElement).offsetWidth),
+    )
+    .not.toBe(beforeResize.width);
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (window as any).__beforeSidebarResizeMarkers.every(
+          (node: Element) => !node.isConnected,
+        ),
+      ),
+    )
+    .toBe(true);
+  const afterResize = await page
+    .getByTestId("floor-plan-transit")
+    .evaluate((overlay) => ({
+      to: overlay.getAttribute("data-window-to"),
+      markers: overlay.childElementCount,
+    }));
+  if (afterResize.to === beforeResize.to) expect(afterResize.markers).toBe(0);
+  await expect
+    .poll(() =>
+      page.getByTestId("floor-plan-transit").getAttribute("data-window-to"),
+    )
+    .not.toBe(beforeResize.to);
+  await expect
+    .poll(() =>
+      page
+        .locator(".floor-transit-marker")
+        .evaluateAll(
+          (markers) =>
+            markers.filter(
+              (marker) => Number(getComputedStyle(marker).opacity) > 0.2,
+            ).length,
+        ),
+    )
+    .toBeGreaterThan(0);
+  const resizedMotion = await page.evaluate(() => {
+    const architecture = document.querySelector<SVGElement>(
+      '[data-testid="hospital-footprint"]',
+    )!;
+    const nodes = JSON.parse(
+      architecture.dataset.corridorNodes || "{}",
+    ) as Record<string, { x: number; y: number }>;
+    return [
+      ...document.querySelectorAll<HTMLElement>(".floor-transit-marker"),
+    ].every((marker) =>
+      [...(marker.dataset.path || "").matchAll(/[ML]([\d.]+),([\d.]+)/g)].every(
+        (point) =>
+          Object.values(nodes).some(
+            (node) =>
+              Math.abs(node.x - Number(point[1])) < 0.03 &&
+              Math.abs(node.y - Number(point[2])) < 0.03,
+          ),
+      ),
+    );
+  });
+  expect(resizedMotion).toBe(true);
   await page.getByLabel("Reduced motion", { exact: true }).check();
   await expect(page.locator(".floor-transit-marker")).toHaveCount(0);
   await expect(page.getByLabel("Play replay", { exact: true })).toBeVisible();
@@ -275,6 +388,11 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
     continuity,
     requests,
     delayed_state_ms: 400,
+    sidebar_resize: {
+      before: beforeResize,
+      after: afterResize,
+      follows_new_corridor_graph: resizedMotion,
+    },
     errors,
   });
 });

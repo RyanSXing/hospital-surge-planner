@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-18T07:30:18.694834+00:00",
-  "frontend_tests": 349,
+  "checked_at": "2026-10-18T07:43:30.566498+00:00",
+  "frontend_tests": 357,
   "backend_tests": 159,
   "unique_desktop_browser_cases": 28,
   "all_passed": true,
@@ -10,9 +10,9 @@
   "independent_review": "Legacy comparison export leakage found and corrected; final browser regression passed.",
   "preservation": "Existing host database backup created before release; saved data verification follows deployment.",
   "scope": [
-    "Top-down hospital map with exact installed bed inventory and occupied/ready/reserved/cleaning/unavailable states.",
+    "Hospital-shaped clinical wings, entrance/waiting/admission ordering, separate discharge exit, clear doorways, measured corridor containment and exact installed bed states.",
     "Edited48/36 and44/32 physical/staffed counts remain immutable in their saved replays;100 physical beds render without overflow.",
-    "Recorded corridor movement, discharge paths, continuous stable bed/map DOM, seeking and reduced motion.",
+    "Recorded movement follows the measured corridor graph; discharge paths, stable bed/map DOM, seeking, reduced motion and sidebar resizing are verified.",
     "Two saved scenario comparison, current revision validation, missing and incompatible results, keyboard and history navigation, legacy-link export cleanup."
   ]
 }

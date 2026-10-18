@@ -1,0 +1,72 @@
+{
+  "recorded_scope": "Full 106-case browser run on frozen build, then final affected-flow rerun after the listed fixes. Backend and replay logic remained unchanged during the final follow-up.",
+  "fixes": [
+    "Natural-language staff/equipment search and a 44px mobile search control",
+    "Numeric arrival text drafts, normalized percentages and correct scenario run statuses",
+    "Visibility and editing of saved combined hospital bed/staff responses",
+    "Updated library lifecycle assertion for the intentionally simplified visible metadata"
+  ],
+  "changed_application_files": {
+    "apps/web/src/components/workspaceSearch.test.ts": {
+      "full_suite_sha256": "aa621fb981349f2be012714a69f28e753a411c27e7c6239fb8feed3c457da9ba",
+      "final_sha256": "7d3b050a769ff0dcc6ca223bce32c5578005de761e1b3bb1c91cdfc2f03e3bcf"
+    },
+    "apps/web/src/components/workspaceSearch.ts": {
+      "full_suite_sha256": "4b6e76d45b9bddf2cf3970c4de2575642a12fb45230db89730bc2f56e6b8bed4",
+      "final_sha256": "b6df5bdfb45fce034918a35811734f67a4b1ee7f1f298f26003b24bd077e1291"
+    },
+    "apps/web/src/hospital.css": {
+      "full_suite_sha256": "25048c9e8431a968f647b59544f008d7d5c9b2a48b3701cbc2b7112ce6cc147a",
+      "final_sha256": "88ad51fbf011526edfbb78e178602313df3783309b01fce756c726bfdd2a8139"
+    },
+    "apps/web/src/pages/ScenarioTracks.tsx": {
+      "full_suite_sha256": "035e1361da1c1a1139ef207ccc41209e1d70688d1100f3de4361051e04d25cb3",
+      "final_sha256": "d3317b87d47c99ebbf43f7c6aba586ebc18e73e349927edead22bd07ae7654be"
+    },
+    "apps/web/src/pages/Scenarios.tsx": {
+      "full_suite_sha256": "b23db3c92c98185bc7ddef4535da33d2a2ce2a102b101d5c1b26e1ab558bf86c",
+      "final_sha256": "c75d0735ac6495405f3510696164f9d353d9bae5c224ce519199f1cd09df55b5"
+    },
+    "apps/web/src/pages/arrivalPreview.test.ts": {
+      "full_suite_sha256": "e10f3c8157a798ee4ce09de231d742321b56e8bd71b682236a6109ec3de3ad8c",
+      "final_sha256": "7006a30a2edaf9228fb2d01e21197f3d7333c8d047982c4c9d05136f2abb9c4e"
+    },
+    "apps/web/src/pages/plannedArrivalSeries.ts": {
+      "full_suite_sha256": "4abbb7abc9968abebff791ba9293e982a386ef7b11e68c1fb05dda428bb2168c",
+      "final_sha256": "34c068f66038dd5aa1adac9aa6081cf669c139af6e6932cec9a38918f35f6a4f"
+    },
+    "apps/web/src/pages/scenarioPlans.test.ts": {
+      "full_suite_sha256": "09cc0216b0e758e65eb5ea78b2b857dbfdd7f6ea1aee3e1b7cc90f56b1649b65",
+      "final_sha256": "736de7ccc59370f1bc27e3222acf179f37506f3e15681a4b68940f2663883a5c"
+    },
+    "apps/web/src/pages/scenarioPlans.ts": {
+      "full_suite_sha256": "7a5556e5ae69f7213091533c2bfafc3267fd33ce8cda5cf0476f840d94102dd9",
+      "final_sha256": "0b0b4cca37b0d942bf2f28cd382e437b8267706c7c7a8dd6a55b454253d6748e"
+    }
+  },
+  "required_followup": [
+    "all frontend unit tests and production build",
+    "setup, graph layout, canonical edits, keyboard typing, saved response editing, library lifecycle, and workspace search on desktop/mobile"
+  ],
+  "additional_hash_coverage": {
+    "apps/web/playwright.config.ts": "497507893403758c2739f9418885210043eb0abbe6766ef964fda2e2bdab84ce",
+    "apps/web/src/pages/arrivalPercentInput.test.ts": "68a1aa32ad34859d83cfbb311682b0e39b7db55a7286aae39a94033908c06b46",
+    "apps/web/src/pages/arrivalPercentInput.ts": "cd3a1ec2be493dda0aeebe64404802b0d9eba15d7609c499703947b613854a87",
+    "apps/web/vitest.config.ts": "873982970f6420be106e489dd6add0f8368def41ff3998d87ae859b8e8caab85"
+  },
+  "unchanged_backend_engine_since_full_test": true,
+  "unchanged_replay_since_full_browser_run": true,
+  "unchanged_replay_files_checked": [
+    "apps/api/surge_api/replay.py",
+    "apps/api/surge_api/replay_annotations.py",
+    "apps/web/src/pages/Replay.tsx",
+    "apps/web/src/pages/ReplayCampusContext.tsx",
+    "apps/web/src/pages/ReplayEvidence.tsx",
+    "apps/web/src/pages/replay.css",
+    "apps/web/src/pages/replayAnnotations.test.ts",
+    "apps/web/src/pages/replayAnnotations.ts",
+    "apps/web/src/pages/replayBackdrop.ts",
+    "apps/web/src/pages/replayMotion.test.ts",
+    "apps/web/src/pages/replayMotion.ts"
+  ]
+}

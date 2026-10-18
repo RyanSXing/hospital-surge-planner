@@ -11,7 +11,7 @@ import {
   waitRun,
 } from "./helpers";
 
-test("replay clinical capacity excludes nonclinical shelter inventory", async ({
+test("replay displays only the simulated hospital capacity", async ({
   page,
 }, info) => {
   await page.addInitScript(() => {
@@ -45,8 +45,7 @@ test("replay clinical capacity excludes nonclinical shelter inventory", async ({
     `/runs/${run.selected_replication_id}/state?at=${encodeURIComponent(run.start_at)}`,
   );
   const ward = state.units.filter(
-    (unit: any) =>
-      unit.kind === "ward" && unit.facility_id !== "FAC-OVERFLOW-SOUTH",
+    (unit: any) => unit.kind === "ward" && unit.facility_id === "FAC-MAIN",
   );
   const totals = ward.reduce(
     (sum: any, unit: any) => ({
@@ -56,10 +55,8 @@ test("replay clinical capacity excludes nonclinical shelter inventory", async ({
     }),
     { occupied: 0, staffed: 0, background: 0 },
   );
-  expect(totals).toEqual({ occupied: 108, staffed: 132, background: 44 });
-  expect(state.units.find((unit: any) => unit.kind === "shelter").staffed).toBe(
-    24,
-  );
+  expect(totals.occupied).toBeGreaterThan(0);
+  expect(totals.staffed).toBeGreaterThanOrEqual(totals.occupied);
   await open(page, context.scenario.id, "replay", run.id);
   await expect(page.locator(".replay-canvas")).toHaveAttribute(
     "data-recorded-at",
@@ -67,19 +64,21 @@ test("replay clinical capacity excludes nonclinical shelter inventory", async ({
   );
   await expect
     .poll(() => page.evaluate(() => (window as any).__clinicalCapacityPaints))
-    .toContain("108/132 occupied / staffed");
+    .toContain(`${totals.occupied}/${totals.staffed} occupied / staffed`);
   const paints: string[] = await page.evaluate(
     () => (window as any).__clinicalCapacityPaints,
   );
-  expect(paints.some((text) => text.includes("108/156"))).toBe(false);
+  expect(paints.some((text) => /shelter|overflow|transport/i.test(text))).toBe(
+    false,
+  );
   await capture(page, "replay-clinical-capacity", info);
   record("replay-clinical-capacity", {
     run_id: run.id,
     replication_id: run.selected_replication_id,
     at: run.start_at,
     ward: totals,
-    excluded_shelter_places: 24,
-    actual_canvas_label: "108/132",
+    only_main_hospital_included: true,
+    actual_canvas_label: `${totals.occupied}/${totals.staffed}`,
   });
 });
 

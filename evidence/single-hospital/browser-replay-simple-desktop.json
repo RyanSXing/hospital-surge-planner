@@ -1,0 +1,17 @@
+{
+  "run_id": "run_59d195f7e58c41cc97af",
+  "viewport": "desktop",
+  "animation_samples": 226,
+  "actual_canvas_animation_paints": 230,
+  "active_paint_interval_ms": 3758.5999999046326,
+  "moved_markers": 81,
+  "paused_at": "2026-10-16T19:58:30.720Z",
+  "source_is_synthetic": true,
+  "buffered_sample_boundaries": 4,
+  "maximum_canvas_paint_gap_ms": 17.199999928474426,
+  "same_canvas_throughout_playback": true,
+  "loading_flashes_between_samples": 0,
+  "artificial_state_network_delay_ms": 150,
+  "delayed_state_requests": 13,
+  "console_errors": []
+}

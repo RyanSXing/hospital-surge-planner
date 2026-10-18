@@ -40,7 +40,6 @@ test("detailed workspaces reveal optional time docks without changing the run", 
     "patients" | "resources" | "compare" | "replay",
   ][] = [
     ["analytics-patients", "patients"],
-    ["analytics-resources", "resources"],
     ["comparison", "compare"],
   ];
   for (const [view, panel] of views) {

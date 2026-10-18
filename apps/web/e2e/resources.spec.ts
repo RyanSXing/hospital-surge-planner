@@ -1,164 +1,285 @@
 import { test, expect } from "@playwright/test";
-import { api, capture, open, record, scenario, waitRun } from "./helpers";
+import {
+  api,
+  assertPageHealthy,
+  capture,
+  open,
+  record,
+  scenario,
+  waitRun,
+} from "./helpers";
+import { expandScenarioSection } from "./scenario-ui";
 
-test("candidate site requirements become a feasible saved and simulated resource response", async ({
+test("opening hospital beds preserves staffing limits until nurses are added", async ({
   page,
 }, info) => {
-  test.skip(
-    info.project.name === "mobile",
-    "Resource mutation lifecycle is exercised once.",
+  const context = await scenario(
+    page,
+    "internal beds and nurses",
+    { horizon_calendar_days: 1, replications: 1 },
+    "hospital_baseline",
   );
-  const context = await scenario(page, "candidate resource workflow", {
-    horizon_calendar_days: 1,
-    replications: 1,
-  });
   const original = await api(page.request, `/datasets/${context.dataset.id}`);
-  await open(page, context.scenario.id, "analytics-resources");
+  await open(page, context.scenario.id, "overview");
+  await expandScenarioSection(page, "resources");
   await page
-    .getByRole("button", { name: "Add candidate site", exact: true })
+    .getByRole("button", { name: "Add hospital beds", exact: true })
     .click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toContainText("Add a candidate site");
-  const name = `Audit neighborhood clinic ${Date.now()}`;
-  await dialog.getByLabel("Site name", { exact: true }).fill(name);
-  await dialog.getByLabel("Installed treatment / shelter places").fill("12");
+  let dialog = page.getByRole("dialog");
   await dialog
-    .getByLabel("Source / provenance")
-    .fill("Browser acceptance declared fictional inventory");
-  await dialog
-    .getByLabel("Requirements and uncertainty notes")
-    .fill(
-      "Twelve spaces require declared reserve staffing and portable kits before receiving.",
-    );
-  await dialog
-    .getByRole("button", { name: "Save candidate inventory" })
-    .click();
-  await expect(dialog).toHaveCount(0, { timeout: 30000 });
-  await expect(page.locator(".site-inspector h2")).toHaveText(name);
-  const scenarioId = new URL(page.url()).searchParams.get("scenario")!;
-  expect(scenarioId).not.toBe(context.scenario.id);
-  const freshScenario = await api(page.request, `/scenarios/${scenarioId}`),
-    dataset = await api(
-      page.request,
-      `/datasets/${freshScenario.dataset_version_id}`,
-    );
-  expect(dataset.id).not.toBe(original.id);
-  const site = dataset.facilities.find((f: any) => f.name === name),
-    unit = dataset.units.find((u: any) => u.facility_id === site.facility_id);
-  expect(
-    dataset.slots.filter((s: any) => s.unit_id === unit.unit_id),
-  ).toHaveLength(12);
-  expect(
-    dataset.capacity_policies.some(
-      (p: any) =>
-        p.capacity_policy_id === unit.capacity_policy_id &&
-        p.slots_per_nurse === 4,
-    ),
-  ).toBeTruthy();
-  expect(
-    dataset.routes.filter(
-      (r: any) =>
-        r.from_facility_id === site.facility_id ||
-        r.to_facility_id === site.facility_id,
-    ),
-  ).toHaveLength(original.facilities.length * 2);
-  for (const route of dataset.routes.filter(
-    (r: any) =>
-      r.from_facility_id === site.facility_id ||
-      r.to_facility_id === site.facility_id,
-  )) {
-    expect(route.estimate_source).toBe("manual");
-    expect(route.source).toBe(
-      "Browser acceptance declared fictional inventory",
-    );
-  }
-  expect(
-    dataset.clinic_policies.some((p: any) => p.site_id === site.facility_id),
-  ).toBeTruthy();
-  expect(dataset.staff).toHaveLength(original.staff.length);
-  expect(dataset.equipment_pools).toHaveLength(original.equipment_pools.length);
-  await page
-    .getByRole("button", { name: "Assign resources & schedule" })
-    .click();
-  await expect(dialog).toContainText("Plan resources");
-  await expect(
-    dialog.getByRole("button", { name: "Save proposed response" }),
-  ).toBeDisabled();
-  await expect(dialog).toContainText(
-    "Allocate one declared clinic kit for each enabled space",
+    .getByLabel("Bed or staffing change", { exact: true })
+    .selectOption("physical_overflow");
+  await expect(dialog.getByLabel("Target unit", { exact: true })).toHaveValue(
+    "UNIT-WARD-C",
   );
-  await dialog.getByLabel(/CLINIC_KIT · EQ-RES-CLINIC-KIT/).fill("8");
-  await dialog.getByLabel("Nurses", { exact: true }).fill("0");
-  await dialog.getByLabel("Providers", { exact: true }).fill("0");
-  await dialog.getByLabel("Support", { exact: true }).fill("0");
-  await dialog.getByRole("button", { name: "Validate prerequisites" }).click();
-  await expect(dialog).toContainText("Unmet prerequisites");
-  await expect(
-    dialog.getByRole("button", { name: "Save proposed response" }),
-  ).toBeDisabled();
-  await dialog.getByLabel("Nurses", { exact: true }).fill("2");
-  await dialog.getByLabel("Providers", { exact: true }).fill("1");
-  await dialog.getByLabel("Support", { exact: true }).fill("1");
-  await dialog.getByRole("button", { name: "Validate prerequisites" }).click();
-  await expect(dialog).toContainText("Declared prerequisites fit");
-  await dialog.getByRole("button", { name: "Save proposed response" }).click();
-  await expect(dialog).toHaveCount(0);
-  const saved = await api(page.request, `/scenarios/${scenarioId}`),
-    response = saved.interventions.find(
-      (p: any) => p.facility_id === site.facility_id,
+  await expect(dialog.getByLabel(/^Total beds after opening/)).toHaveValue(
+    "32",
+  );
+  await dialog
+    .getByLabel("Change name", { exact: true })
+    .fill("Open the twelve planned Ward C beds");
+  await dialog
+    .getByLabel("Activation delay (minutes)", { exact: true })
+    .fill("0");
+  await dialog
+    .getByRole("button", { name: "Apply change", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
+    0,
+  );
+  const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
+  expect(saved.interventions).toHaveLength(1);
+  expect(saved.interventions[0]).toMatchObject({
+    unit_id: "UNIT-WARD-C",
+    facility_id: "FAC-MAIN",
+    kind: "physical_overflow",
+    enabled_slots: 32,
+    activation_minutes: 0,
+  });
+  const submitRun = async () => {
+    const response = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/run-groups") &&
+        response.request().method() === "POST",
     );
-  expect(response).toMatchObject({
-    unit_id: unit.unit_id,
-    kind: "clinic",
-    nurses: 2,
+    const button = page.getByRole("button", {
+      name: "Run simulation",
+      exact: true,
+    });
+    await expect(button).toBeEnabled();
+    await button.click();
+    const queued = await response;
+    expect(queued.ok()).toBeTruthy();
+    return waitRun(page, (await queued.json()).id);
+  };
+  const physicalRun = await submitRun();
+  const at = "2026-10-16T06:00:00Z";
+  const physicalState = await api(
+    page.request,
+    `/runs/${physicalRun.selected_replication_id}/state?at=${at}`,
+  );
+  const physical = physicalState.units.find(
+    (unit: any) => unit.unit_id === "UNIT-WARD-C",
+  );
+  expect(physical).toMatchObject({ physical: 32, enabled: 32, staffed: 16 });
+  expect(physical.available).toBeLessThanOrEqual(16);
+
+  await open(page, context.scenario.id, "overview");
+  await expandScenarioSection(page, "resources");
+  await page
+    .getByRole("button", { name: "Add hospital beds", exact: true })
+    .click();
+  dialog = page.getByRole("dialog");
+  await dialog
+    .getByLabel("Bed or staffing change", { exact: true })
+    .selectOption("staff_existing");
+  await dialog
+    .getByLabel("Target unit", { exact: true })
+    .selectOption("UNIT-WARD-C");
+  await dialog
+    .getByLabel("Change name", { exact: true })
+    .fill("Four nurses for the expanded Ward C");
+  await dialog.getByLabel("Nurses", { exact: true }).fill("4");
+  await dialog
+    .getByRole("button", { name: "Apply change", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
+    0,
+  );
+  const staffedDraft = await api(
+    page.request,
+    `/scenarios/${context.scenario.id}`,
+  );
+  expect(staffedDraft.interventions).toHaveLength(2);
+  expect(
+    staffedDraft.interventions.find(
+      (plan: any) => plan.kind === "staff_existing",
+    ),
+  ).toMatchObject({
+    unit_id: "UNIT-WARD-C",
+    facility_id: "FAC-MAIN",
+    nurses: 4,
+  });
+  await capture(page, "hospital-bed-and-staff-plan", info);
+  const staffedRun = await submitRun();
+  const staffedState = await api(
+    page.request,
+    `/runs/${staffedRun.selected_replication_id}/state?at=${at}`,
+  );
+  const staffed = staffedState.units.find(
+    (unit: any) => unit.unit_id === "UNIT-WARD-C",
+  );
+  expect(staffed).toMatchObject({ physical: 32, enabled: 32, staffed: 32 });
+  expect(
+    staffedState.units.every((unit: any) => unit.facility_id === "FAC-MAIN"),
+  ).toBe(true);
+  const after = await api(page.request, `/scenarios/${context.scenario.id}`);
+  expect(
+    after.revisions.find(
+      (revision: any) => revision.id === physicalRun.scenario_revision_id,
+    ).interventions,
+  ).toEqual(saved.interventions);
+  expect(
+    after.revisions.find(
+      (revision: any) => revision.id === staffedRun.scenario_revision_id,
+    ).interventions,
+  ).toEqual(staffedDraft.interventions);
+  const unchanged = await api(page.request, `/datasets/${original.id}`);
+  expect(unchanged.slots).toEqual(original.slots);
+  expect(unchanged.facilities).toEqual(original.facilities);
+  await assertPageHealthy(page);
+  record(`internal-hospital-resources-${info.project.name}`, {
+    scenario_id: after.id,
+    physical_run_id: physicalRun.id,
+    staffed_run_id: staffedRun.id,
+    physical_beds: physical.physical,
+    without_added_nurses: physical.staffed,
+    with_added_nurses: staffed.staffed,
+    source_inventory_unchanged: true,
+    only_main_hospital: true,
+  });
+});
+
+test("a saved combined hospital response stays visible and editable under optional bed settings", async ({
+  page,
+}, info) => {
+  const response = {
+    id: `hospital-response-${Date.now()}`,
+    kind: "staffed_overflow",
+    name: "Open and staff extra beds",
+    facility_id: "FAC-MAIN",
+    unit_id: "UNIT-WARD-C",
+    start_at: "2026-10-16T05:00:00Z",
+    activation_minutes: 60,
+    enabled_slots: 32,
+    nurses: 4,
     providers: 1,
     support: 1,
-    enabled_slots: 8,
-    equipment_allocations: [
-      { equipment_pool_id: "EQ-RES-CLINIC-KIT", quantity: 8 },
-    ],
+  };
+  const context = await scenario(page, "saved combined hospital response", {
+    horizon_calendar_days: 1,
+    replications: 1,
+    interventions: [response],
   });
-  await capture(page, "new-candidate-resources", info);
-  const short = await api(page.request, "/scenarios", "POST", {
-      name: "E2E candidate response evaluation",
-      dataset_version_id: dataset.id,
-      start_at: saved.start_at,
-      horizon_calendar_days: 1,
-      replications: 1,
-      conditions: [],
-      interventions: [response],
+  await open(page, context.scenario.id, "overview");
+  const editor = page.getByTestId("guided-scenario");
+  await expect(
+    editor.locator(".more-simulation-parameters"),
+  ).not.toHaveAttribute("open", "");
+  await expandScenarioSection(page, "resources");
+  const beds = editor.getByRole("region", {
+    name: "Hospital beds",
+    exact: true,
+  });
+  await beds
+    .getByRole("button", {
+      name: "Open and staff extra beds Planning assumption",
+      exact: true,
+    })
+    .click();
+  let dialog = page.getByRole("dialog", {
+    name: "Edit hospital beds",
+    exact: true,
+  });
+  await expect(
+    dialog.getByLabel("Bed or staffing change", { exact: true }),
+  ).toHaveValue("staffed_overflow");
+  await expect(dialog.getByLabel("Target unit", { exact: true })).toHaveValue(
+    "UNIT-WARD-C",
+  );
+  await expect(dialog.getByLabel(/^Total beds after opening/)).toHaveValue(
+    "32",
+  );
+  await expect(dialog.getByLabel("Nurses", { exact: true })).toHaveValue("4");
+  await expect(dialog.getByLabel("Providers", { exact: true })).toHaveValue(
+    "1",
+  );
+  await expect(dialog.getByLabel("Support staff", { exact: true })).toHaveValue(
+    "1",
+  );
+  await expect(
+    dialog.getByLabel("Activation delay (minutes)", { exact: true }),
+  ).toHaveValue("60");
+  await expect(dialog.getByLabel(/^End time \(exclusive\)/)).toBeVisible();
+  await expect(
+    dialog.getByRole("group", {
+      name: "Explicit portable equipment allocation",
+      exact: true,
     }),
-    run = await waitRun(
-      page,
-      (
-        await api(page.request, "/run-groups", "POST", {
-          scenario_id: short.id,
-        })
-      ).id,
-    ),
-    at = new Date(Date.parse(saved.start_at) + 8 * 3600000).toISOString(),
-    state = await api(
-      page.request,
-      `/runs/${run.selected_replication_id}/state?at=${encodeURIComponent(at)}`,
-    ),
-    actual = state.units.find((u: any) => u.unit_id === unit.unit_id);
-  expect(actual.staffed_capacity ?? actual.staffed).toBe(8);
-  expect(actual.enabled_capacity ?? actual.enabled).toBe(8);
-  const old = await api(page.request, `/datasets/${original.id}`);
-  expect(old.facilities).toHaveLength(original.facilities.length);
-  expect(
-    old.facilities.some((f: any) => f.facility_id === site.facility_id),
-  ).toBeFalsy();
-  record("candidate-resource-response", {
-    source_dataset_id: original.id,
-    dataset_id: dataset.id,
-    scenario_id: scenarioId,
-    evaluation_run_id: run.id,
-    facility_id: site.facility_id,
-    unit_id: unit.unit_id,
-    declared_places: 12,
-    staff_supported_places: 8,
-    at,
-    actual_unit: actual,
+  ).toBeVisible();
+  await expect(
+    dialog.getByRole("option", { name: /shelter|partner|clinic|transfer/i }),
+  ).toHaveCount(0);
+  await dialog.getByLabel(/^Total beds after opening/).fill("28");
+  await dialog.getByLabel("Nurses", { exact: true }).fill("3");
+  await dialog
+    .getByLabel("Activation delay (minutes)", { exact: true })
+    .fill("30");
+  await dialog
+    .getByRole("button", { name: "Apply change", exact: true })
+    .click();
+  await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect(
+    editor.getByText("Unsaved changes", { exact: true }),
+  ).toHaveCount(0);
+  const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
+  expect(saved.interventions).toHaveLength(1);
+  expect(saved.interventions[0]).toMatchObject({
+    ...response,
+    enabled_slots: 28,
+    nurses: 3,
+    activation_minutes: 30,
+  });
+  expect(Date.parse(saved.interventions[0].end_at)).toBe(
+    Date.parse("2026-10-17T05:00:00Z"),
+  );
+  await open(page, saved.id, "overview");
+  await expandScenarioSection(page, "resources");
+  await page
+    .getByRole("button", {
+      name: "Open and staff extra beds Planning assumption",
+      exact: true,
+    })
+    .click();
+  dialog = page.getByRole("dialog", {
+    name: "Edit hospital beds",
+    exact: true,
+  });
+  await expect(dialog.getByLabel(/^Total beds after opening/)).toHaveValue(
+    "28",
+  );
+  await expect(dialog.getByLabel("Nurses", { exact: true })).toHaveValue("3");
+  await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+  await assertPageHealthy(page);
+  record(`saved-combined-hospital-response-${info.project.name}`, {
+    scenario_id: saved.id,
+    saved_plan_visible_under_hospital_beds: true,
+    combined_kind_preserved: saved.interventions[0].kind,
+    physical_and_staff_fields_editable: true,
+    enabled_slots: saved.interventions[0].enabled_slots,
+    nurses: saved.interventions[0].nurses,
+    only_hospital_target_options: true,
   });
 });

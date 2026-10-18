@@ -5,7 +5,7 @@ describe("workspace navigation", () => {
   it.each([
     ["scenarios", "overview", "outcomes"],
     ["patients", "analytics", "patients"],
-    ["resources", "analytics", "resources"],
+    ["resources", "analytics", "patients"],
     ["compare", "comparison", "outcomes"],
     ["replay", "replay", "outcomes"],
     ["bad-link", "overview", "outcomes"],
@@ -28,7 +28,7 @@ describe("workspace navigation", () => {
           "view=analysis&analysis=analytics&section=resources",
         ),
       ),
-    ).toEqual({ page: "analytics", section: "resources" });
+    ).toEqual({ page: "analytics", section: "patients" });
   });
 
   it("changes only navigation keys and roundtrips each destination", () => {
@@ -47,7 +47,7 @@ describe("workspace navigation", () => {
       const next = writeNavigation(source, route);
       expect(readNavigation(next.searchParams)).toEqual({
         ...route,
-        section: page === "analytics" ? "resources" : "outcomes",
+        section: page === "analytics" ? "patients" : "outcomes",
       });
       for (const [key, value] of source.searchParams)
         if (key !== "view") expect(next.searchParams.get(key)).toBe(value);

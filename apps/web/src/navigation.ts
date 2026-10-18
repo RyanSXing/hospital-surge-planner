@@ -2,7 +2,7 @@ import type { PageId } from "./types";
 
 export type AnalysisPage = "summary" | "replay" | "analytics" | "comparison";
 export type WorkspacePage = "overview" | AnalysisPage | "data";
-export type AnalyticsSection = "outcomes" | "patients" | "resources";
+export type AnalyticsSection = "outcomes" | "patients";
 export type WorkspaceRoute = {
   page: WorkspacePage;
   section: AnalyticsSection;
@@ -25,12 +25,12 @@ export function resolvePage(
   section?: string | null,
 ): WorkspaceRoute {
   const selectedSection =
-    section === "resources" || section === "patients" ? section : "outcomes";
+    section === "resources" || section === "patients" ? "patients" : "outcomes";
   switch (page) {
     case "patients":
       return { page: "analytics", section: "patients" };
     case "resources":
-      return { page: "analytics", section: "resources" };
+      return { page: "analytics", section: "patients" };
     case "compare":
       return { page: "comparison", section: selectedSection };
     case "scenarios":

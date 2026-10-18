@@ -1,0 +1,1920 @@
+{
+  "config": {
+    "argv": [
+      "/Users/rsxing/.nvm/versions/node/v24.15.0/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "--workers=1",
+      "--output",
+      "../../output/playwright/single-hospital/followup-results",
+      "e2e/(arrival-preview-layout|context-editor|guided-setup|resources|pulse-preset|scenario-assumptions|scenario-curves|scenario-families|map-search|release-workflows)\\.spec\\.ts$"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true,
+          "deviceScaleFactor": 1
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../output/playwright/single-hospital/browser-followup.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "arrival-preview-layout.spec.ts",
+      "file": "arrival-preview-layout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "arrival chart preserves readable labels and alignment at narrow and wide widths",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3989,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:27:43.852Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-preview-320",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-320-a627cb18220862d77df58cc5eb7ed969ac01d680.png"
+                    },
+                    {
+                      "name": "arrival-preview-320-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-320-middle-77af6e0ff2ce4a8c9a9ea31d67839f51669a8ef7.png"
+                    },
+                    {
+                      "name": "arrival-preview-320-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-320-lower-43207e8cc05e5dcff04615f3dca9276418fec98c.png"
+                    },
+                    {
+                      "name": "arrival-preview-390",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-390-177e05a8858f4d04f6fb6c40e1b68eb502588b20.png"
+                    },
+                    {
+                      "name": "arrival-preview-390-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-390-middle-7692f7ecab6a55a40f9f401e0f92ac33fa967c8e.png"
+                    },
+                    {
+                      "name": "arrival-preview-390-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-390-lower-d2212a0455f45c88c68e88ba02f8f6914e604cfa.png"
+                    },
+                    {
+                      "name": "arrival-preview-1280",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-1280-c6679e29b57f2db8a2bf58c49341f1f81c9ad628.png"
+                    },
+                    {
+                      "name": "arrival-preview-1280-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-1280-middle-226826cf1d2c0b4b3b2d32d16f11874c2c097351.png"
+                    },
+                    {
+                      "name": "arrival-preview-1280-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-1280-lower-70c2427336e7e9933beeddaa77c71cf821753d0f.png"
+                    },
+                    {
+                      "name": "arrival-preview-1600",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-1600-d1f65770f9254ee733252401d0f049b67a0cb8f3.png"
+                    },
+                    {
+                      "name": "arrival-preview-1600-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-1600-middle-6a6e65b8df4748876b7ae9fa278e66b9f4b628c8.png"
+                    },
+                    {
+                      "name": "arrival-preview-1600-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-desktop/attachments/arrival-preview-1600-lower-5fb99e729b8a0a9a8ff8e131d72b2e378314ce0d.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f4a0df0cb84a76b00581-f0a51cb6ed4a2d9a6416",
+          "file": "arrival-preview-layout.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "arrival chart preserves readable labels and alignment at narrow and wide widths",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3840,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:30:03.935Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "arrival-preview-320",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-320-27c1f856d5fcc325ee34619110774bca341ca504.png"
+                    },
+                    {
+                      "name": "arrival-preview-320-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-320-middle-28de3f811fb5b6f8ee8f8870ab427723ffffbca7.png"
+                    },
+                    {
+                      "name": "arrival-preview-320-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-320-lower-9883a5f276128a4b29649317b97dd1c73d11caab.png"
+                    },
+                    {
+                      "name": "arrival-preview-390",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-390-a9552aa935aa21ec438e5a49dece9ca4a690ba13.png"
+                    },
+                    {
+                      "name": "arrival-preview-390-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-390-middle-8aa3fc6778221e30806da11ab0715ddef568922d.png"
+                    },
+                    {
+                      "name": "arrival-preview-390-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-390-lower-b0f753549bf40d0f3178e3e5fe691707a2fe19de.png"
+                    },
+                    {
+                      "name": "arrival-preview-1280",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-1280-2dcfdab33e41fb607974fca78af55d0684a7f873.png"
+                    },
+                    {
+                      "name": "arrival-preview-1280-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-1280-middle-fa5a1eeb33815d6bc00c28ef397ed5af6b379de9.png"
+                    },
+                    {
+                      "name": "arrival-preview-1280-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-1280-lower-24ce9d5400eb1db7463b941afd7d59e40851f8e4.png"
+                    },
+                    {
+                      "name": "arrival-preview-1600",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-1600-37132304ef572a43310f3a2b771e312197f65509.png"
+                    },
+                    {
+                      "name": "arrival-preview-1600-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-1600-middle-37a3e1ebe7d74f9ce07d1536bbfd211a0808bc55.png"
+                    },
+                    {
+                      "name": "arrival-preview-1600-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/arrival-preview-layout-arr-4b985-t-at-narrow-and-wide-widths-mobile/attachments/arrival-preview-1600-lower-fe4cc44b9332e4ce2474e220ffabc1a670e7869a.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f4a0df0cb84a76b00581-ff0c6dfc512e4623850a",
+          "file": "arrival-preview-layout.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "context-editor.spec.ts",
+      "file": "context-editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "selected alternate replication and patient survive a page reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13031,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:27:48.532Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "restored-context",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/context-editor-selected-al-310b3-tient-survive-a-page-reload-desktop/attachments/restored-context-5fa474b052c4ee36a9f3b95b9eac796851cd311b.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4937d382eda8c3444f65-be501b5a1da8818112dc",
+          "file": "context-editor.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "exact arrival dates and care edits preserve completed forecast inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8457,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:28:01.574Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "exact-arrival-parameters",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/context-editor-exact-arriv-741ad-e-completed-forecast-inputs-desktop/attachments/exact-arrival-parameters-62222b354045c0b02814d7c032dac4a1dacfa12d.png"
+                    },
+                    {
+                      "name": "exact-arrival-parameters-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/context-editor-exact-arriv-741ad-e-completed-forecast-inputs-desktop/attachments/exact-arrival-parameters-middle-34918c16031cdda66edb2eb9b9271a7837e2ea12.png"
+                    },
+                    {
+                      "name": "exact-arrival-parameters-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/context-editor-exact-arriv-741ad-e-completed-forecast-inputs-desktop/attachments/exact-arrival-parameters-lower-b50391da1d1db6eacd691899b0319f81f3c1f05b.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4937d382eda8c3444f65-af3d141438b190ba2b22",
+          "file": "context-editor.spec.ts",
+          "line": 74,
+          "column": 1
+        },
+        {
+          "title": "selected alternate replication and patient survive a page reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18350,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:30:08.527Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "restored-context",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/context-editor-selected-al-310b3-tient-survive-a-page-reload-mobile/attachments/restored-context-02475ebdcc8c3fd201c8fb042f4a597205c7751a.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4937d382eda8c3444f65-cadfec91ca3d295edb1a",
+          "file": "context-editor.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "exact arrival dates and care edits preserve completed forecast inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10459,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:30:26.886Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "exact-arrival-parameters",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/context-editor-exact-arriv-741ad-e-completed-forecast-inputs-mobile/attachments/exact-arrival-parameters-b52283e0119def9036823830dfdeedd55284e0d2.png"
+                    },
+                    {
+                      "name": "exact-arrival-parameters-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/context-editor-exact-arriv-741ad-e-completed-forecast-inputs-mobile/attachments/exact-arrival-parameters-middle-b47e3d8883211d85b601e171a5f91d32f20edbd3.png"
+                    },
+                    {
+                      "name": "exact-arrival-parameters-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/context-editor-exact-arriv-741ad-e-completed-forecast-inputs-mobile/attachments/exact-arrival-parameters-lower-9094828bb67da63bac03285f7406fbb26f06e1e1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4937d382eda8c3444f65-19a47385a64838817201",
+          "file": "context-editor.spec.ts",
+          "line": 74,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "guided-setup.spec.ts",
+      "file": "guided-setup.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "simple hospital setup keeps its live graph visible and runs the exact optional inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11478,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:28:10.051Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "simple-setup",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/guided-setup-simple-hospit-ea652-s-the-exact-optional-inputs-desktop/attachments/simple-setup-6c0e165711995d8df4b151513279ac86bc2be989.png"
+                    },
+                    {
+                      "name": "simple-setup-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/guided-setup-simple-hospit-ea652-s-the-exact-optional-inputs-desktop/attachments/simple-setup-middle-c1bd1e62363394c666c3472271135185c5b4a956.png"
+                    },
+                    {
+                      "name": "simple-setup-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/guided-setup-simple-hospit-ea652-s-the-exact-optional-inputs-desktop/attachments/simple-setup-lower-e1cc8ca1c6382df64f05af0db2a6d7851990dd79.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f2d333a5cc339561346e-ace0396d198f57f264fd",
+          "file": "guided-setup.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "arrival percentage accepts sequential negative and positive typing without losing the draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4747,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:28:21.539Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f2d333a5cc339561346e-6d204a3dce05936ed8d3",
+          "file": "guided-setup.spec.ts",
+          "line": 238,
+          "column": 1
+        },
+        {
+          "title": "simple hospital setup keeps its live graph visible and runs the exact optional inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11584,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:30:37.366Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "simple-setup",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/guided-setup-simple-hospit-ea652-s-the-exact-optional-inputs-mobile/attachments/simple-setup-e726babb81e9e6cfc4c64e7e6438b7d164d48960.png"
+                    },
+                    {
+                      "name": "simple-setup-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/guided-setup-simple-hospit-ea652-s-the-exact-optional-inputs-mobile/attachments/simple-setup-middle-c44647865f20b78c514fc036c710573927dcf38c.png"
+                    },
+                    {
+                      "name": "simple-setup-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/guided-setup-simple-hospit-ea652-s-the-exact-optional-inputs-mobile/attachments/simple-setup-lower-09442dfb34f9565803e29c29e536201067ccae02.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f2d333a5cc339561346e-1da7a3e4d16c82a9510d",
+          "file": "guided-setup.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "arrival percentage accepts sequential negative and positive typing without losing the draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4587,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:30:48.956Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f2d333a5cc339561346e-3803303c2b102672b8a0",
+          "file": "guided-setup.spec.ts",
+          "line": 238,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "map-search.spec.ts",
+      "file": "map-search.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "workspace search finds the hospital and preserves exact run context in focused details",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8418,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:28:26.305Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-search",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/map-search-workspace-searc-f4159--context-in-focused-details-desktop/attachments/hospital-search-79b01973acd9de46e7afe81698af95badaf75436.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11063396553d6831a315-52559e301362236cac35",
+          "file": "map-search.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "workspace search finds the hospital and preserves exact run context in focused details",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8399,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:30:53.559Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-search",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/map-search-workspace-searc-f4159--context-in-focused-details-mobile/attachments/hospital-search-05e4d6341551a14cd18e74c8315b897862ee42c6.png"
+                    },
+                    {
+                      "name": "hospital-search-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/map-search-workspace-searc-f4159--context-in-focused-details-mobile/attachments/hospital-search-middle-601922c07a38600203395f594e9fe45619b40813.png"
+                    },
+                    {
+                      "name": "hospital-search-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/map-search-workspace-searc-f4159--context-in-focused-details-mobile/attachments/hospital-search-lower-1efa0e52b34edae4eb7472d9dbc44431ec7209d1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11063396553d6831a315-446bf8896548033303a4",
+          "file": "map-search.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pulse-preset.spec.ts",
+      "file": "pulse-preset.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "extra arrival groups are editable, undoable and frozen as one additive batch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7958,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:28:34.743Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4b1f93dbbf0e921edcc5-08b2d6e9cd9b9c342add",
+          "file": "pulse-preset.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "extra arrivals reject times outside the simulation period",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2671,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:28:42.711Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4b1f93dbbf0e921edcc5-de7bcff36649e455a753",
+          "file": "pulse-preset.spec.ts",
+          "line": 143,
+          "column": 1
+        },
+        {
+          "title": "extra arrival groups are editable, undoable and frozen as one additive batch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9634,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:01.977Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4b1f93dbbf0e921edcc5-089a24abbf70420f38d6",
+          "file": "pulse-preset.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "extra arrivals reject times outside the simulation period",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2690,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:11.618Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4b1f93dbbf0e921edcc5-e7382f3080f63a18ee36",
+          "file": "pulse-preset.spec.ts",
+          "line": 143,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "release-workflows.spec.ts",
+      "file": "release-workflows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "calendar horizons, complete library search, pagination, clone and archive lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17346,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:28:45.404Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "scenario-library-lifecycle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/release-workflows-calendar-13ef5-clone-and-archive-lifecycle-desktop/attachments/scenario-library-lifecycle-b94f78dc7af1e4c86b7cd42c8554a068249bbad4.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5b2659e0555fb56cf346-8bab1c6d4272100baf90",
+          "file": "release-workflows.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "patient filters and unit evidence expose exact selected-run details",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6954,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:02.763Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "patient-full-filters",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/release-workflows-patient--e0f14--exact-selected-run-details-desktop/attachments/patient-full-filters-f7684bf613c57569857cad7cddc4b8f25d945780.png"
+                    },
+                    {
+                      "name": "unit-evidence",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/release-workflows-patient--e0f14--exact-selected-run-details-desktop/attachments/unit-evidence-392d1d7530df08a9bb8bd8edc55160a3308fec65.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5b2659e0555fb56cf346-eed7f5b487b902bb7829",
+          "file": "release-workflows.spec.ts",
+          "line": 142,
+          "column": 1
+        },
+        {
+          "title": "calendar horizons, complete library search, pagination, clone and archive lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Full lifecycle runs once; responsive screens have separate coverage.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/release-workflows.spec.ts",
+                    "line": 8,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 208,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:14.325Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Full lifecycle runs once; responsive screens have separate coverage.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/release-workflows.spec.ts",
+                        "line": 8,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "5b2659e0555fb56cf346-27cdca18024b53fde3fb",
+          "file": "release-workflows.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "patient filters and unit evidence expose exact selected-run details",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Detailed model filters run once.",
+                  "location": {
+                    "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/release-workflows.spec.ts",
+                    "line": 145,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 253,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:14.541Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Detailed model filters run once.",
+                      "location": {
+                        "file": "/Users/rsxing/Downloads/Agies/apps/web/e2e/release-workflows.spec.ts",
+                        "line": 145,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "5b2659e0555fb56cf346-c96f402ab380c63efb30",
+          "file": "release-workflows.spec.ts",
+          "line": 142,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "resources.spec.ts",
+      "file": "resources.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "opening hospital beds preserves staffing limits until nurses are added",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17974,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:09.739Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-bed-and-staff-plan",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/resources-opening-hospital-5cef9-mits-until-nurses-are-added-desktop/attachments/hospital-bed-and-staff-plan-f4e50d5c3ba90cf76aa60b0f47c9bcac6825cbec.png"
+                    },
+                    {
+                      "name": "hospital-bed-and-staff-plan-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/resources-opening-hospital-5cef9-mits-until-nurses-are-added-desktop/attachments/hospital-bed-and-staff-plan-middle-bd08ca8f5e4dfad43c279e0aed5c19e0a27287a2.png"
+                    },
+                    {
+                      "name": "hospital-bed-and-staff-plan-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/resources-opening-hospital-5cef9-mits-until-nurses-are-added-desktop/attachments/hospital-bed-and-staff-plan-lower-e6e978c7ec1cc5e8f7820f24a763e1ae5a74adb8.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c5a9a91e1b9b058112b5-9ea992a36fadc9f5208c",
+          "file": "resources.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "a saved combined hospital response stays visible and editable under optional bed settings",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3821,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:27.721Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c5a9a91e1b9b058112b5-6949221304e20f0206f1",
+          "file": "resources.spec.ts",
+          "line": 165,
+          "column": 1
+        },
+        {
+          "title": "opening hospital beds preserves staffing limits until nurses are added",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18955,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:14.811Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-bed-and-staff-plan",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/resources-opening-hospital-5cef9-mits-until-nurses-are-added-mobile/attachments/hospital-bed-and-staff-plan-aa7c0a34d2a44ae97fcf1dca4b1abf39cc189eb6.png"
+                    },
+                    {
+                      "name": "hospital-bed-and-staff-plan-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/resources-opening-hospital-5cef9-mits-until-nurses-are-added-mobile/attachments/hospital-bed-and-staff-plan-middle-b315aea4ca7bc8a990c6bc711994f9c50ed179e2.png"
+                    },
+                    {
+                      "name": "hospital-bed-and-staff-plan-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/resources-opening-hospital-5cef9-mits-until-nurses-are-added-mobile/attachments/hospital-bed-and-staff-plan-lower-5858f7437cc4cec7d960f3ce05b2d4ab52b1a108.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c5a9a91e1b9b058112b5-36b4eafc2d427bc6d611",
+          "file": "resources.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "a saved combined hospital response stays visible and editable under optional bed settings",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4446,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:33.779Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c5a9a91e1b9b058112b5-6105a3cf154c15ff8b81",
+          "file": "resources.spec.ts",
+          "line": 165,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "scenario-assumptions.spec.ts",
+      "file": "scenario-assumptions.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "optional settings retain unsaved changes when collapsed and save the complete draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2471,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:31.559Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "38d7e6484aecb47e2424-4547705d16fde5725428",
+          "file": "scenario-assumptions.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "optional settings retain unsaved changes when collapsed and save the complete draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3017,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:38.248Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "38d7e6484aecb47e2424-873d5a1a2eb2cd80f859",
+          "file": "scenario-assumptions.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "scenario-curves.spec.ts",
+      "file": "scenario-curves.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "cohort edit and stream changes retain compatible visible mix semantics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3381,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:34.048Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-3fd00fe26a1ea40c86d2",
+          "file": "scenario-curves.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "custom imported curves, multiple windows and exact time edits retain canonical inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4056,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:37.437Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-39e8c2907c03fa1d2bbe",
+          "file": "scenario-curves.spec.ts",
+          "line": 83,
+          "column": 1
+        },
+        {
+          "title": "legacy arrival inputs show the engine default and survive unrelated saves",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2998,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:41.502Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-3537ffb2efc58456b876",
+          "file": "scenario-curves.spec.ts",
+          "line": 196,
+          "column": 1
+        },
+        {
+          "title": "editing exact stepped arrivals preserves their step behavior",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2858,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:44.510Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-d19a501382d2c2e16bd9",
+          "file": "scenario-curves.spec.ts",
+          "line": 252,
+          "column": 1
+        },
+        {
+          "title": "cohort edit and stream changes retain compatible visible mix semantics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3347,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:41.281Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-6d6e0acf526bb4a862db",
+          "file": "scenario-curves.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "custom imported curves, multiple windows and exact time edits retain canonical inputs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3975,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:44.635Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-c5359a318039646dd445",
+          "file": "scenario-curves.spec.ts",
+          "line": 83,
+          "column": 1
+        },
+        {
+          "title": "legacy arrival inputs show the engine default and survive unrelated saves",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2931,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:48.619Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-bc1bb46eb9d5007ce454",
+          "file": "scenario-curves.spec.ts",
+          "line": 196,
+          "column": 1
+        },
+        {
+          "title": "editing exact stepped arrivals preserves their step behavior",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2843,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:51.558Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd4456b65a72654d26f6-9890665393b5d5b7055e",
+          "file": "scenario-curves.spec.ts",
+          "line": 252,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "scenario-families.spec.ts",
+      "file": "scenario-families.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "all hospital setup changes save canonical inputs and produce real simulation effects",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12597,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:29:47.395Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-optional-changes",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-all-hosp-89acb-uce-real-simulation-effects-desktop/attachments/hospital-optional-changes-5276386dc968041fec69bfd525ddd7564b7c950f.png"
+                    },
+                    {
+                      "name": "hospital-optional-changes-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-all-hosp-89acb-uce-real-simulation-effects-desktop/attachments/hospital-optional-changes-middle-766b601d6998c5827db177ae89b3df0b3021b80b.png"
+                    },
+                    {
+                      "name": "hospital-optional-changes-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-all-hosp-89acb-uce-real-simulation-effects-desktop/attachments/hospital-optional-changes-lower-1044976ea3435db182e9d27c17a11bf0d23ca218.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-d486f2d003bf42366eb0",
+          "file": "scenario-families.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "optional hospital forms and details are keyboard accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3273,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:30:00.002Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-keyboard-parameters",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-optional-71119-ils-are-keyboard-accessible-desktop/attachments/hospital-keyboard-parameters-554ae9fc227cf6fd5c53bde2538d60fc82fc8002.png"
+                    },
+                    {
+                      "name": "hospital-keyboard-parameters-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-optional-71119-ils-are-keyboard-accessible-desktop/attachments/hospital-keyboard-parameters-middle-44d2f36f160ae05254c2cce406c0d4961b270149.png"
+                    },
+                    {
+                      "name": "hospital-keyboard-parameters-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-optional-71119-ils-are-keyboard-accessible-desktop/attachments/hospital-keyboard-parameters-lower-0583e4080917919ba8a692baa0afb446459ef9ce.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-380a621fcb6835eb3028",
+          "file": "scenario-families.spec.ts",
+          "line": 302,
+          "column": 1
+        },
+        {
+          "title": "all hospital setup changes save canonical inputs and produce real simulation effects",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12318,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:31:54.425Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-optional-changes",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-all-hosp-89acb-uce-real-simulation-effects-mobile/attachments/hospital-optional-changes-207c772cc04d96e22264420e995cad0d9af41555.png"
+                    },
+                    {
+                      "name": "hospital-optional-changes-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-all-hosp-89acb-uce-real-simulation-effects-mobile/attachments/hospital-optional-changes-middle-d858237d4d8e230483a66d0184115acf3b446c1e.png"
+                    },
+                    {
+                      "name": "hospital-optional-changes-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-all-hosp-89acb-uce-real-simulation-effects-mobile/attachments/hospital-optional-changes-lower-6c12634de9d717e3dfeac11c6e363eef2be99a9b.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-d2a44ba1133536955f58",
+          "file": "scenario-families.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "optional hospital forms and details are keyboard accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2996,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T00:32:06.751Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "hospital-keyboard-parameters",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-optional-71119-ils-are-keyboard-accessible-mobile/attachments/hospital-keyboard-parameters-fb4408f25a4bfebfbe9afa6a7b621e7ab1e5b9ed.png"
+                    },
+                    {
+                      "name": "hospital-keyboard-parameters-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-optional-71119-ils-are-keyboard-accessible-mobile/attachments/hospital-keyboard-parameters-middle-7328d93e2b570c9157f3469f971bec31b686dfd0.png"
+                    },
+                    {
+                      "name": "hospital-keyboard-parameters-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/single-hospital/followup-results/scenario-families-optional-71119-ils-are-keyboard-accessible-mobile/attachments/hospital-keyboard-parameters-lower-e45d029ff55597b567a88af52fe7c9a0e68c34e7.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4742fad0eb8fc0f2847a-a305bac141cee6d030d4",
+          "file": "scenario-families.spec.ts",
+          "line": 302,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T00:27:43.426Z",
+    "duration": 266638.113,
+    "expected": 36,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

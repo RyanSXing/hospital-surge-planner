@@ -5,7 +5,6 @@ import { api, open, record, scenario } from "./helpers";
 test("cohort edit and stream changes retain compatible visible mix semantics", async ({
   page,
 }, info) => {
-  test.skip(info.project.name !== "desktop");
   const original = {
     id: "cohort-edit",
     name: "Declared ward cohort",
@@ -31,9 +30,9 @@ test("cohort edit and stream changes retain compatible visible mix semantics", a
   let d = page.getByRole("dialog");
   await expect(d.getByLabel("Mix basis")).toHaveValue("cohorts");
   await expect(
-    d.getByLabel("COHORT-WARD-SHORT (%)", { exact: true }),
+    d.getByLabel("Ward · short stay (%)", { exact: true }),
   ).toHaveValue("70");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
+  await d.getByRole("button", { name: "Apply change" }).click();
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
     0,
@@ -45,23 +44,23 @@ test("cohort edit and stream changes retain compatible visible mix semantics", a
   await block.click();
   d = page.getByRole("dialog");
   await d.getByLabel("Mix basis").selectOption("profiles");
-  await d
-    .getByLabel("Incident or cohort entry stream")
-    .selectOption("DIRECT_WARD_MAIN");
+  await d.getByLabel("Where patients arrive").selectOption("DIRECT_WARD_MAIN");
   await expect(d.getByLabel("Mix basis")).toHaveValue("care");
-  await expect(d.getByLabel("ward (%)", { exact: true })).toHaveValue("100");
+  await expect(d.getByLabel("Ward admission (%)", { exact: true })).toHaveValue(
+    "100",
+  );
   await d.getByLabel("Mix basis").selectOption("profiles");
   await expect(
-    d.getByLabel("RP-ICU-VENTILATED (%)", { exact: true }),
+    d.getByLabel("Intensive care · ventilation (%)", { exact: true }),
   ).toHaveCount(0);
   await expect(
-    d.getByLabel("RP-WARD-BASIC (%)", { exact: true }),
+    d.getByLabel("Ward care · usual needs (%)", { exact: true }),
   ).toBeVisible();
   await d.getByLabel("Mix basis").selectOption("cohorts");
   await expect(
-    d.getByLabel("COHORT-ICU-STANDARD (%)", { exact: true }),
+    d.getByLabel("Intensive care · usual stay (%)", { exact: true }),
   ).toHaveCount(0);
-  await d.getByRole("button", { name: "Apply assumption" }).click();
+  await d.getByRole("button", { name: "Apply change" }).click();
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
     0,
@@ -81,10 +80,9 @@ test("cohort edit and stream changes retain compatible visible mix semantics", a
   });
 });
 
-test("custom imported curves, multiple windows and timeline moves retain exact inputs", async ({
+test("custom imported curves, multiple windows and exact time edits retain canonical inputs", async ({
   page,
 }, info) => {
-  test.skip(info.project.name !== "desktop");
   const curve = {
     id: "custom-import",
     kind: "arrival_multiplier",
@@ -103,7 +101,9 @@ test("custom imported curves, multiple windows and timeline moves retain exact i
   });
   await open(page, context.scenario.id, "overview");
   await expandScenarioDetails(page);
-  await expect(page.getByLabel("Scenario preset")).toHaveValue("custom");
+  await expect(
+    page.getByRole("radio", { name: "Custom", exact: true }),
+  ).toBeChecked();
   await page
     .getByLabel("Scenario name", { exact: true })
     .fill("Unrelated edit preserves exact imported points");
@@ -148,46 +148,24 @@ test("custom imported curves, multiple windows and timeline moves retain exact i
       .control_points.map((p: any) => p.multiplier),
   ).toEqual([1.25, 1.25]);
   await page
-    .getByRole("button", { name: "Add equipment availability", exact: true })
+    .getByRole("button", { name: "Add equipment", exact: true })
     .click();
   let d = page.getByRole("dialog");
-  await d.getByLabel("Assumption name").fill("Drag exact planned change");
+  await d.getByLabel("Change name").fill("Exact scheduled equipment change");
   await d
     .getByLabel("Effective time (America/Chicago)", { exact: true })
     .fill("2026-10-17T00:00");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
+  await d.getByRole("button", { name: "Apply change" }).click();
   const block = page.getByRole("button", {
-    name: "Drag exact planned change Planning assumption",
+    name: "Exact scheduled equipment change Planning assumption",
     exact: true,
   });
-  await block.scrollIntoViewIfNeeded();
-  const bounds = await block.boundingBox();
-  const row = await block
-    .locator("xpath=ancestor::div[contains(@class,'plan-timeline-row')]")
-    .boundingBox();
-  expect(bounds && row).toBeTruthy();
-  expect(
-    await block.evaluate((element) => {
-      const rect = element.getBoundingClientRect();
-      return element.contains(
-        document.elementFromPoint(
-          rect.x + rect.width / 2,
-          rect.y + rect.height / 2,
-        ),
-      );
-    }),
-  ).toBe(true);
-  await page.mouse.move(
-    bounds!.x + bounds!.width / 2,
-    bounds!.y + bounds!.height / 2,
-  );
-  await page.mouse.down();
-  await page.mouse.move(
-    bounds!.x + bounds!.width / 2 + row!.width / 72,
-    bounds!.y + bounds!.height / 2,
-    { steps: 5 },
-  );
-  await page.mouse.up();
+  await block.click();
+  d = page.getByRole("dialog");
+  await d
+    .getByLabel("Effective time (America/Chicago)", { exact: true })
+    .fill("2026-10-17T01:00");
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
   await block.click();
   d = page.getByRole("dialog");
   await expect(
@@ -210,7 +188,121 @@ test("custom imported curves, multiple windows and timeline moves retain exact i
     unrelated_save_preserves_custom_curve: true,
     custom_point_edit_preserves_other_points: true,
     multiple_intervals_unique: true,
-    pointer_move_exact_hour: true,
+    exact_time_edit_retains_hour: true,
     undo_restores_exact_time: true,
+  });
+});
+
+test("legacy arrival inputs show the engine default and survive unrelated saves", async ({
+  page,
+}, info) => {
+  const context = await scenario(page, "legacy arrival default", {
+    conditions: [
+      {
+        id: "legacy-default-demand",
+        kind: "arrival_multiplier",
+        multiplier: 2,
+      },
+    ],
+    replications: 1,
+  });
+  await open(page, context.scenario.id, "overview");
+  await expect(
+    page.getByLabel("Increase in ED arrivals", { exact: true }),
+  ).toHaveValue("70%");
+  const graph = page.getByTestId("arrival-preview-chart");
+  const planned = (await graph.getAttribute("data-planned-arrivals"))!
+    .split(",")
+    .map(Number);
+  const usual = (await graph.getAttribute("data-usual-arrivals"))!
+    .split(",")
+    .map(Number);
+  planned.forEach((value, index) =>
+    expect(value / usual[index]).toBeCloseTo(1.7),
+  );
+  await page
+    .getByLabel("Scenario name", { exact: true })
+    .fill("Unrelated save keeps legacy engine defaults");
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
+    0,
+  );
+  const unchanged = await api(
+    page.request,
+    `/scenarios/${context.scenario.id}`,
+  );
+  expect(unchanged.conditions).toEqual(context.scenario.conditions);
+  await page.getByLabel("Increase in ED arrivals", { exact: true }).fill("35");
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
+    0,
+  );
+  const edited = await api(page.request, `/scenarios/${context.scenario.id}`);
+  expect(
+    edited.conditions[0].control_points.map((point: any) => point.multiplier),
+  ).toEqual([1.35, 1.35]);
+  record(`legacy-demand-controls-${info.project.name}`, {
+    scenario_id: edited.id,
+    displayed_engine_default_percent: 70,
+    unchanged_canonical_input_preserved: true,
+    explicit_edit_applied_percent: 35,
+  });
+});
+
+test("editing exact stepped arrivals preserves their step behavior", async ({
+  page,
+}, info) => {
+  const curve = {
+    id: "exact-stepped-arrivals",
+    kind: "arrival_multiplier",
+    shape: "step",
+    source: "imported",
+    control_points: [
+      { at: "2026-10-16T05:00:00Z", multiplier: 1.2 },
+      { at: "2026-10-17T05:00:00Z", multiplier: 2 },
+      { at: "2026-10-19T05:00:00Z", multiplier: 1 },
+    ],
+  };
+  const context = await scenario(page, "exact stepped arrivals", {
+    conditions: [curve],
+    replications: 1,
+  });
+  await open(page, context.scenario.id, "overview");
+  await expect(
+    page.getByRole("radio", { name: "Custom", exact: true }),
+  ).toBeChecked();
+  await expect(
+    page.getByLabel("Increase in ED arrivals", { exact: true }),
+  ).toBeDisabled();
+  await expandScenarioDetails(page);
+  await page.getByLabel("Point 2 multiplier", { exact: true }).fill("2.3");
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
+    0,
+  );
+  const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
+  expect(saved.conditions[0]).toMatchObject({
+    shape: "step",
+    source: "imported",
+  });
+  expect(saved.conditions[0].control_points).toEqual([
+    curve.control_points[0],
+    { ...curve.control_points[1], multiplier: 2.3 },
+    curve.control_points[2],
+  ]);
+  const graph = page.getByTestId("arrival-preview-chart");
+  const planned = (await graph.getAttribute("data-planned-arrivals"))!
+      .split(",")
+      .map(Number),
+    usual = (await graph.getAttribute("data-usual-arrivals"))!
+      .split(",")
+      .map(Number);
+  expect(planned[0] / usual[0]).toBeCloseTo(1.2);
+  expect(planned[1] / usual[1]).toBeCloseTo(2.3);
+  expect(planned[2] / usual[2]).toBeCloseTo(2.3);
+  record(`exact-stepped-arrivals-${info.project.name}`, {
+    scenario_id: saved.id,
+    step_interpolation_preserved: true,
+    unrelated_points_preserved: true,
   });
 });

@@ -1,0 +1,12 @@
+{
+  "scenario_id": "scenario_3b23af5b89644a349819",
+  "run_id": "run_47a0c40537504192b35b",
+  "replications": 2,
+  "fixture": "hospital_baseline",
+  "live_graph_updates": true,
+  "optional_draft_preserved": true,
+  "single_hospital": true,
+  "exact_saved_conditions_frozen": true,
+  "scenario_library_results_status_correct": true,
+  "page_errors": []
+}

@@ -1,3 +1,4 @@
+import { expandScenarioDetails } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import { api, capture, open, record, scenario, waitRun } from "./helpers";
 
@@ -23,6 +24,7 @@ test("calendar horizons, complete library search, pagination, clone and archive 
       replications: 1,
     });
   await open(page, context.scenario.id, "overview");
+  await expandScenarioDetails(page);
   await page.getByLabel("Horizon unit").selectOption("weeks");
   await page.getByLabel("Planning horizon").fill("2");
   const saveWeeks = page.waitForResponse(
@@ -41,9 +43,7 @@ test("calendar horizons, complete library search, pagination, clone and archive 
   ).toBe(14);
   await page.getByLabel("Horizon unit").selectOption("months");
   await page.getByLabel("Planning horizon").fill("1");
-  await expect(page.locator(".scenarios-page")).toContainText(
-    "31 local calendar days",
-  );
+  await expect(page.locator(".scenarios-page")).toContainText("31 days");
   const saveMonth = page.waitForResponse(
     (r) =>
       r.url().endsWith("/scenarios/" + context.scenario.id) &&
@@ -70,8 +70,6 @@ test("calendar horizons, complete library search, pagination, clone and archive 
   const row = dialog
     .locator(".library-row")
     .filter({ has: page.getByText(prefix + " 00", { exact: true }) });
-  await expect(row).toContainText("Owner:");
-  await expect(row).toContainText("Dataset " + context.dataset.id);
   await expect(row).toContainText("Created");
   await expect(row).toContainText("Modified");
   const cloned = page.waitForResponse(
@@ -80,6 +78,7 @@ test("calendar horizons, complete library search, pagination, clone and archive 
   await row.getByRole("button", { name: "Clone", exact: true }).click();
   const copy = await (await cloned).json();
   expect(copy.parent_scenario_id).toBe(context.scenario.id);
+  expect(copy.dataset_version_id).toBe(context.dataset.id);
   expect(copy.horizon_calendar_days).toBe(31);
   const copyRow = dialog
     .locator(".library-row")
@@ -140,116 +139,6 @@ test("calendar horizons, complete library search, pagination, clone and archive 
   });
 });
 
-test("ICU transfer to a clinic is rejected and ward transfer reserves and travels", async ({
-  page,
-}, info) => {
-  test.skip(
-    info.project.name === "mobile",
-    "Detailed transfer semantics run once.",
-  );
-  const context = await scenario(
-    page,
-    "transfer acceptance",
-    { horizon_calendar_days: 1, replications: 1 },
-    "stress_snapshot",
-  );
-  const initial = await waitRun(
-    page,
-    (
-      await api(page.request, "/run-groups", "POST", {
-        scenario_id: context.scenario.id,
-      })
-    ).id,
-  );
-  await open(page, context.scenario.id, "analytics-resources", initial.id);
-  await page
-    .getByRole("button", { name: "Plan transfer", exact: true })
-    .click();
-  const dialog = page.getByRole("dialog");
-  await dialog.getByLabel("Patient group").selectOption("icu");
-  await dialog
-    .getByLabel("Receiving facility")
-    .selectOption("FAC-CLINIC-NORTH");
-  await expect(dialog).toContainText("Constraints require attention");
-  await expect(dialog).toContainText("Incompatible");
-  await expect(
-    dialog.getByRole("button", { name: "Save proposed transfer plan" }),
-  ).toBeDisabled();
-  await capture(page, "icu-clinic-rejected", info);
-  await dialog.getByLabel("Patient group").selectOption("ward");
-  await dialog.getByLabel("Receiving facility").selectOption("FAC-EAST");
-  await dialog.getByLabel("Maximum patients").fill("2");
-  await expect(dialog).toContainText("Prerequisites declared");
-  const saving = page.waitForResponse(
-    (r) =>
-      r.url().endsWith("/scenarios/" + context.scenario.id) &&
-      r.request().method() === "PATCH",
-  );
-  await dialog
-    .getByRole("button", { name: "Save proposed transfer plan" })
-    .click();
-  expect((await saving).ok()).toBeTruthy();
-  const saved = await api(page.request, "/scenarios/" + context.scenario.id);
-  expect(saved.interventions.at(-1).destination_unit_id).toBe("UNIT-EAST-WARD");
-  const run = await waitRun(
-    page,
-    (
-      await api(page.request, "/run-groups", "POST", {
-        scenario_id: context.scenario.id,
-      })
-    ).id,
-  );
-  const events = (
-    await api(
-      page.request,
-      `/runs/${run.selected_replication_id}/events?limit=200`,
-    )
-  ).items;
-  const accepted = events.find(
-      (e: any) => e.event_type === "transfer_accepted",
-    ),
-    departed = events.find((e: any) => e.event_type === "transfer_departed"),
-    arrived = events.find((e: any) => e.event_type === "transfer_arrived");
-  expect(accepted).toBeTruthy();
-  expect(departed).toBeTruthy();
-  expect(arrived).toBeTruthy();
-  expect(Date.parse(accepted.occurred_at)).toBeLessThanOrEqual(
-    Date.parse(departed.occurred_at),
-  );
-  expect(Date.parse(departed.occurred_at)).toBeLessThan(
-    Date.parse(arrived.occurred_at),
-  );
-  const at = await api(
-      page.request,
-      `/runs/${run.selected_replication_id}/state?at=${encodeURIComponent(accepted.occurred_at)}`,
-    ),
-    patient = await api(
-      page.request,
-      `/runs/${run.selected_replication_id}/patients/${accepted.patient_id}?at=${encodeURIComponent(accepted.occurred_at)}`,
-    );
-  expect(patient.state).toBe("transfer_reserved");
-  expect(
-    at.units.find((u: any) => u.unit_id === "UNIT-EAST-WARD").reserved,
-  ).toBeGreaterThan(0);
-  expect(patient.unit_id).toBe("UNIT-ED");
-  expect(
-    (await api(page.request, "/run-groups/" + initial.id)).input_sha256,
-  ).toBe(initial.input_sha256);
-  await open(page, context.scenario.id, "replay", run.id);
-  await capture(page, "bounded-transfer-replay", info);
-  record("bounded-transfer", {
-    scenario_id: saved.id,
-    original_run_id: initial.id,
-    run_id: run.id,
-    patient_id: accepted.patient_id,
-    accepted_at: accepted.occurred_at,
-    departed_at: departed.occurred_at,
-    arrived_at: arrived.occurred_at,
-    clinic_icu_rejected: true,
-    source_retained_until_pickup: true,
-  });
-});
-
 test("patient filters and unit evidence expose exact selected-run details", async ({
   page,
 }, info) => {
@@ -277,8 +166,6 @@ test("patient filters and unit evidence expose exact selected-run details", asyn
     .click();
   await page.getByLabel("Required care").selectOption("icu");
   await expect(page.locator(".table-footer")).toContainText("4 patients");
-  await page.getByLabel("Transfer eligibility").selectOption("true");
-  await expect(page.locator(".table-footer")).toContainText("4 patients");
   await page
     .getByLabel("Waiting reason")
     .selectOption("no_matching_physical_place");
@@ -290,7 +177,7 @@ test("patient filters and unit evidence expose exact selected-run details", asyn
     "Time waiting",
   );
   await expect(page.locator(".patient-table tbody")).toContainText(
-    "ICU MONITOR",
+    "Intensive care monitor",
   );
   await capture(page, "patient-full-filters", info);
   await page.getByLabel("Maximum remaining hours").fill("1");

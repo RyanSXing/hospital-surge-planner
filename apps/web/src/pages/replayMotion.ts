@@ -2,9 +2,11 @@ export type ReplayPoint = { x: number; y: number };
 export type ReplayMotion = {
   rep: string;
   at: number;
+  fromAt: number;
   height: number;
   points: Map<string, ReplayPoint>;
   origins: Map<string, ReplayPoint>;
+  entering: Set<string>;
   startedAt: number;
   duration: number;
 };
@@ -25,7 +27,7 @@ export function replayFramePoint(
   progress: number,
 ): ReplayPoint {
   const t = Math.max(0, Math.min(1, progress));
-  const eased = t * t * (3 - 2 * t);
+  const eased = t;
   const u = 1 - eased;
   const dx = to.x - from.x;
   return {
@@ -52,6 +54,7 @@ export function prepareReplayMotion({
   playing,
   reduced,
   now,
+  originAt,
 }: {
   previous: ReplayMotion | null;
   rep: string;
@@ -62,22 +65,26 @@ export function prepareReplayMotion({
   playing: boolean;
   reduced: boolean;
   now: number;
+  originAt?: number;
 }): ReplayMotion {
   const continuous =
     playing && !reduced && previous?.rep === rep && previous.height === height;
   // Inspection/selection rerenders must not restart an animation already in flight.
   if (continuous && previous.at === at) return { ...previous, points };
-  const moved = Array.from(points).some(([id, point]) => {
-    const prior = origins.get(id);
-    return prior && (prior.x !== point.x || prior.y !== point.y);
-  });
+  const advance = continuous && at > previous.at;
   return {
     rep,
     at,
+    fromAt: advance ? Math.min(at, originAt ?? previous.at) : at,
     height,
     points,
-    origins: continuous && at > previous.at && moved ? origins : points,
+    origins: advance ? origins : points,
+    entering: advance
+      ? new Set(
+          Array.from(points.keys()).filter((id) => !previous.points.has(id)),
+        )
+      : new Set(),
     startedAt: now,
-    duration: continuous && at > previous.at && moved ? 850 : 0,
+    duration: advance ? 1000 : 0,
   };
 }

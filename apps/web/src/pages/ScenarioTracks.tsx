@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { NativeSelect } from "@mantine/core";
 import type { Dataset, Entity } from "../types";
-import { api, atDay, fmt } from "../api";
+import { api, atDay, fmt, localDate } from "../api";
 import { Button, ErrorBox, Modal } from "../components/ui";
 import { ZonedDateTimeInput } from "../components/ZonedDateTimeInput";
 import {
@@ -13,8 +13,6 @@ import {
   capacityFacts,
   withPlan,
   withoutPlan,
-  movePlan,
-  resizePlan,
   readinessError,
   inferMixBasis,
   mixForBasis,
@@ -29,26 +27,10 @@ import type {
   PlanSelection,
 } from "./scenarioPlans";
 export const planFamilies: [PlanFamily, string, string][] = [
-  [
-    "cohort",
-    "Arrival cohorts",
-    "Change the disposition or resource-profile mix",
-  ],
-  [
-    "staff",
-    "Staff availability",
-    "Role, unit, declared shift and affected staff",
-  ],
-  [
-    "capacity",
-    "Physical, ready & usable capacity",
-    "Edit space and staffing drivers separately",
-  ],
-  [
-    "equipment",
-    "Equipment availability",
-    "Add, fail, repair or retire declared equipment",
-  ],
+  ["cohort", "Patient care needs", "Choose the care new patients need"],
+  ["staff", "Staff availability", "Adjust staffing for a unit or shift"],
+  ["capacity", "Hospital beds", "Change available beds or add nurses"],
+  ["equipment", "Equipment", "Adjust equipment availability"],
   [
     "sites",
     "Sites & transfers",
@@ -56,10 +38,50 @@ export const planFamilies: [PlanFamily, string, string][] = [
   ],
   [
     "incident",
-    "One-time incident batches",
-    "Add a specified number of synthetic arrivals",
+    "Extra patient arrivals",
+    "Schedule an additional group of patients",
   ],
 ];
+const friendly = (value: string) =>
+  ({
+    "RP-ED-BASIC": "Emergency care · usual needs",
+    "RP-ED-MONITORED": "Emergency care · monitoring",
+    "RP-WARD-BASIC": "Ward care · usual needs",
+    "RP-WARD-OXYGEN": "Ward care · oxygen",
+    "RP-ICU-MONITORED": "Intensive care · monitoring",
+    "RP-ICU-VENTILATED": "Intensive care · ventilation",
+    "COHORT-WARD-SHORT": "Ward · short stay",
+    "COHORT-WARD-STANDARD": "Ward · usual stay",
+    "COHORT-WARD-EXTENDED": "Ward · longer stay",
+    "COHORT-ICU-STANDARD": "Intensive care · usual stay",
+    "COHORT-ICU-EXTENDED": "Intensive care · longer stay",
+    "COHORT-ED": "Emergency assessment",
+    rn: "Registered nurse",
+    provider: "Provider",
+    support: "Support staff",
+    discharge: "Go home after assessment",
+    ward: "Ward admission",
+    icu: "Intensive care",
+    ambulatory: "Outpatient care",
+    OXYGEN: "Oxygen equipment",
+    ICU_MONITOR: "ICU monitors",
+    VENTILATOR: "Ventilators",
+    ED_MONITOR: "Emergency monitors",
+    ISOLATION: "Isolation equipment",
+    TRANSPORT: "Transport equipment",
+  })[value] ||
+  value
+    .replace(/^(COHORT|PROFILE|EQ|POOL|TEAM)[-_]/i, "")
+    .replaceAll("_", " ")
+    .replaceAll("-", " ")
+    .toLowerCase()
+    .replace(/^./, (x) => x.toUpperCase());
+const streamName = (id: string) =>
+  id === "ED_MAIN"
+    ? "Emergency department"
+    : id === "DIRECT_WARD_MAIN"
+      ? "Direct hospital admissions"
+      : "Hospital arrivals";
 const titleFor = (f: PlanFamily) => planFamilies.find((v) => v[0] === f)![1];
 const utcInput = (s: string) =>
   s ? new Date(s).toISOString().slice(0, 16) : "";
@@ -105,112 +127,83 @@ export default function ScenarioTracks({
       collection,
       value,
       index,
-      family: familyOf(value, collection),
+      family: familyOf(value, collection, dataset),
     })),
   );
   return (
     <div className="scenario-plan-tracks">
-      {planFamilies.map(([family, title, description]) => (
-        <section
-          className="track plan-family-track"
-          key={family}
-          aria-label={title + " timeline"}
-        >
-          <div className="track-label">
-            <strong title={description}>{title}</strong>
-            <span>{description}</span>
-            <button
-              onClick={() => setEditing({ family, selection: null })}
-              disabled={!canWrite}
-              aria-label={"Add " + title.toLowerCase()}
+      {planFamilies
+        .filter(([family]) => family !== "sites")
+        .map(([family, title, description]) => {
+          const selectedRows = rows.filter((row) => row.family === family);
+          return (
+            <section
+              className="optional-change-group"
+              key={family}
+              aria-label={title}
             >
-              + Add · {rows.filter((row) => row.family === family).length}{" "}
-              inputs
-            </button>
-          </div>
-          <div className="plan-family-rail" aria-label={`${title} assumptions`}>
-            {rows
-              .filter((row) => row.family === family)
-              .map(({ collection, value, index }) => {
-                const interval = planInterval(value, start, end),
-                  total = Date.parse(end) - Date.parse(start);
-                const left = Math.max(
-                  0,
-                  Math.min(
-                    98,
-                    (100 * (Date.parse(interval.start) - Date.parse(start))) /
-                      total,
-                  ),
-                );
-                const width = Math.max(
-                  2,
-                  Math.min(
-                    100 - left,
-                    (100 *
-                      (Date.parse(interval.end) - Date.parse(interval.start))) /
-                      total,
-                  ),
-                );
-                const observed =
-                  collection === "updates" &&
-                  value.input_kind !== "planned_assumption";
-                return (
-                  <PlanTimelineBlock
-                    key={recordId(value) || `${collection}-${index}`}
-                    value={value}
-                    left={left}
-                    width={width}
-                    interval={interval}
-                    start={start}
-                    end={end}
-                    zone={timeZone}
-                    canEdit={canWrite && !observed}
-                    onEdit={() =>
-                      setEditing({
-                        family,
-                        selection: { collection, id: recordId(value), index },
-                        value,
-                      })
-                    }
-                    onChange={(next) =>
-                      onChange(
-                        withPlan(
-                          draft,
-                          { collection, id: recordId(value), index },
-                          collection,
-                          next,
-                        ),
-                      )
-                    }
-                  />
-                );
-              })}
-            {!rows.some((row) => row.family === family) && (
-              <button
-                className="empty-track"
-                onClick={() => setEditing({ family, selection: null })}
-                disabled={!canWrite}
-              >
-                + Add {title.toLowerCase()}{" "}
-                <span>Exact values and timestamps</span>
-              </button>
-            )}
-          </div>
-        </section>
-      ))}
-      {rows.some((r) => !r.family && r.value.kind !== "arrival_multiplier") && (
-        <details className="preserved-assumptions">
-          <summary>Other imported assumptions (preserved)</summary>
-          {rows
-            .filter((r) => !r.family && r.value.kind !== "arrival_multiplier")
-            .map((r, i) => (
-              <p key={i}>
-                {r.value.name || r.value.kind || r.value.type} ·{" "}
-                {recordId(r.value) || "imported record"}
-              </p>
-            ))}
-        </details>
-      )}
+              <div className="optional-change-heading">
+                <div>
+                  <h4>{title}</h4>
+                  <p>{description}</p>
+                </div>
+                <Button
+                  small
+                  disabled={!canWrite}
+                  aria-label={"Add " + title.toLowerCase()}
+                  onClick={() => setEditing({ family, selection: null })}
+                >
+                  Add
+                </Button>
+              </div>
+              {selectedRows.length > 0 && (
+                <div className="optional-change-list">
+                  {selectedRows.map(({ collection, value, index }) => {
+                    const interval = planInterval(value, start, end);
+                    const observed =
+                      collection === "updates" &&
+                      value.input_kind !== "planned_assumption";
+                    return (
+                      <button
+                        className="optional-change-row"
+                        key={recordId(value) || `${collection}-${index}`}
+                        onClick={() =>
+                          setEditing({
+                            family,
+                            selection: {
+                              collection,
+                              id: recordId(value),
+                              index,
+                            },
+                            value,
+                          })
+                        }
+                        aria-label={`${value.name || title} ${observed ? "Recorded input" : "Planning assumption"}`}
+                      >
+                        <span>
+                          <strong>{value.name || title}</strong>
+                          <small>
+                            {localDate(interval.start, {
+                              month: "short",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit",
+                              timeZone,
+                            })}
+                            {interval.end !== interval.start
+                              ? ` – ${localDate(interval.end, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone })}`
+                              : ""}
+                          </small>
+                        </span>
+                        <span>{observed ? "View" : "Edit"}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          );
+        })}
       {editing && (
         <PlanForm
           key={editing.selection?.id || `${editing.family}-${request?.nonce}`}
@@ -267,22 +260,25 @@ function PlanForm({
   const defaultUnit =
     dataset.units.find(
       (u) =>
+        u.facility_id === "FAC-MAIN" &&
         u.kind === (family === "sites" ? "clinic" : "ward") &&
         (family === "sites" || u.capacity_mode === "staff_derived"),
     ) || dataset.units[0];
   const [name, setName] = useState(value?.name || titleFor(family));
-  const [kind, setKind] = useState(
+  const initialKind =
     value?.kind ||
-      value?.template_kind ||
-      value?.type ||
-      {
-        staff: "staff_unavailability",
-        capacity: "capacity_change",
-        equipment: "equipment_change",
-        sites: "clinic",
-        incident: "arrival_batch",
-        cohort: "care_mix_override",
-      }[family],
+    value?.template_kind ||
+    value?.type ||
+    {
+      staff: "staff_unavailability",
+      capacity: "capacity_change",
+      equipment: "equipment_change",
+      sites: "clinic",
+      incident: "arrival_batch",
+      cohort: "care_mix_override",
+    }[family];
+  const [kind, setKind] = useState(
+    initialKind === "activate_overflow" ? "staffed_overflow" : initialKind,
   );
   const [at, setAt] = useState(
     value?.effective_at || value?.at || value?.start_at || start,
@@ -477,19 +473,32 @@ function PlanForm({
   }, [family, dataset.id, unit, role, at, until]);
   const changeKind = (next: string) => {
     setKind(next);
-    const target = dataset.units.find((u) =>
-      next === "clinic"
-        ? u.kind === "clinic"
-        : next === "partner_transfer"
-          ? u.capacity_mode === "advertised_aggregate" && u.kind === care
-          : next === "advertised_capacity_change"
-            ? u.capacity_mode === "advertised_aggregate"
-            : u.kind === "ward" &&
-              (next === "physical_overflow" || next === "staffed_overflow"
-                ? u.enabled_capacity === 0
-                : u.capacity_mode === "staff_derived"),
-    );
-    if (target) setUnit(target.unit_id);
+    const target = dataset.units
+      .filter((u) => u.facility_id === "FAC-MAIN")
+      .find((u) =>
+        next === "clinic"
+          ? u.kind === "clinic"
+          : next === "partner_transfer"
+            ? u.capacity_mode === "advertised_aggregate" && u.kind === care
+            : next === "advertised_capacity_change"
+              ? u.capacity_mode === "advertised_aggregate"
+              : u.kind === "ward" &&
+                (next === "physical_overflow" || next === "staffed_overflow"
+                  ? dataset.slots.some(
+                      (slot) =>
+                        slot.unit_id === u.unit_id &&
+                        slot.installation_status === "planned",
+                    )
+                  : u.capacity_mode === "staff_derived"),
+      );
+    if (target) {
+      setUnit(target.unit_id);
+      if (next === "physical_overflow" || next === "staffed_overflow")
+        setQuantity(
+          dataset.slots.filter((slot) => slot.unit_id === target.unit_id)
+            .length,
+        );
+    }
     setDelay(
       next === "clinic"
         ? 360
@@ -510,7 +519,9 @@ function PlanForm({
         );
       const interval =
         ["staff", "cohort", "sites"].includes(family) ||
-        ["physical_overflow", "staff_existing"].includes(kind);
+        ["physical_overflow", "staffed_overflow", "staff_existing"].includes(
+          kind,
+        );
       if (
         interval &&
         (!until ||
@@ -519,6 +530,16 @@ function PlanForm({
       )
         throw new Error(
           "The end must follow the start and fall within the scenario horizon.",
+        );
+      if (
+        ["physical_overflow", "staffed_overflow"].includes(kind) &&
+        (!Number.isInteger(quantity) ||
+          quantity < facts.enabled ||
+          quantity >
+            dataset.slots.filter((slot) => slot.unit_id === unit).length)
+      )
+        throw new Error(
+          `Choose a total from ${facts.enabled} existing beds to ${dataset.slots.filter((slot) => slot.unit_id === unit).length} including planned beds.`,
         );
       const id = value?.id || value?.update_id || crypto.randomUUID();
       const base = {
@@ -713,7 +734,9 @@ function PlanForm({
         onChange={(value) => setAt(isoInput(value))}
       />
       {["staff", "cohort", "sites"].includes(family) ||
-      ["physical_overflow", "staff_existing"].includes(kind) ? (
+      ["physical_overflow", "staffed_overflow", "staff_existing"].includes(
+        kind,
+      ) ? (
         <ZonedDateTimeInput
           label="End time (exclusive)"
           timeZone={timeZone}
@@ -722,8 +745,8 @@ function PlanForm({
         />
       ) : null}
       <small>
-        Fields and timeline use {timeZone}. Repeated daylight-saving hours
-        require an explicit occurrence; nonexistent local times cannot be saved.
+        Times use {timeZone}. Repeated daylight-saving hours require an explicit
+        occurrence; nonexistent local times cannot be saved.
       </small>
     </>
   );
@@ -739,6 +762,7 @@ function PlanForm({
         }}
       >
         {dataset.units
+          .filter((u) => u.facility_id === "FAC-MAIN")
           .filter((u) =>
             kind === "clinic"
               ? u.kind === "clinic"
@@ -746,11 +770,23 @@ function PlanForm({
                 ? u.kind === care && u.capacity_mode === "advertised_aggregate"
                 : kind === "advertised_capacity_change"
                   ? u.capacity_mode === "advertised_aggregate"
-                  : true,
+                  : ["physical_overflow", "staffed_overflow"].includes(kind)
+                    ? dataset.slots.some(
+                        (slot) =>
+                          slot.unit_id === u.unit_id &&
+                          slot.installation_status === "planned",
+                      )
+                    : kind === "staff_existing"
+                      ? u.kind === "ward"
+                      : true,
           )
           .map((u) => (
             <option key={u.unit_id} value={u.unit_id}>
-              {u.name} · {u.unit_id}
+              {u.kind === "icu"
+                ? "Intensive care"
+                : u.kind === "ed"
+                  ? "Emergency department"
+                  : u.name}
             </option>
           ))}
       </NativeSelect>
@@ -773,8 +809,8 @@ function PlanForm({
             }}
           >
             <option value="care">Care level</option>
-            <option value="profiles">Declared resource profiles</option>
-            <option value="cohorts">Declared cohorts</option>
+            <option value="profiles">Equipment and care needs</option>
+            <option value="cohorts">Patient groups</option>
             {mixKind === "mixed" && (
               <option value="mixed" disabled>
                 Imported mixed care/profile/cohort keys
@@ -785,7 +821,7 @@ function PlanForm({
       )}
       {Object.keys(mix).map((key) => (
         <label key={key}>
-          {key} (%)
+          {friendly(key)} (%)
           <input
             type="number"
             min="0"
@@ -814,30 +850,30 @@ function PlanForm({
         <p className="info-note">
           {observed
             ? "This is an inherited operational report. It remains unchanged here; use Record update to correct its reported history."
-            : "A synthetic planning assumption, saved with this scenario. It does not record an observed event or change a completed run."}
+            : "This change applies to future simulations of this scenario."}
         </p>
         <fieldset disabled={!canWrite || observed} className="plan-form-fields">
           <label>
-            Assumption name
+            Change name
             <input value={name} onChange={(e) => setName(e.target.value)} />
           </label>
           {family === "capacity" && (
             <label>
-              Capacity driver
+              Bed or staffing change
               <NativeSelect
-                aria-label="Capacity driver"
+                aria-label="Bed or staffing change"
                 value={kind}
                 onChange={(e) => changeKind(e.target.value)}
               >
-                <option value="capacity_change">Enabled physical slots</option>
+                <option value="capacity_change">Change available beds</option>
                 <option value="physical_overflow">
-                  Install planned physical overflow
+                  Open planned ward beds
+                </option>
+                <option value="staffed_overflow">
+                  Open and staff planned ward beds
                 </option>
                 <option value="staff_existing">
-                  Staff existing enabled beds
-                </option>
-                <option value="advertised_capacity_change">
-                  Advertised partner staffing
+                  Add nurses to existing beds
                 </option>
               </NativeSelect>
             </label>
@@ -883,21 +919,19 @@ function PlanForm({
                 </NativeSelect>
               </label>
               <label>
-                Availability input
+                Choose staff using
                 <NativeSelect
-                  aria-label="Availability input"
+                  aria-label="Choose staff using"
                   value={staffMode}
                   onChange={(e) => setStaffMode(e.target.value)}
                 >
-                  <option value="named">Named unavailable staff</option>
+                  <option value="named">Individual staff members</option>
                   <option value="percentage">
-                    Absent percentage in a declared shift
+                    Percentage absent for a shift
                   </option>
-                  <option value="count">
-                    Absent headcount in a declared shift
-                  </option>
+                  <option value="count">Number absent for a shift</option>
                   <option value="available">
-                    Available headcount in a declared shift
+                    Number available for a shift
                   </option>
                 </NativeSelect>
               </label>
@@ -909,9 +943,9 @@ function PlanForm({
               {staffMode !== "named" ? (
                 <>
                   <label>
-                    Declared shift
+                    Scheduled shift
                     <NativeSelect
-                      aria-label="Declared shift"
+                      aria-label="Scheduled shift"
                       value={shift}
                       onChange={(e) => setShift(e.target.value)}
                     >
@@ -956,7 +990,7 @@ function PlanForm({
                 </>
               ) : (
                 <fieldset className="staff-picks">
-                  <legend>Declared {role} roster</legend>
+                  <legend>{friendly(role)} roster</legend>
                   {matchingStaff.map((s) => (
                     <label key={s.staff_id}>
                       <input
@@ -970,47 +1004,44 @@ function PlanForm({
                           )
                         }
                       />
-                      {s.staff_id} · {s.team_id}
+                      {s.name ||
+                        `${friendly(s.role)} ${dataset.staff.findIndex((person) => person.staff_id === s.staff_id) + 1}`}
                     </label>
                   ))}
                 </fieldset>
               )}
               <p className="info-note">
-                {chosenStaff.length} exact staff IDs will be unavailable.
-                Shift-based inputs affect only the chosen shift within the
-                specified interval; other assignments stay scheduled.
+                {chosenStaff.length} staff members affected. Shift changes apply
+                only during the selected shift.
               </p>
             </>
           )}
           {family === "capacity" && (
             <div className="capacity-concepts">
-              <strong>Snapshot capacity calculation</strong>
+              <strong>Current bed capacity</strong>
               <dl>
                 <div>
-                  <dt>Installed physical</dt>
+                  <dt>Installed beds</dt>
                   <dd>
-                    {facts.installed} (+{facts.planned} declared planned)
+                    {facts.installed} (+{facts.planned} planned)
                   </dd>
                 </div>
                 <div>
-                  <dt>Enabled physical</dt>
+                  <dt>Available beds</dt>
                   <dd>{facts.enabled}</dd>
                 </div>
                 <div>
-                  <dt>Ready physical</dt>
-                  <dd>{facts.ready} free enabled spaces at snapshot</dd>
+                  <dt>Free beds</dt>
+                  <dd>{facts.ready} free beds now</dd>
                 </div>
                 <div>
-                  <dt>Staff-supported ceiling</dt>
+                  <dt>Beds supported by staff</dt>
                   <dd>{facts.staffed}</dd>
                 </div>
               </dl>
               <p>
-                Usable capacity is computed from enabled ready spaces, qualified
-                staffing and minimum team gates, reservations, turnover and
-                equipment. These are separate constraints; changing a physical
-                count cannot create staff or equipment. Run the scenario to see
-                forecast availability.
+                Beds need staff and equipment before patients can use them. The
+                simulation checks these limits together.
               </p>
             </div>
           )}
@@ -1018,23 +1049,42 @@ function PlanForm({
             <label>
               {kind === "advertised_capacity_change"
                 ? "Advertised staffed places"
-                : kind === "physical_overflow"
-                  ? "Physical places to install and enable"
-                  : "Enabled physical places"}
+                : ["physical_overflow", "staffed_overflow"].includes(kind)
+                  ? "Total beds after opening"
+                  : "Available beds"}
               <input
                 type="number"
-                min="0"
+                min={
+                  ["physical_overflow", "staffed_overflow"].includes(kind)
+                    ? facts.enabled
+                    : 0
+                }
+                max={
+                  ["physical_overflow", "staffed_overflow"].includes(kind)
+                    ? dataset.slots.filter((slot) => slot.unit_id === unit)
+                        .length
+                    : undefined
+                }
                 value={quantity}
                 onChange={(e) => setQuantity(+e.target.value)}
               />
+              {["physical_overflow", "staffed_overflow"].includes(kind) && (
+                <small>
+                  {facts.enabled} current beds + up to {facts.planned} planned
+                  beds.{" "}
+                  {kind === "staffed_overflow"
+                    ? "Reserve staff below will support these beds."
+                    : "Staff are scheduled separately."}
+                </small>
+              )}
             </label>
           )}
           {family === "equipment" && (
             <>
               <label>
-                Equipment pool
+                Equipment
                 <NativeSelect
-                  aria-label="Equipment pool"
+                  aria-label="Equipment"
                   value={pool}
                   onChange={(e) => setPool(e.target.value)}
                 >
@@ -1043,16 +1093,16 @@ function PlanForm({
                       key={p.equipment_pool_id}
                       value={p.equipment_pool_id}
                     >
-                      {p.equipment_pool_id} · {p.capability_code} ·{" "}
-                      {p.portable ? "portable" : "fixed"}
+                      {p.name || friendly(p.capability_code)}
+                      {p.portable ? " · portable" : ""}
                     </option>
                   ))}
                 </NativeSelect>
               </label>
               <label>
-                Equipment operation
+                What changes?
                 <NativeSelect
-                  aria-label="Equipment operation"
+                  aria-label="What changes?"
                   value={operation}
                   onChange={(e) => setOperation(e.target.value)}
                 >
@@ -1091,9 +1141,9 @@ function PlanForm({
           {["incident", "cohort"].includes(family) && (
             <>
               <label>
-                Incident or cohort entry stream
+                Where patients arrive
                 <NativeSelect
-                  aria-label="Incident or cohort entry stream"
+                  aria-label="Where patients arrive"
                   value={stream}
                   onChange={(e) => {
                     setStream(e.target.value);
@@ -1101,17 +1151,22 @@ function PlanForm({
                     setMix(mixForBasis(dataset, e.target.value, "care"));
                   }}
                 >
-                  {dataset.entry_streams?.map((s: Entity) => (
-                    <option key={s.entry_stream_id} value={s.entry_stream_id}>
-                      {s.entry_stream_id} · {s.entry_type}
-                    </option>
-                  ))}
+                  {dataset.entry_streams
+                    ?.filter(
+                      (s: Entity) =>
+                        !s.facility_id || s.facility_id === "FAC-MAIN",
+                    )
+                    .map((s: Entity) => (
+                      <option key={s.entry_stream_id} value={s.entry_stream_id}>
+                        {streamName(s.entry_stream_id)}
+                      </option>
+                    ))}
                 </NativeSelect>
               </label>
               {family === "incident" && (
                 <>
                   <label>
-                    Incident patient count
+                    Additional patients
                     <input
                       type="number"
                       min="0"
@@ -1121,7 +1176,7 @@ function PlanForm({
                     />
                   </label>
                   <label>
-                    Incident spread (minutes)
+                    Spread arrivals over (minutes)
                     <input
                       type="number"
                       min="0"
@@ -1130,8 +1185,8 @@ function PlanForm({
                     />
                   </label>
                   <p>
-                    Added once to baseline arrivals, with synthetic incident
-                    provenance. Zero spread means the same arrival instant.
+                    Added once to usual arrivals. Use 0 minutes to have everyone
+                    arrive together.
                   </p>
                 </>
               )}
@@ -1277,12 +1332,14 @@ function PlanForm({
                       <option value="rotating">
                         Rotating qualified reserve pool
                       </option>
-                      <option value="named">Exact reserve staff IDs</option>
+                      <option value="named">
+                        Choose individual reserve staff
+                      </option>
                     </NativeSelect>
                   </label>
                   {staffSource === "named" ? (
                     <fieldset className="staff-picks">
-                      <legend>Declared reserve staff</legend>
+                      <legend>Available reserve staff</legend>
                       {dataset.staff
                         .filter((s) => s.employment_pool === "reserve")
                         .map((s) => (
@@ -1298,7 +1355,8 @@ function PlanForm({
                                 )
                               }
                             />
-                            {s.staff_id} · {s.role}
+                            {s.name ||
+                              `${friendly(s.role)} ${dataset.staff.findIndex((person) => person.staff_id === s.staff_id) + 1}`}
                           </label>
                         ))}
                     </fieldset>
@@ -1337,7 +1395,7 @@ function PlanForm({
                     .filter((p) => p.portable)
                     .map((p) => (
                       <label key={p.equipment_pool_id}>
-                        {p.equipment_pool_id} ({p.capability_code}, {p.quantity}{" "}
+                        {p.name || friendly(p.capability_code)} ({p.quantity}{" "}
                         total)
                         <input
                           type="number"
@@ -1375,7 +1433,7 @@ function PlanForm({
         <div className="modal-actions">
           {selection && !observed && (
             <Button onClick={onDelete} disabled={!canWrite}>
-              Remove assumption
+              Remove change
             </Button>
           )}
           <Button onClick={onClose}>Cancel</Button>
@@ -1384,185 +1442,10 @@ function PlanForm({
             onClick={save}
             disabled={!canWrite || observed || scheduleLoading}
           >
-            Apply assumption
+            Apply change
           </Button>
         </div>
       </div>
     </Modal>
-  );
-}
-
-function PlanTimelineBlock({
-  value,
-  left,
-  width,
-  interval,
-  start,
-  end,
-  zone,
-  canEdit,
-  onEdit,
-  onChange,
-}: {
-  value: Entity;
-  left: number;
-  width: number;
-  interval: { start: string; end: string };
-  start: string;
-  end: string;
-  zone: string;
-  canEdit: boolean;
-  onEdit: () => void;
-  onChange: (v: Entity) => void;
-}) {
-  const drag = useRef<{
-      x: number;
-      mode: "move" | "start" | "end";
-      width: number;
-    } | null>(null),
-    suppressClick = useRef(false);
-  const [preview, setPreview] = useState(0);
-  const total = Date.parse(end) - Date.parse(start),
-    a = Date.parse(interval.start),
-    b = Date.parse(interval.end),
-    isInterval = b > a;
-  function apply(delta: number, mode: "move" | "start" | "end") {
-    if (mode === "move")
-      return movePlan(
-        value,
-        Math.max(
-          (Date.parse(start) - a) / 60000,
-          Math.min(delta, (Date.parse(end) - b - 1) / 60000),
-        ),
-      );
-    const instant =
-      mode === "start"
-        ? Math.max(Date.parse(start), Math.min(a + delta * 60000, b - 60000))
-        : Math.min(Date.parse(end), Math.max(b + delta * 60000, a + 60000));
-    return resizePlan(value, mode, new Date(instant).toISOString());
-  }
-  const begin = (e: React.PointerEvent, mode: "move" | "start" | "end") => {
-    if (!canEdit || e.button !== 0) return;
-    e.stopPropagation();
-    drag.current = {
-      x: e.clientX,
-      mode,
-      width: e.currentTarget
-        .closest(".plan-timeline-row")!
-        .getBoundingClientRect().width,
-    };
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
-  const pointerMove = (e: React.PointerEvent) => {
-    if (drag.current) {
-      const delta =
-        Math.round(
-          (((e.clientX - drag.current.x) / drag.current.width) * total) /
-            60000 /
-            15,
-        ) * 15;
-      setPreview(delta);
-      if (Math.abs(e.clientX - drag.current.x) > 4)
-        suppressClick.current = true;
-    }
-  };
-  const finish = (e: React.PointerEvent) => {
-    if (!drag.current) return;
-    const mode = drag.current.mode;
-    drag.current = null;
-    if (e.currentTarget.hasPointerCapture(e.pointerId))
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    if (suppressClick.current && preview) onChange(apply(preview, mode));
-    setPreview(0);
-  };
-  const key = (e: React.KeyboardEvent, mode: "move" | "start" | "end") => {
-    if (!canEdit || !["ArrowLeft", "ArrowRight"].includes(e.key)) return;
-    e.preventDefault();
-    onChange(
-      apply((e.key === "ArrowLeft" ? -1 : 1) * (e.shiftKey ? 1440 : 60), mode),
-    );
-  };
-  const label = value.name || (value.kind || value.type).replaceAll("_", " ");
-  return (
-    <div className="plan-timeline-row">
-      <div
-        className="plan-block-group"
-        style={{
-          marginLeft: `${left}%`,
-          width: `${width}%`,
-          transform:
-            preview && drag.current?.mode === "move"
-              ? `translateX(${((preview * 60000) / total) * drag.current.width}px)`
-              : undefined,
-        }}
-      >
-        {isInterval && canEdit && (
-          <button
-            className="plan-resize-handle"
-            aria-label={`Resize start of ${label}`}
-            onPointerDown={(e) => begin(e, "start")}
-            onPointerMove={pointerMove}
-            onPointerUp={finish}
-            onPointerCancel={() => {
-              drag.current = null;
-              setPreview(0);
-            }}
-            onKeyDown={(e) => key(e, "start")}
-          >
-            ‹
-          </button>
-        )}
-        <button
-          className="plan-timeline-block"
-          aria-label={`${label} ${canEdit ? "Planning assumption" : "Recorded input"}`}
-          title={`${label}\n${interval.start} — ${interval.end}\nDrag to move; arrow keys move one hour, Shift+arrow one day. Exact values are available by opening this assumption.`}
-          onPointerDown={(e) => begin(e, "move")}
-          onPointerMove={pointerMove}
-          onPointerUp={finish}
-          onPointerCancel={() => {
-            drag.current = null;
-            setPreview(0);
-          }}
-          onKeyDown={(e) => key(e, "move")}
-          onClick={() => {
-            if (suppressClick.current) {
-              suppressClick.current = false;
-              return;
-            }
-            onEdit();
-          }}
-        >
-          <span>{label}</span>
-          <small>{canEdit ? "Planning assumption" : "Recorded input"}</small>
-        </button>
-        {isInterval && canEdit && (
-          <button
-            className="plan-resize-handle"
-            aria-label={`Resize end of ${label}`}
-            onPointerDown={(e) => begin(e, "end")}
-            onPointerMove={pointerMove}
-            onPointerUp={finish}
-            onPointerCancel={() => {
-              drag.current = null;
-              setPreview(0);
-            }}
-            onKeyDown={(e) => key(e, "end")}
-          >
-            ›
-          </button>
-        )}
-      </div>
-      <span className="plan-timeline-time">
-        {new Intl.DateTimeFormat("en-US", {
-          timeZone: zone,
-          month: "short",
-          day: "numeric",
-          hour: "numeric",
-          minute: "2-digit",
-        }).format(new Date(interval.start))}
-        {isInterval ? " · interval" : " · one time"}
-        {preview ? ` · ${preview > 0 ? "+" : ""}${preview} min` : ""}
-      </span>
-    </div>
   );
 }

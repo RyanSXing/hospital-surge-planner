@@ -125,7 +125,7 @@ def counts(client):
 
 
 def test_clinic_bad_input_cannot_create_scenario_or_queue_existing_draft(client, monkeypatch):
-    context = setup_context(client)
+    context = setup_context(client, "planning_baseline")
     scenario = create_short_scenario(client, context, replications=1)
 
     def unexpected(*args, **kwargs):

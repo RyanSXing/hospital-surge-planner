@@ -4,8 +4,6 @@ import { resolve } from "node:path";
 import {
   api,
   exportResults,
-  revealSummaryTimeline,
-  revealOutcomeMetrics,
   assertPageHealthy,
   capture,
   open,
@@ -28,7 +26,12 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
     Number.isInteger(workflowDays) && workflowDays >= 1 && workflowDays <= 365,
   ).toBe(true);
   page.on("pageerror", (e) => errors.push(e.message));
-  const context = await scenario(page, "complete workflow");
+  const context = await scenario(
+    page,
+    "complete workflow",
+    {},
+    "hospital_baseline",
+  );
   console.log("workflow: created", context.scenario.id);
   await open(page, context.scenario.id, "overview");
   console.log("workflow: scenario screen loaded");
@@ -38,8 +41,11 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
       process.env.E2E_SCENARIO_NAME || "E2E 70 percent surge " + Date.now(),
     );
   await page.getByLabel("Increase in ED arrivals").fill("70");
+  const moreParameters = page.locator(".more-simulation-parameters");
+  await moreParameters.locator(":scope > summary").click();
   await page.getByLabel("Planning horizon").fill(String(workflowDays));
   await page.getByLabel("Simulation runs").selectOption("10");
+  await moreParameters.locator(":scope > summary").click();
   console.log("workflow: fields configured");
   const submitted = page.waitForResponse(
     (r) =>
@@ -137,7 +143,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
     .getByText("Full outcome metrics & resource assumptions", { exact: true })
     .click();
   await expect(page.locator(".comparison-metrics")).toContainText(
-    "Interfacility transfers",
+    "Completed inpatient admissions",
   );
   await page.locator(".comparison-plan-resources > summary").last().click();
   await page
@@ -208,7 +214,7 @@ test("configure, compute, inspect, compare, update, replay and export", async ({
   await page.getByLabel("Pause replay").click();
   await page.getByText("View patient census", { exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: /Accessible replay census/ }),
+    page.getByRole("heading", { name: /Patient list/ }),
   ).toBeVisible();
   await capture(page, "workflow-replay", info);
   await exportResults(page);

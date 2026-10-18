@@ -3,7 +3,7 @@ import { ArrowRight, Clock3, Database, Hospital, Layers } from "lucide-react";
 import type { PlanningContext } from "../types";
 import { fmt, localDate, unitId } from "../api";
 import { isActive, nameOf, queueStats, statsFor } from "../model";
-import { Badge, Button } from "../components/ui";
+import { Button } from "../components/ui";
 import "./planningOverview.css";
 
 export interface PlanningOverviewProps {
@@ -113,7 +113,7 @@ export default function PlanningOverview({
                   : "Hospital baseline"}
               </h2>
               <span>
-                {fmt(census.length)} modeled patients
+                {fmt(census.length)} patients
                 {background ? ` · ${fmt(background)} background occupants` : ""}
               </span>
             </div>
@@ -122,9 +122,6 @@ export default function PlanningOverview({
             <span className="planning-baseline-asof">
               <Clock3 size={13} aria-hidden="true" /> As of {at}
             </span>
-            <Badge tone={dataset?.synthetic ? "amber" : "neutral"}>
-              {dataset?.synthetic ? "Synthetic baseline" : "Dataset baseline"}
-            </Badge>
           </div>
         </div>
 

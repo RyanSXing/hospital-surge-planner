@@ -51,6 +51,8 @@ def fixture_identity(fixture, seed=41021, days=365):
 
 
 def generate_dataset(fixture="planning_baseline", seed=41021, days=365):
+    if fixture == "hospital_baseline":
+        return generate_hospital_dataset(seed=seed, days=days)
     if fixture not in ("planning_baseline", "stress_snapshot"):
         raise ValueError("Unknown fixture")
     if not 1 <= int(days) <= 365:
@@ -880,5 +882,70 @@ def generate_dataset(fixture="planning_baseline", seed=41021, days=365):
         "counts": {f["name"].removesuffix(".json"): f["row_count"] for f in files},
         "coverage_days": days,
     }
+    data["input_sha256"] = digest(data)
+    return data
+
+
+def generate_hospital_dataset(seed=41021, days=365):
+    """Versioned single-hospital inventory; legacy fixtures remain byte-for-byte stable."""
+    data = generate_dataset("planning_baseline", seed=seed, days=days)
+    version = fixture_identity("hospital_baseline", seed, days)
+    data.update(id=version, dataset_version_id=version, fixture="hospital_baseline", label="Hospital baseline")
+    data["organizations"][0]["name"] = "Hospital planning workspace"
+    data["facilities"] = [f for f in data["facilities"] if f["facility_id"] == "FAC-MAIN"]
+    data["facilities"][0].update(name="Vanderbilt University Hospital", latitude=36.14229, longitude=-86.801627)
+    data["units"] = [u for u in data["units"] if u["facility_id"] == "FAC-MAIN"]
+    unit_ids = {u["unit_id"] for u in data["units"]}
+    for key in ("slots", "geometry"):
+        data[key] = [row for row in data[key] if row["unit_id"] in unit_ids]
+    data["unit_layouts"] = data["geometry"]
+    # These are space inside the hospital, never an alternate care site. Opening
+    # a bed still requires installation, readiness, qualified staff and equipment.
+    for i in range(21, 33):
+        data["slots"].append({
+            "slot_id": f"SLOT-WC-{i:03}", "unit_id": "UNIT-WARD-C", "slot_kind": "ward_bed",
+            "enabled": False, "installation_status": "planned", "capabilities": ["WARD_CARE"],
+            "display_label": str(i), "layout_x": ((i - 1) % 6 + 1) / 7,
+            "layout_y": ((i - 1) // 6 + 1) / 7,
+        })
+    data["partner_equipment"] = []
+    data["routes"] = []
+    data["vehicles"] = []
+    data["clinic_policies"] = []
+    for pathway in data["pathway_profiles"]:
+        pathway["clinic_policy_id"] = None
+    data["equipment_pools"] = [p for p in data["equipment_pools"] if p["capability_code"] != "CLINIC_KIT"]
+    data["capacity_policies"] = [p for p in data["capacity_policies"] if p["unit_kind"] in {"ward", "icu", "ed"}]
+    data["resource_profiles"] = [p for p in data["resource_profiles"] if p["stage_kind"] != "clinic"]
+    for profile in data["resource_profiles"]:
+        profile.update(transfer_allowed=False, required_transport_capability=None)
+    for cohort in data["cohorts"]:
+        cohort["transfer_eligibility"] = False
+    for patient in data["patients"]:
+        patient["eligible_for_transfer"] = False
+    for person in data["staff"]:
+        person["capabilities"] = [c for c in person["capabilities"] if not c.startswith("CLINIC_")]
+    for stream in data["entry_streams"]:
+        stream["clinic_eligibility_probability_given_discharge"] = 0
+    data["capabilities"] = [c for c in data["capabilities"] if not any(t in c["capability_code"] for t in ("CLINIC", "SHELTER", "TRANSPORT"))]
+    data["intervention_templates"] = [
+        {"template_kind": "staff_existing_beds", "kind": "staff_existing", "name": "Staff more ward beds", "activation_minutes": 0},
+        {"template_kind": "open_hospital_beds", "kind": "physical_overflow", "name": "Open extra hospital beds", "activation_minutes": 60, "unit_id": "UNIT-WARD-C", "facility_id": "FAC-MAIN"},
+    ]
+    data["update_fixtures"] = [u for u in data["update_fixtures"] if u["type"] not in {"site_ready", "advertised_capacity_change"}]
+    data["assumptions"] = [
+        "Patients, staff, inventory and demand are generated planning data, not Vanderbilt operational records.",
+        "The hospital map is centered at Vanderbilt University Hospital; internal unit geometry is illustrative.",
+        "Only this hospital is modeled. No partner transfers, temporary sites or shelters are used.",
+        "Historical episodes and the current census are independent generated samples.",
+        "Bed capacity requires installed, ready spaces, qualified staff and compatible equipment.",
+        "Financial costs are not configured.",
+    ]
+    alias = {"staff_assignments", "unit_layouts", "distributions", "baseline"}
+    files = [{"name": key + ".json", "row_count": len(value), "sha256": digest(value)}
+             for key, value in data.items() if isinstance(value, list) and key not in alias]
+    data["manifest"].update(dataset_version_id=version, files=files,
+                            counts={f["name"].removesuffix(".json"): f["row_count"] for f in files})
+    data.pop("input_sha256", None)
     data["input_sha256"] = digest(data)
     return data

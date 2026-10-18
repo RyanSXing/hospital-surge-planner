@@ -2,37 +2,28 @@ import { ArrowUpRight, Play } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { fmt, localDate } from "../api";
 import { Badge, Button } from "./ui";
+import { responseName } from "../pages/resultsMetrics";
 
 const fields: [string, string, string][] = [
   [
     "inpatient_waiting_patient_hours",
-    "Inpatient placement waiting",
+    "Total time waiting for a hospital bed",
     "patient-hours",
   ],
-  ["ed_waiting_patient_hours", "ED assessment waiting", "patient-hours"],
-  ["peak_inpatient_queue", "Peak inpatient queue", "patients"],
   [
-    "time_to_first_shortage_hours",
-    "First unmet placement demand",
-    "hours after start",
+    "ed_waiting_patient_hours",
+    "Total time waiting for emergency assessment",
+    "patient-hours",
   ],
-  [
-    "hours_with_unmet_placement_demand",
-    "Duration with unmet placement demand",
-    "hours",
-  ],
+  ["peak_inpatient_queue", "Most patients waiting for a bed", "patients"],
+  ["time_to_first_shortage_hours", "First bed queue", "hours after start"],
+  ["hours_with_unmet_placement_demand", "Time with a bed queue", "hours"],
   ["discharges", "Completed discharges", "patients"],
   ["completed_admissions", "Completed inpatient admissions", "patients"],
-  ["patients_transferred", "Interfacility transfers", "patients"],
-  ["unserved_at_horizon", "Unresolved inpatient requests at end", "patients"],
+  ["unserved_at_horizon", "Still waiting for a bed at the end", "patients"],
   ["staff_deficit_hours", "Staffing coverage deficit", "place-hours"],
   ["equipment_deficit_hours", "Equipment coverage deficit", "equipment-hours"],
   ["additional_staff_hours", "Additional staff assignments", "staff-hours"],
-  [
-    "temporary_site_patients_served",
-    "Temporary-site services completed",
-    "patients",
-  ],
 ];
 function scalar(value: unknown, stat = "p50"): number | null {
   const raw =
@@ -52,7 +43,7 @@ function valueText(value: unknown, missing = "Unavailable") {
       {median === null ? missing : fmt(median, 1)}
       {low !== null && high !== null ? (
         <small>
-          P10–P90: {fmt(low, 1)}–{fmt(high, 1)}
+          Typical range: {fmt(low, 1)}–{fmt(high, 1)}
         </small>
       ) : null}
     </>
@@ -72,9 +63,9 @@ export default function ComparisonDetails({
     <details className="comparison-metrics">
       <summary>Full outcome metrics & resource assumptions</summary>
       <p className="muted small-copy">
-        Full-horizon median and P10–P90 across the matched runs. Reduction
-        intervals use paired differences. Unobserved outcomes remain distinct
-        from zero.
+        Middle results across the full simulation. The typical range covers the
+        middle 80% of runs. Waiting reductions compare runs with the same
+        arrivals.
       </p>
       <div className="table-scroll">
         <table className="data-table">
@@ -110,7 +101,9 @@ export default function ComparisonDetails({
               </tr>
             ))}
             <tr>
-              <th scope="row">Paired waiting reduction · patient-hours</th>
+              <th scope="row">
+                Less waiting than the current plan · patient-hours
+              </th>
               {plans.map((p, i) => (
                 <td key={p.id}>
                   {i === 0
@@ -122,7 +115,7 @@ export default function ComparisonDetails({
               ))}
             </tr>
             <tr>
-              <th scope="row">Relative waiting reduction · percent</th>
+              <th scope="row">Less waiting than the current plan · percent</th>
               {plans.map((p, i) => {
                 const baseline = scalar(
                     plans[0]?.metrics?.scalar_metrics
@@ -144,7 +137,7 @@ export default function ComparisonDetails({
                         {`${fmt(value, 1)}%`}
                         {p.improvement?.relative_change_percent ? (
                           <small>
-                            P10–P90:{" "}
+                            Typical range:{" "}
                             {fmt(p.improvement.relative_change_percent.p10, 1)}–
                             {fmt(p.improvement.relative_change_percent.p90, 1)}%
                           </small>
@@ -196,10 +189,10 @@ export default function ComparisonDetails({
               }
             >
               {p.feasibility?.feasible === false
-                ? "Prerequisites unmet"
+                ? "Unavailable"
                 : p.status === "SUCCEEDED"
-                  ? "Simulated feasible"
-                  : "Awaiting evaluation"}
+                  ? "Ready to use"
+                  : "Not yet compared"}
             </Badge>
           </summary>
           <div className="comparison-plan-resource-body">
@@ -208,12 +201,7 @@ export default function ComparisonDetails({
                 <dl key={v.id || index}>
                   <div>
                     <dt>Proposed action</dt>
-                    <dd>
-                      {(v.name || v.kind || "Resource allocation").replaceAll(
-                        "_",
-                        " ",
-                      )}
-                    </dd>
+                    <dd>{responseName(v)}</dd>
                   </div>
                   <div>
                     <dt>Scheduled start</dt>
@@ -235,22 +223,29 @@ export default function ComparisonDetails({
                     <dt>Activation lead time</dt>
                     <dd>
                       {v.activation_minutes === undefined
-                        ? "Modeled site / template assumption"
+                        ? "Default preparation time"
                         : `${v.activation_minutes} minutes`}
                     </dd>
                   </div>
                   <div>
                     <dt>Target</dt>
                     <dd>
-                      {v.unit_id ||
-                        v.facility_id ||
-                        "Template target from dataset"}
+                      {ctx.dataset?.units?.find(
+                        (unit) =>
+                          unit.unit_id === (v.unit_id || v.destination_unit_id),
+                      )?.name ||
+                        ctx.dataset?.facilities?.find(
+                          (facility) => facility.facility_id === v.facility_id,
+                        )?.name ||
+                        "Hospital ward"}
                     </dd>
                   </div>
                   <div>
                     <dt>Staff allocation</dt>
                     <dd>
-                      {v.assigned_staff_ids?.join(", ") ||
+                      {(v.assigned_staff_ids?.length
+                        ? `${v.assigned_staff_ids.length} qualified staff`
+                        : null) ||
                         [
                           v.nurses === undefined ? null : `${v.nurses} nurses`,
                           v.providers === undefined
@@ -262,7 +257,7 @@ export default function ComparisonDetails({
                         ]
                           .filter(Boolean)
                           .join(" · ") ||
-                        "Qualified template allocation from available reserve"}
+                        "Available reserve staff"}
                     </dd>
                   </div>
                   <div>
@@ -271,7 +266,7 @@ export default function ComparisonDetails({
                       {v.enabled_slots ??
                         v.beds ??
                         v.quantity ??
-                        "Template quantity from dataset"}
+                        "Planned hospital beds"}
                     </dd>
                   </div>
                 </dl>

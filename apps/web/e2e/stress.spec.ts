@@ -24,7 +24,7 @@ test("stress census exposes initial boarding and actual patient blockers", async
   await open(page, context.scenario.id, "summary", run.id);
   const waiting = page
     .locator(".summary-metrics article")
-    .filter({ hasText: "Awaiting inpatient placement" });
+    .filter({ hasText: "Patients waiting for a bed" });
   await expect(waiting).toContainText("14");
   await expect(
     page
@@ -51,10 +51,8 @@ test("stress census exposes initial boarding and actual patient blockers", async
     "Awaiting suitable inpatient capacity",
   );
   await expect(page.locator(".patient-inspector")).toContainText(
-    "Current simultaneous blockers",
+    "Why this patient is waiting",
   );
-  await page.getByRole("button", { name: "Find placement options" }).click();
-  await expect(page.locator(".eligibility-row").first()).toBeVisible();
   await capture(page, "stress-patient-blockers", info);
   record("stress-context", {
     scenario_id: context.scenario.id,

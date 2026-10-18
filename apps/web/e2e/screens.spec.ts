@@ -29,7 +29,6 @@ test("the two-page workspace and analysis sections render actual run context", a
     "replay",
     "analytics-outcomes",
     "analytics-patients",
-    "analytics-resources",
     "comparison",
     "data",
   ];
@@ -52,8 +51,6 @@ test("the two-page workspace and analysis sections render actual run context", a
       ).toBeVisible();
       await expect(page.locator(".patient-census tbody tr")).not.toHaveCount(0);
     }
-    if (view === "analytics-resources")
-      await expect(page.locator(".resources-page")).toBeVisible();
     if (view === "replay")
       await expect(page.locator(".replay-summary")).toContainText(
         "84 active patients",
@@ -71,13 +68,7 @@ test("the two-page workspace and analysis sections render actual run context", a
       const assertComparisonWidth = async () => {
         const pageWidth = (await page.locator(".compare-page").boundingBox())!
           .width;
-        for (const selector of [
-          ".comparison-main",
-          ".comparison-chart",
-          ".comparison-outcomes",
-          ".comparison-capacity-details",
-          ".comparison-metrics",
-        ]) {
+        for (const selector of [".comparison-main", ".comparison-chart"]) {
           const box = await page.locator(selector).boundingBox();
           expect(box, selector).not.toBeNull();
           expect(

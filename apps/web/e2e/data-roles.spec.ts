@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { api, capture, open, record, scenario } from "./helpers";
+import { api, capture, open, record, scenario, signInAs } from "./helpers";
 function csv(
   rows: Record<string, any>[],
   rename: Record<string, string> = {},
@@ -39,9 +39,9 @@ test("typed data editor and multi-file mapped import create immutable versions",
   await expect(page.getByText("Editable draft", { exact: true })).toBeVisible();
   await page.locator(".entity-panel tbody tr").first().click();
   const editor = page.getByRole("dialog");
-  await editor.getByLabel("turnover minutes", { exact: true }).fill("25");
+  await editor.getByLabel("Turnover minutes", { exact: true }).fill("25");
   await expect(
-    editor.getByLabel("physical capacity", { exact: true }),
+    editor.getByLabel("Installed beds", { exact: true }),
   ).toBeVisible();
   await capture(page, "typed-editor", info);
   await editor
@@ -156,7 +156,7 @@ test("viewer sees disabled mutation controls and the API rejects writes", async 
     role: "viewer",
   });
   await api(page.request, "/auth/logout", "POST", {});
-  await api(page.request, "/auth/login", "POST", { username, password });
+  await signInAs(page, { username, password });
   await open(page, context.scenario.id, "overview");
   await expect(
     page

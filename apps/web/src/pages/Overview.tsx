@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import {
   Activity,
   ArrowRight,
@@ -8,7 +8,6 @@ import {
   CalendarRange,
   Clock3,
   Info,
-  Map,
   ShieldCheck,
 } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
@@ -31,8 +30,6 @@ import {
 } from "../model";
 import { finiteStatistic } from "./resultsMetrics";
 import "./summaryDashboard.css";
-
-const CampusMap = lazy(() => import("../components/CampusMap"));
 
 function selectedRow(rows: Entity[], at: string) {
   if (!rows.length) return 0;
@@ -67,18 +64,16 @@ export default function Overview({
   const peakQueue = metric.peak_inpatient_queue;
   const predictedShortage = finiteStatistic(firstShortage);
   const noRecordedQueue = finiteStatistic(peakQueue, "max") === 0;
-  const forecastWaiting = finiteStatistic(
-    metric.inpatient_waiting_patient_hours,
-  );
+  const admissionWait = finiteStatistic(metric.completed_wait_median_hours);
   const hasPressure = !queue.unavailable && queue.total > 0;
   const facility = ctx.dataset?.facilities?.find(
     (item) => (item.id || item.facility_id) === ctx.selectedFacility,
   );
   const wardIds = new Set(ward.units.map((unit) => unit.unit_id || unit.id));
   const patients = patientsOf(ctx);
-  const wardSlots = (selectedStateUnavailable
-    ? []
-    : ctx.state?.slots || ctx.dataset?.slots || [])
+  const wardSlots = (
+    selectedStateUnavailable ? [] : ctx.state?.slots || ctx.dataset?.slots || []
+  )
     .filter(
       (slot: Entity) =>
         wardIds.has(slot.unit_id) && slot.installation_status === "installed",
@@ -96,17 +91,17 @@ export default function Overview({
   const insight = hasPressure
     ? {
         tone: "warning" as const,
-        title: `${queue.total} patients need an inpatient place now`,
+        title: `${queue.total} patients are waiting for a bed`,
         body: `${queue.ward} need ward care and ${queue.icu} need intensive care. Review patients first, then compare response options.`,
       }
     : predictedShortage !== null
       ? {
           tone: "warning" as const,
           title: `Patients may start waiting for beds after ${fmt(predictedShortage, 1)} hours`,
-          body: "Timing includes only runs with a bed queue. Compare staffing and overflow options.",
+          body: "Timing includes only runs with a bed queue. Compare staffing and extra hospital beds.",
         }
       : {
-          tone: noRecordedQueue ? "success" as const : "neutral" as const,
+          tone: noRecordedQueue ? ("success" as const) : ("neutral" as const),
           title: noRecordedQueue
             ? "No inpatient bed queue in these results"
             : "Review the queue charts for bed pressure",
@@ -169,7 +164,7 @@ export default function Overview({
           </small>
         </article>
         <article className={`stat${hasPressure ? " needs-attention" : ""}`}>
-          <span>Awaiting inpatient placement</span>
+          <span>Patients waiting for a bed</span>
           <strong>{queue.unavailable ? "—" : queue.total}</strong>
           <small>
             {selectedStateUnavailable
@@ -178,13 +173,13 @@ export default function Overview({
           </small>
         </article>
         <article className="stat">
-          <span>Forecast waiting</span>
+          <span>Typical admission wait</span>
           <strong>
-            {ctx.metrics && forecastWaiting !== null
-              ? fmt(forecastWaiting, 1)
+            {ctx.metrics && admissionWait !== null
+              ? `${fmt(admissionWait, 1)} h`
               : "—"}
           </strong>
-          <small>patient-hours · median across runs</small>
+          <small>completed admissions · median across runs</small>
         </article>
       </section>
 
@@ -194,7 +189,9 @@ export default function Overview({
             <Activity size={22} aria-hidden="true" />
           ) : insight.tone === "success" ? (
             <ShieldCheck size={22} aria-hidden="true" />
-          ) : <Info size={22} aria-hidden="true" />}
+          ) : (
+            <Info size={22} aria-hidden="true" />
+          )}
         </div>
         <div>
           <span>What needs attention</span>
@@ -207,8 +204,14 @@ export default function Overview({
               Review patients <ArrowRight size={14} />
             </Button>
           ) : null}
-          <Button primary onClick={() => ctx.setPage(noRecordedQueue ? "overview" : "compare")}>
-            {noRecordedQueue ? "Test another scenario" : "Compare responses"} <ArrowUpRight size={14} />
+          <Button
+            primary
+            onClick={() =>
+              ctx.setPage(noRecordedQueue ? "overview" : "compare")
+            }
+          >
+            {noRecordedQueue ? "Test another scenario" : "Compare responses"}{" "}
+            <ArrowUpRight size={14} />
           </Button>
         </div>
       </section>
@@ -252,13 +255,13 @@ export default function Overview({
           <div className="summary-card-heading">
             <div>
               <span className="eyebrow">WAITING PRESSURE</span>
-              <h2>Patients in queue</h2>
+              <h2>Patients waiting</h2>
             </div>
           </div>
           <ForecastChart
             rows={rows}
             keys={["inpatient_queue", "ed_queue"]}
-            labels={["Inpatient placement", "ED assessment"]}
+            labels={["Waiting for a bed", "Waiting for emergency assessment"]}
             height={220}
             selected={rowIndex}
             onSelect={(index) =>
@@ -267,7 +270,10 @@ export default function Overview({
             showBand={false}
             yLabel="Patients waiting"
           />
-          <p>Inpatient placement and ED assessment are separate queues.</p>
+          <p>
+            See the people waiting for a bed and those waiting for emergency
+            assessment.
+          </p>
         </article>
       </section>
 
@@ -281,10 +287,8 @@ export default function Overview({
             <Building2 size={18} />
           </span>
           <span>
-            <strong>Explore facilities and exact bed status</strong>
-            <small>
-              Campus map, ward places, patient links, and source details
-            </small>
+            <strong>Hospital and bed details</strong>
+            <small>Ward beds, available capacity, and patient details</small>
           </span>
           <span>{operationsOpen ? "Hide" : "Show"}</span>
         </summary>
@@ -302,103 +306,89 @@ export default function Overview({
               </div>
             </div>
           ) : (
-          <>
-            <section
-              className="summary-current-state"
-              aria-labelledby="current-state-title"
-            >
-              <div className="summary-section-heading">
-                <div>
-                  <span className="eyebrow">AT THE SELECTED TIME</span>
-                  <h2 id="current-state-title">Capacity at a glance</h2>
-                </div>
-                <span>
-                  {ctx.run?.status === "SUCCEEDED"
-                    ? `Example run ${selectedRunNumber(ctx) || "—"}`
-                    : "Initial census"}
-                </span>
-              </div>
-              <div className="summary-capacity-grid">
-                <CapacityBar label="General ward" {...ward} capacity={ward.staffed} />
-                <CapacityBar
-                  label="Intensive care"
-                  {...icu}
-                  capacity={icu.staffed}
-                  color="red"
-                />
-                <CapacityBar
-                  label="Emergency department"
-                  {...ed}
-                  capacity={ed.staffed}
-                  color="green"
-                />
-              </div>
-            </section>
-          <div className="summary-operations-grid">
-            <section className="summary-map-panel" aria-label="Campus map">
-              <Suspense
-                fallback={
-                  <div className="summary-map-loading">Loading campus map…</div>
-                }
+            <>
+              <section
+                className="summary-current-state"
+                aria-labelledby="current-state-title"
               >
-                <CampusMap ctx={ctx} />
-              </Suspense>
-              <div className="summary-source-line">
-                <Map size={14} aria-hidden="true" />
-                <span>
-                  Source:{" "}
-                  {ctx.state ? "selected simulation run" : "planning dataset"}
-                </span>
-                <span>{ctx.dataset?.fixture?.replaceAll("_", " ")}</span>
-              </div>
-            </section>
-            <section className="summary-bed-panel">
-              <div className="summary-card-heading">
-                <div>
-                  <span className="eyebrow">SELECTED FACILITY</span>
-                  <h2>{nameOf(facility || {}) || "Central Hospital"}</h2>
-                </div>
-                <Badge>{facility?.status || "Active"}</Badge>
-              </div>
-              <div className="summary-bed-heading">
-                <span>
-                  <BedDouble size={16} /> Ward places
-                </span>
-                <strong>
-                  {ward.physical} physical · {ward.staffed} staffed
-                </strong>
-              </div>
-              <BedGrid
-                physical={ward.physical}
-                staffed={ward.staffed}
-                occupied={ward.occupied}
-                cleaning={ward.cleaning}
-                slots={wardSlots}
-                onSelectSlot={(slot) => {
-                  ctx.setPatient(
-                    patients.find(
-                      (patient) => patient.slot_id === slot.slot_id,
-                    ) ||
-                      (slot.patient_id
-                        ? { patient_id: slot.patient_id }
-                        : null),
-                  );
-                  ctx.setPage("patients");
-                }}
-              />
-              <BedLegend />
-              {ward.physical > ward.staffed ? (
-                <div className="summary-detail-note">
-                  <Info size={15} />
+                <div className="summary-section-heading">
+                  <div>
+                    <span className="eyebrow">AT THE SELECTED TIME</span>
+                    <h2 id="current-state-title">Capacity at a glance</h2>
+                  </div>
                   <span>
-                    {ward.physical - ward.staffed} physical places do not have
-                    enough qualified staff to count as usable capacity.
+                    {ctx.run?.status === "SUCCEEDED"
+                      ? `Example run ${selectedRunNumber(ctx) || "—"}`
+                      : "Initial census"}
                   </span>
                 </div>
-              ) : null}
-            </section>
-          </div>
-          </>
+                <div className="summary-capacity-grid">
+                  <CapacityBar
+                    label="General ward"
+                    {...ward}
+                    capacity={ward.staffed}
+                  />
+                  <CapacityBar
+                    label="Intensive care"
+                    {...icu}
+                    capacity={icu.staffed}
+                    color="red"
+                  />
+                  <CapacityBar
+                    label="Emergency department"
+                    {...ed}
+                    capacity={ed.staffed}
+                    color="green"
+                  />
+                </div>
+              </section>
+              <div className="summary-operations-grid">
+                <section className="summary-bed-panel">
+                  <div className="summary-card-heading">
+                    <div>
+                      <span className="eyebrow">HOSPITAL WARD</span>
+                      <h2>{nameOf(facility || {}) || "Central Hospital"}</h2>
+                    </div>
+                  </div>
+                  <div className="summary-bed-heading">
+                    <span>
+                      <BedDouble size={16} /> Ward places
+                    </span>
+                    <strong>
+                      {ward.physical} physical · {ward.staffed} staffed
+                    </strong>
+                  </div>
+                  <BedGrid
+                    physical={ward.physical}
+                    staffed={ward.staffed}
+                    occupied={ward.occupied}
+                    cleaning={ward.cleaning}
+                    slots={wardSlots}
+                    onSelectSlot={(slot) => {
+                      ctx.setPatient(
+                        patients.find(
+                          (patient) => patient.slot_id === slot.slot_id,
+                        ) ||
+                          (slot.patient_id
+                            ? { patient_id: slot.patient_id }
+                            : null),
+                      );
+                      ctx.setPage("patients");
+                    }}
+                  />
+                  <BedLegend />
+                  {ward.physical > ward.staffed ? (
+                    <div className="summary-detail-note">
+                      <Info size={15} />
+                      <span>
+                        {ward.physical - ward.staffed} physical places do not
+                        have enough qualified staff to count as usable capacity.
+                      </span>
+                    </div>
+                  ) : null}
+                </section>
+              </div>
+            </>
           )
         ) : null}
       </details>

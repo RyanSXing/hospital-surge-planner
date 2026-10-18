@@ -2,7 +2,7 @@
 
 This user-requested rework supersedes the original specification's six-item primary navigation. The simulation model, generated data, constraints, frozen input contracts, and underlying planning capabilities remain governed by the build specification.
 
-The application has two primary pages. The subsequent [light hospital-management redesign](hospital-management-interface.md) further simplifies the layout and progressively discloses detailed tools:
+The application has two primary pages. The current [single-hospital workflow](single-hospital-workflow.md) supersedes the earlier broad editor described below. The subsequent [light hospital-management redesign](hospital-management-interface.md) further simplifies the layout and progressively discloses detailed tools:
 
 - **Overview** shows the editable scenario's source hospital baseline, snapshot timestamp, occupied/staffed/installed/enabled capacity, waiting census, and expandable unit inventory. The complete simulation editor follows: demand, staffing, equipment, capacity, sites, transfers, incident batches, horizon, repetitions, seeds, revisions, scenario library, and saved-input differences. Running saves the current editor inputs and opens Analysis/Summary.
 - **Analysis** contains **Summary**, **Replay**, **Analytics**, and **Comparison**. Summary brings together computed outcomes, the campus map, selected-time capacity, placement constraints, forecast, and calendar. Replay retains the patient-flow timeline and evidence tools. Analytics includes detailed ensemble outcomes plus patient/unit and resource inspection. Comparison evaluates matched response plans and opens a completed plan in Summary or Replay.

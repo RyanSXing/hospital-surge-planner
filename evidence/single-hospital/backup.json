@@ -1,0 +1,10 @@
+{
+  "created_before_scenario_archiving": true,
+  "format": "PostgreSQL custom dump",
+  "object_key": "backups/hospital-single-20261017T235145Z.dump",
+  "private_oci_storage": true,
+  "bytes": 4605463,
+  "sha256": "ae4c98fb70c38a7e0c0c11cf9601d1df23d0375a09af4a13d20a3854f0517c12",
+  "existing_resources_reused": true,
+  "retention_deletions": 0
+}

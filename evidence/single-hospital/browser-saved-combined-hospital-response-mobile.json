@@ -1,0 +1,9 @@
+{
+  "scenario_id": "scenario_6043d092b6ea4667b880",
+  "saved_plan_visible_under_hospital_beds": true,
+  "combined_kind_preserved": "staffed_overflow",
+  "physical_and_staff_fields_editable": true,
+  "enabled_slots": 28,
+  "nurses": 3,
+  "only_hospital_target_options": true
+}

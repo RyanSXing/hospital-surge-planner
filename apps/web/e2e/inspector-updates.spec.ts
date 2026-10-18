@@ -1,5 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { api, capture, open, record, scenario, waitRun } from "./helpers";
+import {
+  api,
+  capture,
+  open,
+  record,
+  scenario,
+  waitRun,
+  signInAs,
+} from "./helpers";
 
 test("cancelled runs explain their state and retry the same frozen input snapshot", async ({
   page,
@@ -135,62 +143,13 @@ test("inspector updates retain selected entities, exact time and frozen parent p
   expect(saved.source).toBe(`inspector:unit:${unit.unit_id}`);
   expect(branched.scenario.id).not.toBe(context.scenario.id);
   if (branched.run_group?.id) await waitRun(page, branched.run_group.id);
-  const cases = [
-    {
-      kind: "equipment_pool",
-      id: dataset.equipment_pools[1].equipment_pool_id,
-      type: "equipment_change",
-      label: "Equipment pool",
-    },
-    {
-      kind: "staff",
-      id: dataset.staff[1].staff_id,
-      type: "staff_unavailable",
-      label: "Specific staff (optional; otherwise use unit/count)",
-    },
-    {
-      kind: "route",
-      id: dataset.routes[1].route_id,
-      type: "route_change",
-      label: "Directed route",
-    },
-  ];
-  for (const item of cases) {
-    await page.goto(
-      `/?scenario=${context.scenario.id}&run=${run.id}&view=analysis&analysis=analytics&section=resources&resource_type=${item.kind}&resource=${item.id}&at=${encodeURIComponent(at)}`,
-    );
-    const button = page
-      .locator("#resources-inspector-dock")
-      .getByRole("button", { name: "Record change", exact: true });
-    await expect(button).toBeEnabled();
-    await button.click();
-    await expect(
-      dialog.getByRole("combobox", { name: "Change to record", exact: true }),
-    ).toHaveValue(item.type);
-    if (item.kind === "staff")
-      await expect(
-        dialog.getByRole("listbox", { name: item.label, exact: true }),
-      ).toHaveValues([item.id]);
-    else
-      await expect(
-        dialog.getByRole("combobox", { name: item.label, exact: true }),
-      ).toHaveValue(item.id);
-    await expect(dialog.getByTestId("update-source-context")).toContainText(
-      item.id,
-    );
-    await dialog
-      .getByRole("button", { name: "Close dialog", exact: true })
-      .click();
-  }
   expect((await api(page.request, `/run-groups/${run.id}`)).input_sha256).toBe(
     run.input_sha256,
   );
   await page.goto(url);
   await expect(change).toBeEnabled();
   await capture(page, "inspector-update-context", info);
-  const viewer = await page.request.post("/api/auth/login", {
-    data: { demo_role: "viewer" },
-  });
+  const viewer = await signInAs(page, { demo_role: "viewer" });
   expect(viewer.ok()).toBe(true);
   await page.reload();
   await expect(change).toBeDisabled();
@@ -211,7 +170,7 @@ test("inspector updates retain selected entities, exact time and frozen parent p
     branch_scenario_id: branched.scenario.id,
     selected_unit: unit.unit_id,
     exact_effective_at: saved.effective_at,
-    resource_types: cases.map((c) => c.kind),
+    resource_types: ["unit"],
     parent_preserved: true,
     viewer_disabled_and_api_403: true,
   });

@@ -3,9 +3,7 @@ import { NativeSelect } from "@mantine/core";
 import {
   ArrowDownToLine,
   ArrowRight,
-  ArrowUpRight,
   Check,
-  ChevronRight,
   Clock3,
   GitCompareArrows,
   Info,
@@ -20,7 +18,12 @@ import { api, atDay, fmt, items, localDayIndex, num, post } from "../api";
 import { Badge, Button, Modal } from "../components/ui";
 import { ForecastChart, Timeline } from "../components/Charts";
 import { comparisonWardInventory } from "./comparisonCapacity";
-import { comparisonResultPlan } from "./resultsMetrics";
+import {
+  comparisonResultPlan,
+  finiteStatistic,
+  hospitalResponse,
+  responseName,
+} from "./resultsMetrics";
 import ComparisonDetails from "../components/ComparisonDetails";
 import {
   PlanningPanelControls,
@@ -30,39 +33,23 @@ import {
 import "./compare.css";
 const choices = [
   {
-    kind: "physical_overflow",
-    name: "Add physical overflow",
-    description:
-      "Install planned physical spaces. Staffing remains a separate requirement.",
-    icon: Layers,
-  },
-  {
     kind: "staff_existing",
-    name: "Staff existing ward beds",
-    description:
-      "Allocate available qualified reserve nurses to installed ward beds.",
+    name: "Staff more ward beds",
+    description: "Bring in reserve nurses to use beds already in the hospital.",
     icon: Users,
   },
   {
-    kind: "clinic",
-    name: "Activate outpatient clinic",
-    description:
-      "Allocate qualified reserve staff and equipment to eligible outpatient services.",
-    icon: Plus,
-  },
-  {
-    kind: "staffed_overflow",
-    name: "Staffed overflow ward",
-    description:
-      "Install planned inpatient spaces and assign their required resource bundle.",
+    kind: "physical_overflow",
+    name: "Open extra hospital beds",
+    description: "Open planned ward beds with the current staffing level.",
     icon: Layers,
   },
   {
-    kind: "partner_transfer",
-    name: "Partner transfer plan",
+    kind: "staffed_overflow",
+    name: "Open and staff extra beds",
     description:
-      "Reserve suitable receiving capacity and compatible transport.",
-    icon: ArrowUpRight,
+      "Open planned ward beds with reserve staff and available equipment.",
+    icon: Layers,
   },
 ];
 const palette = ["#65758b", "#a87614", "#1976c9", "#168976", "#8060b6"];
@@ -77,8 +64,8 @@ export default function Compare({
 }) {
   const panels = usePlanningPanels(180);
   const [selected, setSelected] = useState([
-      "physical_overflow",
       "staff_existing",
+      "staffed_overflow",
     ]),
     [comparison, setComparison] = useState<Entity | null>(null),
     [replications, setReplications] = useState(100),
@@ -97,6 +84,14 @@ export default function Compare({
     [checking, setChecking] = useState(false),
     [periodMetrics, setPeriodMetrics] = useState<Record<string, Metrics>>({}),
     [periodLoading, setPeriodLoading] = useState(false);
+  const availableChoices = choices.filter((choice) =>
+    hospitalResponse(ctx.dataset, choice.kind, ctx.scenario?.start_at),
+  );
+  const selectedChoices = selected.filter((kind) =>
+    availableChoices.some((choice) => choice.kind === kind),
+  );
+  const makeResponse = (kind: string) =>
+    hospitalResponse(ctx.dataset, kind, ctx.scenario?.start_at);
   useEffect(() => {
     let ignore = false;
     setPreflight(null);
@@ -110,12 +105,12 @@ export default function Compare({
       const common = { replications };
       Promise.all([
         post(`/scenarios/${ctx.scenario.id}/feasibility`, common),
-        ...selected.map((kind) =>
+        ...selectedChoices.map((kind) =>
           post(`/scenarios/${ctx.scenario!.id}/feasibility`, {
             ...common,
             interventions: [
               ...(ctx.scenario?.interventions || []),
-              { kind, start_at: ctx.scenario?.start_at },
+              makeResponse(kind),
             ],
           }),
         ),
@@ -125,11 +120,12 @@ export default function Compare({
           const estimate = base.compute_estimate;
           if (estimate) {
             const total =
-              estimate.expected_trajectories_per_run * (selected.length + 1);
+              estimate.expected_trajectories_per_run *
+              (selectedChoices.length + 1);
             setPreflight({
               ...estimate,
               valid: base.valid,
-              plans: selected.length + 1,
+              plans: selectedChoices.length + 1,
               expected_trajectories_total: total,
               within_budget:
                 estimate.within_budget &&
@@ -142,7 +138,10 @@ export default function Compare({
             );
           setPrerequisites(
             Object.fromEntries(
-              selected.map((kind, index) => [kind, reports[index].feasibility]),
+              selectedChoices.map((kind, index) => [
+                kind,
+                reports[index].feasibility,
+              ]),
             ),
           );
         })
@@ -161,9 +160,11 @@ export default function Compare({
     ctx.scenario?.id,
     ctx.scenario?.revision,
     replications,
-    selected.join(","),
+    selectedChoices.join(","),
+    ctx.dataset?.id,
   ]);
   function accept(c: Entity) {
+    setChosen("");
     if (c.scenario_id && c.scenario_id !== ctx.scenario?.id) {
       setComparison(null);
       return;
@@ -181,7 +182,7 @@ export default function Compare({
     const kinds = c.plans
       ?.slice(1)
       .map((p: Entity) => p.interventions?.at(-1)?.kind)
-      .filter(Boolean);
+      .filter((kind: string) => choices.some((choice) => choice.kind === kind));
     if (kinds?.length) setSelected(kinds);
   }
   useEffect(() => {
@@ -231,16 +232,17 @@ export default function Compare({
     historyReplace(u);
   }
   async function compare() {
+    setChosen("");
     await ctx.action("Submitting matched comparisons", async () => {
       setFetchError("");
       const result = await post("/comparisons", {
         scenario_id: ctx.scenario?.id,
         replications,
-        plans: selected.map((kind) => ({
+        plans: selectedChoices.map((kind) => ({
           name: choices.find((o) => o.kind === kind)?.name,
           interventions: [
             ...(ctx.scenario?.interventions || []),
-            { kind, id: crypto.randomUUID(), start_at: ctx.scenario?.start_at },
+            { ...makeResponse(kind), id: crypto.randomUUID() },
           ],
         })),
       });
@@ -300,21 +302,29 @@ export default function Compare({
       ignore = true;
     };
   }, [comparison?.id, comparison?.status, ctx.grain]);
-  const plans: Entity[] = comparison?.plans || [
+  const rawPlans: Entity[] = comparison?.plans || [
     { id: "reference", name: "Current plan", kind: "reference" },
-    ...selected.map((kind) => ({
+    ...selectedChoices.map((kind) => ({
       id: kind,
       name: choices.find((o) => o.kind === kind)?.name,
       kind,
     })),
   ];
+  const plans: Entity[] = rawPlans.map((plan, index): Entity => ({
+    ...plan,
+    name:
+      plan.reference === true || index === 0
+        ? "Current setup"
+        : plan.name || responseName(plan),
+  }));
   const maxWait = Math.max(
       1,
-      ...plans.map((p) =>
-        num(
-          (p.metrics?.scalar_metrics || p.metrics || {})
-            .inpatient_waiting_patient_hours,
-        ),
+      ...plans.map(
+        (p) =>
+          finiteStatistic(
+            (p.metrics?.scalar_metrics || p.metrics || {})
+              .inpatient_waiting_patient_hours,
+          ) ?? 0,
       ),
     ),
     first =
@@ -405,11 +415,18 @@ export default function Compare({
     comparison?.no_plan_improves,
     rankedPlan,
   );
-  const leadingIndex = leadingPlan
-    ? plans.findIndex((plan) => plan.id === leadingPlan.id)
-    : -1;
   const leadingWait =
     leadingPlan?.metrics?.scalar_metrics?.inpatient_waiting_patient_hours;
+  const selectedPlan =
+    comparison?.status === "SUCCEEDED"
+      ? plans.find(
+          (plan) =>
+            plan.id === chosen &&
+            plan.status === "SUCCEEDED" &&
+            plan.reference !== true &&
+            plan.feasibility?.feasible !== false,
+        )
+      : undefined;
   async function exportComparison() {
     await ctx.action("Exporting comparison", async () => {
       const exp = await post("/exports", {
@@ -458,7 +475,7 @@ export default function Compare({
               ctx.canWrite === false ||
               !!ctx.busy ||
               running ||
-              !selected.length ||
+              !selectedChoices.length ||
               checking ||
               preflight?.within_budget === false
             }
@@ -500,7 +517,7 @@ export default function Compare({
         <GitCompareArrows size={16} />
         <strong>{calendarScenario?.name}</strong>
         <span>{calendarScenario?.horizon_calendar_days} days</span>
-        <span>Paired random inputs</span>
+        <span>One hospital · same patient demand</span>
         <Badge
           tone={comparison?.status === "SUCCEEDED" ? "success" : "neutral"}
         >
@@ -512,12 +529,14 @@ export default function Compare({
         </Badge>
       </div>
       <div className="response-selector">
-        {choices.map((o) => (
+        {availableChoices.map((o) => (
           <button
             key={o.kind}
-            className={selected.includes(o.kind) ? "selected" : ""}
+            className={selectedChoices.includes(o.kind) ? "selected" : ""}
+            aria-pressed={selectedChoices.includes(o.kind)}
             disabled={
-              running || (!selected.includes(o.kind) && selected.length >= 3)
+              running ||
+              (!selectedChoices.includes(o.kind) && selectedChoices.length >= 3)
             }
             onClick={() => {
               setSelected((v) =>
@@ -525,6 +544,7 @@ export default function Compare({
                   ? v.filter((k) => k !== o.kind)
                   : [...v, o.kind],
               );
+              setChosen("");
               setComparison(null);
               onComparisonSelect?.(null);
               sessionStorage.removeItem(
@@ -536,7 +556,10 @@ export default function Compare({
             }}
           >
             <o.icon size={16} />
-            <span>{o.name}</span>
+            <span className="response-choice-copy">
+              <strong>{o.name}</strong>
+              <small>{o.description}</small>
+            </span>
             {selected.includes(o.kind) ? (
               <Check size={14} />
             ) : (
@@ -545,13 +568,21 @@ export default function Compare({
           </button>
         ))}
       </div>
+      {!availableChoices.length ? (
+        <p className="comparison-unavailable" role="status">
+          The hospital baseline has no additional ward beds or reserve staffing
+          to compare. Update the hospital setup to add a response.
+        </p>
+      ) : null}
       <details className="comparison-preflight">
         <summary>
           {checking
-            ? "Checking compute estimate & prerequisites…"
+            ? "Checking hospital readiness…"
             : preflight
-              ? `${fmt(preflight.plans)} plans × ${fmt(replications)} runs × ${fmt(preflight.expected_trajectories_per_replication)} expected patients = ${fmt(preflight.expected_trajectories_total)} trajectories`
-              : preflightError || "Execution estimate unavailable"}
+              ? preflight.within_budget === false
+                ? "Reduce the simulation size to continue"
+                : "More details · readiness and calculation settings"
+              : preflightError || "Readiness check unavailable"}
         </summary>
         <p className="muted small-copy">
           Estimate includes the initial census in every run. Budget:{" "}
@@ -565,7 +596,7 @@ export default function Compare({
             execution budget.
           </p>
         ) : null}
-        {selected.map((kind) => (
+        {selectedChoices.map((kind) => (
           <div className="preflight-row" key={kind}>
             <strong>{choices.find((o) => o.kind === kind)?.name}</strong>
             <span
@@ -576,8 +607,8 @@ export default function Compare({
               {prerequisites[kind]?.feasible === false
                 ? prerequisites[kind].reasons?.join(" · ")
                 : prerequisites[kind]
-                  ? "Inventory and scheduled roster prerequisites satisfied"
-                  : "Awaiting validation"}
+                  ? "This change can be scheduled"
+                  : "Checking availability"}
             </span>
           </div>
         ))}
@@ -585,8 +616,8 @@ export default function Compare({
       {comparison?.source_draft_revision &&
       ctx.scenario?.revision !== comparison.source_draft_revision ? (
         <div className="stale-banner">
-          This comparison uses saved revision {comparison.source_draft_revision}
-          . Evaluate again to include changes in the current draft.
+          The setup has changed since this comparison. Evaluate again to include
+          your latest changes.
         </div>
       ) : null}
       {fetchError || comparison?.status === "FAILED" ? (
@@ -616,24 +647,10 @@ export default function Compare({
             <h2>{leadingPlan.name}</h2>
             <p>
               {comparison?.no_plan_improves
-                ? "None of the tested responses improved the selected objective. The current plan remains the reference result."
-                : `${fmt(num(leadingWait), 1)} median patient-hours of inpatient waiting across the full horizon.`}
+                ? "These changes did not reduce waiting. Keep the current plan or adjust the simulation setup."
+                : `${fmt(num(leadingWait), 1)} patient-hours of total bed waiting, using the middle result across all runs.`}
             </p>
           </div>
-          {leadingIndex > 0 ? (
-            <Button
-              primary={chosen === leadingPlan.id}
-              disabled={
-                ctx.canWrite === false ||
-                leadingPlan.feasibility?.feasible === false
-              }
-              onClick={() => setChosen(leadingPlan.id)}
-            >
-              {chosen === leadingPlan.id
-                ? "Response selected"
-                : "Select this response"}
-            </Button>
-          ) : null}
         </section>
       ) : null}
       <div className="comparison-body">
@@ -686,8 +703,7 @@ export default function Compare({
                     </div>
                     <div className="plan-grid">
                       <span className="micro-label">
-                        MODELED WARD INVENTORY ·{" "}
-                        {inventory?.basis || "SAVED BASELINE PENDING"}
+                        WARD BEDS · {inventory?.basis || "Waiting for baseline"}
                       </span>
                       <div
                         className="capacity-diagram"
@@ -752,21 +768,6 @@ export default function Compare({
                             {fmt(num(fullHorizonWait))}
                             <small>patient-hours</small>
                           </strong>
-                          {comparison?.status === "SUCCEEDED" && i > 0 ? (
-                            <Button
-                              disabled={
-                                ctx.canWrite === false ||
-                                p.feasibility?.feasible === false
-                              }
-                              primary={chosen === p.id}
-                              onClick={() => setChosen(p.id)}
-                            >
-                              {chosen === p.id ? <Check size={13} /> : null}
-                              {chosen === p.id
-                                ? "Selected response"
-                                : "Select response"}
-                            </Button>
-                          ) : null}
                         </div>
                       ) : null}
                     </div>
@@ -791,7 +792,7 @@ export default function Compare({
             <div className="spread">
               <h3>
                 {chartMetric === "inpatient_queue"
-                  ? "Patients awaiting inpatient placement"
+                  ? "Patients waiting for a hospital bed"
                   : chartMetric === "ward_occupied"
                     ? "Ward occupancy"
                     : chartMetric === "icu_occupied"
@@ -818,7 +819,7 @@ export default function Compare({
                 data={[
                   {
                     value: "inpatient_queue",
-                    label: "Inpatient queue · patients",
+                    label: "Patients waiting for a bed",
                   },
                   {
                     value: "ward_occupied",
@@ -837,10 +838,10 @@ export default function Compare({
                 value={bandPlan}
                 onChange={(e) => setBandPlan(e.currentTarget.value)}
                 data={[
-                  { value: "none", label: "No band" },
+                  { value: "none", label: "Hide possible range" },
                   ...plottedPlans.map((plan) => ({
                     value: plan.chartKey,
-                    label: `${plan.name} · P10–P90`,
+                    label: `${plan.name} · possible range`,
                   })),
                 ]}
               />
@@ -890,128 +891,128 @@ export default function Compare({
             ) : null}
             {running ? (
               <div className="comparison-progress">
-                <span className="spin">◌</span> Evaluating recorded patient
-                trajectories under the same external demand.
+                <span className="spin">◌</span> Comparing how patients move
+                through the hospital…
               </div>
             ) : null}
           </section>
-          <div
-            className="comparison-outcomes"
-            style={{
-              gridTemplateColumns: `repeat(${plans.length},minmax(0,1fr))`,
-            }}
-          >
-            {plans.map((p, i) => {
-              const metrics = p.metrics?.scalar_metrics || {},
-                wait = metrics.inpatient_waiting_patient_hours,
-                has = wait !== undefined,
-                improvement = p.improvement;
-              return (
-                <div
-                  key={p.id}
-                  className={`outcome-card ${chosen === p.id ? "chosen" : ""}`}
-                >
-                  <span className="eyebrow">{p.name} · FULL HORIZON</span>
-                  <div className="outcome-number">
-                    {has ? fmt(num(wait)) : "—"}
-                    <small>patient-hours waiting</small>
-                  </div>
-                  <div className="outcome-bar">
-                    <span
-                      style={{
-                        width: `${has ? (num(wait) / maxWait) * 100 : 0}%`,
-                        background: palette[i],
-                      }}
-                    />
-                  </div>
-                  <dl>
-                    <div>
-                      <dt>Peak queue</dt>
-                      <dd>
-                        {has ? fmt(num(metrics.peak_inpatient_queue)) : "—"}{" "}
-                        patients
-                      </dd>
+          {comparison?.status === "SUCCEEDED" ? (
+            <div
+              className="comparison-outcomes"
+              style={{
+                gridTemplateColumns: `repeat(${plans.length},minmax(0,1fr))`,
+              }}
+            >
+              {plans.map((p, i) => {
+                const metrics = p.metrics?.scalar_metrics || {},
+                  wait = metrics.inpatient_waiting_patient_hours,
+                  waitMedian = finiteStatistic(wait),
+                  has = waitMedian !== null,
+                  peak = finiteStatistic(metrics.peak_inpatient_queue),
+                  improvement = p.improvement;
+                return (
+                  <div
+                    key={p.id}
+                    className={`outcome-card ${chosen === p.id ? "chosen" : ""}`}
+                  >
+                    <span className="eyebrow">{p.name} · FULL HORIZON</span>
+                    <div className="outcome-number">
+                      {has ? fmt(waitMedian) : "—"}
+                      <small>patient-hours waiting</small>
                     </div>
-                    <div>
-                      <dt>Median paired reduction</dt>
-                      <dd className={num(improvement?.p50) > 0 ? "green" : ""}>
-                        {i === 0
-                          ? "Reference"
-                          : improvement
-                            ? `${fmt(num(improvement.absolute_change || improvement), 1)} h`
-                            : "—"}
-                      </dd>
+                    <div className="outcome-bar">
+                      <span
+                        style={{
+                          width: `${has ? (waitMedian / maxWait) * 100 : 0}%`,
+                          background: palette[i],
+                        }}
+                      />
                     </div>
-                    {improvement && i > 0 ? (
-                      <>
-                        <div>
-                          <dt>P10–P90 reduction</dt>
-                          <dd>
-                            {fmt(
-                              num(
-                                improvement.absolute_change || improvement,
-                                "p10",
-                              ),
-                            )}{" "}
-                            –{" "}
-                            {fmt(
-                              num(
-                                improvement.absolute_change || improvement,
-                                "p90",
-                              ),
-                            )}{" "}
-                            h
-                          </dd>
-                        </div>
-                        <div>
-                          <dt>Runs with improvement</dt>
-                          <dd>
-                            {fmt(
-                              100 *
-                                (improvement.probability_of_improvement ??
-                                  improvement.probability_improvement ??
-                                  0),
-                            )}
-                            %
-                          </dd>
-                        </div>
-                      </>
+                    <dl>
+                      <div>
+                        <dt>Most patients waiting</dt>
+                        <dd>{peak !== null ? fmt(peak) : "—"} patients</dd>
+                      </div>
+                      <div>
+                        <dt>Less waiting</dt>
+                        <dd
+                          className={num(improvement?.p50) > 0 ? "green" : ""}
+                        >
+                          {i === 0
+                            ? "Reference"
+                            : improvement
+                              ? `${fmt(num(improvement.absolute_change || improvement), 1)} h`
+                              : "—"}
+                        </dd>
+                      </div>
+                      {improvement && i > 0 ? (
+                        <>
+                          <div>
+                            <dt>Typical range</dt>
+                            <dd>
+                              {fmt(
+                                num(
+                                  improvement.absolute_change || improvement,
+                                  "p10",
+                                ),
+                              )}{" "}
+                              –{" "}
+                              {fmt(
+                                num(
+                                  improvement.absolute_change || improvement,
+                                  "p90",
+                                ),
+                              )}{" "}
+                              h
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>Runs with less waiting</dt>
+                            <dd>
+                              {fmt(
+                                100 *
+                                  (improvement.probability_of_improvement ??
+                                    improvement.probability_improvement ??
+                                    0),
+                              )}
+                              %
+                            </dd>
+                          </div>
+                        </>
+                      ) : null}
+                    </dl>
+                    {p.feasibility?.feasible === false ? (
+                      <p className="amber small-copy">
+                        {p.feasibility.reasons?.join(" · ") ||
+                          "Resource prerequisites unmet"}
+                      </p>
                     ) : null}
-                  </dl>
-                  {p.feasibility?.feasible === false ? (
-                    <p className="amber small-copy">
-                      {p.feasibility.reasons?.join(" · ") ||
-                        "Resource prerequisites unmet"}
-                    </p>
-                  ) : null}
-                  {comparison?.status === "SUCCEEDED" && i > 0 ? (
-                    <Button
-                      className="full-width"
-                      disabled={
-                        ctx.canWrite === false ||
-                        p.feasibility?.feasible === false
-                      }
-                      primary={chosen === p.id}
-                      onClick={() => setChosen(p.id)}
-                    >
-                      {chosen === p.id ? <Check size={13} /> : null}
-                      {chosen === p.id
-                        ? "Selected planning response"
-                        : "Select response"}
-                    </Button>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-          {chosen && comparison?.id ? (
+                    {comparison?.status === "SUCCEEDED" && i > 0 ? (
+                      <Button
+                        className="full-width"
+                        disabled={
+                          ctx.canWrite === false ||
+                          p.feasibility?.feasible === false
+                        }
+                        primary={chosen === p.id}
+                        onClick={() => setChosen(p.id)}
+                      >
+                        {chosen === p.id ? <Check size={13} /> : null}
+                        {chosen === p.id
+                          ? "Selected response"
+                          : "Select response"}
+                      </Button>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+          {selectedPlan && comparison?.id ? (
             <section className="comparison-selected-action">
               <div>
                 <span className="eyebrow">SELECTED RESPONSE</span>
-                <strong>
-                  {plans.find((plan) => plan.id === chosen)?.name ||
-                    "Response plan"}
-                </strong>
+                <strong>{selectedPlan.name}</strong>
                 <span>
                   Save this evaluated response as a new scenario when you are
                   ready to continue planning.
@@ -1019,11 +1020,12 @@ export default function Compare({
               </div>
               <Button
                 primary
+                disabled={ctx.canWrite === false || !!ctx.busy}
                 onClick={() =>
                   ctx.action("Saving planning response", async () => {
                     const saved = await post(
                       `/comparisons/${comparison.id}/save-plan`,
-                      { plan_id: chosen },
+                      { plan_id: selectedPlan.id },
                     );
                     await ctx.saveScenario({ __select: saved.id });
                     ctx.notify(
@@ -1037,7 +1039,9 @@ export default function Compare({
               </Button>
             </section>
           ) : null}
-          <ComparisonDetails plans={plans} ctx={calendarCtx} />
+          {comparison?.status === "SUCCEEDED" ? (
+            <ComparisonDetails plans={plans} ctx={calendarCtx} />
+          ) : null}
         </div>
         <details
           className="comparison-explainer"
@@ -1080,15 +1084,15 @@ export default function Compare({
             </div>
             {comparison?.no_plan_improves ? (
               <div className="info-note">
-                None of these plans improves the selected objective. Review the
-                remaining constraints.
+                These plans did not reduce waiting. Review staffing, beds, and
+                equipment before trying another change.
               </div>
             ) : null}
             <Button
               className="full-width"
-              onClick={() => ctx.setPage("resources")}
+              onClick={() => ctx.setPage("overview")}
             >
-              Inspect resource dependencies <ChevronRight size={14} />
+              Adjust hospital setup <ArrowRight size={14} />
             </Button>
             {comparison?.status === "SUCCEEDED" ? (
               <Button className="full-width" onClick={exportComparison}>
@@ -1117,10 +1121,9 @@ export default function Compare({
           onClose={() => setAssumptions(false)}
         >
           <div className="info-note">
-            All plans use the same immutable dataset, horizon, model version,
-            and paired exogenous demand. Rank by median full-horizon waiting,
-            peak queue, additional staff-hours, configured costs, and activation
-            time.
+            Each option uses the same hospital, time period, and patient
+            arrivals. Results are ordered by total time waiting for a bed, then
+            by the largest queue and the staff needed.
           </div>
           <dl className="detail-list">
             <div>
@@ -1131,8 +1134,8 @@ export default function Compare({
               <dt>Dataset</dt>
               <dd>
                 {calendarScenario?.dataset_version_id === ctx.dataset?.id
-                  ? ctx.dataset?.fixture || ctx.dataset?.name
-                  : calendarScenario?.dataset_version_id}
+                  ? ctx.dataset?.name || "Hospital baseline"
+                  : "Saved hospital baseline"}
               </dd>
             </div>
             <div>
@@ -1140,7 +1143,7 @@ export default function Compare({
               <dd>{calendarScenario?.horizon_calendar_days} local days</dd>
             </div>
             <div>
-              <dt>Base seed</dt>
+              <dt>Randomness seed</dt>
               <dd>{calendarScenario?.base_seed}</dd>
             </div>
           </dl>
@@ -1150,11 +1153,13 @@ export default function Compare({
               const option = choices.find((o) => o.kind === kind);
               return (
                 <div key={plan.id || kind || index} className="assumption-row">
-                  <strong>{plan.name || option?.name || kind}</strong>
+                  <strong>
+                    {plan.name || option?.name || "Hospital response"}
+                  </strong>
                   <span>
                     {comparison
                       ? (plan.interventions || [])
-                          .map((value: Entity) => value.name || value.kind)
+                          .map((value: Entity) => responseName(value))
                           .join(" · ") ||
                         "Reference scenario resource assumptions"
                       : option?.description}
@@ -1208,9 +1213,17 @@ export default function Compare({
             <div className="library-row" key={c.id}>
               <div>
                 <strong>{c.name || "Response comparison"}</strong>
-                <span>{c.id}</span>
+                <span>{c.plans?.length || "Saved"} plans</span>
               </div>
-              <Badge>{c.status || "Saved"}</Badge>
+              <Badge>
+                {c.status === "SUCCEEDED"
+                  ? "Complete"
+                  : c.status === "FAILED"
+                    ? "Needs attention"
+                    : c.status === "CANCELLED"
+                      ? "Stopped"
+                      : "In progress"}
+              </Badge>
               <Button
                 small
                 onClick={() =>

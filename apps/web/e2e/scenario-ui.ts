@@ -1,9 +1,9 @@
 import { expect, type Page } from "@playwright/test";
 
 export const scenarioSectionNames = {
-  demand: "Arrival timing & patient mix",
-  resources: "Staff, beds, equipment & response plans",
-  timeline: "Visual planning timeline",
+  demand: "Arrival details",
+  resources: "Staff, beds & equipment",
+  timeline: "Staff, beds & equipment",
   calculation: "Calculation details",
 } as const;
 
@@ -12,6 +12,17 @@ export async function expandScenarioSection(
   section: keyof typeof scenarioSectionNames,
 ) {
   const name = scenarioSectionNames[section];
+  const more = page
+    .getByTestId("guided-scenario")
+    .locator("details")
+    .filter({ hasText: "More parameters" })
+    .first();
+  if (!(await more.getAttribute("open"))) {
+    const isOpen = await more.evaluate(
+      (node) => (node as HTMLDetailsElement).open,
+    );
+    if (!isOpen) await more.locator("summary").first().click();
+  }
   const control = page
     .getByTestId("guided-scenario")
     .getByRole("button", { name: new RegExp(`^${name}`) });

@@ -806,3 +806,357 @@
   padding: 6px 9px;
   margin-bottom: 11px;
 }
+
+/* The editable demand curve is the center of the setup workflow. */
+.simulation-workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.8fr);
+  gap: 24px;
+  align-items: stretch;
+}
+.simulation-main-controls {
+  display: grid;
+  align-content: start;
+  gap: 21px;
+  padding: 6px 0;
+}
+.simulation-control {
+  min-width: 0;
+}
+.simulation-control-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 30px;
+  margin-bottom: 9px;
+}
+.simulation-control-heading h3 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #2c4355;
+  font-weight: 650;
+}
+.simulation-control-heading > span {
+  color: #617386;
+  font-size: 12px;
+}
+.simulation-control-heading .mantine-NumberInput-root {
+  width: 98px;
+}
+.simulation-control-heading .mantine-NumberInput-input {
+  min-height: 34px;
+  padding-left: 10px;
+  font-weight: 650;
+  color: #1e69a7;
+}
+.simulation-control p {
+  margin: 9px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #607287;
+}
+.simulation-control .mantine-Slider-root {
+  margin: 16px 8px 28px;
+}
+.simulation-control .mantine-Slider-markLabel {
+  font-size: 11px;
+  color: #607287;
+}
+.simulation-control .mantine-Slider-thumb {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+.simulation-control .mantine-SegmentedControl-root {
+  max-width: 100%;
+}
+.simulation-control .mantine-SegmentedControl-label {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 5px;
+  font-size: 12px;
+  white-space: normal;
+}
+.arrival-preview {
+  border: 1px solid #dce5ee;
+  border-radius: 9px;
+  padding: 16px 18px 12px;
+  background: #fff;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.arrival-preview-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.arrival-preview-heading h3 {
+  font-size: 15px;
+  margin: 0 0 4px;
+  color: #2c4355;
+}
+.arrival-preview-heading p {
+  margin: 0;
+  color: #607287;
+  font-size: 12px;
+}
+.preview-live {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #567184;
+  white-space: nowrap;
+  margin-top: 3px;
+}
+.preview-live i {
+  width: 6px;
+  height: 6px;
+  background: #39967a;
+  border-radius: 50%;
+}
+.arrival-preview svg {
+  width: 100%;
+  min-height: 200px;
+  height: auto;
+  overflow: visible;
+  display: block;
+}
+.arrival-preview svg text {
+  font-family: inherit;
+  font-size: 13px;
+  fill: #607287;
+}
+.arrival-preview-footer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.arrival-preview-footer p {
+  margin: 0;
+  font-size: 12px;
+  color: #607287;
+}
+.arrival-preview-footer strong {
+  color: #2b4e6a;
+  font-size: 15px;
+}
+.arrival-preview-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  color: #607287;
+}
+.arrival-preview-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.arrival-preview-legend i {
+  width: 17px;
+  height: 0;
+  border-top: 3px solid #2378bf;
+}
+.arrival-preview-legend span + span i {
+  border-top: 2px dashed #8495a7;
+}
+.simulation-run-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+}
+.simulation-ready {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #4b6f5c;
+  font-size: 12px;
+}
+.guided-scenario .simulation-run-row .setup-run-button {
+  width: auto;
+  min-width: 180px;
+  margin: 0;
+}
+.simulation-run-row .setup-validation {
+  margin: 0;
+}
+.more-simulation-parameters {
+  border-top: 1px solid #dfe7ef;
+}
+.more-simulation-parameters > summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 15px 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #345571;
+  cursor: pointer;
+  list-style: none;
+}
+.more-simulation-parameters > summary::before {
+  content: "›";
+  font-size: 21px;
+  line-height: 1;
+  width: 12px;
+  transform: rotate(0);
+}
+.more-simulation-parameters[open] > summary::before {
+  transform: rotate(90deg);
+}
+.more-simulation-parameters > summary span {
+  font-size: 11px;
+  font-weight: 400;
+  color: #6a7c8e;
+}
+.more-simulation-parameters > summary::-webkit-details-marker {
+  display: none;
+}
+.optional-run-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 16px;
+  margin: 0 0 18px;
+  max-width: 740px;
+}
+.optional-run-settings > label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #345571;
+}
+.scenario-details .mantine-Accordion-control {
+  min-height: 52px;
+  padding: 8px 14px;
+}
+.scenario-details .setup-section-description {
+  font-size: 11px;
+  margin-top: 2px;
+}
+.optional-change-group {
+  padding: 13px 0;
+  border-top: 1px solid #e4ebf1;
+}
+.optional-change-group:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.optional-change-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.optional-change-heading h4 {
+  margin: 0 0 3px;
+  font-size: 13px;
+  color: #345571;
+}
+.optional-change-heading p {
+  margin: 0;
+  font-size: 12px;
+  color: #607287;
+}
+.optional-change-list {
+  display: grid;
+  gap: 6px;
+  padding-top: 10px;
+}
+.optional-change-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 11px;
+  border: 1px solid #dce6ee;
+  border-radius: 6px;
+  text-align: left;
+  background: #f8fafc;
+  color: #345571;
+}
+.optional-change-row > span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.optional-change-row strong {
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.optional-change-row small {
+  font-size: 11px;
+  color: #607287;
+}
+.optional-change-row > span:last-child {
+  font-size: 12px;
+  color: #2468a5;
+}
+.optional-change-row:hover {
+  border-color: #a2bfd6;
+  background: #f0f6fc;
+}
+@media (max-width: 1000px) {
+  .simulation-workspace {
+    grid-template-columns: minmax(240px, 0.9fr) minmax(0, 1.2fr);
+    gap: 18px;
+  }
+  .arrival-preview-heading {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 760px) {
+  .simulation-workspace {
+    grid-template-columns: 1fr;
+  }
+  .arrival-preview {
+    grid-row: 1;
+  }
+  .simulation-main-controls {
+    gap: 16px;
+  }
+  .arrival-preview svg {
+    min-height: 160px;
+  }
+  .optional-run-settings {
+    grid-template-columns: 1fr 1fr;
+  }
+  .optional-run-settings > label:last-child {
+    grid-column: 1/-1;
+  }
+  .simulation-run-row {
+    align-items: stretch;
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  .guided-scenario .simulation-run-row .setup-run-button {
+    width: 100%;
+    min-height: 44px;
+  }
+  .simulation-control .mantine-SegmentedControl-label {
+    min-height: 40px;
+  }
+}
+.calculation-settings {
+  max-width: 360px;
+  margin-bottom: 16px;
+}
+
+.arrival-preview-plot {
+  width: 100%;
+  min-width: 0;
+}

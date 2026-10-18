@@ -1,0 +1,41 @@
+{
+  "run_id": "run_aebac583806b40f0b81e",
+  "source": {
+    "at": "2026-10-16T06:15:00Z",
+    "unit_id": "UNIT-ICU",
+    "requested_care": "ward",
+    "canvas": {
+      "dots": [
+        {
+          "x": 713,
+          "y": 375
+        }
+      ],
+      "path": [],
+      "height": 620
+    }
+  },
+  "destination": {
+    "at": "2026-10-16T08:00:00Z",
+    "unit_id": "UNIT-WARD-A",
+    "canvas": {
+      "dots": [
+        {
+          "x": 943,
+          "y": 215
+        }
+      ],
+      "path": [
+        {
+          "x": 713,
+          "y": 375
+        },
+        {
+          "x": 943,
+          "y": 215
+        }
+      ],
+      "height": 620
+    }
+  }
+}

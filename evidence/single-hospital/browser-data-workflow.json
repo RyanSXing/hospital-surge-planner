@@ -1,0 +1,10 @@
+{
+  "original_dataset_id": "demo-v1-1-0-hospital_baseline-41021-365",
+  "edited_dataset_id": "dataset_45054361d9a242c5ab5c",
+  "imported_dataset_id": "dataset_b7ff1abb179d4375b9c3",
+  "field_mapping": {
+    "site_key": "facility_id",
+    "unit_key": "unit_id",
+    "operator_note": "explicitly ignored"
+  }
+}

@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { api, capture, open, record, scenario, waitRun } from "./helpers";
 
-test("resource tables use persistent selected-time inspectors and reloadable links", async ({
+test("hospital inventory opens focused reloadable details and optional changes without a Resources page", async ({
   page,
 }, info) => {
-  const context = await scenario(page, "persistent resource inspection", {
+  const context = await scenario(page, "hospital inventory details", {
     horizon_calendar_days: 1,
     replications: 1,
   });
@@ -17,66 +17,73 @@ test("resource tables use persistent selected-time inspectors and reloadable lin
     ).id,
   );
   const dataset = await api(page.request, `/datasets/${context.dataset.id}`);
-  await open(page, context.scenario.id, "analytics-resources", run.id);
-  const cases = [
-    ["Staff", "staff", dataset.staff[0].staff_id],
+  const at = new Date(Date.parse(run.start_at) + 3600000).toISOString();
+  const recorded = await api(
+    page.request,
+    `/runs/${run.selected_replication_id}/state?at=${encodeURIComponent(at)}`,
+  );
+  const occupied = recorded.slots.find(
+    (slot: any) => slot.status === "occupied" && slot.enabled,
+  );
+  expect(occupied).toBeTruthy();
+  for (const [kind, id, type] of [
+    ["staff", dataset.staff[0].staff_id, "staff_unavailable"],
     [
-      "Equipment",
       "equipment_pool",
       dataset.equipment_pools[0].equipment_pool_id,
+      "equipment_change",
     ],
-    ["Transport", "vehicle", dataset.vehicles[0].vehicle_id],
-  ];
-  const seen = [];
-  for (const [label, kind, id] of cases) {
-    await page
-      .locator(".resource-tabs")
-      .getByRole("button", { name: new RegExp(`^${label}`) })
-      .click();
-    const search = page.getByLabel("Search records", { exact: true }).first();
-    await search.fill(id);
-    const row = page
-      .locator(".resource-table-page tbody tr")
-      .filter({ hasText: id })
-      .first();
-    await row.getByRole("button", { name: "Details", exact: true }).click();
-    const inspector = page.locator("#resources-inspector-dock");
-    await expect(inspector).toBeVisible();
-    await expect(inspector).toContainText(id);
-    await expect(inspector).toContainText("selected simulation time");
-    await expect(page.getByRole("dialog")).toHaveCount(0);
-    await expect
-      .poll(() => new URL(page.url()).searchParams.get("resource"))
-      .toBe(id);
-    expect(new URL(page.url()).searchParams.get("resource_type")).toBe(kind);
-    const at = new URL(page.url()).searchParams.get("at");
-    await page.getByLabel("Hide resources inspector", { exact: true }).click();
-    await expect(inspector).toBeHidden();
-    await expect(page.locator("#resources-timeline-dock")).toBeHidden();
-    await page.getByLabel("Show resources timeline", { exact: true }).click();
-    await expect(page.locator("#resources-timeline-dock")).toBeVisible();
-    await page.getByLabel("Hide resources timeline", { exact: true }).click();
-    await page.getByLabel("Show resources inspector", { exact: true }).click();
+    ["slot", occupied.slot_id, "capacity_change"],
+  ]) {
+    await page.goto(
+      `/?scenario=${context.scenario.id}&run=${run.id}&view=analysis&analysis=summary&at=${encodeURIComponent(at)}&resource_type=${kind}&resource=${id}`,
+    );
+    const detail = page.getByRole("dialog");
+    await expect(detail).toBeVisible();
+    await detail.locator("details > summary").click();
+    await expect(detail).toContainText(id);
+    if (kind === "slot") {
+      await expect(detail).toContainText("Occupied");
+      await expect(detail).toContainText("Bed enabledYes");
+      await expect(detail).not.toContainText("Ready for use");
+    }
+    await expect(page.locator(".resources-page")).toHaveCount(0);
     await page.reload();
-    await expect(inspector).toBeVisible();
-    await expect(inspector).toContainText(id);
-    expect(new URL(page.url()).searchParams.get("at")).toBe(at);
+    await expect(detail).toBeVisible();
+    await expect(
+      detail.getByRole("button", { name: "Record change", exact: true }),
+    ).toBeEnabled();
+    await detail
+      .getByRole("button", { name: "Record change", exact: true })
+      .click();
+    await expect(
+      detail.getByLabel("Change to record", { exact: true }),
+    ).toHaveValue(type);
+    await expect(detail.getByTestId("update-source-context")).toContainText(id);
+    await detail
+      .getByRole("button", { name: "Close dialog", exact: true })
+      .click();
     expect(new URL(page.url()).searchParams.get("run")).toBe(run.id);
-    await expect(page.locator(".resource-tabs .active")).toContainText(label);
+    expect(new URL(page.url()).searchParams.get("at")).toBe(at);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    seen.push({ kind, id, selected_time: at, reload_preserved: true });
   }
-  await capture(page, "resource-persistent-inspector", info);
+  await open(page, context.scenario.id, "analytics-patients", run.id);
+  await expect(
+    page.getByRole("tab", { name: "Resources", exact: true }),
+  ).toHaveCount(0);
+  await capture(page, "hospital-inventory-details", info);
   expect((await api(page.request, `/run-groups/${run.id}`)).input_sha256).toBe(
     run.input_sha256,
   );
-  record("resource-persistent-inspector", {
+  record("hospital-inventory-details", {
     project: info.project.name,
     run_id: run.id,
-    selections: seen,
+    resource_types: ["staff", "equipment_pool", "slot"],
+    parent_preserved: true,
+    separate_resource_page: false,
   });
 });

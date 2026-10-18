@@ -75,6 +75,20 @@ async function analysis(page: Page, name: string, touch = false) {
   else await button.click();
   await expect(button).toHaveAttribute("aria-current", "page");
 }
+async function moreParameters(page: Page) {
+  const more = page.locator(".more-simulation-parameters");
+  if (!(await more.evaluate((element) => (element as HTMLDetailsElement).open)))
+    await more.locator(":scope > summary").click();
+  await expect(more).toHaveAttribute("open", "");
+}
+async function outcomeTime(page: Page) {
+  const control = page.getByRole("button", {
+    name: /^Choose an exact outcome interval/,
+  });
+  if ((await control.getAttribute("aria-expanded")) !== "true")
+    await control.click();
+  await expect(control).toHaveAttribute("aria-expanded", "true");
+}
 async function baseline(page: Page) {
   const region = page.locator(".planning-baseline");
   return {
@@ -95,7 +109,12 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   test.setTimeout(process.env.E2E_BASE_URL ? 900000 : 300000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  const context = await scenario(page, "navigation full flow");
+  const context = await scenario(
+    page,
+    "navigation full flow",
+    {},
+    "hospital_baseline",
+  );
   await open(page, context.scenario.id, "overview");
   await expect(
     page.getByRole("heading", { name: "Hospital overview", exact: true }),
@@ -104,6 +123,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
     name = "E2E navigation surge " + Date.now();
   await page.getByLabel("Scenario name", { exact: true }).fill(name);
   await page.getByLabel("Increase in ED arrivals").fill("70");
+  await moreParameters(page);
   await page.getByLabel("Planning horizon").fill("3");
   await page
     .getByRole("combobox", { name: "Simulation runs", exact: true })
@@ -123,7 +143,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   await expect(page.getByLabel("Scenario name", { exact: true })).toHaveValue(
     name,
   );
-  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("70");
+  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue(/70%?/);
   await expect(page.getByLabel("Planning horizon")).toHaveValue("3");
   expect(await baseline(page)).toEqual(source);
   // A dialog retained inside hidden Overview must not capture keyboard input.
@@ -145,7 +165,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
     .getByRole("dialog")
     .getByRole("button", { name: "Close dialog", exact: true })
     .click();
-  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("70");
+  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue(/70%?/);
 
   const submitted = page.waitForResponse(
     (r) =>
@@ -246,24 +266,42 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   await expect(page.locator(".patient-inspector")).toContainText(
     patient.patient_id,
   );
-  const held = selection(page);
-  for (const key of contextKeys.filter((k) => k !== "comparison"))
-    expect(held[key], key).toBeTruthy();
+  // Equipment now opens a focused modal rather than a permanent resource tab.
+  // Its Close action deliberately clears only that selection before navigation.
+  await expect(page.getByRole("dialog")).toBeVisible();
+  expect(selection(page).resource).toBe(pool.equipment_pool_id || pool.id);
+  expect(selection(page).resource_type).toBe("equipment_pool");
   await page
-    .getByRole("tablist", { name: "Analytics sections" })
-    .getByRole("tab", { name: "Resources", exact: true })
+    .getByRole("dialog")
+    .getByRole("button", { name: "Close dialog", exact: true })
     .click();
-  await expectRoute(page, "analysis", "analytics", "resources");
+  await expect.poll(() => selection(page).resource).toBeNull();
+  const held = selection(page);
+  for (const key of contextKeys.filter(
+    (k) => !["comparison", "resource", "resource_type"].includes(k),
+  ))
+    expect(held[key], key).toBeTruthy();
+  const analyticsSections = page.getByRole("tablist", {
+    name: "Analytics sections",
+  });
+  await expect(analyticsSections.getByRole("tab")).toHaveText([
+    "Outcomes",
+    "Patients & units",
+  ]);
+  await analyticsSections
+    .getByRole("tab", { name: "Outcomes", exact: true })
+    .click();
+  await expectRoute(page, "analysis", "analytics", "outcomes");
   expect(selection(page)).toEqual(held);
   await page.reload();
-  await expectRoute(page, "analysis", "analytics", "resources");
-  await expect(page.locator(".resources-page:visible")).toBeVisible();
+  await expectRoute(page, "analysis", "analytics", "outcomes");
+  await expect(page.getByTestId("outcome-analytics")).toBeVisible();
   expect(selection(page)).toEqual(held);
   await page.goBack();
   await expectRoute(page, "analysis", "analytics", "patients");
   expect(selection(page)).toEqual(held);
   await page.goForward();
-  await expectRoute(page, "analysis", "analytics", "resources");
+  await expectRoute(page, "analysis", "analytics", "outcomes");
   expect(selection(page)).toEqual(held);
   await analysis(page, "Replay");
   await expectRoute(page, "analysis", "replay");
@@ -533,6 +571,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     unsaved_responses_survive_history: true,
     cleared_comparison_reopened_from_plan: true,
     overview_export_and_alerts_use_selected_run: true,
+    resource_details_use_modal_and_clear_selection_on_close: true,
     export: checksums,
     page_errors: errors,
   });
@@ -547,7 +586,12 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
   );
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  const context = await scenario(page, "mobile navigation");
+  const context = await scenario(
+    page,
+    "mobile navigation",
+    {},
+    "hospital_baseline",
+  );
   await open(page, context.scenario.id, "overview");
   const source = await baseline(page);
   await page.getByLabel("Increase in ED arrivals").fill("42");
@@ -556,9 +600,18 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
   const retained = selection(page);
   await analysis(page, "Analytics", true);
   const sections = page.getByRole("tablist", { name: "Analytics sections" });
-  await sections.getByRole("tab", { name: "Resources", exact: true }).tap();
-  await expectRoute(page, "analysis", "analytics", "resources");
-  await expect(page.locator(".resources-page:visible")).toBeVisible();
+  await expect(sections.getByRole("tab")).toHaveText([
+    "Outcomes",
+    "Patients & units",
+  ]);
+  await sections
+    .getByRole("tab", { name: "Patients & units", exact: true })
+    .tap();
+  await expectRoute(page, "analysis", "analytics", "patients");
+  await expect(page.locator(".patients-page:visible")).toBeVisible();
+  expect(selection(page)).toEqual(retained);
+  await sections.getByRole("tab", { name: "Outcomes", exact: true }).tap();
+  await expectRoute(page, "analysis", "analytics", "outcomes");
   expect(selection(page)).toEqual(retained);
   await sections
     .getByRole("tab", { name: "Patients & units", exact: true })
@@ -572,13 +625,13 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
   expect(selection(page)).toEqual(retained);
   await primary(page, "Overview", true);
   await expectRoute(page, "overview");
-  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("42");
+  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue(/42%?/);
   expect(await baseline(page)).toEqual(source);
   await page.goBack();
   await expectRoute(page, "analysis", "replay");
   await page.goForward();
   await expectRoute(page, "overview");
-  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("42");
+  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue(/42%?/);
   await page.setViewportSize({ width: 320, height: 844 });
   const expectNarrowWidth = async () => {
     await expect
@@ -605,7 +658,6 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
       for (const [label, section] of [
         ["Outcomes", "outcomes"],
         ["Patients & units", "patients"],
-        ["Resources", "resources"],
       ]) {
         await sections.getByRole("tab", { name: label, exact: true }).tap();
         await expectRoute(page, "analysis", "analytics", section);
@@ -616,7 +668,7 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
   await primary(page, "Overview", true);
   await expectRoute(page, "overview");
   await expectNarrowWidth();
-  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("42");
+  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue(/42%?/);
   expect(await baseline(page)).toEqual(source);
   await assertPageHealthy(page);
   expect(errors).toEqual([]);
@@ -637,12 +689,23 @@ test("mobile touch navigation retains the Overview draft and source baseline", a
 test("root, legacy aliases and invalid navigation canonicalize without losing context", async ({
   page,
 }, info) => {
-  const context = await scenario(page, "navigation links");
+  const context = await scenario(
+    page,
+    "navigation links",
+    {},
+    "hospital_baseline",
+  );
   const cases = [
     ["", "overview", null, null],
     ["view=scenarios", "overview", null, null],
     ["view=patients", "analysis", "analytics", "patients"],
-    ["view=resources", "analysis", "analytics", "resources"],
+    ["view=resources", "analysis", "analytics", "patients"],
+    [
+      "view=analysis&analysis=analytics&section=resources",
+      "analysis",
+      "analytics",
+      "patients",
+    ],
     ["view=compare", "analysis", "comparison", null],
     ["view=replay", "analysis", "replay", null],
     ["view=summary", "analysis", "summary", null],
@@ -688,9 +751,12 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   test.setTimeout(240000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  const context = await scenario(page, "outcome analytics", {
-    replications: 2,
-  });
+  const context = await scenario(
+    page,
+    "outcome analytics",
+    { replications: 2 },
+    "hospital_baseline",
+  );
   const run = await waitRun(
     page,
     (
@@ -719,8 +785,8 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   const values: Record<string, number> = {};
   for (const [key, label] of [
     ["arrivals", "New arrivals"],
-    ["inpatient_waiting_patient_hours", "Inpatient placement waiting"],
-    ["ed_waiting_patient_hours", "ED assessment waiting"],
+    ["inpatient_waiting_patient_hours", "Waiting for a hospital bed"],
+    ["ed_waiting_patient_hours", "Waiting for emergency assessment"],
   ]) {
     const value = metrics.scalar_metrics[key];
     const median = typeof value === "number" ? value : value.p50;
@@ -730,6 +796,7 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
     );
     values[key] = median;
   }
+  await outcomeTime(page);
   await outcomes
     .getByRole("combobox", { name: "Selected outcome day", exact: true })
     .selectOption("1");
@@ -831,9 +898,7 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   await revealOutcomeMetrics(page);
   await expect(row("New arrivals").getByRole("cell").nth(2)).toHaveText("0");
   await expect(
-    row("First unmet placement demand (observed runs)")
-      .getByRole("cell")
-      .nth(2),
+    row("First bed queue (runs with a queue)").getByRole("cell").nth(2),
   ).toHaveText("—");
   await expect(outcomes).toContainText(
     "— means unavailable or undefined; zero remains 0.",
@@ -882,9 +947,10 @@ test("Analytics outcomes match recorded metrics and preserve trajectory context"
   await revealOutcomeMetrics(page);
   await expect(outcomes.locator(".outcome-scalars")).toBeVisible();
   await expect(outcomes.locator(".outcome-context")).toContainText(
-    "From update cutoff",
+    "After the recorded update",
   );
-  await expect(row("Expected exogenous arrivals")).toHaveCount(0);
+  await expect(row("Expected arrivals")).toHaveCount(0);
+  await outcomeTime(page);
   const daySelect = outcomes.getByRole("combobox", {
     name: "Selected outcome day",
     exact: true,

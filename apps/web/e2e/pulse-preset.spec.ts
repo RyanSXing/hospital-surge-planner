@@ -1,12 +1,23 @@
-import { expandScenarioDetails } from "./scenario-ui";
+import { expandScenarioSection } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import { api, open, record, scenario, waitRun } from "./helpers";
 
-test("short arrival pulse is editable, undoable and frozen as one additive batch", async ({
+test("extra arrival groups are editable, undoable and frozen as one additive batch", async ({
   page,
-}) => {
-  const context = await scenario(page, "short pulse preset", {
-    replications: 10,
+}, info) => {
+  const separate = {
+    id: "separate-incident",
+    name: "Earlier extra patients",
+    kind: "arrival_batch",
+    entry_stream_id: "ED_MAIN",
+    at: "2026-10-16T11:00:00Z",
+    count: 3,
+    spread_minutes: 0,
+    care_mix: { discharge: 1 },
+    source: "user_assumption",
+  };
+  const context = await scenario(page, "editable short arrival pulse", {
+    replications: 2,
     conditions: [
       {
         id: "selected-surge",
@@ -19,57 +30,65 @@ test("short arrival pulse is editable, undoable and frozen as one additive batch
           { at: "2026-10-19T05:00:00Z", multiplier: 1.7 },
         ],
       },
-      {
-        id: "separate-incident",
-        kind: "arrival_batch",
-        entry_stream_id: "ED_MAIN",
-        at: "2026-10-16T11:00:00Z",
-        count: 3,
-        spread_minutes: 0,
-        care_mix: { discharge: 1 },
-        source: "user_assumption",
-      },
+      separate,
     ],
   });
   await open(page, context.scenario.id, "overview");
-  await expandScenarioDetails(page);
-  await page.getByLabel("Scenario preset").selectOption("pulse");
+  await page.getByLabel("Increase in ED arrivals", { exact: true }).fill("0");
+  await expandScenarioSection(page, "resources");
+  await page
+    .getByRole("button", { name: "Add extra patient arrivals", exact: true })
+    .click();
+  let dialog = page.getByRole("dialog");
+  await dialog
+    .getByLabel("Change name", { exact: true })
+    .fill("Short arrival pulse");
+  await dialog
+    .getByLabel("Effective time (America/Chicago)", { exact: true })
+    .fill("2026-10-17T12:00");
+  await dialog.getByLabel("Additional patients", { exact: true }).fill("20");
+  await dialog
+    .getByLabel("Spread arrivals over (minutes)", { exact: true })
+    .fill("60");
+  await dialog
+    .getByRole("button", { name: "Apply change", exact: true })
+    .click();
   const pulse = page.getByRole("button", {
     name: "Short arrival pulse Planning assumption",
     exact: true,
   });
   await expect(pulse).toBeVisible();
-  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("0");
   await page.getByRole("button", { name: "Undo", exact: true }).click();
   await expect(pulse).toHaveCount(0);
-  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("70");
   await page.getByRole("button", { name: "Redo", exact: true }).click();
   await expect(pulse).toBeVisible();
-  await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue("0");
   await pulse.click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog.getByLabel("Incident patient count")).toHaveValue("20");
-  await expect(dialog.getByLabel("Incident spread (minutes)")).toHaveValue(
-    "60",
-  );
+  dialog = page.getByRole("dialog");
   await expect(
-    dialog.getByLabel("Incident or cohort entry stream"),
+    dialog.getByLabel("Additional patients", { exact: true }),
+  ).toHaveValue("20");
+  await expect(
+    dialog.getByLabel("Spread arrivals over (minutes)", { exact: true }),
+  ).toHaveValue("60");
+  await expect(
+    dialog.getByLabel("Where patients arrive", { exact: true }),
   ).toHaveValue("ED_MAIN");
-  await dialog
-    .getByRole("button", { name: "Close dialog", exact: true })
-    .click();
-  const submitted = page.waitForResponse(
+  await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+  const submission = page.waitForResponse(
     (response) =>
       response.url().endsWith("/api/run-groups") &&
       response.request().method() === "POST",
   );
-  await page
-    .getByRole("button", { name: "Run simulation", exact: true })
-    .click();
-  const queued = await (await submitted).json();
-  const saved = await api(page.request, "/scenarios/" + context.scenario.id);
+  const runButton = page.getByRole("button", {
+    name: "Run simulation",
+    exact: true,
+  });
+  await expect(runButton).toBeEnabled();
+  await runButton.click();
+  const queued = await (await submission).json();
+  const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
   const batch = saved.conditions.find(
-    (condition: any) => condition.preset_id === "PRESET-PULSE",
+    (condition: any) => condition.name === "Short arrival pulse",
   );
   expect(batch).toMatchObject({
     kind: "arrival_batch",
@@ -78,7 +97,7 @@ test("short arrival pulse is editable, undoable and frozen as one additive batch
     spread_minutes: 60,
     at: "2026-10-17T17:00:00.000Z",
     care_mix: { discharge: 0.8, ward: 0.16, icu: 0.04 },
-    source: "synthetic_preset",
+    source: "user_assumption",
   });
   expect(saved.conditions).toHaveLength(2);
   expect(
@@ -87,14 +106,13 @@ test("short arrival pulse is editable, undoable and frozen as one additive batch
     ),
   ).toBe(false);
   expect(
-    saved.conditions.find(
-      (condition: any) => condition.id === "separate-incident",
-    ),
-  ).toEqual(context.scenario.conditions[1]);
-  const frozen = saved.revisions.find(
-    (revision: any) => revision.id === queued.scenario_revision_id,
-  );
-  expect(frozen.conditions).toEqual(saved.conditions);
+    saved.conditions.find((condition: any) => condition.id === separate.id),
+  ).toEqual(separate);
+  expect(
+    saved.revisions.find(
+      (revision: any) => revision.id === queued.scenario_revision_id,
+    ).conditions,
+  ).toEqual(saved.conditions);
   const run = await waitRun(page, queued.id);
   const trace = await api(
     page.request,
@@ -111,7 +129,7 @@ test("short arrival pulse is editable, undoable and frozen as one additive batch
         Date.parse(event.occurred_at) < Date.parse(batch.at) + 3600000,
     ),
   ).toBe(true);
-  record("pulse-preset", {
+  record(`hospital-arrival-pulse-${info.project.name}`, {
     scenario_id: saved.id,
     run_id: run.id,
     saved_batch: batch,
@@ -122,25 +140,38 @@ test("short arrival pulse is editable, undoable and frozen as one additive batch
   });
 });
 
-test("short arrival pulse rejects a horizon ending before day-two noon", async ({
+test("extra arrivals reject times outside the simulation period", async ({
   page,
 }) => {
-  const context = await scenario(page, "short pulse horizon", {
+  const context = await scenario(page, "arrival pulse outside horizon", {
     horizon_calendar_days: 1,
   });
   await open(page, context.scenario.id, "overview");
-  await expandScenarioDetails(page);
-  await page.getByLabel("Scenario preset").selectOption("pulse");
-  await expect(page.getByRole("alert")).toContainText(
-    "local day 2 from 12:00 to 13:00",
+  await expandScenarioSection(page, "resources");
+  await page
+    .getByRole("button", { name: "Add extra patient arrivals", exact: true })
+    .click();
+  const dialog = page.getByRole("dialog");
+  await dialog
+    .getByLabel("Change name", { exact: true })
+    .fill("Out-of-period arrivals");
+  await dialog
+    .getByLabel("Effective time (America/Chicago)", { exact: true })
+    .fill("2026-10-17T12:00");
+  await dialog
+    .getByRole("button", { name: "Apply change", exact: true })
+    .click();
+  await expect(dialog.getByRole("alert")).toContainText(
+    "effective time must lie within the scenario horizon",
   );
+  await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
   await expect(
     page.getByRole("button", {
-      name: "Short arrival pulse Planning assumption",
+      name: "Out-of-period arrivals Planning assumption",
       exact: true,
     }),
   ).toHaveCount(0);
   expect(
-    (await api(page.request, "/scenarios/" + context.scenario.id)).conditions,
+    (await api(page.request, `/scenarios/${context.scenario.id}`)).conditions,
   ).toEqual([]);
 });

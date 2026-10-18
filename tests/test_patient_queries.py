@@ -1,17 +1,20 @@
 # ruff: noqa: F401,F811
+import pytest
 from surge_api.artifacts import ArtifactStore
 from surge_api.db import Document, Job
 from surge_api.patients import remaining_summary
 from test_api import client, setup_context
 
 
-def test_source_patient_filters_keep_residual_mean_and_validate_bounds(client):
-    context = setup_context(client)
+@pytest.mark.parametrize("fixture,eligible", [("planning_baseline", "true"), ("hospital_baseline", "false")])
+def test_source_patient_filters_keep_residual_mean_and_validate_bounds(client, fixture, eligible):
+    context = setup_context(client, fixture)
     endpoint = f"/api/datasets/{context['dataset']['id']}/patients"
     result = client.get(
-        endpoint, params={"care_level": "ward", "remaining_max_hours": 25, "transfer_eligible": "true"}
+        endpoint, params={"care_level": "ward", "remaining_max_hours": 25, "transfer_eligible": eligible}
     ).json()
     assert result["total"] == 25
+    assert all(bool(p.get("eligible_for_transfer")) == (eligible == "true") for p in result["items"])
     assert all(
         p["remaining_summary"]["hours"] == 24 and p["required_care_level"] == "ward" for p in result["items"]
     )

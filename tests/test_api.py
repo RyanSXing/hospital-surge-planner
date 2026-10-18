@@ -23,10 +23,15 @@ def client(tmp_path, monkeypatch):
         yield c
 
 
-def setup_context(client):
+def setup_context(client, fixture=None):
     response = client.get("/api/workspaces/workspace-main/summary")
     assert response.status_code == 200, response.text
-    return response.json()
+    context = response.json()
+    if fixture:
+        cards = client.get("/api/datasets?limit=200").json()["items"]
+        identity = next(card["id"] for card in cards if card.get("fixture") == fixture)
+        context["dataset"] = client.get("/api/datasets/" + identity).json()
+    return context
 
 
 def create_short_scenario(client, context, **values):
@@ -52,7 +57,7 @@ def test_boot_seeded_sessions_and_census(client):
     assert len(context["dataset"]["patients"]) == 84
     response = client.get("/api/v1/datasets")
     assert response.status_code == 200
-    assert response.json()["total"] == 2
+    assert response.json()["total"] == 3
     assert client.get("/api/me").json()["role"] == "admin"
     assert client.get("/api/workspaces/not-my-workspace/summary").status_code == 404
 
@@ -72,8 +77,9 @@ def test_dataset_cards_are_projected_and_paginated_in_sql(client):
         second = client.get(f"/api/datasets?limit=1&cursor={first['next_cursor']}").json()
     finally:
         event.remove(client.app.state.engine, "before_cursor_execute", capture)
-    assert first["total"] == 2 and first["next_cursor"] == "1"
-    assert second["next_cursor"] is None
+    assert first["total"] == 3 and first["next_cursor"] == "1"
+    assert second["next_cursor"] == "2"
+    assert client.get("/api/datasets?limit=1&cursor=2").json()["next_cursor"] is None
     assert first["items"][0]["id"] != second["items"][0]["id"]
     assert all("patients" not in item and "assignments" not in item for item in first["items"])
     card = next(item for item in first["items"] + second["items"] if item["id"] == context["dataset"]["id"])
@@ -187,7 +193,7 @@ def test_selected_time_equipment_pools_include_site_split_and_backward_seek(clie
 
     from surge_engine.common import dt
 
-    context = setup_context(client)
+    context = setup_context(client, "planning_baseline")
     dataset = client.get(f"/api/datasets/{context['dataset']['id']}").json()
     start = dataset["snapshot_at"]
     active = [
@@ -487,7 +493,7 @@ def test_comparison_and_alert_evidence(client):
 
 
 def test_eligibility_uses_patient_profile_and_comparison_does_not_replace_main_run(client):
-    context = setup_context(client)
+    context = setup_context(client, "planning_baseline")
     scenario = create_short_scenario(client, context)
     patient = next(
         p

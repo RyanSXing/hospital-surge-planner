@@ -57,11 +57,32 @@ export async function login(page: Page) {
     `Sign-in returned HTTP ${response.status()}`,
   ).toBeTruthy();
 }
+
+/** Respect the shared auth rate limit when several acceptance flows overlap. */
+export async function signInAs(page: Page, data: Record<string, unknown>) {
+  let response = await page.request.post("/api/auth/login", { data });
+  if (response.status() === 429) {
+    await expect
+      .poll(
+        async () => {
+          response = await page.request.post("/api/auth/login", { data });
+          return response.status();
+        },
+        { timeout: 75_000, intervals: [2000, 4000] },
+      )
+      .not.toBe(429);
+  }
+  expect(
+    response.ok(),
+    `Sign-in returned HTTP ${response.status()}`,
+  ).toBeTruthy();
+  return response;
+}
 export async function scenario(
   page: Page,
   name: string,
   options: Entity = {},
-  fixture = "planning_baseline",
+  fixture = "hospital_baseline",
 ) {
   await login(page);
   const generatorVersion = readFileSync(

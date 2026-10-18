@@ -158,6 +158,7 @@ export function readinessError(start: string, end: string, delay: number) {
 export function familyOf(
   value: Entity,
   collection: PlanCollection,
+  dataset?: Pick<Dataset, "units">,
 ): PlanFamily | null {
   const kind = value.kind || value.template_kind || value.type;
   if (
@@ -179,13 +180,19 @@ export function familyOf(
     ].includes(kind)
   )
     return "capacity";
+  if (["staffed_overflow", "activate_overflow"].includes(kind)) {
+    const unitId = value.unit_id || value.payload?.unit_id;
+    const facilityId =
+      value.facility_id ||
+      value.payload?.facility_id ||
+      dataset?.units.find((unit) => unit.unit_id === unitId)?.facility_id;
+    return facilityId === "FAC-MAIN" ? "capacity" : "sites";
+  }
   if (kind === "equipment_change") return "equipment";
   if (
     [
       "clinic",
       "activate_clinic",
-      "staffed_overflow",
-      "activate_overflow",
       "partner_transfer",
       "site_ready",
       "route_change",

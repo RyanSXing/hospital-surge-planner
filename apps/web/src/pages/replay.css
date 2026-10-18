@@ -882,3 +882,66 @@
     position: static;
   }
 }
+
+/* Keep the hospital context close to the video without taking a second panel. */
+.replay-page > .page-heading {
+  padding: 14px 0 10px;
+}
+.replay-page > .page-heading h1 {
+  font-size: 22px;
+}
+.replay-page > .page-heading p {
+  margin-top: 5px;
+}
+.replay-location {
+  padding: 10px 13px;
+  gap: 5px 18px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+.replay-location > div {
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.replay-campus-reference {
+  width: auto;
+  margin-left: auto;
+}
+.replay-campus-reference[open] {
+  width: 100%;
+  margin-left: 0;
+}
+.replay-page .heading-actions .micro-label,
+.replay-page .scene-tag {
+  letter-spacing: 0;
+  text-transform: none;
+}
+.replay-page .scene-tag {
+  font-size: 12px;
+  font-weight: 600;
+}
+.replay-page .replay-canvas-viewport {
+  height: clamp(380px, 49vh, 600px);
+}
+@media (max-width: 767px) {
+  .replay-location > div {
+    flex-direction: column;
+    gap: 3px;
+  }
+  .replay-campus-reference {
+    margin-left: 0;
+  }
+  .replay-page .replay-canvas-viewport {
+    height: 360px;
+  }
+  .replay-page .scene-legend {
+    flex-wrap: wrap;
+  }
+  .replay-page .scene-legend .button,
+  .replay-page .playback-buttons > button:not(.button) {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}

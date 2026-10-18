@@ -1,0 +1,25 @@
+{
+  "project": "mobile",
+  "scenario_id": "scenario_03fbc204ffed4863a4a7",
+  "update_id": "update_d643fbc753054e389d70",
+  "payload": {
+    "facility_id": "FAC-MAIN",
+    "count": 9,
+    "care_mix": {
+      "discharge": 0,
+      "ward": 1,
+      "icu": 0
+    },
+    "resource_profile_mix": {
+      "ward": {
+        "RP-WARD-BASIC": 0,
+        "RP-WARD-OXYGEN": 1
+      }
+    },
+    "entry_stream_id": "ED_MAIN",
+    "spread_minutes": 0
+  },
+  "invalid_total_blocked": true,
+  "mismatched_facility_blocked": true,
+  "reload_preserved": true
+}

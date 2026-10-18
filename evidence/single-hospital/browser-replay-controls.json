@@ -1,0 +1,8 @@
+{
+  "run_id": "run_ad384d6ae1ae408490f4",
+  "input_sha256": "ea90de2cbee9a54a5ed2c7ca6af89093cd2a61600ee2b7f17e24466bd1bf6d51",
+  "paused_at": "2026-10-16T05:04:29.999Z",
+  "exclusive_end_at": "2026-10-18T05:00:00Z",
+  "exact_event_cursor": true,
+  "reduced_motion_plays_without_tweening": true
+}

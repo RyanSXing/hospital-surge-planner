@@ -1,3 +1,4 @@
+import { humanLabel } from "../presentation";
 import { useEffect, useState } from "react";
 import { api, localDate } from "../api";
 import type { Entity, PlanningContext } from "../types";
@@ -82,7 +83,8 @@ export default function UnitEvidence({
             {staff.length
               ? staff
                   .map(
-                    (person: Entity) => `${person.staff_id} (${person.role})`,
+                    (person: Entity) =>
+                      `${person.staff_id} (${humanLabel(person.role)})`,
                   )
                   .join(", ")
               : actualIds.length
@@ -118,7 +120,9 @@ export default function UnitEvidence({
                 <tr key={a.assignment_id}>
                   <td>
                     {a.staff_id}
-                    <small className="patient-cell-note">{a.role}</small>
+                    <small className="patient-cell-note">
+                      {humanLabel(a.role)}
+                    </small>
                   </td>
                   <td>
                     {format(a.start_at)}
@@ -126,7 +130,7 @@ export default function UnitEvidence({
                       to {format(a.end_at)}
                     </small>
                   </td>
-                  <td>{a.status}</td>
+                  <td>{humanLabel(a.status)}</td>
                 </tr>
               ))}
           </tbody>

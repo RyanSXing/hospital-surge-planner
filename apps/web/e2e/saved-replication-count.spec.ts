@@ -1,3 +1,4 @@
+import { expandScenarioSection } from "./scenario-ui";
 import { test, expect } from "@playwright/test";
 import { api, open, record, scenario } from "./helpers";
 
@@ -10,14 +11,13 @@ test("saved custom replication counts stay visible and are submitted unchanged",
     replications: 2,
   });
   await open(page, context.scenario.id, "overview");
+  await expandScenarioSection(page, "calculation");
   const scenarioCount = page.getByRole("combobox", {
     name: "Simulation runs",
     exact: true,
   });
   await expect(scenarioCount).toHaveValue("2");
-  await expect(scenarioCount.locator("option:checked")).toHaveText(
-    "2 · Saved count",
-  );
+  await expect(scenarioCount.locator("option:checked")).toHaveText("2 runs");
   await expect(scenarioCount.locator("option")).toHaveCount(4);
   await page
     .getByLabel("Scenario name", { exact: true })

@@ -5,10 +5,6 @@ import { api, capture, open, record, scenario, waitRun } from "./helpers";
 test("selected alternate replication and patient survive a page reload", async ({
   page,
 }, info) => {
-  test.skip(
-    info.project.name === "mobile",
-    "Context persistence runs once; responsive screens run separately.",
-  );
   const context = await scenario(page, "restored context", {
     horizon_calendar_days: 2,
     replications: 3,
@@ -45,11 +41,12 @@ test("selected alternate replication and patient survive a page reload", async (
     .locator(".replay-page .patient-census tbody button")
     .first();
   await expect(first).toBeVisible();
-  const patient = (await first.textContent())?.trim();
+  const patientLabel = (await first.textContent())?.trim();
   await first.click();
   await expect
     .poll(() => new URL(page.url()).searchParams.get("patient"))
-    .toBe(patient);
+    .toBeTruthy();
+  const patient = new URL(page.url()).searchParams.get("patient")!;
   const saved = page.url();
   await page.reload();
   await expect(page.locator(".app-shell")).toBeVisible();
@@ -57,7 +54,7 @@ test("selected alternate replication and patient survive a page reload", async (
   await page
     .getByRole("button", { name: "Inspect replay", exact: true })
     .click();
-  await expect(page.locator(".replay-inspector")).toContainText(patient!);
+  await expect(page.locator(".replay-inspector")).toContainText(patient);
   expect(new URL(page.url()).searchParams.get("replication")).toBe(
     alternate.id,
   );
@@ -68,18 +65,15 @@ test("selected alternate replication and patient survive a page reload", async (
     run_id: run.id,
     replication_id: alternate.id,
     patient_id: patient,
+    patient_label: patientLabel,
     scenario_id: context.scenario.id,
     at: new URL(saved).searchParams.get("at"),
   });
 });
 
-test("condition drag and care mix edits create inspectable saved differences", async ({
+test("exact arrival dates and care edits preserve completed forecast inputs", async ({
   page,
 }, info) => {
-  test.skip(
-    info.project.name === "mobile",
-    "Pointer drag and immutable save workflow runs on desktop.",
-  );
   const context = await scenario(page, "condition editing", {
     horizon_calendar_days: 10,
     replications: 1,
@@ -94,7 +88,6 @@ test("condition drag and care mix edits create inspectable saved differences", a
   );
   await open(page, context.scenario.id, "overview", run.id);
   await expandScenarioDetails(page);
-  await page.getByLabel("Scenario preset").selectOption("sustained");
   await page.getByLabel("Increase in ED arrivals").fill("70");
   await page.getByLabel("Starts on day").fill("3");
   await page.getByLabel("Ends on day").fill("8");
@@ -104,25 +97,22 @@ test("condition drag and care mix edits create inspectable saved differences", a
     .fill("60");
   await page.getByLabel("Ward admission (%)", { exact: true }).fill("30");
   await page.getByLabel("ICU admission (%)", { exact: true }).fill("10");
-  const track = page.locator(".condition-window"),
-    body = page.getByRole("button", { name: "Move condition window" });
-  await body.scrollIntoViewIfNeeded();
-  const box = (await body.boundingBox())!,
-    trackBox = (await track.boundingBox())!;
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(
-    box.x + box.width / 2 + trackBox.width / 10,
-    box.y + box.height / 2,
-    { steps: 5 },
+  const graph = page.getByTestId("arrival-preview-chart");
+  const originalCurve = await graph.getAttribute("data-planned-arrivals");
+  await page.getByLabel("Starts on day", { exact: true }).fill("4");
+  await page.getByLabel("Ends on day", { exact: true }).fill("9");
+  await page.getByLabel("Starts on day", { exact: true }).focus();
+  await page.keyboard.press("ArrowUp");
+  await expect(page.getByLabel("Starts on day", { exact: true })).toHaveValue(
+    "5",
   );
-  await page.mouse.up();
-  await expect(page.getByLabel("Starts on day")).toHaveValue("4");
-  await expect(page.getByLabel("Ends on day")).toHaveValue("9");
-  const start = page.getByRole("slider", { name: "Resize condition start" });
-  await start.focus();
-  await page.keyboard.press("ArrowRight");
-  await expect(page.getByLabel("Starts on day")).toHaveValue("5");
+  await expect(page.getByLabel("Ends on day", { exact: true })).toHaveValue(
+    "9",
+  );
+  await expect(graph).not.toHaveAttribute(
+    "data-planned-arrivals",
+    originalCurve!,
+  );
   const saving = page.waitForResponse(
     (r) =>
       r.url().endsWith("/scenarios/" + context.scenario.id) &&
@@ -142,14 +132,11 @@ test("condition drag and care mix edits create inspectable saved differences", a
     ward: 0.3,
     icu: 0.1,
   });
-  await page.getByRole("button", { name: "Compare saved inputs" }).click();
-  await expect(page.getByRole("dialog")).toContainText(
-    "Frozen run inputs retain their original values.",
-  );
-  await expect(page.locator(".version-differences")).toContainText(
-    "conditions",
-  );
-  await capture(page, "saved-input-differences", info);
+  expect(condition.control_points.map((point: any) => point.at)).toEqual([
+    "2026-10-20T05:00:00.000Z",
+    "2026-10-25T05:00:00.000Z",
+  ]);
+  await capture(page, "exact-arrival-parameters", info);
   const preserved = await api(page.request, "/run-groups/" + run.id);
   expect(preserved.input_sha256).toBe(run.input_sha256);
   record("condition-editor", {
@@ -157,7 +144,7 @@ test("condition drag and care mix edits create inspectable saved differences", a
     original_run_id: run.id,
     original_input_sha256: run.input_sha256,
     care_mix: condition.care_mix_override,
-    drag_window_days: [5, 9],
+    exact_window_days: [5, 9],
     saved_revision: saved.revision,
   });
 });

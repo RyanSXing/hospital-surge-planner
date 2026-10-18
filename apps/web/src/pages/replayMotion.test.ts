@@ -10,9 +10,11 @@ const next = new Map([["patient-a", { x: 500, y: 300 }]]);
 const previous: ReplayMotion = {
   rep: "rep1",
   at: 0,
+  fromAt: 0,
   height: 620,
   points: old,
   origins: old,
+  entering: new Set(),
   startedAt: 0,
   duration: 0,
 };
@@ -30,7 +32,7 @@ const input = {
 describe("recorded replay presentation", () => {
   it("moves stable IDs smoothly between exact endpoints", () => {
     const motion = prepareReplayMotion(input);
-    expect(motion.duration).toBe(850);
+    expect(motion.duration).toBe(1000);
     expect(
       replayFramePoint(
         old.get("patient-a")!,
@@ -42,7 +44,7 @@ describe("recorded replay presentation", () => {
       replayFramePoint(
         old.get("patient-a")!,
         next.get("patient-a")!,
-        replayMotionProgress(motion, 1425),
+        replayMotionProgress(motion, 1500),
       ),
     ).toEqual({ x: 300, y: 200 });
     expect(
@@ -53,6 +55,12 @@ describe("recorded replay presentation", () => {
       ),
     ).toEqual(next.get("patient-a"));
   });
+  it("keeps the presentation clock continuous even when no patient changes zones", () => {
+    const motion = prepareReplayMotion({ ...input, points: old });
+    expect(motion.duration).toBe(1000);
+    expect(motion.fromAt).toBe(0);
+    expect(motion.at).toBe(3600000);
+  });
   it("retains in-flight timing when patient inspection rerenders the same recorded instant", () => {
     const motion = prepareReplayMotion(input);
     const rerender = prepareReplayMotion({
@@ -62,8 +70,10 @@ describe("recorded replay presentation", () => {
       now: 1200,
     });
     expect(rerender.startedAt).toBe(1000);
+    expect(rerender.fromAt).toBe(0);
     expect(rerender.origins).toBe(old);
-    expect(replayMotionProgress(rerender, 1425)).toBe(0.5);
+    expect(rerender.entering).toBe(motion.entering);
+    expect(replayMotionProgress(rerender, 1500)).toBe(0.5);
   });
   it("snaps on pause, reduced motion, manual backward seeks, replication changes and resized geometry", () => {
     for (const change of [
@@ -78,16 +88,21 @@ describe("recorded replay presentation", () => {
       expect(motion.origins).toBe(next);
     }
   });
+  it("continues its visible clock when a sample boundary lands between screen frames", () => {
+    const motion = prepareReplayMotion({ ...input, originAt: 3599900 });
+    expect(motion.fromAt).toBe(3599900);
+    expect(motion.at).toBe(3600000);
+  });
   it("uses the actually drawn point as origin when a new recorded state interrupts movement", () => {
     const drawn = new Map([["patient-a", { x: 300, y: 200 }]]);
     const motion = prepareReplayMotion({
       ...input,
       previous: prepareReplayMotion(input),
       at: 7200000,
-      now: 1500,
+      now: 1600,
       origins: drawn,
     });
     expect(motion.origins).toBe(drawn);
-    expect(replayMotionProgress(motion, 1500)).toBe(0);
+    expect(replayMotionProgress(motion, 1600)).toBe(0);
   });
 });

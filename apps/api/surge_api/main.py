@@ -1136,8 +1136,8 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         previous = idempotent(session, user, "demo-datasets", key, payload)
         if previous:
             return serialize(owned(session, previous, "dataset", user))
-        fixture = payload.get("fixture", "planning_baseline")
-        if fixture not in {"planning_baseline", "stress_snapshot"}:
+        fixture = payload.get("fixture", "hospital_baseline")
+        if fixture not in {"hospital_baseline", "planning_baseline", "stress_snapshot"}:
             fail(422, "Unknown snapshot fixture")
         days = payload.get("days", 365)
         if not isinstance(days, int) or not 1 <= days <= 365:

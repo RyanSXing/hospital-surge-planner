@@ -1,0 +1,66 @@
+{
+  "recorded_at": "2026-10-18T00:32:13.054646+00:00",
+  "backend": {
+    "command": ".venv/bin/pytest -q",
+    "passed": 605,
+    "failed": 0,
+    "warnings": 2,
+    "seconds": 738.74
+  },
+  "frontend": {
+    "command": "npm run test && npm run build",
+    "unit_tests_passed": 129,
+    "test_files_passed": 21,
+    "production_build": "passed"
+  },
+  "browser": {
+    "full_frozen_build": {
+      "startTime": "2026-10-18T00:10:46.423Z",
+      "duration": 980229.298,
+      "expected": 85,
+      "skipped": 19,
+      "unexpected": 2,
+      "flaky": 0
+    },
+    "final_affected_flow_build": {
+      "startTime": "2026-10-18T00:27:43.426Z",
+      "duration": 266638.113,
+      "expected": 36,
+      "skipped": 2,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "initial_failures_resolved": [
+      {
+        "file": "map-search.spec.ts",
+        "test": "workspace search finds the hospital and preserves exact run context in focused details",
+        "project": "mobile",
+        "followup_status": "expected"
+      },
+      {
+        "file": "release-workflows.spec.ts",
+        "test": "calendar horizons, complete library search, pagination, clone and archive lifecycle",
+        "project": "desktop",
+        "followup_status": "expected"
+      }
+    ],
+    "distinct_cases_after_followup": 110,
+    "distinct_passed_after_followup": 91,
+    "distinct_intentional_device_skips": 19,
+    "unresolved_failures": 0,
+    "attribution": "The full suite used the initial frozen production bundle. All later changes are enumerated in final-followup-scope.json and verified by the final affected-flow run. The final bundle did not rerun every unchanged full-suite case."
+  },
+  "source_and_bundle_unchanged_since_final_build": true,
+  "independent_review": "No concrete blockers found in final source",
+  "local_export": "Real ZIP creation/download and complete checksums verified in full workflow; hosted export download is excluded",
+  "verification_scope": [
+    "desktop and touch mobile including320px",
+    "main sliders and sequential numeric typing with livegraph",
+    "canonical custom curves, imports, optional edits and frozen inputs",
+    "internal physical beds, reserve staff and equipment limits",
+    "comparison save/reopen and stale selection invalidation",
+    "update/reforecast, cancellation, recovery and access roles",
+    "continuous replay acrossdelayed sample boundaries with exactpause/seek",
+    "patient filters, inventory search and focused inspectors"
+  ]
+}

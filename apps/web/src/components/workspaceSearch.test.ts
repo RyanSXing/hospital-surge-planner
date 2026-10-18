@@ -7,6 +7,21 @@ import {
 } from "./workspaceSearch";
 
 describe("workspace resource search", () => {
+  it("finds staff and equipment by the names shown in the interface", () => {
+    const dataset = {
+      staff: [{ staff_id: "STAFF-1", role: "rn" }],
+      equipment_pools: [
+        { equipment_pool_id: "EQ-1", capability_code: "ICU_MONITOR" },
+      ],
+    };
+    expect(
+      resourceSearchRows(dataset, null, "registered nurse")[0]?.staff_id,
+    ).toBe("STAFF-1");
+    expect(
+      resourceSearchRows(dataset, null, "intensive care monitor")[0]
+        ?.equipment_pool_id,
+    ).toBe("EQ-1");
+  });
   it("indexes every frozen inventory kind by its canonical ID", () => {
     const rows = resourceSearchRows(
       {

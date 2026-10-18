@@ -2,6 +2,7 @@ import ReplayCampusContext from "./ReplayCampusContext";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./replay.css";
 import { Drawer, Tabs, NativeSelect } from "@mantine/core";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   prepareReplayMotion,
   replayFramePoint,
@@ -37,9 +38,10 @@ import {
 } from "lucide-react";
 import type { Entity, PlanningContext } from "../types";
 import { api, atDay, fmt, items, localDate, patientId, post } from "../api";
-import { Badge, Button, EmptyState, ErrorBox } from "../components/ui";
+import { Button, EmptyState, ErrorBox } from "../components/ui";
 import { ZonedDateTimeInput } from "../components/ZonedDateTimeInput";
 import { utcMinute } from "../zonedTime";
+import { humanLabel } from "../presentation";
 import {
   patientsOf,
   queueStats,
@@ -52,7 +54,7 @@ const zones = [
   { id: "ed", name: "ED treatment", x: 190, y: 160, w: 210, h: 210 },
   {
     id: "queue",
-    name: "Direct holding / transit",
+    name: "Waiting for a bed",
     x: 440,
     y: 185,
     w: 160,
@@ -60,16 +62,6 @@ const zones = [
   },
   { id: "ward", name: "Ward care", x: 655, y: 40, w: 310, h: 240 },
   { id: "icu", name: "ICU care", x: 655, y: 320, w: 150, h: 170 },
-  { id: "clinic", name: "Outpatient clinic", x: 190, y: 445, w: 210, h: 130 },
-  {
-    id: "overflow",
-    name: "Overflow",
-    x: 440,
-    y: 445,
-    w: 160,
-    h: 130,
-  },
-  { id: "transport", name: "Transport", x: 845, y: 320, w: 120, h: 145 },
   {
     id: "exit",
     name: "Discharge",
@@ -79,6 +71,52 @@ const zones = [
     h: 105,
   },
 ];
+function hospitalZone(zone: string) {
+  return (
+    (
+      { clinic: "ed", overflow: "ward", transport: "queue" } as Record<
+        string,
+        string
+      >
+    )[zone] || zone
+  );
+}
+function hospitalOnly<T extends Entity>(rows: T[]) {
+  return rows.filter(
+    (row) => !row.facility_id || row.facility_id === "FAC-MAIN",
+  );
+}
+function careName(value?: string) {
+  return (
+    (
+      {
+        ward: "Hospital ward",
+        icu: "Intensive care",
+        ed: "Emergency care",
+        clinic: "Outpatient care",
+      } as Record<string, string>
+    )[value || ""] || "Care assessment"
+  );
+}
+function stateName(value?: string) {
+  return (
+    (
+      {
+        ed_waiting: "Waiting for emergency care",
+        ed_assessment: "Receiving emergency care",
+        ed_boarding: "Waiting for an inpatient bed",
+        direct_waiting: "Waiting for an inpatient bed",
+        inpatient: "Admitted",
+        transfer_reserved: "Preparing to move to a bed",
+        in_transit: "Moving to a bed",
+        clinic_assessment: "Receiving outpatient care",
+        discharged: "Discharged",
+        departed: "Discharged",
+        transfer_out: "Left the hospital",
+      } as Record<string, string>
+    )[value || ""] || "Awaiting assessment"
+  );
+}
 function layoutZone(z: (typeof zones)[number], height: number) {
   return { ...z, y: (z.y * height) / 620, h: (z.h * height) / 620 };
 }
@@ -88,7 +126,7 @@ function position(
   unitKinds: Record<string, string> = {},
 ) {
   const z = layoutZone(
-    zones.find((z) => z.id === zoneFor(p, unitKinds))!,
+    zones.find((z) => z.id === hospitalZone(zoneFor(p, unitKinds)))!,
     height,
   );
   let hash = 2166136261;
@@ -115,6 +153,12 @@ const timestamp = (at: string) =>
     timeZoneName: "short",
   });
 export default function Replay({ ctx }: { ctx: PlanningContext }) {
+  const queryClient = useQueryClient();
+  const latestContext = useRef(ctx);
+  latestContext.current = ctx;
+  const displayClock = useRef<HTMLSpanElement>(null);
+  const scrubber = useRef<HTMLInputElement>(null);
+  const [buffering, setBuffering] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailTab, setDetailTab] = useState<string | null>("patient");
   const [advanced, setAdvanced] = useState(false);
@@ -145,6 +189,13 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   const motionState = useRef<ReplayMotion | null>(null);
   useEffect(() => setJumpTime(utcMinute(ctx.selectedTime)), [ctx.selectedTime]);
   const drawnPoints = useRef(new Map<string, { x: number; y: number }>());
+  const drawnPatients = useRef<Entity[]>([]);
+  const fadingPatients = useRef<{
+    rep: string;
+    at: number;
+    patients: Entity[];
+    origins: Map<string, { x: number; y: number }>;
+  } | null>(null);
   const unavailable = stateUnavailable(ctx);
   const facilityTypes = useMemo(
     () =>
@@ -168,7 +219,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   );
   const patients = useMemo<Entity[]>(
     () =>
-      patientsOf(ctx).map((patient: Entity) => ({
+      hospitalOnly(patientsOf(ctx)).map((patient: Entity) => ({
         ...patient,
         facility_type: facilityTypes[patient.facility_id],
       })),
@@ -184,7 +235,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         : null,
     [selectedDetail, facilityTypes],
   );
-  const q = queueStats(ctx, "all"),
+  const q = queueStats(ctx, "FAC-MAIN"),
     ward = statsFor(ctx, "ward", "FAC-MAIN"),
     icu = statsFor(ctx, "icu", "FAC-MAIN");
   const rep = ctx.activeReplicationId || ctx.run?.selected_replication_id;
@@ -230,7 +281,24 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     patientId(selectedDetail) === patientId(ctx.selectedPatient || {})
       ? selectedDetail
       : selected || ctx.selectedPatient;
-  const patientTotal = Number(ctx.state?.patient_total ?? patients.length);
+  const unitName = (id?: string) =>
+    unitsOf(ctx).find((unit: Entity) => (unit.unit_id || unit.id) === id)
+      ?.name ||
+    (
+      {
+        "UNIT-ED": "Emergency department",
+        "UNIT-WARD": "Hospital ward",
+        "UNIT-ICU": "Intensive care",
+      } as Record<string, string>
+    )[id || ""] ||
+    "Waiting area";
+  const patientName = (patient: Entity) => {
+    const id = patientId(patient);
+    return `Patient ${id.match(/(\d+)$/)?.[1] || id.slice(-6)}`;
+  };
+  const patientTotal = Number(
+    ctx.state?.patient_counts?.by_facility?.["FAC-MAIN"] ?? patients.length,
+  );
   const lastScene = useRef({
     total: patientTotal,
     queue: q.total,
@@ -252,20 +320,25 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   ]);
   const recordedPath = useMemo(
     () =>
-      (inspected?.state_intervals || []).map((interval: Entity) => ({
-        at: Date.parse(interval.start_at),
-        patient: {
-          ...interval,
-          facility_type: facilityTypes[interval.facility_id],
-          patient_id: patientId(inspected || {}),
-        },
-      })),
+      (inspected?.state_intervals || [])
+        .filter(
+          (interval: Entity) =>
+            !interval.facility_id || interval.facility_id === "FAC-MAIN",
+        )
+        .map((interval: Entity) => ({
+          at: Date.parse(interval.start_at),
+          patient: {
+            ...interval,
+            facility_type: facilityTypes[interval.facility_id],
+            patient_id: patientId(inspected || {}),
+          },
+        })),
     [pathSignature, facilityTypes],
   );
   useEffect(() => {
     let ignore = false;
     setSelectedDetail(null);
-    if (rep && ctx.selectedPatient?.patient_id)
+    if (!playing && rep && ctx.selectedPatient?.patient_id)
       api(
         `/runs/${rep}/patients/${encodeURIComponent(ctx.selectedPatient.patient_id)}?at=${encodeURIComponent(ctx.selectedTime)}`,
       )
@@ -278,7 +351,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     return () => {
       ignore = true;
     };
-  }, [rep, ctx.selectedPatient?.patient_id, ctx.selectedTime]);
+  }, [rep, ctx.selectedPatient?.patient_id, ctx.selectedTime, playing]);
   const visiblePatients = useMemo<Entity[]>(() => {
     const sorted = [...patients].sort((a, b) =>
       patientId(a).localeCompare(patientId(b)),
@@ -289,13 +362,18 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     }
     return sorted.slice(0, 500);
   }, [patients, selected]);
-  const { totals: zoneTotals, grouped: groups } = useMemo(
+  const hospitalCounts = useMemo(
     () =>
       replayCounts(
-        ctx.state?.patient_groups?.map((group: Entity) => ({
-          ...group,
-          facility_type: facilityTypes[group.facility_id],
-        })),
+        ctx.state?.patient_groups
+          ?.filter(
+            (group: Entity) =>
+              !group.facility_id || group.facility_id === "FAC-MAIN",
+          )
+          .map((group: Entity) => ({
+            ...group,
+            facility_type: facilityTypes[group.facility_id],
+          })),
         patients,
         visiblePatients,
         unitKinds,
@@ -308,8 +386,23 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       unitKinds,
     ],
   );
+  const { totals: zoneTotals, grouped: groups } = useMemo(() => {
+    const fold = (rows: Record<string, number>) =>
+      Object.entries(rows).reduce<Record<string, number>>(
+        (acc, [zone, count]) => {
+          const target = hospitalZone(zone);
+          acc[target] = (acc[target] || 0) + count;
+          return acc;
+        },
+        {},
+      );
+    return {
+      totals: fold(hospitalCounts.totals),
+      grouped: fold(hospitalCounts.grouped),
+    };
+  }, [hospitalCounts]);
   const zoneInventory = useMemo(
-    () => replayClinicalInventory(unitsOf(ctx), facilityTypes),
+    () => replayClinicalInventory(hospitalOnly(unitsOf(ctx)), facilityTypes),
     [ctx.state, ctx.dataset, unavailable, facilityTypes],
   );
   const backgroundOccupants = Object.values(zoneInventory).reduce(
@@ -317,15 +410,19 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     0,
   );
   const census = usePatientPage(
-      rep,
+      censusOpen ? rep : undefined,
       ctx.selectedTime,
-      { state: stateFilter === "all" ? undefined : stateFilter },
+      {
+        facility_id: "FAC-MAIN",
+        state: stateFilter === "all" ? undefined : stateFilter,
+      },
       50,
       patients.filter((p) => stateFilter === "all" || p.state === stateFilter),
     ),
     { page, setPage } = census;
   useEffect(() => {
     setEventCursor(null);
+    setPlaying(false);
   }, [rep]);
   useEffect(() => {
     let ignore = false;
@@ -366,9 +463,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           ctx.setReplication(pendingRep);
           setPendingRep("");
           setError("");
-          ctx.notify(
-            "Selected replication reconstructed from its saved inputs and seed.",
-          );
+          ctx.notify("This simulation run is ready to replay.");
         } else if (["FAILED", "CANCELLED"].includes(status.status)) {
           setError(
             status.error?.message || "Trace reconstruction did not complete.",
@@ -389,35 +484,82 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       clearInterval(timer);
     };
   }, [pendingRep, ctx.setReplication, ctx.notify]);
+  // Read ahead into the same immutable state cache used by the rest of the app.
+  // Publish the next frame only once it is ready, so a sample boundary never
+  // swaps the scene for a loading screen.
   useEffect(() => {
-    if (!playing || ctx.stateLoading || unavailable || !Number.isFinite(endMs))
-      return;
+    if (!playing || !rep || !Number.isFinite(endMs)) return;
+    let active = true;
     let frame = 0;
-    const began = performance.now();
-    const advance = (now: number) => {
+    let cursor = Date.parse(latestContext.current.selectedTime);
+    let nextDue = performance.now();
+    let waiting = false;
+    const pending = new Set<number>();
+    const ready = new Set<number>();
+    const readAhead = () => {
+      for (let index = 1; index <= 3; index++) {
+        const at = Math.min(endMs, cursor + index * speed * 3600000);
+        if (at <= cursor || ready.has(at) || pending.has(at)) continue;
+        pending.add(at);
+        const instant = new Date(at).toISOString();
+        void queryClient
+          .fetchQuery({
+            queryKey: ["run-state", rep, instant],
+            queryFn: () =>
+              api(`/runs/${rep}/state?at=${encodeURIComponent(instant)}`),
+            staleTime: Infinity,
+          })
+          .then(() => {
+            if (active) ready.add(at);
+          })
+          .catch((failure) => {
+            if (active) {
+              setError(
+                `Playback could not load the next moment. ${failure.message}`,
+              );
+              setPlaying(false);
+            }
+          })
+          .finally(() => pending.delete(at));
+      }
+    };
+    const tick = (now: number) => {
+      if (!active) return;
       if (document.hidden) {
         setPlaying(false);
         return;
       }
-      if (now - began < 1000) {
-        frame = requestAnimationFrame(advance);
-        return;
+      if (now >= nextDue) {
+        if (cursor >= endMs) {
+          setPlaying(false);
+          return;
+        }
+        const next = Math.min(endMs, cursor + speed * 3600000);
+        if (ready.has(next)) {
+          cursor = next;
+          ready.delete(next);
+          nextDue = now + 1000;
+          latestContext.current.setTime(new Date(cursor).toISOString());
+          if (waiting) {
+            waiting = false;
+            setBuffering(false);
+          }
+          readAhead();
+        } else if (!waiting) {
+          waiting = true;
+          setBuffering(true);
+        }
       }
-      const next = Math.min(endMs, currentMs + speed * 3600000);
-      ctx.setTime(new Date(next).toISOString());
-      if (next >= endMs) setPlaying(false);
+      frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(advance);
-    return () => cancelAnimationFrame(frame);
-  }, [
-    playing,
-    speed,
-    ctx.stateLoading,
-    unavailable,
-    currentMs,
-    endMs,
-    ctx.setTime,
-  ]);
+    readAhead();
+    frame = requestAnimationFrame(tick);
+    return () => {
+      active = false;
+      cancelAnimationFrame(frame);
+      setBuffering(false);
+    };
+  }, [playing, speed, rep, endMs, queryClient]);
   useEffect(() => {
     const listener = () => {
       if (document.hidden) setPlaying(false);
@@ -475,6 +617,28 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           ),
         );
     }
+    if (!playing || reduced || !previous || previous.rep !== rep)
+      fadingPatients.current = null;
+    else if (previous.at !== recordedTime) {
+      const patients = drawnPatients.current.filter(
+        (patient) => !targetPoints.has(patientId(patient)),
+      );
+      fadingPatients.current = {
+        rep: rep || "",
+        at: recordedTime,
+        patients,
+        origins: new Map(
+          patients.map((patient) => [
+            patientId(patient),
+            drawnPoints.current.get(patientId(patient)) ||
+              position(patient, H, unitKinds),
+          ]),
+        ),
+      };
+    }
+    const departing = fadingPatients.current?.patients || [];
+    const departingOrigins = fadingPatients.current?.origins || new Map();
+    drawnPatients.current = visiblePatients;
     const movedMarkers = visiblePatients.filter((patient) => {
       const prior = originPoints.get(patientId(patient));
       const target = targetPoints.get(patientId(patient))!;
@@ -490,6 +654,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       playing,
       reduced,
       now: performance.now(),
+      originAt: Number.isFinite(Date.parse(node.dataset.visualAt || ""))
+        ? Date.parse(node.dataset.visualAt!)
+        : undefined,
     });
     const moving = motion.duration > 0;
     node.dataset.previousMarkers = String(previous?.points.size || 0);
@@ -498,7 +665,19 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     motionState.current = motion;
     function draw(progress: number) {
       if (!g || !node) return;
-      node.dataset.animating = String(moving && progress < 1);
+      node.dataset.animating = String(playing && !reduced && moving);
+      node.dataset.paintCount = String(
+        Number(node.dataset.paintCount || 0) + 1,
+      );
+      const visualTime =
+        motion.fromAt + (recordedTime - motion.fromAt) * progress;
+      node.dataset.visualAt = new Date(visualTime).toISOString();
+      if (displayClock.current)
+        displayClock.current.textContent = timestamp(
+          new Date(visualTime).toISOString(),
+        );
+      if (scrubber.current && playing)
+        scrubber.current.value = String((visualTime - startMs) / 60000);
       g.fillStyle = "#f7fafc";
       g.fillRect(0, 0, W, H);
       drawReplayBackdrop(g, W, H);
@@ -513,10 +692,6 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       g.lineTo(840, 405 * yScale);
       g.lineTo(840, 520 * yScale);
       g.lineTo(845, 520 * yScale);
-      g.moveTo(295, 370 * yScale);
-      g.lineTo(295, 445 * yScale);
-      g.moveTo(520, 345 * yScale);
-      g.lineTo(520, 445 * yScale);
       g.stroke();
       g.strokeStyle = "#bbcbd6";
       g.lineWidth = 1;
@@ -548,7 +723,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         const n = zoneTotals[z.id] || 0;
         if (z.id !== "exit" || z.h > 60)
           g.fillText(
-            z.id === "exit" ? "Path endpoint" : `${n} active`,
+            z.id === "exit" ? "Patients leave care" : `${n} patients`,
             z.x + 12,
             z.y + 44,
           );
@@ -588,6 +763,8 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           moving && prior ? replayFramePoint(prior, target, progress) : target;
         framePoints.set(patientId(p), pos);
         const chosen = patientId(ctx.selectedPatient || {}) === patientId(p);
+        g.globalAlpha =
+          moving && motion.entering.has(patientId(p)) ? progress : 1;
         g.beginPath();
         g.arc(pos.x, pos.y, chosen ? 5.5 : 3, 0, Math.PI * 2);
         g.fillStyle = p.admission_pending
@@ -604,6 +781,19 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           g.stroke();
         }
       }
+      g.globalAlpha = 1;
+      for (const patient of departing) {
+        const origin = departingOrigins.get(patientId(patient))!;
+        // A bounded snapshot can omit a still-active patient. Fade a marker at
+        // its last known position rather than inventing a discharge journey.
+        const point = origin;
+        g.globalAlpha = 1 - progress;
+        g.beginPath();
+        g.arc(point.x, point.y, 3, 0, Math.PI * 2);
+        g.fillStyle = "#0b8ca5";
+        g.fill();
+      }
+      g.globalAlpha = 1;
       drawnPoints.current = framePoints;
       for (const original of zones) {
         if (!groups[original.id]) continue;
@@ -618,22 +808,18 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         g.strokeRect(x, y, width, 22);
         g.fillStyle = "#b66b07";
         g.font = "600 10px system-ui";
-        g.fillText(`1 marker = ${fmt(groups[z.id])}`, x + 7, y + 15);
+        g.fillText(`+${fmt(groups[z.id])} more patients`, x + 7, y + 15);
       }
       g.fillStyle = "#536b7d";
       g.font = "10px system-ui";
-      g.fillText(
-        "SYNTHETIC CARE FLOW · SCHEMATIC POSITIONS · RECORDED PATIENT STATES",
-        20,
-        H - 14,
-      );
+      g.fillText("Vanderbilt hospital · care flow", 20, H - 14);
     }
     let frame = 0;
-    if (moving) {
+    if (playing && !reduced) {
       const paint = (now: number) => {
         const progress = replayMotionProgress(motion, now);
         draw(progress);
-        if (progress < 1) frame = requestAnimationFrame(paint);
+        frame = requestAnimationFrame(paint);
       };
       draw(replayMotionProgress(motion, performance.now()));
       frame = requestAnimationFrame(paint);
@@ -658,6 +844,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     canvasHeight,
     zoneInventory,
     unitKinds,
+    startMs,
   ]);
   async function chooseReplication(id: string) {
     setPlaying(false);
@@ -722,6 +909,22 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       setError((e as Error).message);
     }
   }
+  function pauseAtVisibleTime() {
+    setPlaying(false);
+    const visibleAt = canvas.current?.dataset.visualAt;
+    const instant = Date.parse(visibleAt || "");
+    // Freeze the moment the viewer was actually seeing. Request its exact
+    // recorded state once; retain the canvas while that one seek completes.
+    if (
+      playing &&
+      !reduced &&
+      visibleAt &&
+      Number.isFinite(instant) &&
+      instant >= startMs &&
+      instant <= endMs
+    )
+      ctx.setTime(visibleAt);
+  }
   function move(at: string) {
     setPlaying(false);
     setEventCursor(null);
@@ -739,7 +942,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         <EmptyState
           icon={Play}
           title="A patient-level view of your scenario"
-          description="Complete a simulation to inspect its recorded patient movements, queues, resource changes, and transfers."
+          description="Run a simulation to watch patients arrive, receive care and leave the hospital."
           action={
             <Button
               primary
@@ -758,17 +961,20 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
         <div>
           <div className="eyebrow">SIMULATION EXPLORER</div>
           <h1>Patient flow replay</h1>
-          <p>Follow one simulated patient population through care.</p>
+          <p>Watch patients move from arrival to treatment and discharge.</p>
         </div>
         <div className="heading-actions">
           <Button
-            onClick={() => setDetailOpen(true)}
+            onClick={() => {
+              pauseAtVisibleTime();
+              setDetailOpen(true);
+            }}
             aria-label="Inspect replay"
           >
             Inspect replay
           </Button>
           <label className="micro-label">
-            <span>Replication</span>
+            <span>Simulation run</span>
             <NativeSelect
               aria-label="Select replication to replay"
               value={pendingRep || rep || ""}
@@ -804,10 +1010,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       {error ? <ErrorBox error={error} onDismiss={() => setError("")} /> : null}
       {pendingRep ? (
         <div className="info-note" role="status">
-          Reconstructing this replication from its saved seed and frozen inputs…
+          Preparing this simulation run…
         </div>
       ) : null}
-      {unavailable ? (
+      {unavailable && !playing ? (
         <div className="info-note" role="status">
           {ctx.stateError || "Loading the exact state at this timestamp…"}
         </div>
@@ -817,21 +1023,20 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           <strong>Vanderbilt hospital campus</strong>
           <span>Nashville, Tennessee · 1211 Medical Center Drive</span>
         </div>
-        <Badge>Synthetic simulation</Badge>
-        <a
-          href="https://www.vanderbilthealth.com/locations/vanderbilt-university-medical-center"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Location reference ↗
-        </a>
-        <p>
-          Synthetic care flow, not Vanderbilt operational data or actual patient
-          positions.
-        </p>
         <details className="replay-campus-reference">
           <summary>Campus context · local map</summary>
           <ReplayCampusContext />
+          <p>
+            Planning simulation with generated patient data. Care zones are a
+            simplified illustration, not a clinical floor plan.
+          </p>
+          <a
+            href="https://www.vanderbilthealth.com/locations/vanderbilt-university-medical-center"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Location reference ↗
+          </a>
         </details>
       </div>
       <div className="replay-stage">
@@ -853,8 +1058,12 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
               </button>
               <Button
                 primary
-                disabled={unavailable || currentMs >= endMs}
-                onClick={() => setPlaying(!playing)}
+                disabled={
+                  (!playing && unavailable) || (!playing && currentMs >= endMs)
+                }
+                onClick={() =>
+                  playing ? pauseAtVisibleTime() : setPlaying(true)
+                }
                 aria-label={playing ? "Pause replay" : "Play replay"}
               >
                 {playing ? <Pause size={18} /> : <Play size={18} />}
@@ -885,14 +1094,20 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             </div>
             <div className="replay-time">
               <strong>
-                {timestamp(unavailable ? displayedScene.at : ctx.selectedTime)}
+                <span ref={displayClock}>
+                  {timestamp(
+                    unavailable ? displayedScene.at : ctx.selectedTime,
+                  )}
+                </span>
               </strong>
               <span>
-                {unavailable
-                  ? "Loading recorded state…"
-                  : playing
-                    ? "Playing recorded simulation"
-                    : "Paused · exact recorded state"}
+                {playing
+                  ? buffering
+                    ? "Preparing the next moment…"
+                    : "Playing"
+                  : unavailable
+                    ? "Loading selected time…"
+                    : "Paused"}
               </span>
             </div>
             <Button
@@ -906,6 +1121,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           <div className="replay-scrubber">
             <span>{localDate(start)}</span>
             <input
+              ref={scrubber}
               aria-label="Replay timestamp across actual elapsed horizon"
               type="range"
               min={0}
@@ -936,7 +1152,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             <div className="scene-topline">
               <span className="scene-tag">
                 <span className="cyan-dot" />
-                RUN {Number(repIndex) + 1} · CARE FLOW
+                Hospital care flow
               </span>
               <div className="scene-legend">
                 <span>
@@ -1020,7 +1236,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                 className="replay-canvas"
                 style={{ "--replay-zoom": zoom } as React.CSSProperties}
                 role="img"
-                aria-label={`Hospital state schematic across all sites: ${displayedScene.total} active patients; ${displayedScene.queue} awaiting inpatient placement. Bed totals also include ${backgroundOccupants} anonymous partner occupants. Every individual patient is available in the accessible census below.`}
+                aria-label={`Hospital care flow: ${displayedScene.total} patients in the hospital; ${displayedScene.queue} waiting for an inpatient bed. Every patient is available in the patient list below.`}
                 onClick={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect(),
                     x = ((e.clientX - rect.left) / rect.width) * 1000,
@@ -1038,6 +1254,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                     }
                   }
                   if (best) {
+                    pauseAtVisibleTime();
                     ctx.setPatient(best);
                     setDetailTab("patient");
                     setDetailOpen(true);
@@ -1051,18 +1268,18 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
               </span>
               <span>
                 <strong className="amber">{fmt(displayedScene.queue)}</strong>{" "}
-                inpatient requests
+                waiting for a bed
               </span>
               <span>
                 {unavailable
-                  ? "Loading the requested timestamp; the last recorded frame remains visible."
+                  ? "Showing the last loaded moment."
                   : inspected
-                    ? `Highlighted recorded path: ${patientId(inspected)}.`
+                    ? "Selected patient highlighted."
                     : patientTotal > visiblePatients.length
                       ? `${visiblePatients.length} individual markers; ${fmt(patientTotal - visiblePatients.length)} grouped. Full census below.`
                       : backgroundOccupants > 0
-                        ? `Beds include ${fmt(backgroundOccupants)} anonymous partner occupants; positions are schematic.`
-                        : "Exact recorded state; schematic positions only."}
+                        ? `Includes ${fmt(backgroundOccupants)} beds occupied at the start.`
+                        : "Select a dot to see the patient’s care journey."}
               </span>
             </div>
           </div>
@@ -1095,59 +1312,46 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                   </div>
                   <div className="inspector-section">
                     <h3>
-                      {inspected
-                        ? patientId(inspected)
-                        : "Main hospital capacity"}
+                      {inspected ? patientName(inspected) : "Hospital beds"}
                     </h3>
                     {inspected ? (
                       <dl className="detail-list">
                         <div>
-                          <dt>State</dt>
+                          <dt>Care status</dt>
                           <dd>
                             {inspectedPresence === "not_arrived"
                               ? "Not yet arrived"
                               : inspectedPresence === "departed"
                                 ? "Discharged"
-                                : inspected.state?.replaceAll("_", " ") ||
-                                  "Loading patient state…"}
+                                : stateName(inspected.state)}
                           </dd>
                         </div>
                         <div>
-                          <dt>Actual unit / slot</dt>
+                          <dt>Current location</dt>
                           <dd>
                             {inspectedPresence !== "active"
                               ? "No active location at this timestamp"
-                              : inspected.unit_id || "Transit / queue"}
-                            <br />
-                            {inspectedPresence === "active"
-                              ? inspected.slot_id || "No treatment slot"
-                              : ""}
+                              : unitName(inspected.unit_id)}
                           </dd>
                         </div>
                         <div>
                           <dt>Required care</dt>
                           <dd>
-                            {inspected.target_unit_kind || inspected.care_level}
+                            {careName(
+                              inspected.target_unit_kind ||
+                                inspected.care_level,
+                            )}
                           </dd>
                         </div>
                         <div>
-                          <dt>Unresolved request</dt>
+                          <dt>Waiting for a bed</dt>
                           <dd>
                             {inspectedPresence === "active" &&
                             inspected.admission_pending
-                              ? "Yes; waiting continues"
+                              ? "Yes"
                               : "No"}
                           </dd>
                         </div>
-                        {inspectedPresence === "active" &&
-                        inspected.pending_transfer ? (
-                          <div>
-                            <dt>Destination</dt>
-                            <dd>
-                              {inspected.pending_transfer.destination_unit_id}
-                            </dd>
-                          </div>
-                        ) : null}
                       </dl>
                     ) : (
                       <>
@@ -1164,8 +1368,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                           </strong>
                         </div>
                         <p className="small-copy muted">
-                          Occupied / staffed. Partner patients remain tracked
-                          separately in the full census.
+                          Beds occupied / beds supported by available staff.
                         </p>
                       </>
                     )}
@@ -1174,13 +1377,11 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                         {inspected.blockers?.length ? (
                           <div className="constraint-callout">
                             <strong className="amber">
-                              Recorded placement blockers
+                              Why this patient is waiting
                             </strong>
                             <ul>
                               {inspected.blockers.map((reason: string) => (
-                                <li key={reason}>
-                                  {reason.replaceAll("_", " ")}
-                                </li>
+                                <li key={reason}>{humanLabel(reason)}</li>
                               ))}
                             </ul>
                           </div>
@@ -1204,78 +1405,30 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                               (requirement: Entity | string, index: number) => (
                                 <li key={index}>
                                   {typeof requirement === "string"
-                                    ? requirement.replaceAll("_", " ")
-                                    : `${String(requirement.capability_code || requirement.resource_type || "Resource").replaceAll("_", " ")} × ${requirement.quantity ?? 1}`}
+                                    ? humanLabel(requirement)
+                                    : `${humanLabel(requirement.capability_code || requirement.resource_type || "Resource")} × ${requirement.quantity ?? 1}`}
                                 </li>
                               ),
                             )}
                           </ul>
                         </details>
-                        {inspected.pending_transfer ? (
-                          <details
-                            key={inspected.pending_transfer.request_id}
-                            className="replay-transfer-detail"
-                          >
-                            <summary>
-                              Inspect transfer ·{" "}
-                              {inspected.pending_transfer.status}
-                            </summary>
-                            <dl className="detail-list">
-                              <div>
-                                <dt>Request</dt>
-                                <dd>{inspected.pending_transfer.request_id}</dd>
-                              </div>
-                              <div>
-                                <dt>Source</dt>
-                                <dd>
-                                  {inspected.pending_transfer.source_unit_id ||
-                                    "Holding queue"}
-                                </dd>
-                              </div>
-                              <div>
-                                <dt>Destination / reservation</dt>
-                                <dd>
-                                  {
-                                    inspected.pending_transfer
-                                      .destination_unit_id
-                                  }
-                                  <br />
-                                  {
-                                    inspected.pending_transfer
-                                      .destination_slot_id
-                                  }
-                                </dd>
-                              </div>
-                              <div>
-                                <dt>Vehicle</dt>
-                                <dd>{inspected.pending_transfer.vehicle_id}</dd>
-                              </div>
-                              <div>
-                                <dt>Planned departure</dt>
-                                <dd>
-                                  {timestamp(
-                                    inspected.pending_transfer
-                                      .planned_departure_at,
-                                  )}
-                                </dd>
-                              </div>
-                              <div>
-                                <dt>Planned arrival</dt>
-                                <dd>
-                                  {timestamp(
-                                    inspected.pending_transfer
-                                      .planned_arrival_at,
-                                  )}
-                                </dd>
-                              </div>
-                            </dl>
-                            <p className="small-copy muted">
-                              The source place remains occupied until recorded
-                              departure. Planned times do not imply arrival has
-                              occurred.
-                            </p>
-                          </details>
-                        ) : null}
+                        <details className="replay-identifiers">
+                          <summary>Technical record</summary>
+                          <dl className="detail-list">
+                            <div>
+                              <dt>Patient record</dt>
+                              <dd>{patientId(inspected)}</dd>
+                            </div>
+                            <div>
+                              <dt>Unit record</dt>
+                              <dd>{inspected.unit_id || "No unit assigned"}</dd>
+                            </div>
+                            <div>
+                              <dt>Bed record</dt>
+                              <dd>{inspected.slot_id || "No bed assigned"}</dd>
+                            </div>
+                          </dl>
+                        </details>
                       </div>
                     ) : null}
                     <Button small onClick={() => ctx.setPage("patients")}>
@@ -1300,7 +1453,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
               </Tabs.Panel>
               <Tabs.Panel value="events">
                 <ReplayEventWindow
-                  rep={rep || ""}
+                  rep={detailOpen && detailTab === "events" ? rep || "" : ""}
                   at={ctx.selectedTime}
                   patient={inspected || null}
                   cursor={eventCursor}
@@ -1383,7 +1536,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       <div className="replay-census-toggle">
         <Button
           aria-expanded={censusOpen}
-          onClick={() => setCensusOpen(!censusOpen)}
+          onClick={() => {
+            pauseAtVisibleTime();
+            setCensusOpen(!censusOpen);
+          }}
         >
           {censusOpen ? "Hide patient census" : "View patient census"}
         </Button>
@@ -1400,12 +1556,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           <div className="census-toolbar">
             <div>
               <h3>
-                Accessible replay census{" "}
-                <span className="muted">{fmt(census.total)}</span>
+                Patient list <span className="muted">{fmt(census.total)}</span>
               </h3>
               <span className="micro-label">
-                Every active patient at this timestamp, including grouped
-                markers
+                Patients in the hospital at the selected time.
               </span>
             </div>
             <NativeSelect
@@ -1421,7 +1575,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                 .sort()
                 .map((state) => (
                   <option key={state} value={state}>
-                    {state.replaceAll("_", " ")}
+                    {stateName(state)}
                   </option>
                 ))}
             </NativeSelect>
@@ -1437,10 +1591,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
               <thead>
                 <tr>
                   <th>Patient</th>
-                  <th>State</th>
-                  <th>Actual location</th>
+                  <th>Care status</th>
+                  <th>Care unit</th>
                   <th>Required care</th>
-                  <th>Inpatient waiting</th>
+                  <th>Waiting for a bed</th>
                 </tr>
               </thead>
               <tbody>
@@ -1457,22 +1611,18 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                       <button
                         className="link-button"
                         onClick={() => {
+                          setPlaying(false);
                           ctx.setPatient(p);
                           setDetailTab("patient");
                           setDetailOpen(true);
                         }}
                       >
-                        {patientId(p)}
+                        {patientName(p)}
                       </button>
                     </td>
-                    <td>{p.state?.replaceAll("_", " ")}</td>
-                    <td>
-                      {p.unit_id ||
-                        p.pending_transfer?.vehicle_id ||
-                        "Holding queue"}
-                      {p.slot_id ? ` · ${p.slot_id}` : ""}
-                    </td>
-                    <td>{p.target_unit_kind || p.care_level}</td>
+                    <td>{stateName(p.state)}</td>
+                    <td>{unitName(p.unit_id)}</td>
+                    <td>{careName(p.target_unit_kind || p.care_level)}</td>
                     <td>{p.admission_pending ? "Yes" : "No"}</td>
                   </tr>
                 ))}

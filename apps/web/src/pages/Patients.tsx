@@ -1,3 +1,4 @@
+import { humanLabel } from "../presentation";
 import { NativeSelect } from "@mantine/core";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./patients.css";
@@ -42,7 +43,7 @@ const labels: Record<string, string> = {
   transfer_reserved: "Transfer reserved",
 };
 const stateLabel = (p: Entity) =>
-  labels[p.state] || p.state?.replaceAll("_", " ") || "Unknown";
+  labels[p.state] || humanLabel(p.state) || "Unknown";
 const time = (value?: string) =>
   value
     ? localDate(value, {
@@ -121,14 +122,14 @@ function UnitDetails({ unit }: { unit: Entity }) {
           <dt>Admission gate</dt>
           <dd>
             {unit.admission_gate === false
-              ? "Minimum team missing"
-              : "Open when resources fit"}
+              ? "More staff needed"
+              : "Accepting suitable patients"}
           </dd>
         </div>
         {Object.entries(unit.staff_by_role || unit.baseline_staff || {}).map(
           ([role, count]) => (
             <div key={role}>
-              <dt>{role === "rn" ? "Qualified nurses" : role}</dt>
+              <dt>{humanLabel(role)}</dt>
               <dd>{String(count)}</dd>
             </div>
           ),
@@ -136,12 +137,12 @@ function UnitDetails({ unit }: { unit: Entity }) {
       </dl>
       {Object.keys(equipment).length ? (
         <>
-          <h3>Equipment ledger</h3>
+          <h3>Equipment availability</h3>
           {Object.entries(equipment).map(([cap, v]) => {
             const e = v as Entity;
             return (
               <div className="eligibility-row" key={cap}>
-                <strong>{cap.replaceAll("_", " ")}</strong>
+                <strong>{humanLabel(cap)}</strong>
                 <span>
                   {e.in_use} in use · {e.reserved} reserved · {e.available} free
                   {e.deficit ? ` · ${e.deficit} deficit` : ""}
@@ -323,14 +324,18 @@ export default function Patients({
     : null;
   const currentPath =
     current?.entry_type === "direct_ward"
-      ? ["Direct admission", current?.care_level || "Ward", "Discharge"]
+      ? [
+          "Direct admission",
+          humanLabel(current?.care_level || "ward"),
+          "Discharge",
+        ]
       : current?.state === "clinic_assessment"
         ? ["Eligible new arrival", "Clinic", "Discharge"]
         : [
             "ED assessment",
             current?.care_level === "ambulatory"
               ? "Disposition after assessment"
-              : current?.care_level || "Inpatient",
+              : humanLabel(current?.care_level || "inpatient"),
             "Discharge",
           ];
   return (
@@ -626,7 +631,8 @@ export default function Patients({
                 <div className="patient-filter-grid">
                   <label>
                     Required care
-                    <NativeSelect aria-label="Required care"
+                    <NativeSelect
+                      aria-label="Required care"
                       value={care}
                       onChange={(e) => setCare(e.target.value)}
                     >
@@ -638,7 +644,8 @@ export default function Patients({
                   </label>
                   <label>
                     Current unit
-                    <NativeSelect aria-label="Current unit"
+                    <NativeSelect
+                      aria-label="Current unit"
                       value={unit}
                       onChange={(e) => setUnit(e.target.value)}
                     >
@@ -652,7 +659,8 @@ export default function Patients({
                   </label>
                   <label>
                     Waiting reason
-                    <NativeSelect aria-label="Waiting reason"
+                    <NativeSelect
+                      aria-label="Waiting reason"
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       disabled={!rep}
@@ -667,8 +675,6 @@ export default function Patients({
                         "destination_inactive",
                         "unsupported_care_capability",
                         "incoming_reservation",
-                        "awaiting_transport_pickup",
-                        "in_transit",
                         ...Object.keys(
                           ctx.state?.blocker_summary?.[ctx.selectedFacility] ||
                             {},
@@ -680,20 +686,9 @@ export default function Patients({
                         )
                         .map((value) => (
                           <option key={value} value={value}>
-                            {value.replaceAll("_", " ")}
+                            {humanLabel(value)}
                           </option>
                         ))}
-                    </NativeSelect>
-                  </label>
-                  <label>
-                    Transfer eligibility
-                    <NativeSelect aria-label="Transfer eligibility"
-                      value={transfer}
-                      onChange={(e) => setTransfer(e.target.value)}
-                    >
-                      <option value="">All declarations</option>
-                      <option value="true">Declared eligible</option>
-                      <option value="false">Declared ineligible</option>
                     </NativeSelect>
                   </label>
                   <ZonedDateTimeInput
@@ -735,9 +730,7 @@ export default function Patients({
                   Remaining filters use the retained stage sample for a
                   simulation or the supplied residual/template mean for a source
                   snapshot. Unknown or not-started stages do not match a numeric
-                  range. Transfer eligibility is a patient declaration;
-                  placement still requires destination and transport checks.
-                  Waiting reasons are available after a simulation.
+                  range. Waiting reasons are available after a simulation.
                 </p>
                 <Button
                   small
@@ -809,11 +802,13 @@ export default function Patients({
                           {nameOf(
                             allUnits.find((u) => unitId(u) === p.unit_id) || {},
                           ) ||
-                            p.state?.replaceAll("_", " ") ||
+                            humanLabel(p.state) ||
                             "—"}
                         </td>
                         <td data-label="Required care">
-                          {p.target_unit_kind || p.care_level || "ambulatory"}
+                          {humanLabel(
+                            p.target_unit_kind || p.care_level || "ambulatory",
+                          )}
                         </td>
                         <td className="numeric" data-label="Elapsed stage">
                           {elapsed(p, censusAt) === null
@@ -846,8 +841,8 @@ export default function Patients({
                             ? p.placement_resource_requirements
                                 .map((r: Entity | string) =>
                                   typeof r === "string"
-                                    ? r.replaceAll("_", " ")
-                                    : `${r.quantity || 1} × ${(r.capability_code || r.resource_profile_id || "resource").replaceAll("_", " ")}`,
+                                    ? humanLabel(r)
+                                    : `${r.quantity || 1} × ${humanLabel(r.capability_code || r.resource_profile_id || "resource")}`,
                                 )
                                 .join(", ")
                             : "Standard care bundle"}
@@ -899,7 +894,7 @@ export default function Patients({
                             {nameOf(u)}
                           </button>
                         </td>
-                        <td>{u.kind}</td>
+                        <td>{humanLabel(u.kind)}</td>
                         <td>{u.physical ?? u.physical_capacity}</td>
                         <td>{u.staffed ?? u.staffed_capacity}</td>
                         <td>
@@ -984,12 +979,16 @@ export default function Patients({
                     </dd>
                   </div>
                   <div>
-                    <dt>Actual slot</dt>
+                    <dt>Bed or treatment space</dt>
                     <dd>{current.slot_id || "No treatment slot"}</dd>
                   </div>
                   <div>
                     <dt>Required care</dt>
-                    <dd>{current.target_unit_kind || current.care_level}</dd>
+                    <dd>
+                      {humanLabel(
+                        current.target_unit_kind || current.care_level,
+                      )}
+                    </dd>
                   </div>
                   <div>
                     <dt>Arrival</dt>
@@ -1000,11 +999,8 @@ export default function Patients({
                     <dd>
                       {current.arrival_origin === "synthetic_incident" ||
                       current.source_type === "synthetic_incident"
-                        ? "Synthetic planned incident"
-                        : (current.source_type || "initial_census").replaceAll(
-                            "_",
-                            " ",
-                          )}
+                        ? "Planned incident"
+                        : humanLabel(current.source_type || "initial_census")}
                     </dd>
                   </div>
                   <div>
@@ -1017,7 +1013,7 @@ export default function Patients({
                   </div>
                   <div>
                     <dt>Model priority</dt>
-                    <dd>{current.acuity_rank ?? "—"} · synthetic input</dd>
+                    <dd>{current.acuity_rank ?? "—"}</dd>
                   </div>
                 </dl>
               </div>
@@ -1032,9 +1028,8 @@ export default function Patients({
                   <p>{fmt(spec.minutes / 60, 1)} hours supplied at snapshot.</p>
                 ) : template ? (
                   <p>
-                    Gamma(shape {template.shape}, scale {template.scale_hours}{" "}
-                    h); mean {fmt(template.shape * template.scale_hours)} h
-                    remaining at snapshot.
+                    Expected stay: {fmt(template.shape * template.scale_hours)}{" "}
+                    hours from the starting census.
                   </p>
                 ) : spec?.kind === "expected_end" ? (
                   <p>Expected end: {time(spec.expected_end_at)}</p>
@@ -1078,11 +1073,11 @@ export default function Patients({
                 {current.blockers?.length ? (
                   <div className="constraint-callout">
                     <strong className="amber">
-                      Current simultaneous blockers
+                      Why this patient is waiting
                     </strong>
                     <ul>
                       {current.blockers.map((reason: string) => (
-                        <li key={reason}>{reason.replaceAll("_", " ")}</li>
+                        <li key={reason}>{humanLabel(reason)}</li>
                       ))}
                     </ul>
                     <p>
@@ -1093,7 +1088,8 @@ export default function Patients({
                 ) : null}
                 <ul className="requirements-list">
                   <li>
-                    Compatible {current.target_unit_kind || current.care_level}{" "}
+                    Compatible{" "}
+                    {humanLabel(current.target_unit_kind || current.care_level)}{" "}
                     place
                   </li>
                   <li>Qualified nursing and operating team</li>
@@ -1122,42 +1118,6 @@ export default function Patients({
                     </p>
                   </div>
                 ) : null}
-                <Button
-                  className="full-width"
-                  disabled={!ctx.scenario}
-                  onClick={() =>
-                    ctx.action("Checking placement options", async () => {
-                      const request = ++placementRequest.current;
-                      const results = await Promise.all(
-                        (ctx.dataset?.facilities || [])
-                          .filter((f) => f.facility_id !== current.facility_id)
-                          .map((f) =>
-                            api(
-                              `/sites/${f.facility_id}/eligibility?${rep && ctx.run?.scenario_revision_id ? `scenario_revision_id=${ctx.run.scenario_revision_id}` : `scenario_id=${ctx.scenario?.id}`}&patient_id=${patientId(current)}&care_level=${current.target_unit_kind || current.care_level}&replication_id=${rep || ""}&at=${encodeURIComponent(ctx.selectedTime)}`,
-                            ),
-                          ),
-                      );
-                      if (request === placementRequest.current)
-                        setEligibility(results);
-                    })
-                  }
-                >
-                  Find placement options <ArrowUpRight size={15} />
-                </Button>
-                {eligibility.map((e, i) => (
-                  <div className="eligibility-row" key={i}>
-                    <strong>
-                      {e.site?.name || e.site_id || "Destination"}
-                    </strong>
-                    <span className={e.eligible ? "green" : "amber"}>
-                      {e.eligible
-                        ? "Eligible"
-                        : (e.reasons || e.rejection_reasons || []).join(
-                            " · ",
-                          ) || "Constraints apply"}
-                    </span>
-                  </div>
-                ))}
               </div>
               {currentUnit ? (
                 <div className="inspector-section">
@@ -1257,7 +1217,7 @@ export default function Patients({
                     <button key={unitId(u)} onClick={() => setUnit(unitId(u))}>
                       <span>
                         <strong>{nameOf(u)}</strong>
-                        <small>{u.kind?.toUpperCase()}</small>
+                        <small>{humanLabel(u.kind)}</small>
                       </span>
                       <span>
                         {u.occupied ??

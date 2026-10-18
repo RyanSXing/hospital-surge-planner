@@ -6,7 +6,7 @@ test("entry stream edit derives read-only demand summaries and commits one immut
 }, info) => {
   await login(page);
   const original = await api(page.request, "/demo-datasets", "POST", {
-    fixture: "planning_baseline",
+    fixture: "hospital_baseline",
     days: 3,
   });
   const scenario = await api(page.request, "/scenarios", "POST", {
@@ -21,14 +21,14 @@ test("entry stream edit derives read-only demand summaries and commits one immut
     .click();
   await expect(page.getByText("Editable draft", { exact: true })).toBeVisible();
   const collections = page.locator(".collection-list");
-  await collections.getByRole("button", { name: /^entry streams/ }).click();
+  await collections.getByRole("button", { name: /^Entry streams/ }).click();
   await page
     .locator(".entity-panel tbody tr")
     .filter({ hasText: "ED_MAIN" })
     .click();
   let dialog = page.getByRole("dialog");
   await dialog
-    .getByLabel("expected arrivals per local day", { exact: true })
+    .getByLabel("Expected arrivals per local day", { exact: true })
     .fill("120");
   const updating = page.waitForResponse(
     (r) =>
@@ -51,7 +51,7 @@ test("entry stream edit derives read-only demand summaries and commits one immut
   ).toBeTruthy();
   expect(draft.dataset.arrival_profiles.ed_arrivals_per_local_day).toBe(120);
   await expect(dialog).toHaveCount(0);
-  await collections.getByRole("button", { name: /^arrival profiles/ }).click();
+  await collections.getByRole("button", { name: /^Arrival profiles/ }).click();
   await expect(page.locator(".entity-panel")).toContainText(
     "Derived · read-only",
   );
@@ -61,10 +61,10 @@ test("entry stream edit derives read-only demand summaries and commits one immut
   await page.locator(".entity-panel tbody tr").first().click();
   dialog = page.getByRole("dialog");
   await expect(
-    dialog.getByLabel("ed arrivals per local day", { exact: true }),
+    dialog.getByLabel("ED arrivals per local day", { exact: true }),
   ).toHaveValue("120");
   await expect(
-    dialog.getByLabel("ed arrivals per local day", { exact: true }),
+    dialog.getByLabel("ED arrivals per local day", { exact: true }),
   ).toHaveAttribute("readonly", "");
   await expect(dialog.getByRole("button", { name: "Save record" })).toHaveCount(
     0,

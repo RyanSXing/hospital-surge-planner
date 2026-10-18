@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { api, capture, open, record, scenario, waitRun } from "./helpers";
 import { utcToWall } from "../src/zonedTime";
+import { humanLabel } from "../src/presentation";
 
 test("replay exposes complete filtered events, patient history and recorded resources", async ({
   page,
@@ -99,7 +100,7 @@ test("replay exposes complete filtered events, patient history and recorded reso
   for (const value of await feed
     .locator(".replay-event-list strong")
     .allTextContents())
-    expect(value).toBe(type.replaceAll("_", " "));
+    expect(value).toBe(humanLabel(type));
 
   const state = await api(
     page.request,
@@ -260,7 +261,12 @@ test("replay exposes complete filtered events, patient history and recorded reso
   );
   await expect(page.locator(".replay-canvas")).toHaveAttribute(
     "data-visible-markers",
-    String(initial.patients.length),
+    String(
+      initial.patients.filter(
+        (patient: any) =>
+          !patient.facility_id || patient.facility_id === "FAC-MAIN",
+      ).length,
+    ),
   );
   const departed = laterPatients.find(
     (value: any) =>
@@ -283,7 +289,12 @@ test("replay exposes complete filtered events, patient history and recorded reso
   );
   await expect(page.locator(".replay-canvas")).toHaveAttribute(
     "data-visible-markers",
-    String(last.patients.length),
+    String(
+      last.patients.filter(
+        (patient: any) =>
+          !patient.facility_id || patient.facility_id === "FAC-MAIN",
+      ).length,
+    ),
   );
   await page.keyboard.press("Escape");
   await page

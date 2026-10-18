@@ -1,4 +1,5 @@
 import type { Entity } from "../types";
+import { humanLabel } from "../presentation";
 
 export type SearchKind =
   "unit" | "facility" | "staff" | "equipment_pool" | "vehicle" | "slot";
@@ -76,7 +77,7 @@ export function resourceSearchRows(
   ];
   return source.filter((row) => {
     const kind = row.search_kind as SearchKind;
-    return `${row.name || row.display_label || ""} ${searchEntityId(kind, row)} ${row.role || ""} ${row.capability_code || ""}`
+    return `${row.name || row.display_label || ""} ${searchEntityId(kind, row)} ${row.role || ""} ${row.capability_code || ""} ${row.role ? humanLabel(row.role) : ""} ${row.capability_code ? humanLabel(row.capability_code) : ""}`
       .toLowerCase()
       .includes(normalized);
   });

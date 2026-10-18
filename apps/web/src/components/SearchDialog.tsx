@@ -14,6 +14,8 @@ import {
 import type { Entity, PageId, PlanningContext } from "../types";
 import { api, idOf, items, patientId } from "../api";
 import { Busy, ErrorBox, Modal } from "./ui";
+import { humanLabel } from "../presentation";
+import { resourceFacility } from "../entityLocation";
 import {
   resourceSearchRows,
   searchEntityId,
@@ -29,7 +31,6 @@ const pages: [PageId, string][] = [
   ["analytics", "Analysis · Analytics"],
   ["comparison", "Analysis · Comparison"],
   ["patients", "Patients & units"],
-  ["resources", "Resources"],
   ["data", "Data & setup"],
 ];
 
@@ -151,7 +152,19 @@ export default function SearchDialog({
   // Do not index a prior selected-time state while the current request is
   // loading or after it has failed; immutable snapshot rows remain searchable.
   const selectedState = ctx.stateLoading || ctx.stateError ? null : ctx.state;
-  const resources = resourceSearchRows(ctx.dataset, selectedState, term);
+  const resources = resourceSearchRows(ctx.dataset, selectedState, term).filter(
+    (row) => {
+      const kind = row.search_kind as SearchKind;
+      const facility = resourceFacility(
+        kind,
+        searchEntityId(kind, row),
+        row,
+        ctx.dataset?.units || [],
+        selectedState?.units || [],
+      );
+      return kind !== "vehicle" && (!facility || facility === "FAC-MAIN");
+    },
+  );
   useEffect(() => setResourceLimit(12), [term]);
   const inspectEntity = (
     ctx as PlanningContext & {
@@ -168,7 +181,7 @@ export default function SearchDialog({
     }
     // Kept for the brief interval before the shared navigation contract is loaded.
     ctx.setFacility(row.facility_id || row.id || ctx.selectedFacility);
-    ctx.setPage(kind === "unit" ? "patients" : "resources");
+    ctx.setPage("patients");
     onClose();
   };
   return (
@@ -298,8 +311,11 @@ export default function SearchDialog({
                 )}
                 <span>
                   {row.name ||
-                    row.display_label ||
-                    searchEntityId(row.search_kind as SearchKind, row)}
+                    (row.search_kind === "slot"
+                      ? `Bed ${row.display_label}`
+                      : humanLabel(
+                          row.capability_code || row.role || row.display_label,
+                        ))}
                 </span>
                 <small>
                   {searchKindLabel(row.search_kind as SearchKind)} ·{" "}
@@ -310,7 +326,7 @@ export default function SearchDialog({
             ))}
             {resources.length > resourceLimit ? (
               <button onClick={() => setResourceLimit((n) => n + 10)}>
-                Load more resource and site matches
+                Show more hospital matches
               </button>
             ) : null}
           </>

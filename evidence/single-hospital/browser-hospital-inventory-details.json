@@ -1,0 +1,11 @@
+{
+  "project": "mobile",
+  "run_id": "run_e78343dc26804111a408",
+  "resource_types": [
+    "staff",
+    "equipment_pool",
+    "slot"
+  ],
+  "parent_preserved": true,
+  "separate_resource_page": false
+}

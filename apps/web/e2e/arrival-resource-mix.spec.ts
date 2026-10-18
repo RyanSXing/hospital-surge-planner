@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { api, capture, open, record, scenario } from "./helpers";
+import { api, capture, open, record, scenario, waitRun } from "./helpers";
 
 test("reported arrival resource mixtures are editable, validated and retained after reload", async ({
   page,
@@ -8,7 +8,15 @@ test("reported arrival resource mixtures are editable, validated and retained af
     horizon_calendar_days: 1,
     replications: 1,
   });
-  await open(page, context.scenario.id, "analytics-resources");
+  const run = await waitRun(
+    page,
+    (
+      await api(page.request, "/run-groups", "POST", {
+        scenario_id: context.scenario.id,
+      })
+    ).id,
+  );
+  await open(page, context.scenario.id, "summary", run.id);
   await page
     .locator(".page-heading")
     .getByRole("button", { name: /Record update/ })
@@ -18,31 +26,18 @@ test("reported arrival resource mixtures are editable, validated and retained af
     .getByLabel("Create a new forecast branch after saving")
     .uncheck();
   const save = dialog.getByRole("button", { name: "Save input", exact: true });
-  await dialog
-    .getByRole("combobox", { name: "Facility", exact: true })
-    .selectOption("FAC-EAST");
-  await expect(
-    dialog.getByRole("combobox", { name: "Entry pathway", exact: true }),
-  ).toHaveValue("");
-  await expect(dialog.getByRole("alert")).toContainText(
-    "no selected matching arrival stream",
-  );
-  await expect(save).toBeDisabled();
-  await dialog
-    .getByRole("combobox", { name: "Facility", exact: true })
-    .selectOption("FAC-MAIN");
   await dialog.getByLabel("ICU disposition (%)", { exact: true }).fill("0");
   await dialog.getByLabel("Ward disposition (%)", { exact: true }).fill("100");
   await dialog.getByLabel("Additional patients", { exact: true }).fill("9");
   await dialog.getByLabel("Spread over minutes", { exact: true }).fill("0");
   await dialog
     .getByRole("spinbutton", {
-      name: "Ward admission — WARD-BASIC (%)",
+      name: "Ward admission — Standard ward care (%)",
       exact: true,
     })
     .fill("0");
   const oxygen = dialog.getByRole("spinbutton", {
-    name: "Ward admission — WARD-OXYGEN (%)",
+    name: "Ward admission — Ward care with oxygen (%)",
     exact: true,
   });
   await oxygen.fill("85");

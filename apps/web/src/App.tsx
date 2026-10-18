@@ -80,6 +80,7 @@ import UpdateDialog from "./components/UpdateDialog";
 import AdminDialog from "./components/AdminDialog";
 import AlertsDialog from "./components/AlertsDialog";
 import SearchDialog from "./components/SearchDialog";
+import HospitalResourceDetails from "./components/HospitalResourceDetails";
 import { resourceFacility } from "./entityLocation";
 import {
   destination,
@@ -493,12 +494,16 @@ export default function App() {
     });
   }
   async function loadDataset(fixture: string) {
-    await action("Loading synthetic dataset", async () => {
+    await action("Loading hospital baseline", async () => {
       setComparisonSelection(null);
       const contextUrl = new URL(location.href);
       contextUrl.searchParams.delete("comparison");
       history.replaceState({}, "", contextUrl);
-      const d = ["planning_baseline", "stress_snapshot"].includes(fixture)
+      const d = [
+        "hospital_baseline",
+        "planning_baseline",
+        "stress_snapshot",
+      ].includes(fixture)
         ? await post<Dataset>("/demo-datasets", {
             fixture,
             seed: 41021,
@@ -507,27 +512,14 @@ export default function App() {
         : await api<Dataset>(`/datasets/${fixture}`);
       setDataset(d);
       const s = await post<Scenario>("/scenarios", {
-        name: "Respiratory surge — sustained +70%",
+        name: "New simulation",
         dataset_version_id: d.id || d.dataset_version_id,
         start_at: d.snapshot_at,
         timezone: d.timezone,
-        horizon_calendar_days: 30,
+        horizon_calendar_days: 7,
         base_seed: 20261016,
-        replications: 100,
-        conditions: [
-          {
-            id: "arrival-sustained",
-            kind: "arrival_multiplier",
-            entry_stream_id: "ED_MAIN",
-            shape: "step",
-            surge_percent: 70,
-            control_points: [
-              { at: d.snapshot_at, multiplier: 1.7 },
-              { at: atDay(d.snapshot_at, 30), multiplier: 1.7 },
-            ],
-            source: "user_assumption",
-          },
-        ],
+        replications: 10,
+        conditions: [],
         interventions: [],
       });
       setScenario(s);
@@ -574,7 +566,6 @@ export default function App() {
         setPatient(null);
         setSelectedUnit("");
         setSelectedResource({ kind, id });
-        setPage("resources");
         return;
       }
       const inventory: Record<string, Entity[]> = {
@@ -615,7 +606,6 @@ export default function App() {
       setPatient(null);
       setSelectedUnit("");
       setSelectedResource({ kind, id });
-      setPage("resources");
     },
     [
       dataset?.id,
@@ -896,7 +886,7 @@ export default function App() {
             )}
           </button>
         </Tooltip>
-        <button className="hospital-selector" onClick={() => setPage("data")}>
+        <div className="hospital-selector">
           <Hospital size={18} />
           <span>
             {inspectionDataset?.facilities
@@ -904,10 +894,8 @@ export default function App() {
               ?.name?.replace(/^Demo /, "") || "Central Hospital"}
             <small>Planning workspace</small>
           </span>
-          <ChevronDown size={13} />
-        </button>
+        </div>
         <div className="top-context">
-          {dataset?.synthetic ? <Badge>Synthetic planning data</Badge> : null}
           {user?.role === "viewer" ? <Badge>Read-only access</Badge> : null}
         </div>
         <div className="topbar-actions">
@@ -1360,8 +1348,8 @@ export default function App() {
           ) : (
             <div className="workspace-loading">
               <h1>Your hospital planning workspace</h1>
-              <p>Generate the supplied synthetic dataset to begin planning.</p>
-              <Button primary onClick={() => loadDataset("planning_baseline")}>
+              <p>Load the hospital baseline to begin planning.</p>
+              <Button primary onClick={() => loadDataset("hospital_baseline")}>
                 Load planning dataset <ArrowRight size={16} />
               </Button>
             </div>
@@ -1438,6 +1426,20 @@ export default function App() {
           onClose={() => setSearchOpen(false)}
         />
       ) : null}
+      {selectedResource ? (
+        <HospitalResourceDetails
+          ctx={ctx}
+          onClose={() => setSelectedResource(null)}
+          onUpdate={() => {
+            setUpdateTarget({
+              ...selectedResource,
+              kind: selectedResource.kind as UpdateTarget["kind"],
+            });
+            setSelectedResource(null);
+            setUpdateOpen(true);
+          }}
+        />
+      ) : null}
       {exportOpen ? (
         <ExportDialog
           ctx={resultToolsCtx}
@@ -1482,11 +1484,10 @@ export default function App() {
                 selected run. Waiting patient-hours accumulate time awaiting
                 suitable inpatient placement.
               </p>
-              <h3>Resources work together</h3>
+              <h3>What makes a bed available</h3>
               <p>
                 A place is usable only when it is installed, ready, and
                 supported by qualified staff and compatible equipment.
-                Outpatient spaces and shelter places have distinct capabilities.
               </p>
             </div>
             <div>

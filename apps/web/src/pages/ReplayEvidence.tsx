@@ -6,6 +6,7 @@ import { api, fmt, localDate, patientId, unitId } from "../api";
 import type { Entity, PlanningContext } from "../types";
 import { Badge, BedGrid, BedLegend, Button, ErrorBox } from "../components/ui";
 import { unitsOf, stateUnavailable } from "../model";
+import { humanLabel } from "../presentation";
 import { plannedReplayInterval } from "./patientProjection";
 import {
   conditionReplayInterval,
@@ -22,7 +23,7 @@ const stamp = (at: string) =>
     timeZoneName: "short",
   });
 const eventName = (value?: string) =>
-  value?.replaceAll("_", " ") || "Recorded event";
+  value ? humanLabel(value) : "Recorded event";
 
 export function ReplayEventWindow({
   rep,
@@ -138,10 +139,11 @@ export function ReplayEventWindow({
               <strong>{eventName(event.event_type)}</strong>
               <small>
                 #{event.sequence_number} ·{" "}
-                {event.patient_id ||
-                  event.reason_code ||
-                  event.to_unit_id ||
-                  "Resource state change"}
+                {event.patient_id
+                  ? `Patient ${String(event.patient_id).match(/(\d+)$/)?.[1] || String(event.patient_id).slice(-6)}`
+                  : event.reason_code
+                    ? humanLabel(event.reason_code)
+                    : "Hospital capacity update"}
               </small>
             </div>
           </button>
@@ -290,8 +292,9 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
   const [chosenUnit, setChosenUnit] = useState("");
   const [chosenSlot, setChosenSlot] = useState("");
   const [chosenEquipment, setChosenEquipment] = useState("");
-  const [chosenVehicle, setChosenVehicle] = useState("");
-  const units = unitsOf(ctx);
+  const units = unitsOf(ctx).filter(
+    (value: Entity) => value.facility_id === "FAC-MAIN",
+  );
   const unit =
     units.find((value) => unitId(value) === chosenUnit) ||
     units.find((value) => unitId(value) === ctx.selectedPatient?.unit_id) ||
@@ -312,18 +315,12 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
   const equipmentChoice =
     equipment.find(([capability]) => capability === chosenEquipment) ||
     equipment[0];
-  const vehicles: Entity[] = ctx.state?.vehicles || [];
-  const vehicle =
-    vehicles.find((value) => value.vehicle_id === chosenVehicle) || vehicles[0];
-  const vehicleMetadata = ctx.dataset?.vehicles?.find(
-    (value: Entity) => value.vehicle_id === vehicle?.vehicle_id,
-  );
   const recorded = (value: unknown) =>
     value === null || value === undefined ? "Not recorded" : fmt(Number(value));
   if (stateUnavailable(ctx) || !unit) return null;
   return (
     <div className="inspector-section replay-recorded-capacity">
-      <h3>Recorded unit resources</h3>
+      <h3>Beds, staff and equipment</h3>
       <label className="replay-evidence-label">
         Unit
         <NativeSelect
@@ -343,7 +340,7 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
         </NativeSelect>
       </label>
       <div className="spread small-copy">
-        <span>Occupied / supported / physical</span>
+        <span>Beds used / staffed / installed</span>
         <strong>
           {unit.occupied} / {unit.staffed} / {unit.physical}
         </strong>
@@ -378,7 +375,7 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
       <BedLegend />
       {slot ? (
         <p className="small-copy">
-          {slot.slot_id} · {eventName(slot.status)}
+          Selected bed · {eventName(slot.status)}
           {slot.cleaning_end_at
             ? ` · ready ${stamp(slot.cleaning_end_at)}`
             : ""}
@@ -390,12 +387,12 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
         <span>
           Assigned now:{" "}
           {Object.entries(unit.staff_by_role || {})
-            .map(([role, count]) => `${count} ${role.replaceAll("_", " ")}`)
+            .map(([role, count]) => `${count} ${humanLabel(role)}`)
             .join(" · ") || "No active assignments"}
         </span>
       </div>
       <div className="spread small-copy">
-        <span>Admission prerequisite gate</span>
+        <span>Accepting new patients</span>
         <Badge tone={unit.admission_gate ? "success" : "warning"}>
           {unit.admission_gate === undefined
             ? "Not recorded"
@@ -410,12 +407,10 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
         </p>
       ) : null}
       {unit.capacity_mode === "advertised_aggregate" ? (
-        <p className="small-copy muted">
-          This partner unit uses its recorded published staffing capacity.
-        </p>
+        <p className="small-copy muted">Capacity is recorded for this unit.</p>
       ) : policy ? (
         <p className="small-copy muted">
-          Minimum team: {recorded(policy.minimum_provider_count)} qualified
+          Minimum care team: {recorded(policy.minimum_provider_count)} qualified
           provider(s) · {recorded(policy.minimum_support_count)} support staff.
           {policy.slots_per_nurse !== undefined
             ? ` Up to ${policy.slots_per_nurse} places per qualified nurse.`
@@ -427,8 +422,8 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
         </p>
       )}
       <p className="small-copy muted">
-        An open prerequisite gate still requires compatible nursing, equipment
-        and ready places. Counts are from the selected recorded state.
+        A bed needs the right staff, equipment and cleaning status before a
+        patient can use it.
       </p>
       {equipmentChoice ? (
         <>
@@ -461,83 +456,12 @@ export function ReplayRecordedCapacity({ ctx }: { ctx: PlanningContext }) {
             ))}
           </div>
           <p className="small-copy muted">
-            Combined inventory for this capability in the selected unit.
-            Individual pool identities are not part of this state snapshot.
+            Equipment available in this care unit.
           </p>
         </>
       ) : (
         <p className="small-copy muted">
           No equipment inventory is recorded for this unit.
-        </p>
-      )}
-      {vehicle ? (
-        <>
-          <label className="replay-evidence-label">
-            Transport resource
-            <NativeSelect
-              aria-label="Replay transport vehicle"
-              value={vehicle.vehicle_id}
-              onChange={(event) => setChosenVehicle(event.target.value)}
-            >
-              {vehicles.map((value) => (
-                <option key={value.vehicle_id} value={value.vehicle_id}>
-                  {value.vehicle_id}
-                </option>
-              ))}
-            </NativeSelect>
-          </label>
-          <div
-            role="group"
-            aria-label="Selected transport resource"
-            className="small-copy"
-          >
-            <p>
-              <strong>
-                {vehicle.mission
-                  ? "Assigned"
-                  : !vehicle.available_at
-                    ? "Availability not recorded"
-                    : Date.parse(vehicle.available_at) <=
-                        Date.parse(ctx.state?.at || ctx.selectedTime)
-                      ? "Available"
-                      : "Awaiting availability"}
-              </strong>
-            </p>
-            <p>
-              Location:{" "}
-              {ctx.dataset?.facilities?.find(
-                (value) => value.facility_id === vehicle.location,
-              )?.name ||
-                vehicle.location ||
-                "Not recorded"}
-            </p>
-            <p>
-              Available at:{" "}
-              {vehicle.available_at
-                ? stamp(vehicle.available_at)
-                : "Not recorded"}
-            </p>
-            {vehicleMetadata?.capabilities ? (
-              <p>
-                Capabilities:{" "}
-                {vehicleMetadata.capabilities.map(eventName).join(" · ")}
-              </p>
-            ) : null}
-            {vehicle.mission ? (
-              <Button
-                small
-                onClick={() => ctx.setPatient({ patient_id: vehicle.mission })}
-              >
-                Inspect assigned patient {vehicle.mission}
-              </Button>
-            ) : (
-              <p>No patient mission at this timestamp.</p>
-            )}
-          </div>
-        </>
-      ) : (
-        <p className="small-copy muted">
-          No transport resources are recorded in this state.
         </p>
       )}
     </div>
@@ -567,7 +491,7 @@ export function ReplayAnnotations({
   const base = Date.parse(start);
   const rows: { label: string; kind: string; intervals: Entity[] }[] = [
     {
-      label: "Demand / care conditions",
+      label: "Patient arrivals and care",
       kind: "arrival",
       intervals: (query.data?.conditions || [])
         .filter(
@@ -576,7 +500,7 @@ export function ReplayAnnotations({
         )
         .map((value: Entity) => ({
           ...conditionReplayInterval(value, start, end),
-          label: `${value.name || eventName(value.kind)}${value.kind === "arrival_batch" ? " · synthetic planned batch" : ""}`,
+          label: `${value.name || eventName(value.kind)}${value.kind === "arrival_batch" ? " · planned arrivals" : ""}`,
           planned: true,
         })),
     },
@@ -594,7 +518,7 @@ export function ReplayAnnotations({
         })),
     },
     {
-      label: "Plans / reported updates",
+      label: "Capacity changes",
       kind: "intervention",
       intervals: [
         ...(query.data?.planned_interventions || [])
@@ -613,7 +537,7 @@ export function ReplayAnnotations({
       ],
     },
     {
-      label: "Unmet inpatient demand",
+      label: "Waiting for a bed",
       kind: "shortage",
       intervals: (query.data?.shortage_periods || []).map((value: Entity) => ({
         ...value,
@@ -628,9 +552,7 @@ export function ReplayAnnotations({
     >
       <div className="spread">
         <h3>Run context and recorded pressure</h3>
-        <span className="small-copy muted">
-          Frozen revision · selected trajectory
-        </span>
+        <span className="small-copy muted">Saved simulation inputs</span>
       </div>
       {query.error ? (
         <>
@@ -641,7 +563,7 @@ export function ReplayAnnotations({
         </>
       ) : null}
       {query.isPending ? (
-        <p role="status">Loading immutable run context…</p>
+        <p role="status">Loading run details…</p>
       ) : (
         rows.map((row) => (
           <div className="replay-annotation-row" key={row.kind}>

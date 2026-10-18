@@ -1,0 +1,78 @@
+{
+  "checked_at": "2026-10-18T00:27:31.757176+00:00",
+  "services": [
+    {
+      "service": "api",
+      "image": "hospital-surge-planner-api:9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+      "image_id": "sha256:d4eb158c03e0847a23685794be5e71488b3775b84ca9e5c62d074b2ac8341b1c",
+      "image_revision": "9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+      "code_commit": "9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+      "status": "running",
+      "health": "healthy",
+      "named_volumes": [
+        "hospital-surge-planner_artifacts"
+      ]
+    },
+    {
+      "service": "postgres",
+      "image": "hospital-surge-planner-postgres:17.11-patched",
+      "image_id": "sha256:487bcf24e84cbe24104edd17e010f8a55c8f5ce65961683f87bc09ec0cf87f27",
+      "image_revision": null,
+      "code_commit": null,
+      "status": "running",
+      "health": "healthy",
+      "named_volumes": [
+        "hospital-surge-planner_postgres"
+      ]
+    },
+    {
+      "service": "redis",
+      "image": "hospital-surge-planner-redis:7.4.11-patched",
+      "image_id": "sha256:20a1609b7ab1f8ffde2328b88da6180625f2263530b56d7f2b2741d70e281b14",
+      "image_revision": null,
+      "code_commit": null,
+      "status": "running",
+      "health": "healthy",
+      "named_volumes": [
+        "hospital-surge-planner_redis"
+      ]
+    },
+    {
+      "service": "tls",
+      "image": "hospital-surge-planner-caddy:2.11.7-patched",
+      "image_id": "sha256:3a58310e0c12af05338c8b0bdf8f2781913859c204fcc44c46e48cda2041c596",
+      "image_revision": null,
+      "code_commit": null,
+      "status": "running",
+      "health": null,
+      "named_volumes": [
+        "hospital-surge-planner_caddy_config",
+        "hospital-surge-planner_caddy_data"
+      ]
+    },
+    {
+      "service": "web",
+      "image": "hospital-surge-planner-web:9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+      "image_id": "sha256:7e326a3f44aaee29dc4b26a570b340aa25dbc55a2ef17a6d9f47a63c08b888c3",
+      "image_revision": "9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+      "code_commit": null,
+      "status": "running",
+      "health": "healthy",
+      "named_volumes": []
+    },
+    {
+      "service": "worker",
+      "image": "hospital-surge-planner-api:9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+      "image_id": "sha256:d4eb158c03e0847a23685794be5e71488b3775b84ca9e5c62d074b2ac8341b1c",
+      "image_revision": "9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+      "code_commit": "9db04450f2f0dab35dc40fc1270b09370ff5ffb4",
+      "status": "running",
+      "health": null,
+      "named_volumes": [
+        "hospital-surge-planner_artifacts"
+      ]
+    }
+  ],
+  "captured_for": "Single-hospital interface release",
+  "recorded_at": "2026-10-18T00:27:31.733695+00:00"
+}

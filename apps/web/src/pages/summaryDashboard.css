@@ -389,7 +389,9 @@
   .summary-metrics article > strong {
     font-size: 23px;
   }
-  .summary-capacity-grid { gap: 16px; }
+  .summary-capacity-grid {
+    gap: 16px;
+  }
   .summary-card-heading,
   .summary-section-heading,
   .summary-source-line {
@@ -410,5 +412,15 @@
     flex-direction: column;
   }
 }
-.summary-insight.neutral { background:#f1f6fb; border-color:#d7e5f1; }
-.summary-insight.neutral .summary-insight-icon { background:#e5eff8; color:#176caf; }
+.summary-insight.neutral {
+  background: #f1f6fb;
+  border-color: #d7e5f1;
+}
+.summary-insight.neutral .summary-insight-icon {
+  background: #e5eff8;
+  color: #176caf;
+}
+
+.summary-dashboard .summary-operations-grid {
+  grid-template-columns: minmax(0, 1fr);
+}

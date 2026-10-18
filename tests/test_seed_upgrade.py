@@ -45,16 +45,16 @@ def test_generator_identity_truthfully_versions_deterministic_content():
     assert canonical(data) == canonical(generate_dataset(days=1))
 
 
-def test_new_install_has_two_current_fixtures_one_starter_and_idempotent_seed(tmp_path, monkeypatch):
+def test_new_install_has_three_versioned_fixtures_one_starter_and_idempotent_seed(tmp_path, monkeypatch):
     monkeypatch.setenv("APP_ENV", "development")
     engine, factory = make_database("sqlite:///" + str(tmp_path / "new.db"))
     try:
         seed_database(factory)
         datasets = rows(factory, "dataset")
         scenarios = rows(factory, "scenario")
-        assert len(datasets) == 2 and len(scenarios) == 1
+        assert len(datasets) == 3 and len(scenarios) == 1
         assert {row.id for row in datasets} == {
-            fixture_identity(name) for name in ("planning_baseline", "stress_snapshot")
+            fixture_identity(name) for name in ("planning_baseline", "stress_snapshot", "hospital_baseline")
         }
         for row in datasets:
             assert row.data["generator_version"] == GENERATOR_VERSION
@@ -75,7 +75,7 @@ def test_new_install_has_two_current_fixtures_one_starter_and_idempotent_seed(tm
                 }
             )
             assert validate_dataset(row.data)["valid"]
-        assert scenarios[0].data["dataset_version_id"] == fixture_identity("planning_baseline")
+        assert scenarios[0].data["dataset_version_id"] == fixture_identity("hospital_baseline")
         # An edited starter is a user draft; a restart must not restore or duplicate it.
         with factory.begin() as session:
             starter = session.get(Document, scenarios[0].id)
@@ -162,7 +162,7 @@ def test_upgrade_appends_current_seed_and_preserves_all_old_bytes_and_default_co
             old_job = session.get(Job, "old-run")
             job_before = copy.deepcopy((old_job.payload, old_job.result, old_job.status, old_job.created_at))
         seed_database(factory)
-        assert len(rows(factory, "dataset")) == 4
+        assert len(rows(factory, "dataset")) == 5
         assert len(rows(factory, "scenario")) == 3
         after = persisted(factory)
         assert all(after[identity] == contents for identity, contents in before.items())
@@ -176,8 +176,8 @@ def test_upgrade_appends_current_seed_and_preserves_all_old_bytes_and_default_co
             summary = client.get("/api/workspaces/workspace-main/summary")
             assert summary.status_code == 200, summary.text
             value = summary.json()
-            assert value["scenario"]["id"] == "scenario-" + fixture_identity("planning_baseline")
-            assert value["dataset"]["id"] == fixture_identity("planning_baseline")
+            assert value["scenario"]["id"] == "scenario-" + fixture_identity("hospital_baseline")
+            assert value["dataset"]["id"] == fixture_identity("hospital_baseline")
             assert value["dataset"]["generator_version"] == GENERATOR_VERSION
             assert value["run_group"] is None
         app.state.engine.dispose()

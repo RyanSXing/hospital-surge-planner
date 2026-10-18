@@ -1,30 +1,39 @@
 import { useEffect, useRef, useState } from "react";
-import { Accordion, NativeSelect, TextInput } from "@mantine/core";
-import type { PointerEvent, KeyboardEvent } from "react";
+import {
+  Accordion,
+  NativeSelect,
+  NumberInput,
+  SegmentedControl,
+  Slider,
+  TextInput,
+} from "@mantine/core";
+import ArrivalPreview from "./ArrivalPreview";
+import {
+  clampArrivalPercent,
+  completeArrivalPercent,
+} from "./arrivalPercentInput";
+import {
+  plannedArrivals,
+  arrivalControlPercent,
+  displayArrivalPercent,
+} from "./plannedArrivalSeries";
 import {
   buildScenarioPatch,
-  clampWindow,
   conditionWindow,
-  inputDifferences,
   mixError,
   horizonDays,
   planningEnd,
-  applyShortArrivalPulse,
 } from "./scenarioEditor";
 import type { HorizonUnit, MixMode } from "./scenarioEditor";
 import "./scenarios.css";
-import ScenarioTracks, { planFamilies } from "./ScenarioTracks";
+import ScenarioTracks from "./ScenarioTracks";
 import { ZonedDateTimeInput } from "../components/ZonedDateTimeInput";
 import { utcMinute } from "../zonedTime";
 import type { PlanEditorRequest } from "./ScenarioTracks";
 import {
-  Activity,
-  ArrowDownToLine,
   ArrowRight,
   Check,
-  ChevronDown,
   Copy,
-  FileText,
   Layers,
   Plus,
   Save,
@@ -33,50 +42,17 @@ import {
   Users,
   Wind,
 } from "lucide-react";
-import type { Entity, PlanningContext, Scenario } from "../types";
-import {
-  api,
-  atDay,
-  fmt,
-  idOf,
-  items,
-  localDate,
-  localDayIndex,
-  post,
-} from "../api";
-import {
-  Badge,
-  Busy,
-  Button,
-  ErrorBox,
-  Modal,
-  PanelTitle,
-} from "../components/ui";
-import { patientsOf, statsFor } from "../model";
-const presets = [
-  [
-    "sustained",
-    "Sustained surge",
-    "A constant increase throughout the interval",
-  ],
-  ["wave", "Surge wave", "Rises to a peak, then returns to baseline"],
-  [
-    "pulse",
-    "Short arrival pulse",
-    "20 additional ED arrivals at day-two noon, spread over one hour",
-  ],
-  ["baseline", "Baseline", "Unchanged arrival assumptions"],
-  ["staff_loss", "Staffing loss", "Reduced ward nursing coverage"],
-  [
-    "combined",
-    "Surge + staffing loss",
-    "Sustained arrivals with reduced ward nursing",
-  ],
-];
+import type { Entity, PlanningContext } from "../types";
+import { api, atDay, fmt, items, localDate, localDayIndex, post } from "../api";
+import { Badge, Busy, Button, ErrorBox, Modal } from "../components/ui";
 export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   const [openSections, setOpenSections] = useState<string[]>([]);
+  const [moreParameters, setMoreParameters] = useState(false);
   const [windowStartAt, setWindowStartAt] = useState<string | undefined>();
   const [windowEndAt, setWindowEndAt] = useState<string | undefined>();
+  const [customInterpolation, setCustomInterpolation] = useState<
+    "step" | "piecewise_linear"
+  >("piecewise_linear");
   const [customPoints, setCustomPoints] = useState<
     { at: string; multiplier: number }[]
   >([]);
@@ -84,23 +60,23 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     null,
   );
   useEffect(() => {
-    if (planRequest)
+    if (planRequest) {
+      setMoreParameters(true);
       setOpenSections((value) =>
         value.includes("resources") ? value : [...value, "resources"],
       );
+    }
   }, [planRequest]);
   const [draftInterventions, setDraftInterventions] = useState<Entity[]>([]);
   const [draftUpdates, setDraftUpdates] = useState<Entity[]>([]);
   const [arrivalEdited, setArrivalEdited] = useState(false);
   const [legacyStaffEdited, setLegacyStaffEdited] = useState(false);
-  const [advanced, setAdvanced] = useState(false),
-    [startAt, setStartAt] = useState("2026-10-16T05:00:00Z"),
+  const [startAt, setStartAt] = useState("2026-10-16T05:00:00Z"),
     [seed, setSeed] = useState(20261016),
     [stream, setStream] = useState("ED_MAIN"),
     [conditionId, setConditionId] = useState(""),
     [staffConditionId, setStaffConditionId] = useState(""),
     [peakDay, setPeakDay] = useState(10),
-    [conditionsJson, setConditionsJson] = useState("[]"),
     [name, setName] = useState(""),
     [percent, setPercent] = useState(70),
     [days, setDays] = useState(30),
@@ -128,15 +104,15 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
       ward: 0.16,
       icu: 0.04,
     }),
-    [diffOpen, setDiffOpen] = useState(false),
-    [versions, setVersions] = useState<Entity[]>([]),
-    [baseVersion, setBaseVersion] = useState(""),
     [editorError, setEditorError] = useState(""),
     [preflight, setPreflight] = useState<Entity | null>(null),
     [estimating, setEstimating] = useState(false),
     [estimateError, setEstimateError] = useState(""),
     [draftConditions, setDraftConditions] = useState<Entity[]>([]);
   const libraryRequest = useRef(0);
+  const [arrivalInput, setArrivalInput] = useState<number | string>(70);
+  const arrivalInputChanged = useRef(false);
+  const arrivalInputUndoCaptured = useRef(false);
   const exclusiveEnd = planningEnd(ctx.scenario, startAt, days);
   const timeZone =
     ctx.scenario?.timezone || ctx.dataset?.timezone || "America/Chicago";
@@ -166,11 +142,16 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             points[2].multiplier === 1
           ? points[1]
           : maxPoint;
-    setPercent(
-      c?.surge_percent ?? (focusPoint ? (focusPoint.multiplier - 1) * 100 : 0),
+    const controlPercent = arrivalControlPercent(c);
+    setPercent(controlPercent);
+    setArrivalInput(displayArrivalPercent(controlPercent));
+    arrivalInputChanged.current = false;
+    arrivalInputUndoCaptured.current = false;
+    setCustomInterpolation(
+      c?.shape === "piecewise_linear" ? "piecewise_linear" : "step",
     );
     setShape(
-      c?.shape === "piecewise_linear"
+      c?.shape === "piecewise_linear" && points.length >= 2
         ? points.length === 2 && points[0].multiplier === 1
           ? "ramp"
           : points.length === 3 &&
@@ -178,9 +159,16 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               points[2].multiplier === 1
             ? "wave"
             : "custom"
-        : c?.shape === "step"
-          ? "sustained"
-          : c?.shape || "baseline",
+        : points.length > 2 &&
+            new Set(
+              points.slice(0, -1).map((point: Entity) => point.multiplier),
+            ).size > 1
+          ? "custom"
+          : c?.shape === "wave" && !points.length
+            ? "wave"
+            : c
+              ? "sustained"
+              : "baseline",
     );
     setPeakDay(
       points.length > 2 && focusPoint
@@ -204,7 +192,6 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     if (!s) return;
     setStartAt(s.start_at);
     setSeed(s.base_seed);
-    setConditionsJson(JSON.stringify(s.conditions || [], null, 2));
     setDraftConditions(s.conditions || []);
     setDraftInterventions(s.interventions || []);
     setDraftUpdates(s.updates || []);
@@ -239,15 +226,18 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setRedo([]);
   }, [ctx.scenario?.id, ctx.scenario?.revision]);
   useEffect(() => {
-    if (shape === "custom")
+    if (shape === "custom") {
+      setMoreParameters(true);
       setOpenSections((value) =>
         value.includes("demand") ? value : [...value, "demand"],
       );
+    }
   }, [shape]);
   const snapshot = () => ({
     windowStartAt,
     windowEndAt,
     customPoints,
+    customInterpolation,
     name,
     startAt,
     seed,
@@ -283,6 +273,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
   }
   function restore(v: Entity) {
     setCustomPoints(v.customPoints);
+    setCustomInterpolation(v.customInterpolation || "piecewise_linear");
     setWindowStartAt(v.windowStartAt);
     setWindowEndAt(v.windowEndAt);
     setName(v.name);
@@ -295,6 +286,9 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setDraftInterventions(v.draftInterventions);
     setDraftUpdates(v.draftUpdates);
     setPercent(v.percent);
+    setArrivalInput(displayArrivalPercent(v.percent));
+    arrivalInputChanged.current = false;
+    arrivalInputUndoCaptured.current = false;
     setDays(v.days);
     setHorizonUnit(v.horizonUnit || "days");
     setHorizonAmount(v.horizonAmount || v.days);
@@ -337,6 +331,16 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
         mix,
       },
     );
+    if (arrivalEdited && shape === "custom") {
+      patch.conditions = patch.conditions.map((condition) =>
+        condition.kind === "arrival_multiplier" &&
+        (conditionId
+          ? condition.id === conditionId
+          : (condition.entry_stream_id || "ED_MAIN") === stream)
+          ? { ...condition, shape: customInterpolation }
+          : condition,
+      );
+    }
     return {
       ...patch,
       interventions: draftInterventions,
@@ -416,29 +420,10 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     arrivalEdited,
     legacyStaffEdited,
     customPoints,
+    customInterpolation,
     windowStartAt,
     windowEndAt,
   ]);
-  async function openDifferences() {
-    await ctx.action("Loading saved input versions", async () => {
-      if (!ctx.scenario) return;
-      const current = await api(`/scenarios/${ctx.scenario.id}`);
-      const rows: Entity[] = [
-        { ...current, id: current.id, label: "Current saved draft" },
-        ...(current.revisions || []).map((r: Entity) => ({
-          ...r,
-          label: r.revision_name || `Frozen version ${r.id}`,
-        })),
-      ];
-      if (current.parent_scenario_id) {
-        const parent = await api(`/scenarios/${current.parent_scenario_id}`);
-        rows.push({ ...parent, label: `Parent: ${parent.name}` });
-      }
-      setVersions(rows);
-      setBaseVersion(rows.at(-1)?.id || current.id);
-      setDiffOpen(true);
-    });
-  }
   async function save(run = false) {
     setEditorError("");
     try {
@@ -514,80 +499,70 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
     setStartDay((a) => Math.min(a, total - 1));
     setEndDay(total);
   }
-  const validCustomPoints = customPoints.filter(
-    (p) => Number.isFinite(Date.parse(p.at)) && Number.isFinite(p.multiplier),
-  );
-  const multiplier = Math.max(0, 1 + percent / 100),
-    minimum =
-      Math.min(
-        1,
-        multiplier,
-        ...(shape === "custom"
-          ? validCustomPoints.map((p) => p.multiplier)
-          : []),
-      ) * 0.9,
-    maximum =
-      Math.max(
-        1,
-        multiplier,
-        ...(shape === "custom"
-          ? validCustomPoints.map((p) => p.multiplier)
-          : []),
-      ) * 1.12;
-  const y = (v: number) => 135 - ((v - minimum) / (maximum - minimum)) * 120;
-  const x = (d: number) => Math.max(0, Math.min(600, (d / days) * 600));
-  const a = x(startDay),
-    b = x(Math.min(days, endDay)),
-    peak = x(Math.max(startDay + 1, Math.min(peakDay, endDay - 1))),
-    baseY = y(1),
-    peakY = y(multiplier);
-  const path =
-    shape === "custom" && validCustomPoints.length
-      ? validCustomPoints
-          .map(
-            (p, i) =>
-              `${i ? "L" : "M"}${x(((Date.parse(p.at) - Date.parse(startAt)) / (Date.parse(exclusiveEnd) - Date.parse(startAt))) * days)},${y(p.multiplier)}`,
-          )
-          .join(" ")
-      : shape === "baseline" || percent === 0
-        ? `M0,${baseY} L600,${baseY}`
-        : shape === "wave"
-          ? `M0,${baseY} L${a},${baseY} L${peak},${peakY} L${b},${baseY} L600,${baseY}`
-          : shape === "ramp"
-            ? `M0,${baseY} L${a},${baseY} L${b},${peakY} L${b},${baseY} L600,${baseY}`
-            : `M0,${baseY} L${a},${baseY} L${a},${peakY} L${b},${peakY} L${b},${baseY} L600,${baseY}`;
-  const markerX = shape === "wave" ? peak : b,
-    markerY = percent === 0 ? baseY : peakY;
-  const initialCtx = {
-    ...ctx,
-    run: null,
-    state: null,
-    stateLoading: false,
-    stateError: null,
-    selectedFacility: "FAC-MAIN",
-  };
+  let previewConditions = draftConditions;
+  try {
+    previewConditions = makePatch().conditions;
+  } catch {
+    /* Validation is shown beside Run simulation. */
+  }
+  function changeArrival(value: number) {
+    rememberArrival();
+    setPercent(value);
+    setArrivalInput(displayArrivalPercent(value));
+    if (shape === "baseline" && value !== 0) setShape("sustained");
+  }
+  function typeArrival(value: number | string) {
+    setArrivalInput(value);
+    arrivalInputChanged.current = true;
+    const complete = completeArrivalPercent(value);
+    if (complete === null || complete === percent) return;
+    if (!arrivalInputUndoCaptured.current) {
+      rememberArrival();
+      arrivalInputUndoCaptured.current = true;
+    }
+    setPercent(complete);
+    if (shape === "baseline" && complete !== 0) setShape("sustained");
+  }
+  function finishArrivalInput() {
+    const complete = completeArrivalPercent(arrivalInput);
+    if (arrivalInputChanged.current && complete !== null) {
+      const normalized = clampArrivalPercent(complete);
+      if (normalized !== percent) {
+        if (!arrivalInputUndoCaptured.current) rememberArrival();
+        setPercent(normalized);
+        if (shape === "baseline" && normalized !== 0) setShape("sustained");
+      }
+      setArrivalInput(displayArrivalPercent(normalized));
+    } else {
+      setArrivalInput(displayArrivalPercent(percent));
+    }
+    arrivalInputChanged.current = false;
+    arrivalInputUndoCaptured.current = false;
+  }
+  function changePattern(value: string) {
+    rememberArrival();
+    setShape(value);
+    if (value === "wave")
+      setPeakDay(Math.max(startDay, Math.floor((startDay + endDay) / 2)));
+  }
   const baseline = ctx.dataset?.arrival_profiles || {};
   const edRate = Number(baseline.ed_arrivals_per_local_day ?? 100),
     directRate = Number(baseline.direct_ward_arrivals_per_local_day ?? 4);
-  const exposure = Math.max(0, Math.min(days, endDay) - startDay),
-    average =
-      shape === "wave" || shape === "ramp"
-        ? (1 + multiplier) / 2
-        : shape === "baseline"
-          ? 1
-          : multiplier;
   const estimated = Math.round(
-    ((edRate + directRate) * days +
-      (stream === "ED_MAIN" ? edRate : directRate) * (average - 1) * exposure) *
+    (plannedArrivals({
+      conditions: previewConditions,
+      stream,
+      baselineRate: stream === "ED_MAIN" ? edRate : directRate,
+      start: startAt,
+      end: exclusiveEnd,
+      days,
+      timeZone,
+    }).reduce((sum, point) => sum + point.planned, 0) +
+      (stream === "ED_MAIN" ? directRate : edRate) * days) *
       replications,
   );
+  const displayedPercent = displayArrivalPercent(percent);
   const invalidMix = mixError(mixMode, mix);
-  const differenceRows = versions.length
-    ? inputDifferences(
-        versions.find((v) => v.id === baseVersion) || versions[0],
-        versions[0],
-      )
-    : [];
   return (
     <div
       className="scenarios-page guided-scenario"
@@ -629,10 +604,6 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
         <Badge tone={dirty ? "warning" : "success"}>
           {dirty ? "Unsaved changes" : "Saved draft"}
         </Badge>
-        <span className="muted">
-          Dataset {ctx.dataset?.fixture?.replaceAll("_", " ")} ·{" "}
-          {ctx.scenario?.timezone || ctx.dataset?.timezone}
-        </span>
         <div className="undo-actions">
           <button
             disabled={!undo.length}
@@ -659,1166 +630,708 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
         </div>
       </div>
 
-      <div className="scenario-essentials">
-        <section className="setup-card" aria-labelledby="setup-period-title">
-          <h3 id="setup-period-title">
-            <span className="setup-card-number" aria-hidden="true">
-              1
-            </span>{" "}
-            Time period
-          </h3>
-          <div className="setup-date">
-            <Activity size={16} />{" "}
-            {localDate(startAt, {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </div>
-          <div className="setup-horizon-fields">
-            <label>
-              Planning horizon
-              <div className="input-with-unit">
-                <input
-                  type="number"
-                  min="1"
-                  disabled={Boolean(ctx.scenario?.end_at)}
-                  max={
-                    horizonUnit === "days"
-                      ? 365
-                      : horizonUnit === "weeks"
-                        ? 52
-                        : horizonDays(
-                              startAt,
-                              12,
-                              "months",
-                              ctx.scenario?.timezone,
-                            ) <= 365
-                          ? 12
-                          : 11
-                  }
-                  step={1}
-                  value={horizonUnit === "days" ? days : horizonAmount}
-                  onChange={(e) => changeHorizon(+e.target.value)}
-                />
-                <span>{horizonUnit}</span>
-              </div>
-            </label>
-            <label>
-              Horizon unit
-              <NativeSelect
-                aria-label="Horizon unit"
-                value={horizonUnit}
-                disabled={Boolean(ctx.scenario?.end_at)}
-                onChange={(e) => {
-                  const unit = e.target.value as HorizonUnit;
-                  changeHorizon(
-                    unit === "days"
-                      ? days
-                      : Math.max(
-                          1,
-                          Math.round(days / (unit === "weeks" ? 7 : 30)),
-                        ),
-                    unit,
-                  );
-                }}
-              >
-                <option value="days">Days</option>
-                <option value="weeks">Weeks</option>
-                <option value="months">Months</option>
-              </NativeSelect>
-            </label>
-            <p className="small-copy" aria-live="polite">
-              {days} local calendar days ·{" "}
-              {localDate(startAt, {
-                year: "numeric",
+      <div className="simulation-workspace">
+        <section
+          className="simulation-main-controls"
+          aria-label="Main simulation parameters"
+        >
+          <div className="simulation-control">
+            <div className="simulation-control-heading">
+              <h3>How long?</h3>
+              <span>
+                {days} {days === 1 ? "day" : "days"}
+              </span>
+            </div>
+            <SegmentedControl
+              aria-label="Simulation duration"
+              fullWidth
+              value={[7, 14, 30].includes(days) ? String(days) : "custom"}
+              disabled={Boolean(ctx.scenario?.end_at)}
+              onChange={(value) =>
+                value === "custom"
+                  ? setMoreParameters(true)
+                  : changeHorizon(Number(value), "days")
+              }
+              data={[
+                { value: "7", label: "1 week" },
+                { value: "14", label: "2 weeks" },
+                { value: "30", label: "30 days" },
+                ...(![7, 14, 30].includes(days)
+                  ? [{ value: "custom", label: `${days} days` }]
+                  : []),
+              ]}
+            />
+            <p>
+              {localDate(startAt, { month: "short", day: "numeric", timeZone })}{" "}
+              –{" "}
+              {localDate(new Date(Date.parse(exclusiveEnd) - 1).toISOString(), {
                 month: "short",
                 day: "numeric",
-              })}{" "}
-              through{" "}
-              {localDate(exclusiveEnd, {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}{" "}
-              (exclusive end). Up to 365 days.
+                timeZone,
+              })}
             </p>
-            {ctx.scenario?.end_at && (
-              <p className="small-copy">
-                This branch retains its original exclusive endpoint:{" "}
-                {exclusiveEnd}. Its remaining calendar exposure is fixed; edit
-                assumptions within that interval.
-              </p>
-            )}
+          </div>
+          <div className="simulation-control">
+            <div className="simulation-control-heading">
+              <h3>Patient arrivals</h3>
+              <NumberInput
+                id="surge-input"
+                aria-label={`Increase in ${stream === "ED_MAIN" ? "ED arrivals" : "direct ward admissions"}`}
+                value={arrivalInput}
+                min={-100}
+                max={10000}
+                clampBehavior="none"
+                trimLeadingZeroesOnBlur={false}
+                step={5}
+                suffix="%"
+                disabled={shape === "custom"}
+                onChange={typeArrival}
+                onBlur={finishArrivalInput}
+              />
+            </div>
+            <Slider
+              thumbLabel="Adjust arrival surge"
+              value={displayedPercent}
+              min={-100}
+              max={Math.max(200, Math.ceil(percent / 100) * 100)}
+              step={5}
+              disabled={shape === "custom"}
+              label={(value) => `${value > 0 ? "+" : ""}${value}%`}
+              marks={[
+                { value: -100, label: "Fewer" },
+                { value: 0, label: "Usual" },
+                {
+                  value: Math.max(200, Math.ceil(percent / 100) * 100),
+                  label: "More",
+                },
+              ]}
+              onChange={changeArrival}
+            />
+            <p>
+              {shape === "custom"
+                ? "Arrival levels follow your custom schedule."
+                : percent === 0
+                  ? "Usual arrival levels"
+                  : `${Math.abs(displayedPercent)}% ${percent > 0 ? "more" : "fewer"} ${stream === "ED_MAIN" ? "emergency arrivals" : "direct admissions"}${shape === "wave" || shape === "ramp" ? " at the peak" : ""}`}
+            </p>
+          </div>
+          <div className="simulation-control">
+            <div className="simulation-control-heading">
+              <h3>Arrival pattern</h3>
+            </div>
+            <SegmentedControl
+              aria-label="Arrival pattern"
+              fullWidth
+              value={shape === "baseline" ? "sustained" : shape}
+              onChange={changePattern}
+              data={[
+                { value: "sustained", label: "Steady" },
+                { value: "ramp", label: "Builds up" },
+                { value: "wave", label: "Rises & falls" },
+                ...(shape === "custom"
+                  ? [{ value: "custom", label: "Custom" }]
+                  : []),
+              ]}
+            />
           </div>
         </section>
-        <section className="setup-card" aria-labelledby="setup-demand-title">
-          <h3 id="setup-demand-title">
-            <span className="setup-card-number" aria-hidden="true">
-              2
-            </span>{" "}
-            Expected arrivals
-          </h3>
+        <ArrivalPreview
+          conditions={previewConditions}
+          stream={stream}
+          baselineRate={stream === "ED_MAIN" ? edRate : directRate}
+          start={startAt}
+          end={exclusiveEnd}
+          days={days}
+          timeZone={timeZone}
+          hourWeights={
+            ctx.dataset?.entry_streams?.find(
+              (item: Entity) => item.entry_stream_id === stream,
+            )?.hour_weights || baseline.hour_weights
+          }
+          weekdayWeights={
+            ctx.dataset?.entry_streams?.find(
+              (item: Entity) => item.entry_stream_id === stream,
+            )?.weekday_weights || baseline.weekday_weights
+          }
+        />
+      </div>
+      <div className="simulation-run-row">
+        <div
+          role="status"
+          className={
+            preflight?.valid === false || estimateError || invalidMix
+              ? "setup-validation"
+              : "simulation-ready"
+          }
+        >
+          {preflight?.valid === false || estimateError || invalidMix ? (
+            invalidMix ||
+            estimateError ||
+            preflight?.errors?.[0]?.message ||
+            "Review your parameters before running."
+          ) : (
+            <>
+              <Check size={16} />
+              {estimating ? "Checking your settings…" : "Ready to run"}
+            </>
+          )}
+        </div>
+        <Button
+          primary
+          className="setup-run-button"
+          onClick={() => save(true)}
+          disabled={
+            ctx.canWrite === false ||
+            !!ctx.busy ||
+            estimating ||
+            preflight?.valid === false ||
+            !!invalidMix
+          }
+        >
+          Run simulation <ArrowRight size={16} />
+        </Button>
+      </div>
+      <details
+        className="more-simulation-parameters"
+        open={moreParameters}
+        onToggle={(event) => setMoreParameters(event.currentTarget.open)}
+      >
+        <summary>
+          More parameters <span>Optional</span>
+        </summary>
+        <div className="optional-run-settings">
           <label>
-            Scenario preset
+            Planning horizon
+            <NumberInput
+              aria-label="Planning horizon"
+              min={1}
+              max={
+                horizonUnit === "days"
+                  ? 365
+                  : horizonUnit === "weeks"
+                    ? 52
+                    : horizonDays(startAt, 12, "months", timeZone) <= 365
+                      ? 12
+                      : 11
+              }
+              value={horizonUnit === "days" ? days : horizonAmount}
+              disabled={Boolean(ctx.scenario?.end_at)}
+              onChange={(value) => changeHorizon(Number(value) || 1)}
+            />
+          </label>
+          <label>
+            Horizon unit
             <NativeSelect
-              aria-label="Scenario preset"
-              value={shape}
-              onChange={(e) => {
-                if (e.target.value === "pulse") {
-                  try {
-                    if (!ctx.scenario) return;
-                    const staged = makePatch().conditions;
-                    const conditions = applyShortArrivalPulse(
-                      { ...ctx.scenario, conditions: staged },
-                      startAt,
-                      days,
-                      crypto.randomUUID(),
-                      stream === "ED_MAIN" ? conditionId : undefined,
-                    );
-                    remember();
-                    setDraftConditions(conditions);
-                    setOpenSections((value) =>
-                      value.includes("resources")
-                        ? value
-                        : [...value, "resources"],
-                    );
-                    if (stream === "ED_MAIN") loadCondition(undefined);
-                    setArrivalEdited(false);
-                    setLegacyStaffEdited(false);
-                    setEditorError("");
-                    ctx.notify(
-                      "Short arrival pulse added: 20 ED arrivals at local day-two noon. Edit its time, count and care mix in the One-time incident batches track.",
-                    );
-                  } catch (error) {
-                    setEditorError((error as Error).message);
-                  }
-                  return;
-                }
-                rememberArrival();
-                setShape(e.target.value);
-                if (e.target.value === "custom" && customPoints.length < 2)
-                  setCustomPoints([
-                    { at: startAt, multiplier: 1 },
-                    {
-                      at: exclusiveEnd,
-                      multiplier: 1 + percent / 100,
-                    },
-                  ]);
-                if (e.target.value === "baseline") setPercent(0);
-                if (e.target.value === "staff_loss") {
-                  setPercent(0);
-                  setShape("baseline");
-                  setPlanRequest({ family: "staff", nonce: Date.now() });
-                }
-                if (e.target.value === "combined") {
-                  setPercent(70);
-                  setShape("sustained");
-                  setPlanRequest({ family: "staff", nonce: Date.now() });
-                }
+              aria-label="Horizon unit"
+              value={horizonUnit}
+              disabled={Boolean(ctx.scenario?.end_at)}
+              onChange={(event) => {
+                const unit = event.target.value as HorizonUnit;
+                changeHorizon(
+                  unit === "days"
+                    ? days
+                    : Math.max(
+                        1,
+                        Math.round(days / (unit === "weeks" ? 7 : 30)),
+                      ),
+                  unit,
+                );
               }}
             >
-              {presets.map(([v, n]) => (
-                <option key={v} value={v}>
-                  {n}
-                </option>
-              ))}
-              <option value="ramp">Linear ramp</option>
-              <option value="custom">Exact custom control points</option>
+              <option value="days">Days</option>
+              <option value="weeks">Weeks</option>
+              <option value="months">Months</option>
             </NativeSelect>
           </label>
-          <label>
-            Increase in{" "}
-            {stream === "ED_MAIN" ? "ED arrivals" : "direct ward admissions"}
-            <div className="input-with-unit">
-              <input
-                id="surge-input"
-                disabled={shape === "custom"}
-                type="number"
-                min="-100"
-                max="10000"
-                value={percent}
-                onChange={(e) => {
-                  rememberArrival();
-                  setPercent(+e.target.value);
-                  if (+e.target.value !== 0 && shape === "baseline")
-                    setShape("sustained");
-                }}
-              />
-              <span>%</span>
-            </div>
-          </label>
-
-          <p className="setup-help">
-            0% keeps the baseline. A positive percentage adds demand. Existing
-            patients keep their remaining stays.
-          </p>
-          <button
-            type="button"
-            className="setup-detail-link"
-            onClick={() =>
-              setOpenSections((value) =>
-                value.includes("demand") ? value : [...value, "demand"],
-              )
-            }
-          >
-            Adjust arrival dates or patient mix <ArrowRight size={14} />
-          </button>
-        </section>
-        <section
-          className="setup-card setup-review"
-          aria-labelledby="setup-review-title"
-        >
-          <h3 id="setup-review-title">
-            <span className="setup-card-number" aria-hidden="true">
-              3
-            </span>{" "}
-            Review & run
-          </h3>
           <label>
             Simulation runs
             <NativeSelect
               aria-label="Simulation runs"
               value={replications}
-              onChange={(e) => {
+              onChange={(event) => {
                 remember();
-                setReplications(+e.target.value);
+                setReplications(+event.target.value);
               }}
             >
               {![10, 100, 500].includes(replications) && (
-                <option value={replications}>
-                  {replications} · Saved count
-                </option>
+                <option value={replications}>{replications} runs</option>
               )}
-              <option value="10">10 · Quick preview</option>
+              <option value="10">10 · Faster</option>
               <option value="100">100 · Standard</option>
-              <option value="500">500 · Extended</option>
+              <option value="500">500 · More detailed</option>
             </NativeSelect>
           </label>
-
-          <p className="setup-help">
-            Quick preview uses fewer runs. Standard gives a broader view of
-            uncertainty.
-          </p>
-          {preflight?.valid === false || estimateError || invalidMix ? (
-            <div className="setup-validation" role="status">
-              {invalidMix ||
-                estimateError ||
-                preflight?.errors?.[0]?.message ||
-                "Review the calculation details before running."}
-            </div>
-          ) : (
-            <div className="setup-ready">
-              <Check size={15} />{" "}
-              {estimating ? "Checking your inputs…" : "Ready to review and run"}
-            </div>
-          )}
-          <Button
-            primary
-            className="setup-run-button"
-            onClick={() => save(true)}
-            disabled={
-              ctx.canWrite === false ||
-              !!ctx.busy ||
-              estimating ||
-              preflight?.valid === false ||
-              !!invalidMix
-            }
-          >
-            Run simulation <ArrowRight size={16} />
-          </Button>
-        </section>
-      </div>
-      <Accordion
-        multiple
-        value={openSections}
-        onChange={setOpenSections}
-        variant="separated"
-        radius="md"
-        className="scenario-details"
-        transitionDuration={0}
-      >
-        <Accordion.Item value="demand">
-          <Accordion.Control icon={<Wind size={18} />}>
-            Arrival timing & patient mix
-            <span className="setup-section-description">
-              Multiple intervals, exact dates, care needs and custom curves
-            </span>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <div
-              className="scenario-inspector form-stack"
-              id="scenario-inspector-dock"
-            >
-              <label>
-                Arrival interval
-                <NativeSelect
-                  aria-label="Arrival interval"
-                  value={conditionId}
-                  onChange={(e) => {
+        </div>
+        <Accordion
+          multiple
+          value={openSections}
+          onChange={setOpenSections}
+          variant="separated"
+          radius="md"
+          className="scenario-details"
+          transitionDuration={0}
+        >
+          <Accordion.Item value="demand">
+            <Accordion.Control icon={<Wind size={18} />}>
+              Arrival details
+              <span className="setup-section-description">
+                Exact dates, extra arrivals and care needs
+              </span>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <div
+                className="scenario-inspector form-stack"
+                id="scenario-inspector-dock"
+              >
+                <label>
+                  Arrival interval
+                  <NativeSelect
+                    aria-label="Arrival interval"
+                    value={conditionId}
+                    onChange={(e) => {
+                      const staged = makePatch().conditions;
+                      remember();
+                      setDraftConditions(staged);
+                      loadCondition(
+                        staged.find((c) => c.id === e.target.value),
+                      );
+                      setArrivalEdited(false);
+                    }}
+                  >
+                    <option value="">New/default arrival interval</option>
+                    {conditionId &&
+                    !draftConditions.some((c) => c.id === conditionId) ? (
+                      <option value={conditionId}>
+                        New unsaved arrival interval
+                      </option>
+                    ) : null}
+                    {draftConditions
+                      .filter((c) => c.kind === "arrival_multiplier")
+                      .map((c, i) => (
+                        <option key={c.id || i} value={c.id}>
+                          {c.name ||
+                            (c.entry_stream_id === "DIRECT_WARD_MAIN"
+                              ? "Direct admissions"
+                              : "Emergency arrivals")}{" "}
+                          · interval {i + 1}
+                        </option>
+                      ))}
+                  </NativeSelect>
+                </label>
+                <Button
+                  small
+                  onClick={() => {
                     const staged = makePatch().conditions;
                     remember();
                     setDraftConditions(staged);
-                    loadCondition(staged.find((c) => c.id === e.target.value));
+                    loadCondition(undefined);
+                    setConditionId(crypto.randomUUID());
                     setArrivalEdited(false);
                   }}
                 >
-                  <option value="">New/default arrival interval</option>
-                  {conditionId &&
-                  !draftConditions.some((c) => c.id === conditionId) ? (
-                    <option value={conditionId}>
-                      New unsaved arrival interval
-                    </option>
-                  ) : null}
-                  {draftConditions
-                    .filter((c) => c.kind === "arrival_multiplier")
-                    .map((c, i) => (
-                      <option key={c.id || i} value={c.id}>
-                        {c.name || c.entry_stream_id || "Arrival"} ·{" "}
-                        {c.id || i + 1}
-                      </option>
-                    ))}
-                </NativeSelect>
-              </label>
-              <Button
-                small
-                onClick={() => {
-                  const staged = makePatch().conditions;
-                  remember();
-                  setDraftConditions(staged);
-                  loadCondition(undefined);
-                  setConditionId(crypto.randomUUID());
-                  setArrivalEdited(false);
-                }}
-              >
-                Add another arrival interval
-              </Button>
-              {shape === "custom" && (
-                <fieldset className="care-mix-fields">
-                  <legend>Exact arrival control points</legend>
-                  {customPoints.map((p, i) => (
-                    <div className="custom-arrival-point" key={i}>
-                      <ZonedDateTimeInput
-                        label={`Point ${i + 1} time`}
-                        timeZone={timeZone}
-                        value={utcMinute(p.at)}
-                        onChange={(value) => {
-                          rememberArrival();
-                          setCustomPoints((rows) =>
-                            rows.map((row, j) =>
-                              j === i
-                                ? {
-                                    ...row,
-                                    at: value
-                                      ? new Date(value + "Z").toISOString()
-                                      : "",
-                                  }
-                                : row,
-                            ),
-                          );
-                        }}
-                      />
-                      <label>
-                        Point {i + 1} multiplier
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={p.multiplier}
-                          onChange={(e) => {
+                  Add another arrival interval
+                </Button>
+                {shape === "custom" && (
+                  <fieldset className="care-mix-fields">
+                    <legend>Exact arrival control points</legend>
+                    {customPoints.map((p, i) => (
+                      <div className="custom-arrival-point" key={i}>
+                        <ZonedDateTimeInput
+                          label={`Point ${i + 1} time`}
+                          timeZone={timeZone}
+                          value={utcMinute(p.at)}
+                          onChange={(value) => {
                             rememberArrival();
                             setCustomPoints((rows) =>
                               rows.map((row, j) =>
                                 j === i
-                                  ? { ...row, multiplier: +e.target.value }
+                                  ? {
+                                      ...row,
+                                      at: value
+                                        ? new Date(value + "Z").toISOString()
+                                        : "",
+                                    }
                                   : row,
                               ),
                             );
                           }}
                         />
-                      </label>
-                      <button
-                        aria-label={`Remove control point ${i + 1}`}
-                        disabled={customPoints.length <= 2}
-                        onClick={() => {
-                          rememberArrival();
-                          setCustomPoints((rows) =>
-                            rows.filter((_, j) => j !== i),
-                          );
-                        }}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                  <Button
-                    small
-                    onClick={() => {
-                      rememberArrival();
-                      const last = customPoints.at(-1)!;
-                      setCustomPoints((rows) => [
-                        ...rows.slice(0, -1),
-                        {
-                          at: new Date(
-                            (Date.parse(rows.at(-2)!.at) +
-                              Date.parse(last.at)) /
-                              2,
-                          ).toISOString(),
-                          multiplier: last.multiplier,
-                        },
-                        last,
-                      ]);
-                    }}
-                  >
-                    Add control point
-                  </Button>
-                  <small>
-                    The first and last point define the modeled interval.
-                    Intermediate points are linearly interpolated.
-                  </small>
-                </fieldset>
-              )}
-              <div className="two-fields">
-                <label>
-                  Starts on day
-                  <input
-                    type="number"
-                    min="1"
-                    max={days}
-                    value={startDay + 1}
-                    onChange={(e) => {
-                      rememberArrival();
-                      setWindowStartAt(undefined);
-                      setStartDay(
-                        Math.max(0, Math.min(+e.target.value - 1, endDay - 1)),
-                      );
-                    }}
-                  />
-                </label>
-                <label>
-                  Ends on day
-                  <input
-                    type="number"
-                    min={startDay + 1}
-                    max={days}
-                    value={endDay}
-                    onChange={(e) => {
-                      rememberArrival();
-                      setWindowEndAt(undefined);
-                      setEndDay(
-                        Math.min(days, Math.max(startDay + 1, +e.target.value)),
-                      );
-                    }}
-                  />
-                </label>
-              </div>
-              {shape !== "custom" && (
-                <div className="two-fields">
-                  <ZonedDateTimeInput
-                    label="Arrival starts"
-                    timeZone={timeZone}
-                    value={utcMinute(
-                      windowStartAt ?? atDay(startAt, startDay, 0, timeZone),
-                    )}
-                    onChange={(value) => {
-                      rememberArrival();
-                      setWindowStartAt(
-                        value ? new Date(value + "Z").toISOString() : "",
-                      );
-                    }}
-                  />
-                  <ZonedDateTimeInput
-                    label="Arrival ends"
-                    timeZone={timeZone}
-                    value={utcMinute(
-                      windowEndAt ??
-                        new Date(
-                          Math.min(
-                            Date.parse(atDay(startAt, endDay, 0, timeZone)),
-                            Date.parse(exclusiveEnd),
-                          ),
-                        ).toISOString(),
-                    )}
-                    onChange={(value) => {
-                      rememberArrival();
-                      setWindowEndAt(
-                        value ? new Date(value + "Z").toISOString() : "",
-                      );
-                    }}
-                  />
-                </div>
-              )}
-              {shape === "wave" ? (
-                <label>
-                  Peak on day
-                  <input
-                    type="number"
-                    min={startDay + 2}
-                    max={endDay - 1}
-                    value={peakDay + 1}
-                    onChange={(e) => {
-                      rememberArrival();
-                      setPeakDay(+e.target.value - 1);
-                    }}
-                  />
-                </label>
-              ) : null}
-              <label>
-                Arrival stream
-                <NativeSelect
-                  aria-label="Arrival stream"
-                  value={stream}
-                  onChange={(e) => switchStream(e.target.value)}
-                >
-                  {ctx.dataset?.entry_streams?.map((item: Entity) => (
-                    <option
-                      key={item.entry_stream_id}
-                      value={item.entry_stream_id}
-                    >
-                      {item.entry_stream_id} · {item.entry_type}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </label>
-              <fieldset className="care-mix-fields">
-                <legend>Disposition of new arrivals</legend>
-                <label>
-                  Care mix
-                  <NativeSelect
-                    aria-label="Care mix"
-                    value={mixMode}
-                    onChange={(e) => {
-                      rememberArrival();
-                      setMixMode(e.target.value as MixMode);
-                      if (e.target.value === "percentages")
-                        setMix(
-                          stream === "DIRECT_WARD_MAIN"
-                            ? { ward: 1 }
-                            : { discharge: 0.8, ward: 0.16, icu: 0.04 },
-                        );
-                    }}
-                  >
-                    <option value="default">Use stream default</option>
-                    <option value="percentages">Set care percentages</option>
-                    {mixMode === "preserve" ? (
-                      <option value="preserve">
-                        Preserve imported cohort/profile mix
-                      </option>
-                    ) : null}
-                  </NativeSelect>
-                </label>
-                {mixMode === "percentages" ? (
-                  stream === "DIRECT_WARD_MAIN" ? (
-                    <p>Direct ward arrivals require ward care (100%).</p>
-                  ) : (
-                    ["discharge", "ward", "icu"].map((key) => (
-                      <label key={key}>
-                        {key === "discharge"
-                          ? "Discharge after assessment"
-                          : key === "icu"
-                            ? "ICU admission"
-                            : "Ward admission"}{" "}
-                        (%)
-                        <input
-                          type="number"
-                          min={0}
-                          max={100}
-                          step={1}
-                          value={Math.round((mix[key] || 0) * 10000) / 100}
-                          onChange={(e) => {
+                        <label>
+                          Point {i + 1} multiplier
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={p.multiplier}
+                            onChange={(e) => {
+                              rememberArrival();
+                              setCustomPoints((rows) =>
+                                rows.map((row, j) =>
+                                  j === i
+                                    ? { ...row, multiplier: +e.target.value }
+                                    : row,
+                                ),
+                              );
+                            }}
+                          />
+                        </label>
+                        <button
+                          aria-label={`Remove control point ${i + 1}`}
+                          disabled={customPoints.length <= 2}
+                          onClick={() => {
                             rememberArrival();
-                            setMix((v) => ({
-                              ...v,
-                              [key]: Number(e.target.value) / 100,
-                            }));
+                            setCustomPoints((rows) =>
+                              rows.filter((_, j) => j !== i),
+                            );
                           }}
-                        />
-                      </label>
-                    ))
-                  )
-                ) : mixMode === "preserve" ? (
-                  <pre>{JSON.stringify(mix, null, 2)}</pre>
-                ) : null}
-                {mixMode !== "default" ? (
-                  <small>
-                    Total:{" "}
-                    {fmt(
-                      Object.values(mix).reduce((a, b) => a + b, 0) * 100,
-                      1,
-                    )}
-                    %. Applies only to new arrivals in this condition window.
-                  </small>
-                ) : (
-                  <small>Uses the dataset pathway proportions.</small>
-                )}
-              </fieldset>
-            </div>
-          </Accordion.Panel>
-        </Accordion.Item>
-        <Accordion.Item value="resources">
-          <Accordion.Control icon={<Users size={18} />}>
-            Staff, beds, equipment & response plans
-            <span className="setup-section-description">
-              Optional changes to hospital resources and care locations
-            </span>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <aside className="condition-palette">
-              <span className="eyebrow">CONDITIONS</span>
-              <h3>Shape your scenario</h3>
-              <p>Add conditions to the planning timeline.</p>
-              <button
-                className="condition-tile selected"
-                onClick={() => {
-                  setOpenSections((value) =>
-                    value.includes("demand") ? value : [...value, "demand"],
-                  );
-                  document.getElementById("surge-input")?.focus();
-                }}
-                draggable
-                onDragStart={(e) =>
-                  e.dataTransfer.setData("condition", "arrivals")
-                }
-              >
-                <Wind size={21} />
-                <strong>Arrival surge</strong>
-                <small>Change the volume of ED arrivals.</small>
-                <span className="tile-add">
-                  <Plus size={14} />
-                </span>
-              </button>
-              {planFamilies.map(([family, title, description]) => (
-                <button
-                  key={family}
-                  className="condition-tile"
-                  disabled={ctx.canWrite === false}
-                  onClick={() => setPlanRequest({ family, nonce: Date.now() })}
-                  draggable
-                  onDragStart={(e) =>
-                    e.dataTransfer.setData("condition", family)
-                  }
-                >
-                  <Plus size={18} />
-                  <strong>{title}</strong>
-                  <small>{description}</small>
-                </button>
-              ))}
-              <div className="palette-note">
-                <FileText size={16} />
-                <p>
-                  All assumptions stay visible, editable, and attached to the
-                  scenario.
-                </p>
-              </div>
-            </aside>
-            {ctx.dataset && (
-              <ScenarioTracks
-                dataset={ctx.dataset}
-                draft={{
-                  conditions: draftConditions,
-                  interventions: draftInterventions,
-                  updates: draftUpdates,
-                }}
-                start={startAt}
-                end={exclusiveEnd}
-                timeZone={timeZone}
-                canWrite={ctx.canWrite !== false}
-                request={planRequest}
-                onRequestHandled={() => setPlanRequest(null)}
-                onChange={(next) => {
-                  remember();
-                  setDraftConditions(next.conditions);
-                  setDraftInterventions(next.interventions);
-                  setDraftUpdates(next.updates);
-                }}
-              />
-            )}
-          </Accordion.Panel>
-        </Accordion.Item>
-        <Accordion.Item value="timeline">
-          <Accordion.Control icon={<Activity size={18} />}>
-            Visual planning timeline
-            <span className="setup-section-description">
-              Move and resize arrival intervals, and review the demand curve
-            </span>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <section
-              className="planning-canvas"
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                const family = planFamilies.find(
-                  ([f]) => f === e.dataTransfer.getData("condition"),
-                )?.[0];
-                if (family) setPlanRequest({ family, nonce: Date.now() });
-                else {
-                  setOpenSections((value) =>
-                    value.includes("demand") ? value : [...value, "demand"],
-                  );
-                  document.getElementById("surge-input")?.focus();
-                }
-              }}
-            >
-              <PanelTitle
-                title="Planning timeline"
-                eyebrow={`${days} LOCAL CALENDAR DAYS`}
-                actions={
-                  <div className="date-chip">
-                    {localDate(startAt)} —{" "}
-                    {localDate(
-                      new Date(Date.parse(exclusiveEnd) - 1).toISOString(),
-                    )}
-                  </div>
-                }
-              />
-              <div className="track">
-                <div className="track-label">
-                  <Wind size={15} />
-                  <strong>
-                    {stream === "ED_MAIN"
-                      ? "ED arrivals"
-                      : "Direct ward arrivals"}
-                  </strong>
-                  <span>Relative to baseline</span>
-                  <Badge tone="cyan">
-                    {percent > 0 ? "+" : ""}
-                    {percent}%
-                  </Badge>
-                </div>
-                <div className="arrival-canvas">
-                  <div className="track-grid">
-                    <span>{(1 + percent / 100).toFixed(1)}×</span>
-                    <span>Baseline 1.0×</span>
-                  </div>
-                  <svg
-                    viewBox="0 0 600 140"
-                    preserveAspectRatio="none"
-                    aria-label={`Arrival ${shape} with ${percent}% increase`}
-                  >
-                    <defs>
-                      <linearGradient
-                        id="wave-fill"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="0"
-                          stopColor="#32d3ed"
-                          stopOpacity=".25"
-                        />
-                        <stop
-                          offset="1"
-                          stopColor="#32d3ed"
-                          stopOpacity=".01"
-                        />
-                      </linearGradient>
-                    </defs>
-                    <path d={`${path} L600,140 L0,140Z`} fill="#dceaf9" />
-                    <line
-                      x1="0"
-                      x2="600"
-                      y1={baseY}
-                      y2={baseY}
-                      stroke="#508397"
-                      strokeDasharray="5 5"
-                    />
-                    <path
-                      d={path}
-                      fill="none"
-                      stroke="#4de3ef"
-                      strokeWidth="2"
-                    />
-                    <circle cx={markerX} cy={markerY} r="5" fill="#e8faff" />
-                  </svg>
-                  <label
-                    className="wave-peak"
-                    style={{
-                      left: `${10 + (markerX / 600) * 75}%`,
-                      top: `${markerY * (85 / 135) + 8}px`,
-                    }}
-                  >
-                    <strong>
-                      {percent > 0 ? "+" : ""}
-                      {percent}%
-                    </strong>
-                    <small>
-                      {(1 + percent / 100).toFixed(2)}× baseline{" "}
-                      {shape === "wave" ? "at peak" : ""}
-                    </small>
-                  </label>
-                  <input
-                    type="range"
-                    aria-label="Adjust arrival surge"
-                    disabled={shape === "custom"}
-                    min="-100"
-                    max="300"
-                    step="5"
-                    value={percent}
-                    onPointerDown={rememberArrival}
-                    onKeyDown={(e) => {
-                      if (
-                        [
-                          "ArrowLeft",
-                          "ArrowRight",
-                          "ArrowUp",
-                          "ArrowDown",
-                          "Home",
-                          "End",
-                        ].includes(e.key)
-                      )
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                    <Button
+                      small
+                      onClick={() => {
                         rememberArrival();
-                    }}
-                    onChange={(e) => {
-                      setPercent(+e.target.value);
-                      if (+e.target.value !== 0 && shape === "baseline")
-                        setShape("sustained");
-                      setDirty(true);
-                      setArrivalEdited(true);
-                    }}
-                  />
-                </div>
-                <ConditionWindow
-                  start={startDay}
-                  end={endDay}
-                  days={days}
-                  onBegin={rememberArrival}
-                  onChange={(a, b) => {
-                    const value = clampWindow(a, b, days);
-                    setWindowStartAt(undefined);
-                    setWindowEndAt(undefined);
-                    setStartDay(value.startDay);
-                    setEndDay(value.endDay);
-                    setDirty(true);
-                    setArrivalEdited(true);
-                  }}
-                />
-                <div className="window-handles">
-                  <label>
-                    Start
-                    <input
-                      aria-label="Drag condition start day"
-                      type="range"
-                      min="0"
-                      max={Math.max(0, days - 1)}
-                      value={startDay}
-                      onPointerDown={rememberArrival}
-                      onKeyDown={(e) => {
-                        if (
-                          [
-                            "ArrowLeft",
-                            "ArrowRight",
-                            "ArrowUp",
-                            "ArrowDown",
-                            "Home",
-                            "End",
-                          ].includes(e.key)
-                        )
-                          rememberArrival();
+                        const last = customPoints.at(-1)!;
+                        setCustomPoints((rows) => [
+                          ...rows.slice(0, -1),
+                          {
+                            at: new Date(
+                              (Date.parse(rows.at(-2)!.at) +
+                                Date.parse(last.at)) /
+                                2,
+                            ).toISOString(),
+                            multiplier: last.multiplier,
+                          },
+                          last,
+                        ]);
                       }}
-                      onChange={(e) => {
-                        setWindowStartAt(undefined);
-                        setStartDay(Math.min(+e.target.value, endDay - 1));
-                        setDirty(true);
-                        setArrivalEdited(true);
-                      }}
-                    />
-                  </label>
+                    >
+                      Add control point
+                    </Button>
+                    <small>
+                      The first and last point define the interval.{" "}
+                      {customInterpolation === "step"
+                        ? "Each arrival level holds until the next point."
+                        : "Arrival levels change gradually between points."}
+                    </small>
+                  </fieldset>
+                )}
+                <div className="two-fields">
                   <label>
-                    End
+                    Starts on day
                     <input
-                      aria-label="Drag condition end day"
-                      type="range"
+                      type="number"
                       min="1"
                       max={days}
-                      value={endDay}
-                      onPointerDown={rememberArrival}
-                      onKeyDown={(e) => {
-                        if (
-                          [
-                            "ArrowLeft",
-                            "ArrowRight",
-                            "ArrowUp",
-                            "ArrowDown",
-                            "Home",
-                            "End",
-                          ].includes(e.key)
-                        )
-                          rememberArrival();
-                      }}
+                      value={startDay + 1}
                       onChange={(e) => {
+                        rememberArrival();
+                        setWindowStartAt(undefined);
+                        setStartDay(
+                          Math.max(
+                            0,
+                            Math.min(+e.target.value - 1, endDay - 1),
+                          ),
+                        );
+                      }}
+                    />
+                  </label>
+                  <label>
+                    Ends on day
+                    <input
+                      type="number"
+                      min={startDay + 1}
+                      max={days}
+                      value={endDay}
+                      onChange={(e) => {
+                        rememberArrival();
                         setWindowEndAt(undefined);
-                        setEndDay(Math.max(startDay + 1, +e.target.value));
-                        setDirty(true);
-                        setArrivalEdited(true);
+                        setEndDay(
+                          Math.min(
+                            days,
+                            Math.max(startDay + 1, +e.target.value),
+                          ),
+                        );
                       }}
                     />
                   </label>
                 </div>
-                <div className="track-dates">
-                  {Array.from({ length: Math.min(6, days) }, (_, i) => (
-                    <span key={i}>
-                      {localDate(
-                        atDay(
-                          startAt,
-                          Math.floor(
-                            (i * (days - 1)) /
-                              Math.max(1, Math.min(6, days) - 1),
-                          ),
-                          0,
-                          ctx.scenario?.timezone,
-                        ),
+                {shape !== "custom" && (
+                  <div className="two-fields">
+                    <ZonedDateTimeInput
+                      label="Arrival starts"
+                      timeZone={timeZone}
+                      value={utcMinute(
+                        windowStartAt ?? atDay(startAt, startDay, 0, timeZone),
                       )}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="timeline-ruler">
-                <span>DAY 1</span>
-                <span>DAY {Math.max(2, Math.round(days / 2))}</span>
-                <span>DAY {days}</span>
-              </div>
-              <div className="scenario-summary">
-                <Check size={16} />
-                <span>
-                  {draftConditions.length +
-                    draftInterventions.length +
-                    draftUpdates.length}{" "}
-                  saved/staged assumptions ·{" "}
-                  {arrivalEdited
-                    ? "arrival edits pending"
-                    : "arrival input preserved"}{" "}
-                  · {days}-day horizon
-                </span>
-              </div>
-            </section>
-          </Accordion.Panel>
-        </Accordion.Item>
-        <Accordion.Item value="calculation">
-          <Accordion.Control icon={<SlidersHorizontal size={18} />}>
-            Calculation details
-            <span className="setup-section-description">
-              Workload estimate, input checks and execution limits
-            </span>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <div className="setup-advanced-actions">
-              {" "}
-              <Button
-                onClick={() => {
-                  try {
-                    setConditionsJson(
-                      JSON.stringify(makePatch().conditions, null, 2),
-                    );
-                    setEditorError("");
-                    setAdvanced(true);
-                  } catch (error) {
-                    setEditorError((error as Error).message);
-                  }
-                }}
-              >
-                <SlidersHorizontal size={15} />
-                Assumptions
-              </Button>
-              <Button onClick={openDifferences}>Compare saved inputs</Button>
-            </div>
-            <div className="compute-estimate" aria-live="polite">
-              <span>Execution estimate</span>
-              <strong>
-                {estimating
-                  ? "Calculating…"
-                  : preflight?.compute_estimate
-                    ? fmt(
-                        preflight.compute_estimate.expected_trajectories_total,
+                      onChange={(value) => {
+                        rememberArrival();
+                        setWindowStartAt(
+                          value ? new Date(value + "Z").toISOString() : "",
+                        );
+                      }}
+                    />
+                    <ZonedDateTimeInput
+                      label="Arrival ends"
+                      timeZone={timeZone}
+                      value={utcMinute(
+                        windowEndAt ??
+                          new Date(
+                            Math.min(
+                              Date.parse(atDay(startAt, endDay, 0, timeZone)),
+                              Date.parse(exclusiveEnd),
+                            ),
+                          ).toISOString(),
+                      )}
+                      onChange={(value) => {
+                        rememberArrival();
+                        setWindowEndAt(
+                          value ? new Date(value + "Z").toISOString() : "",
+                        );
+                      }}
+                    />
+                  </div>
+                )}
+                {shape === "wave" ? (
+                  <label>
+                    Peak on day
+                    <input
+                      type="number"
+                      min={startDay + 2}
+                      max={endDay - 1}
+                      value={peakDay + 1}
+                      onChange={(e) => {
+                        rememberArrival();
+                        setPeakDay(+e.target.value - 1);
+                      }}
+                    />
+                  </label>
+                ) : null}
+                <label>
+                  Arrival stream
+                  <NativeSelect
+                    aria-label="Arrival stream"
+                    value={stream}
+                    onChange={(e) => switchStream(e.target.value)}
+                  >
+                    {ctx.dataset?.entry_streams
+                      ?.filter(
+                        (item: Entity) =>
+                          !item.facility_id || item.facility_id === "FAC-MAIN",
                       )
-                    : `${fmt(estimated)} approximate arrivals`}
-              </strong>
-              {preflight?.compute_estimate ? (
-                <>
-                  <small>
-                    {fmt(
-                      preflight.compute_estimate
-                        .expected_trajectories_per_replication,
-                    )}{" "}
-                    expected trajectories ×{" "}
-                    {preflight.compute_estimate.replications} replications,
-                    including the starting census and corrected reports.
-                  </small>
-                  <small>
-                    Run budget:{" "}
-                    {fmt(
-                      preflight.compute_estimate.limits.max_run_trajectories,
-                    )}{" "}
-                    trajectories. Per replication:{" "}
-                    {fmt(
-                      preflight.compute_estimate.limits
-                        .max_expected_arrivals_per_replication,
-                    )}{" "}
-                    arrivals.
-                  </small>
-                  {preflight.compute_estimate.expected_trajectories_total >
-                  1000000 ? (
-                    <p className="compute-warning">
-                      Large workload. A shorter horizon or fewer replications
-                      reduces execution time.
-                    </p>
+                      .map((item: Entity) => (
+                        <option
+                          key={item.entry_stream_id}
+                          value={item.entry_stream_id}
+                        >
+                          {item.entry_stream_id === "ED_MAIN"
+                            ? "Emergency department"
+                            : item.entry_stream_id === "DIRECT_WARD_MAIN"
+                              ? "Direct hospital admissions"
+                              : item.name || "Hospital arrivals"}
+                        </option>
+                      ))}
+                  </NativeSelect>
+                </label>
+                <fieldset className="care-mix-fields">
+                  <legend>Disposition of new arrivals</legend>
+                  <label>
+                    Care mix
+                    <NativeSelect
+                      aria-label="Care mix"
+                      value={mixMode}
+                      onChange={(e) => {
+                        rememberArrival();
+                        setMixMode(e.target.value as MixMode);
+                        if (e.target.value === "percentages")
+                          setMix(
+                            stream === "DIRECT_WARD_MAIN"
+                              ? { ward: 1 }
+                              : { discharge: 0.8, ward: 0.16, icu: 0.04 },
+                          );
+                      }}
+                    >
+                      <option value="default">Use stream default</option>
+                      <option value="percentages">Set care percentages</option>
+                      {mixMode === "preserve" ? (
+                        <option value="preserve">
+                          Preserve imported cohort/profile mix
+                        </option>
+                      ) : null}
+                    </NativeSelect>
+                  </label>
+                  {mixMode === "percentages" ? (
+                    stream === "DIRECT_WARD_MAIN" ? (
+                      <p>Direct ward arrivals require ward care (100%).</p>
+                    ) : (
+                      ["discharge", "ward", "icu"].map((key) => (
+                        <label key={key}>
+                          {key === "discharge"
+                            ? "Discharge after assessment"
+                            : key === "icu"
+                              ? "ICU admission"
+                              : "Ward admission"}{" "}
+                          (%)
+                          <input
+                            type="number"
+                            min={0}
+                            max={100}
+                            step={1}
+                            value={Math.round((mix[key] || 0) * 10000) / 100}
+                            onChange={(e) => {
+                              rememberArrival();
+                              setMix((v) => ({
+                                ...v,
+                                [key]: Number(e.target.value) / 100,
+                              }));
+                            }}
+                          />
+                        </label>
+                      ))
+                    )
+                  ) : mixMode === "preserve" ? (
+                    <p>Uses the saved care needs for this arrival group.</p>
                   ) : null}
-                  <small>{preflight.compute_estimate.basis}</small>
-                </>
-              ) : (
-                <small>
-                  Preview estimate; the server verifies the full draft before
-                  execution.
-                </small>
-              )}
-              {(preflight?.errors || []).map((e: Entity, i: number) => (
-                <p className="compute-warning" key={i}>
-                  {e.field}: {e.message}
-                </p>
-              ))}
-              {preflight?.feasibility?.feasible === false ? (
-                <p className="compute-warning">
-                  Intervention prerequisites:{" "}
-                  {preflight.feasibility.reasons?.join("; ")}
-                </p>
-              ) : null}
-              {estimateError ? (
-                <p className="compute-warning">
-                  Estimate unavailable: {estimateError}
-                </p>
-              ) : null}
-            </div>
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
-      {advanced ? (
-        <Modal
-          title="Scenario assumptions"
-          wide
-          onClose={() => setAdvanced(false)}
-        >
-          <div className="form-stack">
-            <div className="two-fields">
-              <ZonedDateTimeInput
-                label="Snapshot timestamp"
-                timeZone={timeZone}
-                value={utcMinute(startAt)}
-                disabled
-                onChange={() => {}}
-              />
-              <label>
-                Base random seed
-                <input
-                  type="number"
-                  min="0"
-                  value={seed}
-                  onChange={(e) => {
+                  {mixMode !== "default" ? (
+                    <small>
+                      Total:{" "}
+                      {fmt(
+                        Object.values(mix).reduce((a, b) => a + b, 0) * 100,
+                        1,
+                      )}
+                      %. Applies only to new arrivals in this condition window.
+                    </small>
+                  ) : (
+                    <small>Uses usual care needs for these arrivals.</small>
+                  )}
+                </fieldset>
+              </div>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item value="resources">
+            <Accordion.Control icon={<Users size={18} />}>
+              Staff, beds & equipment
+              <span className="setup-section-description">
+                Adjust care capacity and scheduled hospital changes
+              </span>
+            </Accordion.Control>
+            <Accordion.Panel>
+              {ctx.dataset && (
+                <ScenarioTracks
+                  dataset={ctx.dataset}
+                  draft={{
+                    conditions: draftConditions,
+                    interventions: draftInterventions,
+                    updates: draftUpdates,
+                  }}
+                  start={startAt}
+                  end={exclusiveEnd}
+                  timeZone={timeZone}
+                  canWrite={ctx.canWrite !== false}
+                  request={planRequest}
+                  onRequestHandled={() => setPlanRequest(null)}
+                  onChange={(next) => {
                     remember();
-                    setSeed(+e.target.value);
+                    setDraftConditions(next.conditions);
+                    setDraftInterventions(next.interventions);
+                    setDraftUpdates(next.updates);
                   }}
                 />
-              </label>
-            </div>
-            <div className="info-note">
-              All conditions are versioned inputs. Existing imported conditions
-              are preserved when editing a selected arrival stream. Advanced
-              conditions support resource schedules, duration multipliers, and
-              incident batches.
-            </div>
-            <label>
-              Complete condition list
-              <textarea
-                className="json-editor"
-                value={conditionsJson}
-                onChange={(e) => setConditionsJson(e.target.value)}
-                spellCheck={false}
-              />
-            </label>
-            <Button
-              primary
-              disabled={ctx.canWrite === false}
-              onClick={() =>
-                ctx.action("Saving condition assumptions", async () => {
-                  const conditions = JSON.parse(conditionsJson);
-                  if (!Array.isArray(conditions))
-                    throw new Error("Conditions must be an array.");
-                  const saved = await ctx.saveScenario({
-                    ...makePatch(),
-                    conditions,
-                    start_at: startAt,
-                    base_seed: seed,
-                  });
-                  if (saved) {
-                    setAdvanced(false);
-                    setDirty(false);
-                  }
-                })
-              }
-            >
-              Validate and save all conditions <Check size={14} />
-            </Button>
-          </div>
-        </Modal>
-      ) : null}
-      {diffOpen ? (
-        <Modal
-          title="Compare saved scenario inputs"
-          wide
-          onClose={() => setDiffOpen(false)}
-        >
-          <div className="form-stack">
-            <p>
-              Current saved draft: <strong>{versions[0]?.name}</strong>. Unsaved
-              form edits are excluded. Frozen run inputs retain their original
-              values.
-            </p>
-            <label>
-              Compare against
-              <NativeSelect
-                aria-label="Compare against"
-                value={baseVersion}
-                onChange={(e) => setBaseVersion(e.target.value)}
-              >
-                {versions.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.label}
-                  </option>
-                ))}
-              </NativeSelect>
-            </label>
-            {differenceRows.length ? (
-              <div className="table-scroll">
-                <table className="data-table version-differences">
-                  <thead>
-                    <tr>
-                      <th>Input</th>
-                      <th>Selected saved version</th>
-                      <th>Current saved draft</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {differenceRows.map((row) => (
-                      <tr key={row.field}>
-                        <th>{row.field}</th>
-                        <td>
-                          <pre>{JSON.stringify(row.before, null, 2)}</pre>
-                        </td>
-                        <td>
-                          <pre>{JSON.stringify(row.after, null, 2)}</pre>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              )}
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item value="calculation">
+            <Accordion.Control icon={<SlidersHorizontal size={18} />}>
+              Calculation details
+              <span className="setup-section-description">
+                Run settings and input checks
+              </span>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <div className="calculation-settings">
+                <NumberInput
+                  label="Random seed"
+                  description="Use the same seed to repeat the same random inputs."
+                  min={0}
+                  value={seed}
+                  onChange={(value) => {
+                    remember();
+                    setSeed(Number(value) || 0);
+                  }}
+                />
               </div>
-            ) : (
-              <p>No input differences between these saved versions.</p>
-            )}
-          </div>
-        </Modal>
-      ) : null}
+              <div className="compute-estimate" aria-live="polite">
+                <span>Execution estimate</span>
+                <strong>
+                  {estimating
+                    ? "Calculating…"
+                    : preflight?.compute_estimate
+                      ? fmt(
+                          preflight.compute_estimate
+                            .expected_trajectories_total,
+                        )
+                      : `${fmt(estimated)} approximate arrivals`}
+                </strong>
+                {preflight?.compute_estimate ? (
+                  <>
+                    <small>
+                      {fmt(
+                        preflight.compute_estimate
+                          .expected_trajectories_per_replication,
+                      )}{" "}
+                      expected patients ×{" "}
+                      {preflight.compute_estimate.replications} simulation runs,
+                      including the starting census and corrected reports.
+                    </small>
+                    <small>
+                      Service limit:{" "}
+                      {fmt(
+                        preflight.compute_estimate.limits.max_run_trajectories,
+                      )}{" "}
+                      modeled patients. Per simulation:{" "}
+                      {fmt(
+                        preflight.compute_estimate.limits
+                          .max_expected_arrivals_per_replication,
+                      )}{" "}
+                      arrivals.
+                    </small>
+                    {preflight.compute_estimate.expected_trajectories_total >
+                    1000000 ? (
+                      <p className="compute-warning">
+                        Large workload. A shorter horizon or fewer simulation
+                        runs reduces execution time.
+                      </p>
+                    ) : null}
+                  </>
+                ) : (
+                  <small>
+                    Preview estimate; the server verifies the full draft before
+                    execution.
+                  </small>
+                )}
+                {(preflight?.errors || []).map((e: Entity, i: number) => (
+                  <p className="compute-warning" key={i}>
+                    {e.message}
+                  </p>
+                ))}
+                {preflight?.feasibility?.feasible === false ? (
+                  <p className="compute-warning">
+                    Intervention prerequisites:{" "}
+                    {preflight.feasibility.reasons?.join("; ")}
+                  </p>
+                ) : null}
+                {estimateError ? (
+                  <p className="compute-warning">
+                    Estimate unavailable: {estimateError}
+                  </p>
+                ) : null}
+              </div>
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
+      </details>
       {library ? (
         <Modal title="Scenario library" onClose={() => setLibrary(false)} wide>
           <div className="form-stack">
@@ -1827,7 +1340,7 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
               <input
                 value={librarySearch}
                 onChange={(e) => setLibrarySearch(e.target.value)}
-                placeholder="Name or scenario ID"
+                placeholder="Search by name"
               />
             </label>
             <label className="checkbox-label">
@@ -1849,9 +1362,8 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                     {s.horizon_calendar_days} days · {s.replications} runs ·
                     Revision {s.revision}
                   </span>
-                  <small className="mono">Dataset {s.dataset_version_id}</small>
+
                   <small>
-                    Owner: {s.owner_name || s.created_by || "Not recorded"} ·
                     Created{" "}
                     {localDate(s.created_at, {
                       year: "numeric",
@@ -1866,10 +1378,19 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
                     })}
                   </small>
                   <small>
-                    Latest run: {s.latest_run?.status || "No runs recorded"}.{" "}
-                    {s.change_summary ||
-                      s.description ||
-                      `${s.conditions?.length || 0} conditions · ${s.interventions?.length || 0} responses · ${s.updates?.length || 0} updates`}
+                    {(
+                      {
+                        SUCCEEDED: "Results available",
+                        COMPLETED: "Results available",
+                        QUEUED: "Simulation queued",
+                        RUNNING: "Simulation running",
+                        AGGREGATING: "Finishing results",
+                        CANCEL_REQUESTED: "Cancelling simulation",
+                        CANCELLED: "Simulation cancelled",
+                        FAILED: "Simulation failed",
+                      } as Record<string, string>
+                    )[String(s.latest_run?.status || "").toUpperCase()] ||
+                      "No results yet"}
                   </small>
                 </div>
                 <Badge>{s.archived ? "Archived" : "Saved"}</Badge>
@@ -1947,162 +1468,5 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
         </Modal>
       ) : null}
     </div>
-  );
-}
-function HospitalIcon() {
-  return <Layers size={20} />;
-}
-function ConditionWindow({
-  start,
-  end,
-  days,
-  onBegin,
-  onChange,
-}: {
-  start: number;
-  end: number;
-  days: number;
-  onBegin: () => void;
-  onChange: (a: number, b: number) => void;
-}) {
-  const drag = useRef<{
-    mode: string;
-    anchor: number;
-    start: number;
-    end: number;
-  } | null>(null);
-  function day(event: PointerEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    return Math.max(
-      0,
-      Math.min(
-        days,
-        Math.round(((event.clientX - rect.left) / rect.width) * days),
-      ),
-    );
-  }
-  function begin(event: PointerEvent<HTMLDivElement>) {
-    if (event.button !== 0) return;
-    event.preventDefault();
-    const mode =
-      (event.target as HTMLElement).closest<HTMLElement>("[data-mode]")?.dataset
-        .mode || "select";
-    onBegin();
-    drag.current = { mode, anchor: day(event), start, end };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-  function move(event: PointerEvent<HTMLDivElement>) {
-    const active = drag.current;
-    if (!active) return;
-    const current = day(event);
-    if (active.mode === "start")
-      onChange(Math.min(current, active.end - 1), active.end);
-    else if (active.mode === "end")
-      onChange(active.start, Math.max(active.start + 1, current));
-    else if (active.mode === "move") {
-      const width = active.end - active.start,
-        a = Math.max(
-          0,
-          Math.min(days - width, active.start + current - active.anchor),
-        );
-      onChange(a, a + width);
-    } else {
-      const a = Math.min(active.anchor, current),
-        b = Math.max(active.anchor, current);
-      onChange(Math.min(a, days - 1), Math.max(a + 1, b));
-    }
-  }
-  function key(event: KeyboardEvent<HTMLButtonElement>, mode: string) {
-    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-    event.preventDefault();
-    onBegin();
-    const delta = event.key === "ArrowLeft" ? -1 : 1;
-    if (mode === "start")
-      onChange(
-        event.key === "Home"
-          ? 0
-          : event.key === "End"
-            ? end - 1
-            : Math.max(0, Math.min(end - 1, start + delta)),
-        end,
-      );
-    else if (mode === "end")
-      onChange(
-        start,
-        event.key === "Home"
-          ? start + 1
-          : event.key === "End"
-            ? days
-            : Math.max(start + 1, Math.min(days, end + delta)),
-      );
-    else {
-      const width = end - start,
-        a =
-          event.key === "Home"
-            ? 0
-            : event.key === "End"
-              ? days - width
-              : Math.max(0, Math.min(days - width, start + delta));
-      onChange(a, a + width);
-    }
-  }
-  return (
-    <>
-      <p className="window-instruction">
-        Drag empty track to select a window, its body to move, or its edges to
-        resize. Arrow keys and numeric fields provide the same edits.
-      </p>
-      <div
-        className="condition-window"
-        aria-label="Condition time window"
-        onPointerDown={begin}
-        onPointerMove={move}
-        onPointerUp={() => {
-          drag.current = null;
-        }}
-        onPointerCancel={() => {
-          drag.current = null;
-        }}
-      >
-        <div
-          className="condition-window-block"
-          style={{
-            left: `${(start / days) * 100}%`,
-            width: `${((end - start) / days) * 100}%`,
-          }}
-        >
-          <button
-            data-mode="start"
-            aria-label="Resize condition start"
-            role="slider"
-            aria-valuemin={1}
-            aria-valuemax={end}
-            aria-valuenow={start + 1}
-            onKeyDown={(e) => key(e, "start")}
-          >
-            ‹
-          </button>
-          <button
-            className="condition-window-body"
-            data-mode="move"
-            aria-label="Move condition window"
-            onKeyDown={(e) => key(e, "move")}
-          >
-            Day {start + 1}–{end}
-          </button>
-          <button
-            data-mode="end"
-            aria-label="Resize condition end"
-            role="slider"
-            aria-valuemin={start + 1}
-            aria-valuemax={days}
-            aria-valuenow={end}
-            onKeyDown={(e) => key(e, "end")}
-          >
-            ›
-          </button>
-        </div>
-      </div>
-    </>
   );
 }

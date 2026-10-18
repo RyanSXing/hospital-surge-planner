@@ -11,57 +11,57 @@ test("planned equipment quantities use prior exact inventory and reject saturati
   await expandScenarioDetails(page);
   const add = async () => {
     await page
-      .getByRole("button", { name: "Add equipment availability", exact: true })
+      .getByRole("button", { name: "Add equipment", exact: true })
       .click();
     const dialog = page.getByRole("dialog");
-    await dialog.getByLabel("Equipment pool").selectOption("EQ-RES-CLINIC-KIT");
+    await dialog
+      .getByLabel("Equipment", { exact: true })
+      .selectOption("EQ-RES-MONITOR");
     return dialog;
   };
   let dialog = await add();
-  await dialog.getByLabel("Equipment operation").selectOption("repair");
+  await dialog.getByLabel("What changes?").selectOption("repair");
   await expect(dialog.getByLabel("Equipment quantity")).toHaveAttribute(
     "max",
     "0",
   );
   await dialog.getByLabel("Equipment quantity").fill("1");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   await expect(dialog).toContainText(
     "Planned repair must be a whole quantity from 0 to 0",
   );
-  await dialog.getByLabel("Equipment operation").selectOption("fail");
-  await dialog.getByLabel("Equipment quantity").fill("13");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByLabel("What changes?").selectOption("fail");
+  await dialog.getByLabel("Equipment quantity").fill("9");
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   await expect(dialog).toContainText(
-    "Planned fail must be a whole quantity from 0 to 12",
+    "Planned fail must be a whole quantity from 0 to 8",
   );
-  await dialog.getByLabel("Assumption name").fill("Four planned failures");
+  await dialog.getByLabel("Change name").fill("Four planned failures");
   await dialog.getByLabel("Equipment quantity").fill("4");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   dialog = await add();
-  await dialog.getByLabel("Equipment operation").selectOption("repair");
+  await dialog.getByLabel("What changes?").selectOption("repair");
   await expect(dialog.getByLabel("Equipment quantity")).toHaveAttribute(
     "max",
     "4",
   );
-  await expect(dialog).toContainText(
-    "12 total, 8 serviceable, 4 unserviceable",
-  );
+  await expect(dialog).toContainText("8 total, 4 serviceable, 4 unserviceable");
   await dialog.getByLabel("Equipment quantity").fill("5");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   await expect(dialog).toContainText(
     "Planned repair must be a whole quantity from 0 to 4",
   );
-  await dialog.getByLabel("Assumption name").fill("Three planned repairs");
+  await dialog.getByLabel("Change name").fill("Three planned repairs");
   await dialog.getByLabel("Equipment quantity").fill("3");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   dialog = await add();
-  await dialog.getByLabel("Equipment operation").selectOption("decommission");
-  await dialog.getByLabel("Equipment quantity").fill("13");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByLabel("What changes?").selectOption("decommission");
+  await dialog.getByLabel("Equipment quantity").fill("9");
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   await expect(dialog).toContainText(
-    "Planned decommission must be a whole quantity from 0 to 12",
+    "Planned decommission must be a whole quantity from 0 to 8",
   );
-  await dialog.getByLabel("Equipment operation").selectOption("add");
+  await dialog.getByLabel("What changes?").selectOption("add");
   await expect(dialog.getByLabel("Equipment quantity")).not.toHaveAttribute(
     "max",
   );
@@ -98,7 +98,7 @@ test("inherited observed equipment failures bound future planned repairs and fai
     state_origin: "simulation_branch",
     source: "Browser regression known equipment failure",
     payload: {
-      equipment_pool_id: "EQ-RES-CLINIC-KIT",
+      equipment_pool_id: "EQ-RES-MONITOR",
       operation: "fail",
       quantity: 100,
     },
@@ -112,10 +112,12 @@ test("inherited observed equipment failures bound future planned repairs and fai
   await open(page, branch.scenario.id, "overview");
   await expandScenarioDetails(page);
   await page
-    .getByRole("button", { name: "Add equipment availability", exact: true })
+    .getByRole("button", { name: "Add equipment", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
-  await dialog.getByLabel("Equipment pool").selectOption("EQ-RES-CLINIC-KIT");
+  await dialog
+    .getByLabel("Equipment", { exact: true })
+    .selectOption("EQ-RES-MONITOR");
   await dialog
     .getByLabel("Effective time (America/Chicago)", { exact: true })
     .fill("2026-10-16T00:01");
@@ -123,21 +125,19 @@ test("inherited observed equipment failures bound future planned repairs and fai
     "max",
     "0",
   );
-  await expect(dialog).toContainText(
-    "12 total, 0 serviceable, 12 unserviceable",
-  );
+  await expect(dialog).toContainText("8 total, 0 serviceable, 8 unserviceable");
   await dialog.getByLabel("Equipment quantity").fill("1");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   await expect(dialog).toContainText(
     "Planned fail must be a whole quantity from 0 to 0",
   );
-  await dialog.getByLabel("Equipment operation").selectOption("repair");
+  await dialog.getByLabel("What changes?").selectOption("repair");
   await expect(dialog.getByLabel("Equipment quantity")).toHaveAttribute(
     "max",
-    "12",
+    "8",
   );
   await dialog.getByLabel("Equipment quantity").fill("3");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
     0,

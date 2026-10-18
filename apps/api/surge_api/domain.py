@@ -614,7 +614,7 @@ def seed_database(factory):
     from surge_engine.generator import fixture_identity
 
     with factory.begin() as session:
-        for fixture in ["planning_baseline", "stress_snapshot"]:
+        for fixture in ["planning_baseline", "stress_snapshot", "hospital_baseline"]:
             identity = fixture_identity(fixture, seed=41021, days=365)
             provenance = {
                 "identity": identity,
@@ -639,7 +639,7 @@ def seed_database(factory):
                 )
                 dataset["validation"] = validation
                 add_document(session, "workspace-main", "dataset", dataset)
-            if fixture == "planning_baseline":
+            if fixture == "hospital_baseline":
                 scenario_id = "scenario-" + identity
                 if session.scalar(select(Document.id).where(Document.id == scenario_id)):
                     continue
@@ -649,17 +649,10 @@ def seed_database(factory):
                         "id": scenario_id,
                         "created_by": "synthetic_demo_seed",
                         "seed_provenance": provenance,
-                        "name": "Sustained 70% surge",
-                        "conditions": [
-                            {
-                                "id": "condition-ed-surge",
-                                "kind": "arrival_multiplier",
-                                "arrival_stream": "ed",
-                                "shape": "step",
-                                "surge_percent": 70,
-                                "multiplier": 1.7,
-                            }
-                        ],
+                        "name": "demo",
+                        "horizon_calendar_days": 7,
+                        "replications": 10,
+                        "conditions": [],
                     },
                     dataset,
                 )

@@ -1,0 +1,12 @@
+{
+  "run_id": "run_fe91bddaae854cda8c79",
+  "replication_id": "run_fe91bddaae854cda8c79_rep_0000",
+  "at": "2026-10-16T05:00:00Z",
+  "ward": {
+    "occupied": 64,
+    "staffed": 80,
+    "background": 0
+  },
+  "only_main_hospital_included": true,
+  "actual_canvas_label": "64/80"
+}

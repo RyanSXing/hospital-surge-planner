@@ -12,20 +12,22 @@ test("scenario fields preserve the second repeated Chicago hour and reject the s
   await open(page, context.scenario.id, "overview");
   await expandScenarioDetails(page);
   await page
-    .getByRole("button", { name: "Add equipment availability", exact: true })
+    .getByRole("button", { name: "Add equipment", exact: true })
     .click();
   let dialog = page.getByRole("dialog");
   await dialog
-    .getByLabel("Assumption name")
+    .getByLabel("Change name")
     .fill("Second repeated hour equipment failure");
-  await dialog.getByLabel("Equipment pool").selectOption("EQ-RES-CLINIC-KIT");
+  await dialog
+    .getByLabel("Equipment", { exact: true })
+    .selectOption("EQ-RES-MONITOR");
   await dialog
     .getByLabel("Effective time (America/Chicago)", { exact: true })
     .fill("2026-11-01T01:30");
   await dialog
     .getByRole("combobox", { name: /^Repeated hour/ })
     .selectOption("2026-11-01T07:30");
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   await page.getByLabel("Increase in ED arrivals").fill("70");
   const start = page.getByLabel("Arrival starts (America/Chicago)", {
     exact: true,
@@ -72,7 +74,7 @@ test("scenario fields preserve the second repeated Chicago hour and reject the s
   await expect(dialog.getByRole("alert")).toContainText(
     "This local time does not exist",
   );
-  await dialog.getByRole("button", { name: "Apply assumption" }).click();
+  await dialog.getByRole("button", { name: "Apply change" }).click();
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText(
     "The effective time must lie within the scenario horizon",

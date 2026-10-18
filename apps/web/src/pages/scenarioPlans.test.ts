@@ -12,10 +12,70 @@ import {
   shiftKey,
   equipmentBeforeEvent,
   equipmentLimit,
+  familyOf,
 } from "./scenarioPlans";
 import type { Dataset, Scenario } from "../types";
 
 describe("complete scenario assumptions", () => {
+  it("keeps combined hospital bed responses editable without reclassifying legacy offsite plans", () => {
+    const dataset = {
+      units: [
+        { unit_id: "UNIT-WARD-C", facility_id: "FAC-MAIN" },
+        { unit_id: "UNIT-SHELTER", facility_id: "FAC-SHELTER" },
+      ],
+    } as unknown as Dataset;
+    const combined = {
+      id: "saved-response",
+      kind: "staffed_overflow",
+      facility_id: "FAC-MAIN",
+      unit_id: "UNIT-WARD-C",
+      enabled_slots: 32,
+      nurses: 4,
+      providers: 1,
+      support: 1,
+    };
+    expect(familyOf(combined, "interventions", dataset)).toBe("capacity");
+    expect(
+      familyOf(
+        { ...combined, facility_id: undefined },
+        "interventions",
+        dataset,
+      ),
+    ).toBe("capacity");
+    expect(
+      familyOf(
+        { ...combined, kind: "activate_overflow" },
+        "interventions",
+        dataset,
+      ),
+    ).toBe("capacity");
+    const offsite = {
+      ...combined,
+      id: "legacy-shelter",
+      facility_id: "FAC-SHELTER",
+      unit_id: "UNIT-SHELTER",
+    };
+    expect(familyOf(offsite, "interventions", dataset)).toBe("sites");
+    expect(
+      familyOf({ kind: "staffed_overflow" }, "interventions", dataset),
+    ).toBe("sites");
+    const draft = {
+      conditions: [],
+      updates: [],
+      interventions: [combined, offsite],
+    };
+    const edited = withPlan(
+      draft,
+      { collection: "interventions", id: combined.id },
+      "interventions",
+      { ...combined, enabled_slots: 28, nurses: 3 },
+    );
+    expect(edited.interventions).toEqual([
+      { ...combined, enabled_slots: 28, nurses: 3 },
+      offsite,
+    ]);
+    expect(draft.interventions).toEqual([combined, offsite]);
+  });
   it("bounds equipment from earlier planned changes in stable time order and excludes the edited event", () => {
     const dataset = {
       equipment_pools: [

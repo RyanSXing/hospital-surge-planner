@@ -33,22 +33,26 @@ test("simple local-campus replay animates recorded transitions and keeps evidenc
       return Reflect.apply(original, this, args);
     };
   });
+  let delayedStateRequests = 0;
+  await page.route("**/runs/*/state?**", async (route) => {
+    delayedStateRequests++;
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    await route.continue();
+  });
   await open(page, context.scenario.id, "replay", run.id);
   const canvas = page.locator(".replay-canvas");
   await expect(canvas).toHaveAttribute(
     "data-recorded-at",
     new Date(run.start_at).toISOString(),
   );
-  await expect(
-    page.getByRole("link", { name: "Location reference" }),
-  ).toHaveAttribute(
-    "href",
-    "https://www.vanderbilthealth.com/locations/vanderbilt-university-medical-center",
-  );
   await expect(page.locator(".replay-location")).toContainText(
     "1211 Medical Center Drive",
   );
-  await expect(page.locator(".replay-location")).toContainText("synthetic");
+  await expect(page.locator(".replay-location .badge")).toHaveCount(0);
+  await expect(page.locator(".replay-campus-reference")).not.toHaveAttribute(
+    "open",
+    "",
+  );
   await expect(
     page.getByRole("dialog", { name: "Replay details" }),
   ).not.toBeVisible();
@@ -60,6 +64,12 @@ test("simple local-campus replay animates recorded transitions and keeps evidenc
     page.getByLabel("Play replay", { exact: true }),
   ).toBeInViewport();
   await page.locator(".replay-campus-reference summary").click();
+  await expect(
+    page.getByRole("link", { name: "Location reference" }),
+  ).toHaveAttribute(
+    "href",
+    "https://www.vanderbilthealth.com/locations/vanderbilt-university-medical-center",
+  );
   await expect(
     page.getByRole("img", { name: "Vanderbilt hospital campus in Nashville" }),
   ).toBeVisible();
@@ -82,7 +92,25 @@ test("simple local-campus replay animates recorded transitions and keeps evidenc
   await capture(page, "replay-simple", info);
 
   await page.evaluate(() => {
-    const samples: { at: string; points: number; frame: number }[] = [];
+    const samples: {
+      at: string;
+      points: number;
+      frame: number;
+      visual: number;
+      paints: number;
+    }[] = [];
+    const canvas = document.querySelector<HTMLCanvasElement>(".replay-canvas");
+    (window as any).__replayOriginalCanvas = canvas;
+    (window as any).__replayLoadingFlashes = 0;
+    const observer = new MutationObserver(() => {
+      if (document.querySelector(".state-banner"))
+        (window as any).__replayLoadingFlashes++;
+    });
+    observer.observe(document.querySelector("main")!, {
+      childList: true,
+      subtree: true,
+    });
+    (window as any).__replayLoadingObserver = observer;
     (window as any).__replayMotionSamples = samples;
     const tick = (now: number) => {
       const node = document.querySelector<HTMLCanvasElement>(".replay-canvas");
@@ -91,6 +119,8 @@ test("simple local-campus replay animates recorded transitions and keeps evidenc
           at: node.dataset.recordedAt || "",
           points: Number(node.dataset.movedMarkers || 0),
           frame: now,
+          visual: Date.parse(node.dataset.visualAt || ""),
+          paints: Number(node.dataset.paintCount || 0),
         });
       (window as any).__replayMotionFrame = requestAnimationFrame(tick);
     };
@@ -100,9 +130,28 @@ test("simple local-campus replay animates recorded transitions and keeps evidenc
   await page.getByLabel("Play replay", { exact: true }).click();
   await expect
     .poll(() =>
-      page.evaluate(() => (window as any).__replayMotionSamples.length),
+      page.evaluate(
+        () =>
+          new Set(
+            (window as any).__replayMotionSamples.map(
+              (sample: any) => sample.at,
+            ),
+          ).size,
+      ),
     )
-    .toBeGreaterThan(5);
+    .toBeGreaterThanOrEqual(4);
+  const continuity = await page.evaluate(() => {
+    (window as any).__replayLoadingObserver.disconnect();
+    return {
+      same_canvas:
+        (window as any).__replayOriginalCanvas ===
+        document.querySelector(".replay-canvas"),
+      loading_flashes: (window as any).__replayLoadingFlashes,
+    };
+  });
+  expect(delayedStateRequests).toBeGreaterThanOrEqual(5);
+  expect(continuity.same_canvas).toBe(true);
+  expect(continuity.loading_flashes).toBe(0);
   await page.getByLabel("Pause replay", { exact: true }).click();
   const paused = new URL(page.url()).searchParams.get("at");
   await expect(canvas).toHaveAttribute("data-animating", "false");
@@ -116,7 +165,17 @@ test("simple local-campus replay animates recorded transitions and keeps evidenc
   const paints: { at: string; now: number }[] = await page.evaluate(
     () => (window as any).__replayCanvasPaints,
   );
-  expect(paints.length).toBeGreaterThan(5);
+  expect(paints.length).toBeGreaterThan(100);
+  expect(
+    samples.every(
+      (value: any, index: number) =>
+        index === 0 || value.visual >= samples[index - 1].visual,
+    ),
+  ).toBe(true);
+  const intervals = paints
+    .slice(1)
+    .map((paint, index) => paint.now - paints[index].now);
+  expect(Math.max(...intervals)).toBeLessThan(350);
 
   await page
     .getByRole("button", { name: "Inspect replay", exact: true })
@@ -161,6 +220,13 @@ test("simple local-campus replay animates recorded transitions and keeps evidenc
     moved_markers: Math.max(...samples.map((value: any) => value.points)),
     paused_at: paused,
     source_is_synthetic: true,
+    buffered_sample_boundaries: new Set(samples.map((sample: any) => sample.at))
+      .size,
+    maximum_canvas_paint_gap_ms: Math.max(...intervals),
+    same_canvas_throughout_playback: continuity.same_canvas,
+    loading_flashes_between_samples: continuity.loading_flashes,
+    artificial_state_network_delay_ms: 150,
+    delayed_state_requests: delayedStateRequests,
     console_errors: errors,
   });
 });

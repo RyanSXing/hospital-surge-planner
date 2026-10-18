@@ -1,4 +1,5 @@
 import { NativeSelect } from "@mantine/core";
+import { humanLabel } from "../presentation";
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, History, Save } from "lucide-react";
 import type { Dataset, Entity, PlanningContext, UpdateTarget } from "../types";
@@ -24,11 +25,8 @@ type SourceMode = "selected_replication" | "paired_ensemble" | "observed_reset";
 const updateKinds = [
   ["arrival_batch", "Additional arrival batch"],
   ["staff_unavailable", "Staff availability loss"],
-  ["advertised_capacity_change", "Advertised receiving capacity"],
-  ["capacity_change", "Enabled physical places"],
-  ["site_ready", "Site readiness"],
+  ["capacity_change", "Available hospital beds"],
   ["equipment_change", "Equipment inventory"],
-  ["route_change", "Travel route"],
   ["patient_departure", "Patient departure"],
 ] as const;
 function errorText(error: unknown) {
@@ -539,7 +537,7 @@ export default function UpdateDialog({
               historyForContext.map((event) => (
                 <div className="assumption-row" key={event.id}>
                   <div>
-                    <strong>{event.type.replaceAll("_", " ")}</strong>{" "}
+                    <strong>{humanLabel(event.type)}</strong>{" "}
                     <Badge>
                       {event.applied_scenario_id ? "Applied" : "Recorded"}
                     </Badge>
@@ -605,7 +603,7 @@ export default function UpdateDialog({
             )}
             {correction ? (
               <section className="form-stack">
-                <h3>Correction to {correction.type.replaceAll("_", " ")}</h3>
+                <h3>Correction to {humanLabel(correction.type)}</h3>
                 <label>
                   Replacement payload
                   <textarea
@@ -690,7 +688,8 @@ export default function UpdateDialog({
             >
               <label>
                 Starting state
-                <NativeSelect aria-label="Starting state"
+                <NativeSelect
+                  aria-label="Starting state"
                   value={sourceMode}
                   onChange={(e) => changeSource(e.target.value as SourceMode)}
                   disabled={!!savedEvent}
@@ -739,7 +738,8 @@ export default function UpdateDialog({
                 <>
                   <label>
                     Complete replacement snapshot
-                    <NativeSelect aria-label="Complete replacement snapshot"
+                    <NativeSelect
+                      aria-label="Complete replacement snapshot"
                       value={observedId}
                       onChange={(e) => setObservedId(e.target.value)}
                       disabled={!!savedEvent}
@@ -880,7 +880,8 @@ export default function UpdateDialog({
                 <>
                   <label>
                     Change to record
-                    <NativeSelect aria-label="Change to record"
+                    <NativeSelect
+                      aria-label="Change to record"
                       value={type}
                       onChange={(e) => {
                         setType(e.target.value as UpdateCreate["type"]);
@@ -911,7 +912,8 @@ export default function UpdateDialog({
                   {["arrival_batch", "site_ready"].includes(type) ? (
                     <label>
                       Facility
-                      <NativeSelect aria-label="Facility"
+                      <NativeSelect
+                        aria-label="Facility"
                         value={facility}
                         onChange={(e) => {
                           const id = e.target.value;
@@ -946,7 +948,8 @@ export default function UpdateDialog({
                   ].includes(type) ? (
                     <label>
                       Unit
-                      <NativeSelect aria-label="Unit"
+                      <NativeSelect
+                        aria-label="Unit"
                         value={unit}
                         onChange={(e) => setUnit(e.target.value)}
                       >
@@ -958,7 +961,7 @@ export default function UpdateDialog({
                           )
                           .map((u) => (
                             <option key={u.unit_id} value={u.unit_id}>
-                              {u.name} · {u.facility_id}
+                              {u.name}
                             </option>
                           ))}
                       </NativeSelect>
@@ -968,7 +971,8 @@ export default function UpdateDialog({
                     <>
                       <label>
                         Entry pathway
-                        <NativeSelect aria-label="Entry pathway"
+                        <NativeSelect
+                          aria-label="Entry pathway"
                           value={entry}
                           onChange={(e) => {
                             const id = e.target.value;
@@ -994,7 +998,7 @@ export default function UpdateDialog({
                                 key={stream.entry_stream_id}
                                 value={stream.entry_stream_id}
                               >
-                                {stream.entry_stream_id} ·{" "}
+                                {humanLabel(stream.entry_type)} ·{" "}
                                 {stream.entry_type === "direct_ward"
                                   ? "Direct ward admission"
                                   : "Emergency department assessment"}
@@ -1084,7 +1088,8 @@ export default function UpdateDialog({
                   ) : type === "patient_departure" ? (
                     <label>
                       Patient
-                      <NativeSelect aria-label="Patient"
+                      <NativeSelect
+                        aria-label="Patient"
                         value={person}
                         onChange={(e) => setPerson(e.target.value)}
                       >
@@ -1136,7 +1141,8 @@ export default function UpdateDialog({
                     <>
                       <label>
                         Equipment pool
-                        <NativeSelect aria-label="Equipment pool"
+                        <NativeSelect
+                          aria-label="Equipment pool"
                           value={equipment}
                           onChange={(e) => setEquipment(e.target.value)}
                         >
@@ -1145,14 +1151,20 @@ export default function UpdateDialog({
                               key={p.equipment_pool_id}
                               value={p.equipment_pool_id}
                             >
-                              {p.equipment_pool_id} · {p.capability_code}
+                              {humanLabel(p.capability_code)} ·{" "}
+                              {p.unit_id
+                                ? ctx.dataset?.units?.find(
+                                    (u) => u.unit_id === p.unit_id,
+                                  )?.name || "Hospital"
+                                : "Reserve"}
                             </option>
                           ))}
                         </NativeSelect>
                       </label>
                       <label>
                         Operation
-                        <NativeSelect aria-label="Operation"
+                        <NativeSelect
+                          aria-label="Operation"
                           value={operation}
                           onChange={(e) => setOperation(e.target.value)}
                         >
@@ -1172,7 +1184,8 @@ export default function UpdateDialog({
                     <>
                       <label>
                         Directed route
-                        <NativeSelect aria-label="Directed route"
+                        <NativeSelect
+                          aria-label="Directed route"
                           value={route}
                           onChange={(e) => setRoute(e.target.value)}
                         >
@@ -1228,7 +1241,7 @@ export default function UpdateDialog({
                           )
                           .map((s) => (
                             <option key={s.staff_id} value={s.staff_id}>
-                              {s.staff_id} · {s.role}
+                              {humanLabel(s.role)} · {s.staff_id}
                             </option>
                           ))}
                       </select>
@@ -1282,7 +1295,8 @@ export default function UpdateDialog({
               {enqueue ? (
                 <label>
                   Future repetitions
-                  <NativeSelect aria-label="Future repetitions"
+                  <NativeSelect
+                    aria-label="Future repetitions"
                     value={
                       sourceMode === "paired_ensemble"
                         ? ctx.run?.replications_requested || 10

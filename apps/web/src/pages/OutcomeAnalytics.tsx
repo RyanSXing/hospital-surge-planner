@@ -35,7 +35,7 @@ const scalarFields: MetricField[] = [
   { key: "arrivals", label: "New arrivals", unit: "patients" },
   {
     key: "expected_arrivals",
-    label: "Expected exogenous arrivals",
+    label: "Expected arrivals",
     unit: "patients",
   },
   {
@@ -55,63 +55,48 @@ const scalarFields: MetricField[] = [
     unit: "patients",
   },
   {
-    key: "patients_transferred",
-    label: "Interfacility transfers",
-    unit: "patients",
-  },
-  {
-    key: "temporary_site_patients_served",
-    label: "Temporary-site services completed",
-    unit: "patients",
-  },
-  {
     key: "inpatient_waiting_patient_hours",
-    label: "Inpatient placement waiting",
+    label: "Waiting for a hospital bed",
     unit: "patient-hours",
   },
   {
     key: "ed_waiting_patient_hours",
-    label: "ED assessment waiting",
-    unit: "patient-hours",
-  },
-  {
-    key: "transfer_waiting_hours",
-    label: "Transfer waiting",
+    label: "Waiting for emergency assessment",
     unit: "patient-hours",
   },
   {
     key: "peak_inpatient_queue",
-    label: "Peak inpatient queue",
+    label: "Most patients waiting for a bed",
     unit: "patients",
   },
   {
     key: "time_to_first_shortage_hours",
-    label: "First unmet placement demand (observed runs)",
+    label: "First bed queue (runs with a queue)",
     unit: "hours after measurement start",
   },
   {
     key: "hours_with_unmet_placement_demand",
-    label: "Duration with unmet placement demand",
+    label: "Time with patients waiting for a bed",
     unit: "hours",
   },
   {
     key: "completed_wait_median_hours",
-    label: "Median completed admission wait within each run",
+    label: "Typical wait before admission",
     unit: "hours",
   },
   {
     key: "completed_wait_p90_hours",
-    label: "P90 completed admission wait within each run",
+    label: "Longer admission wait (90th percentile)",
     unit: "hours",
   },
   {
     key: "unserved_at_horizon",
-    label: "Unresolved inpatient requests at end",
+    label: "Still waiting for a bed at the end",
     unit: "patients",
   },
   {
     key: "ed_unserved_at_horizon",
-    label: "Unresolved ED assessment requests at end",
+    label: "Still waiting for emergency assessment at the end",
     unit: "patients",
   },
   {
@@ -144,55 +129,55 @@ const scalarFields: MetricField[] = [
 
 const plots = {
   demand: {
-    title: "Demand & throughput",
+    title: "Arrivals and discharges",
     keys: ["arrivals", "discharges"],
     labels: ["Arrivals", "Discharges"],
     unit: "Patients per interval",
-    basis: "Totals within each local calendar interval.",
+    basis: "Patients arriving and leaving in each selected period.",
   },
   ward: {
-    title: "Ward occupancy & capacity",
+    title: "Ward beds",
     keys: ["ward_occupied", "ward_staffed"],
     labels: ["Ward occupied", "Ward staffed"],
     unit: "Beds · time-weighted average",
-    basis: "Time-weighted occupancy and staffed capacity within each interval.",
+    basis: "Average occupied beds compared with staffed beds in each period.",
   },
   icu: {
-    title: "ICU occupancy & capacity",
+    title: "Intensive care beds",
     keys: ["icu_occupied", "icu_staffed"],
     labels: ["ICU occupied", "ICU staffed"],
     unit: "Beds · time-weighted average",
-    basis: "Time-weighted occupancy and staffed capacity within each interval.",
+    basis: "Average occupied beds compared with staffed beds in each period.",
   },
   ed: {
-    title: "ED occupancy & capacity",
+    title: "Emergency department",
     keys: ["ed_occupied", "ed_staffed"],
     labels: ["ED occupied", "ED staffed"],
     unit: "Treatment places · time-weighted average",
-    basis: "Time-weighted occupancy and staffed capacity within each interval.",
+    basis: "Average occupied beds compared with staffed beds in each period.",
   },
   queues: {
-    title: "Queues",
+    title: "Patients waiting",
     keys: ["peak_inpatient_queue"],
-    labels: ["Peak inpatient queue"],
+    labels: ["Most patients waiting for a bed"],
     unit: "Patients · interval peak",
-    basis:
-      "Peak inpatient queue within each interval, calculated per run before percentiles.",
+    basis: "The largest number of patients waiting for a bed in each period.",
   },
   waiting: {
-    title: "Waiting burden",
+    title: "Time spent waiting",
     keys: ["inpatient_waiting_patient_hours", "ed_waiting_patient_hours"],
-    labels: ["Inpatient placement waiting", "ED assessment waiting"],
+    labels: ["Waiting for a hospital bed", "Waiting for emergency assessment"],
     unit: "Patient-hours per interval",
-    basis: "Integrated waiting burden within each interval.",
+    basis:
+      "Total waiting time added together across all patients in each period.",
   },
   utilization: {
-    title: "Peak staffed-capacity utilization",
+    title: "Busiest hospital unit",
     keys: ["peak_staffed_utilization"],
     labels: ["Peak clinical staffed-capacity utilization"],
     unit: "Percent · interval peak",
     basis:
-      "Highest instantaneous occupied-to-staffed ratio among main-hospital ward, ICU and ED units. Units with zero staffed capacity have no ratio; missing utilization is undefined, not zero.",
+      "The highest bed-use percentage in a ward, intensive care, or emergency unit.",
   },
   staffing: {
     title: "Staffing coverage deficit",
@@ -251,17 +236,16 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
   const hourlyQueues = ctx.grain === "day" && plot === "queues";
   const definition = hourlyQueues
     ? {
-        title: "Queues",
+        title: "Patients waiting",
         keys: ["inpatient_queue", "ward_queue", "icu_queue", "ed_queue"],
         labels: [
-          "All inpatient requests",
-          "Ward requests",
-          "ICU requests",
-          "ED assessment queue",
+          "All patients waiting for a bed",
+          "Waiting for ward care",
+          "Waiting for intensive care",
+          "Waiting for emergency assessment",
         ],
         unit: "Patients at sampled time",
-        basis:
-          "Recorded hourly queue samples; inpatient requests and ED assessment waiting are separate.",
+        basis: "Patients waiting at each hour, grouped by the care they need.",
       }
     : plots[plot];
   const originalRows: Entity[] = hourlyQueues
@@ -281,17 +265,9 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
       : originalRows;
   const selectedIndex = outcomeRowIndex(rows, selectedTime);
   const scalar = metrics?.scalar_metrics || {};
-  const knownKeys = new Set(scalarFields.map((field) => field.key));
-  const fields = [
-    ...scalarFields.filter((field) => isMeasurementScalar(field.key, window)),
-    ...Object.keys(scalar)
-      .filter((key) => !knownKeys.has(key))
-      .map((key) => ({
-        key,
-        label: key.replaceAll("_", " "),
-        unit: "Unit not declared in output",
-      })),
-  ];
+  const fields = scalarFields.filter((field) =>
+    isMeasurementScalar(field.key, window),
+  );
   const completed =
     ctx.run?.replications_completed || metrics?.replications_completed || 0;
   const measurementStart = hasWindow
@@ -311,10 +287,6 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
       timeZoneName: "short",
     });
 
-  const waitingMedian = finiteStatistic(
-    scalar.inpatient_waiting_patient_hours,
-    "p50",
-  );
   const shortageMedian = finiteStatistic(
     scalar.time_to_first_shortage_hours,
     "p50",
@@ -326,8 +298,8 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
     shortageMedian !== null
       ? {
           tone: "warning",
-          title: `Unmet placement demand begins around ${fmt(shortageMedian, 1)} hours into the measured forecast`,
-          body: `Timing is the median among runs with a bed queue. Inpatient waiting is ${waitingMedian === null ? "unavailable" : `${fmt(waitingMedian, 1)} patient-hours`}. Review the queue and capacity charts before choosing a response.`,
+          title: `Patients start waiting for beds after about ${fmt(shortageMedian, 1)} hours`,
+          body: "Some runs develop a queue. Compare staffing or extra hospital beds to see what helps.",
         }
       : {
           tone: noRecordedQueue ? "success" : "neutral",
@@ -347,9 +319,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
           <h1>Simulation outcomes</h1>
           <p>See what changes over time, then open details only when needed.</p>
         </div>
-        {metrics ? (
-          <Badge>{completed} simulation runs · ensemble forecast</Badge>
-        ) : null}
+        {metrics ? <Badge>{completed} simulation runs</Badge> : null}
       </header>
       {!metrics ? (
         <div
@@ -400,8 +370,10 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
             <div>
               <span>Scope</span>
               <strong>
-                {measuredAfterStart ? "From update cutoff" : "Full horizon"} ·
-                System-wide
+                {measuredAfterStart
+                  ? "After the recorded update"
+                  : "Full simulation"}{" "}
+                · Hospital
               </strong>
             </div>
           </div>
@@ -432,10 +404,6 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                   {display(scalar[field.key], "p50", field.percent)}
                 </strong>
                 <small>{field.unit} · median</small>
-                <span>
-                  P10–P90 {display(scalar[field.key], "p10", field.percent)}–
-                  {display(scalar[field.key], "p90", field.percent)}
-                </span>
               </article>
             ))}
           </section>
@@ -485,6 +453,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
               </p>
               <ForecastChart
                 rows={rows}
+                timeZone={timeZone}
                 keys={definition.keys}
                 labels={definition.labels}
                 height={250}
@@ -502,7 +471,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                   checked={band}
                   onChange={(event) => setBand(event.target.checked)}
                 />
-                Show P10–P90 range for {definition.labels[0]}
+                Show possible range for {definition.labels[0]}
               </label>
             </article>
 
@@ -511,13 +480,14 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                 <div className="outcome-chart-heading">
                   <div>
                     <span className="eyebrow">QUEUE PRESSURE</span>
-                    <h2>Peak inpatient queue</h2>
+                    <h2>Most patients waiting for a bed</h2>
                   </div>
                 </div>
                 <ForecastChart
                   rows={dailyRows}
+                  timeZone={timeZone}
                   keys={["peak_inpatient_queue"]}
-                  labels={["Peak inpatient queue"]}
+                  labels={["Most patients waiting for a bed"]}
                   height={156}
                   selected={outcomeRowIndex(dailyRows, selectedTime)}
                   onSelect={(index) => selectTime(dailyRows[index].start_at)}
@@ -534,6 +504,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                 </div>
                 <ForecastChart
                   rows={dailyRows}
+                  timeZone={timeZone}
                   keys={["ward_occupied", "ward_staffed"]}
                   labels={["Ward occupied", "Ward staffed"]}
                   height={156}
@@ -546,20 +517,11 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
             </div>
           </section>
 
-          <p className="outcome-note outcome-scope-note">
-            <Info size={14} aria-hidden="true" />
-            {plot === "utilization"
-              ? "Peak utilization covers individual main-hospital clinical units."
-              : "Occupancy and staffed capacity include clinical units with staffing-derived capacity and activated overflow."}{" "}
-            Partner capacity and nonclinical shelter places are excluded.
-            Queues, throughput, and deficits are system-wide.
-          </p>
-
           <Accordion
             className="outcome-details"
             variant="separated"
             multiple
-            defaultValue={["time"]}
+            defaultValue={[]}
             aria-label="Outcome details"
           >
             <Accordion.Item value="time">
@@ -624,9 +586,8 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                     }))}
                   />
                   <p>
-                    This selection is shared with Summary, Replay, and patient
-                    and resource inspection. Only times in this result are
-                    offered.
+                    This time is also used in Summary, Replay, and patient
+                    details.
                   </p>
                 </section>
               </Accordion.Panel>
@@ -648,8 +609,8 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                         Measurement-interval outcomes
                       </h2>
                       <p>
-                        Per-run metrics summarized across the ensemble. Chart
-                        grain and selected day do not change these totals.
+                        Totals for the full measured period. Choosing a chart
+                        interval does not change these totals.
                       </p>
                     </div>
                   </div>
@@ -658,16 +619,15 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                       <caption>
                         Median and simulation range across {completed} completed
                         runs. P10 and P90 are percentiles, not confidence
-                        bounds. First-shortage percentiles use observed runs
-                        only.
+                        bounds. First-queue percentiles use observed runs only.
                       </caption>
                       <thead>
                         <tr>
                           <th>Metric</th>
                           <th>Unit</th>
-                          <th>P10</th>
-                          <th>Median · P50</th>
-                          <th>P90</th>
+                          <th>Lower · P10</th>
+                          <th>Typical · Median</th>
+                          <th>Upper · P90</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -691,9 +651,8 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                   </div>
                   {measuredAfterStart && scalar.expected_arrivals ? (
                     <p className="outcome-note">
-                      Expected exogenous arrivals over the full simulation
-                      horizon ({dateText(metrics.start_at)} —{" "}
-                      {dateText(end || "")}) are{" "}
+                      Expected arrivals over the full simulation horizon (
+                      {dateText(metrics.start_at)} — {dateText(end || "")}) are{" "}
                       {display(scalar.expected_arrivals, "p50")} patients,
                       median. This includes time before the update cutoff.
                     </p>

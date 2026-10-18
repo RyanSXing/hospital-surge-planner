@@ -1,3 +1,4 @@
+import { humanLabel } from "../presentation";
 import { NativeSelect } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -56,7 +57,7 @@ function csv(rows: Entity[]) {
     ...rows.map((r) => columns.map((k) => cell(r[k])).join(",")),
   ].join("\r\n");
 }
-const label = (s: string) => s.replaceAll("_", " ");
+const label = humanLabel;
 const derivedDemandCollections = new Set([
   "arrival_profiles",
   "baseline",
@@ -537,9 +538,6 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
             <Badge tone={draft ? "warning" : "success"}>
               {draft ? "Editable draft" : "Immutable version"}
             </Badge>
-            {dataset?.synthetic ? (
-              <Badge tone="warning">Synthetic dataset</Badge>
-            ) : null}
           </div>
           <p>
             {dataset?.fixture?.replaceAll("_", " ")} · As of{" "}
@@ -555,6 +553,10 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
           </p>
           <details className="dataset-technical-details">
             <summary>Version details</summary>
+            <p className="small-copy muted">
+              Patients and operational values are generated planning data, not
+              hospital records.
+            </p>
             <span className="mono muted">
               {draft?.id || ctx.dataset?.id} <b>·</b> Schema{" "}
               {dataset?.schema_version || "—"} <b>·</b> Generator seed{" "}
@@ -576,7 +578,7 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
           ["assumptions", "Assumptions registry"],
           ["source", "Full source & manifest"],
           ["versions", "Dataset versions"],
-          ["fixtures", "Generate synthetic data"],
+          ["fixtures", "New hospital baseline"],
         ].map(([id, title]) => (
           <button
             key={id}
@@ -600,21 +602,13 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
             subtitle="Initial patients · 72 inpatient / 12 ED"
             description="A planning baseline with available capacity and no existing inpatient boarders. Model when and where future demand creates pressure."
             disabled={ctx.canWrite === false}
-            action={() => ctx.loadDataset("planning_baseline")}
-          />
-          <FixtureCard
-            title="Inspect an already-full hospital"
-            count="116"
-            subtitle="Initial patients · 92 inpatient / 24 ED"
-            description="A stress snapshot with 14 ED boarders awaiting inpatient placement. Explore a constraint that already exists at the start."
-            disabled={ctx.canWrite === false}
-            action={() => ctx.loadDataset("stress_snapshot")}
+            action={() => ctx.loadDataset("hospital_baseline")}
           />
           <div className="generation-notes">
             <ShieldCheck size={22} />
             <h3>Reproducible by construction</h3>
             <p>
-              Both snapshots use generator seed 41021, versioned resource
+              The baseline uses generator seed 41021, versioned resource
               policies, synthetic stay distributions, census assignments, and
               resource ledgers.
             </p>
@@ -637,7 +631,7 @@ export default function DataSetup({ ctx }: { ctx: PlanningContext }) {
                 <strong>{v.name || v.label || v.fixture}</strong>
                 <span className="mono">{v.id}</span>
               </div>
-              {v.synthetic ? <Badge tone="warning">Synthetic</Badge> : null}
+
               <span>{localDate(v.snapshot_at || v.created_at)}</span>
               <Button
                 small

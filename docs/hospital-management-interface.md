@@ -4,13 +4,13 @@ The October 2026 interface redesign follows the user's light hospital-management
 
 ## Working through a forecast
 
-1. **Overview** shows the saved starting census as occupancy bars. Choose the time period, expected arrivals, and number of simulation runs in three setup cards. **Run simulation** saves the inputs and opens the completed forecast in Analysis.
+1. **Overview** shows the saved starting census as occupancy bars. Choose a duration, emergency-arrival level and arrival pattern beside the live arrivals chart. Open **More parameters** for optional precise edits. **Run simulation** saves the inputs and opens the completed forecast in Analysis.
 2. **Summary** shows occupancy and queue charts, a short finding, and the next useful action. Facility maps, exact bed status, and the precise calendar/time controls are optional sections.
 3. **Replay** follows one explicitly selected recorded run. Play, pause, speed, event stepping, and time remain separate from the ensemble forecast. Patient, capacity, and event evidence are available in an inspection drawer; exact timing tools and the full census are optional.
-4. **Analytics** contains Outcomes, Patients & units, and Resources. Charts are the starting point; full metric tables and exact records remain available when needed.
+4. **Analytics** contains Outcomes and Patients & units. Charts are the starting point; full metric tables and exact records remain available when needed.
 5. **Comparison** evaluates response plans against matched inputs. The chart and paired waiting reduction guide selection. Save a chosen response as a proposed scenario; source scenarios and earlier results remain intact.
 
-The sidebar collapses by choice and remembers the preference in the browser. Repeated sidebar guidance and connection status have been removed; the planning guide stays available as a secondary tool. Data & setup, the planning guide, alerts, and workspace options remain secondary tools. Advanced arrival timing, care/resource mixes, staffing, equipment, capacity, sites, transport, and calculation details are grouped under clearly named setup sections. No input or planning capability is removed by disclosure.
+The sidebar collapses by choice and remembers the preference in the browser. Repeated sidebar guidance and connection status have been removed; the planning guide stays available as a secondary tool. Data & setup, the planning guide, alerts, and workspace options remain secondary tools. Optional arrival timing, patient care needs, staffing, equipment, internal bed capacity and calculation settings are grouped under **More parameters**. Alternate-site, shelter and transfer planning controls and the separate Resources page have been removed from the current single-hospital workflow.
 
 ## Components and visual language
 
@@ -26,9 +26,11 @@ Sources: [Vanderbilt University Medical Center location](https://www.vanderbilth
 
 The care-zone geometry, patient positions, operational data, resource assumptions, and transitions are synthetic. The local reference does not represent actual Vanderbilt capacity, a hospital floor plan, or real patient locations. The blue hospital application mark is also an original SVG. Artwork is drawn locally in Canvas/SVG; no remote map tiles or downloaded artwork are required.
 
-Recorded patient identities remain stable during animation. Adjacent recorded states use an 850 ms presentation tween; pausing, seeking, changing run, and reduced motion return to the exact recorded state. Interpolated positions are presentation only, never additional clinical events.
+Recorded patient identities remain stable during animation. Playback buffers upcoming recorded states and uses a continuous presentation clock. Pausing and seeking reconstruct the exact displayed time; changing the run and reduced motion preserve exact state. Interpolated positions are presentation only, never additional clinical events.
 
 ## Verification
+
+The current single-hospital simplification is described in the [single-hospital workflow](single-hospital-workflow.md). The verification records below describe the preceding interface release; the new release has its own evidence under `evidence/single-hospital`.
 
 The release retains the existing model and API acceptance baseline and runs the UI's unit, production-build, desktop/mobile, keyboard, permission, frozen-context, scenario, replay, comparison, recovery, import, update, and export checks. New coverage verifies guided setup, optional defaults, navigation preference, dialog focus restoration, retrying failed forecast reads without rerunning the model, local campus context, and actual Canvas compositing during animation.
 

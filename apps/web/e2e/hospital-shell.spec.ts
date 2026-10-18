@@ -4,10 +4,15 @@ import { scenario, open, assertPageHealthy, capture, record } from "./helpers";
 test("light hospital navigation is compact, collapsible, and retains its preference", async ({
   page,
 }, info) => {
-  const context = await scenario(page, "light hospital navigation", {
-    horizon_calendar_days: 1,
-    replications: 2,
-  });
+  const context = await scenario(
+    page,
+    "light hospital navigation",
+    {
+      horizon_calendar_days: 1,
+      replications: 2,
+    },
+    "hospital_baseline",
+  );
   await open(page, context.scenario.id, "overview");
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -21,9 +26,16 @@ test("light hospital navigation is compact, collapsible, and retains its prefere
   await expect(
     page.getByRole("button", { name: "Run simulation", exact: true }),
   ).toHaveCount(1);
+  await expect(page.locator(".more-simulation-parameters")).not.toHaveAttribute(
+    "open",
+  );
   await expect(
-    page.getByRole("button", { name: /Arrival timing & patient mix/ }),
-  ).toHaveAttribute("aria-expanded", "false");
+    page.getByRole("region", { name: "Main simulation parameters" }),
+  ).toBeVisible();
+  await expect(page.locator(".arrival-preview")).toBeVisible();
+  await expect(
+    page.getByText("Synthetic planning data", { exact: true }),
+  ).toHaveCount(0);
   if (info.project.name === "desktop") {
     expect(
       await page
@@ -108,10 +120,15 @@ test("completed result loading failures explain the error and retry without reru
     "Network recovery state is exercised once.",
   );
   const { api, waitRun } = await import("./helpers");
-  const context = await scenario(page, "forecast read recovery", {
-    horizon_calendar_days: 1,
-    replications: 1,
-  });
+  const context = await scenario(
+    page,
+    "forecast read recovery",
+    {
+      horizon_calendar_days: 1,
+      replications: 1,
+    },
+    "hospital_baseline",
+  );
   const run = await waitRun(
     page,
     (

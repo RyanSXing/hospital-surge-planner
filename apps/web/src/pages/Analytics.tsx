@@ -1,12 +1,11 @@
 import { lazy, Suspense } from "react";
 import { Tabs } from "@mantine/core";
-import { BarChart3, Boxes, Users } from "lucide-react";
+import { BarChart3, Users } from "lucide-react";
 import type { PlanningContext, UpdateTarget } from "../types";
 import type { AnalyticsSection } from "../navigation";
 import "./analytics.css";
 
 const Patients = lazy(() => import("./Patients"));
-const Resources = lazy(() => import("./Resources"));
 const Outcomes = lazy(() => import("./OutcomeAnalytics"));
 export type { AnalyticsSection } from "../navigation";
 
@@ -41,21 +40,13 @@ export default function Analytics({
           <Tabs.Tab value="patients" leftSection={<Users size={16} />}>
             Patients &amp; units
           </Tabs.Tab>
-          <Tabs.Tab value="resources" leftSection={<Boxes size={16} />}>
-            Resources
-          </Tabs.Tab>
         </Tabs.List>
         <div className="analytics-content">
           <Suspense
             fallback={
               <div className="analytics-loading" role="status">
                 Loading{" "}
-                {section === "outcomes"
-                  ? "outcomes"
-                  : section === "patients"
-                    ? "patients and units"
-                    : "resources"}
-                …
+                {section === "outcomes" ? "outcomes" : "patients and units"}…
               </div>
             }
           >
@@ -64,9 +55,6 @@ export default function Analytics({
             </Tabs.Panel>
             <Tabs.Panel value="patients">
               <Patients ctx={ctx} onUpdate={onUpdate} />
-            </Tabs.Panel>
-            <Tabs.Panel value="resources">
-              <Resources ctx={ctx} onUpdate={onUpdate} />
             </Tabs.Panel>
           </Suspense>
         </div>

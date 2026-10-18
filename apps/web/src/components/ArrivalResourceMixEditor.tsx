@@ -1,4 +1,5 @@
 import type { Entity } from "../types";
+import { humanLabel } from "../presentation";
 import {
   batchCareLabels,
   batchCareStages,
@@ -19,7 +20,7 @@ export function ArrivalResourceMixEditor({
 }) {
   return (
     <section className="form-stack" aria-label="Arrival resource profiles">
-      <h3>Resource profiles within each care group</h3>
+      <h3>Patient care needs</h3>
       <p className="small-copy muted">
         Each group totals 100%. These declared profile mixtures describe this
         reported batch; capacity and equipment are allocated only when a patient
@@ -48,13 +49,13 @@ export function ArrivalResourceMixEditor({
               </legend>
               {profiles.map((profile) => (
                 <label key={profile.resource_profile_id}>
-                  {profile.name} (%)
+                  {humanLabel(profile.name)} (%)
                   <input
                     type="number"
                     min={0}
                     max={100}
                     step="any"
-                    aria-label={`${batchCareLabels[care]} — ${profile.name} (%)`}
+                    aria-label={`${batchCareLabels[care]} — ${humanLabel(profile.name)} (%)`}
                     value={Number(
                       (
                         (mix[care][profile.resource_profile_id] || 0) * 100
@@ -69,9 +70,11 @@ export function ArrivalResourceMixEditor({
                     }
                   />
                   <small className="muted">
-                    {profile.resource_profile_id} ·{" "}
                     {(profile.required_equipment || [])
-                      .map((r: Entity) => `${r.capability_code} ×${r.quantity}`)
+                      .map(
+                        (r: Entity) =>
+                          `${humanLabel(r.capability_code)} ×${r.quantity}`,
+                      )
                       .join(", ") || "No additional equipment"}
                   </small>
                 </label>

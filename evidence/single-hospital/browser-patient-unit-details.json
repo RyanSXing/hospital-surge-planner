@@ -1,0 +1,9 @@
+{
+  "run_id": "run_7d05bf61933349e49e6e",
+  "filtered_icu_boarders": 4,
+  "not_started_stages_excluded_from_remaining_range": true,
+  "active_staff_ids": true,
+  "shift_roster": true,
+  "occupancy_queue_chart": true,
+  "future_capacity": true
+}

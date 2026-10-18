@@ -10,75 +10,77 @@ import {
   waitRun,
 } from "./helpers";
 
-test("all visual scenario families save canonical inputs and compute actual effects", async ({
+test("all hospital setup changes save canonical inputs and produce real simulation effects", async ({
   page,
 }, info) => {
   test.setTimeout(240000);
-  test.skip(
-    info.project.name === "mobile",
-    "Desktop computes the complete scenario; mobile form access is checked separately.",
-  );
   const errors: string[] = [];
-  page.on("pageerror", (e) => errors.push(e.message));
-  const context = await scenario(page, "all editable assumption families");
+  page.on("pageerror", (error) => errors.push(error.message));
+  const context = await scenario(
+    page,
+    "all hospital assumption families",
+    { horizon_calendar_days: 2, replications: 2 },
+    "hospital_baseline",
+  );
   await open(page, context.scenario.id, "overview");
   await expandScenarioDetails(page);
-  await page.getByLabel("Increase in ED arrivals").fill("70");
-  await expect(page.getByLabel("Scenario preset")).toHaveValue("sustained");
+  await page.getByLabel("Increase in ED arrivals", { exact: true }).fill("70");
   const openFamily = async (name: string) => {
     await page
-      .locator(".condition-palette .condition-tile")
-      .filter({ has: page.getByText(name, { exact: true }) })
+      .getByRole("button", { name: `Add ${name}`, exact: true })
       .click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-    return page.getByRole("dialog");
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    return dialog;
   };
-  let d = await openFamily("One-time incident batches");
-  await d.getByLabel("Assumption name").fill("Planned seven-patient incident");
+  let d = await openFamily("extra patient arrivals");
+  await d.getByLabel("Change name").fill("Seven extra ward patients");
   await d
     .getByLabel("Effective time (America/Chicago)", { exact: true })
     .fill("2026-10-16T06:00");
-  await d.getByLabel("Incident patient count").fill("7");
-  await d.getByLabel("discharge (%)", { exact: true }).fill("0");
-  await d.getByLabel("ward (%)", { exact: true }).fill("100");
-  await d.getByLabel("icu (%)", { exact: true }).fill("0");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-  d = await openFamily("Equipment availability");
-  await d.getByLabel("Assumption name").fill("Ventilator unavailable");
-  await d.getByLabel("Equipment pool").selectOption("EQ-ICU-VENT");
-  await d.getByLabel("Equipment quantity").fill("1");
+  await d.getByLabel("Additional patients").fill("7");
+  await d.getByLabel("Go home after assessment (%)", { exact: true }).fill("0");
+  await d.getByLabel("Ward admission (%)", { exact: true }).fill("100");
+  await d.getByLabel("Intensive care (%)", { exact: true }).fill("0");
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
+  await expect(d).toHaveCount(0);
+  d = await openFamily("equipment");
+  await d.getByLabel("Change name").fill("Ventilator unavailable");
+  await d.getByLabel("Equipment", { exact: true }).selectOption("EQ-ICU-VENT");
+  await d.getByLabel("Equipment quantity", { exact: true }).fill("1");
   await d
     .getByLabel("Effective time (America/Chicago)", { exact: true })
     .fill("2026-10-16T06:00");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
+  // Edit exact time, undo, redo, and reopen without relying on an unlabeled drag rail.
   const equipment = page.getByRole("button", {
     name: "Ventilator unavailable Planning assumption",
     exact: true,
   });
-  await equipment.focus();
-  await equipment.press("ArrowRight");
+  await equipment.click();
+  d = page.getByRole("dialog");
+  await d
+    .getByLabel("Effective time (America/Chicago)", { exact: true })
+    .fill("2026-10-16T07:00");
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
   await page.getByRole("button", { name: "Undo", exact: true }).click();
   await page.getByRole("button", { name: "Redo", exact: true }).click();
   await equipment.click();
+  d = page.getByRole("dialog");
   await expect(
-    page
-      .getByRole("dialog")
-      .getByLabel("Effective time (America/Chicago)", { exact: true }),
+    d.getByLabel("Effective time (America/Chicago)", { exact: true }),
   ).toHaveValue("2026-10-16T07:00");
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: "Cancel", exact: true })
-    .click();
-  d = await openFamily("Physical, ready & usable capacity");
-  await expect(d).toContainText("Staff-supported ceiling");
-  await d.getByLabel("Assumption name").fill("ICU capacity driver");
-  await d.getByLabel("Target unit").selectOption("UNIT-ICU");
-  await d.getByLabel("Enabled physical places").fill("14");
+  await d.getByRole("button", { name: "Cancel", exact: true }).click();
+
+  d = await openFamily("hospital beds");
+  await expect(d).toContainText("Beds supported by staff");
+  await d.getByLabel("Change name").fill("ICU bed count");
+  await d.getByLabel("Target unit", { exact: true }).selectOption("UNIT-ICU");
+  await d.getByLabel(/^Available beds/).fill("14");
   await d
     .getByLabel("Effective time (America/Chicago)", { exact: true })
     .fill("2026-10-16T06:00");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
   await expect(page.locator(".compute-estimate")).toContainText(
     "Use an integer from 0 to 12",
   );
@@ -87,89 +89,66 @@ test("all visual scenario families save canonical inputs and compute actual effe
   ).toBeDisabled();
   await page
     .getByRole("button", {
-      name: "ICU capacity driver Planning assumption",
+      name: "ICU bed count Planning assumption",
       exact: true,
     })
     .click();
   d = page.getByRole("dialog");
-  await d.getByLabel("Enabled physical places").fill("10");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  await page.getByLabel("Scenario preset").selectOption("combined");
-  d = page.getByRole("dialog");
-  await expect(d).toBeVisible();
-  await expect(page.getByLabel("Ward A nursing absence")).toHaveCount(0);
-  await d.getByLabel("Assumption name").fill("Ward A provider shift absence");
-  await d.getByLabel("Target unit").selectOption("UNIT-WARD-A");
-  await d.getByLabel("Staff role").selectOption("provider");
-  await d.getByLabel("Availability input").selectOption("percentage");
+  await d.getByLabel(/^Available beds/).fill("10");
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
+
+  d = await openFamily("staff availability");
+  await d.getByLabel("Change name").fill("Ward A provider shift absence");
+  await d
+    .getByLabel("Target unit", { exact: true })
+    .selectOption("UNIT-WARD-A");
+  await d.getByLabel("Staff role", { exact: true }).selectOption("provider");
+  await d
+    .getByLabel("Choose staff using", { exact: true })
+    .selectOption("percentage");
   await expect(d.getByText("Loading the declared shift roster…")).toHaveCount(
     0,
   );
   await expect(
-    d
-      .getByRole("combobox", { name: "Declared shift", exact: true })
-      .locator("option"),
+    d.getByLabel("Scheduled shift", { exact: true }).locator("option"),
   ).not.toHaveCount(0);
-  await expect(
-    d
-      .getByRole("combobox", { name: "Declared shift", exact: true })
-      .locator("option")
-      .first(),
-  ).toContainText("GMT-5");
   await d.getByLabel("Absent percentage", { exact: true }).fill("100");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-  d = await openFamily("Sites & transfers");
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
+  await expect(d).toHaveCount(0);
+
+  d = await openFamily("hospital beds");
   await d
-    .getByLabel("Assumption name")
-    .fill("Clinic with explicit reserve resources");
+    .getByLabel("Bed or staffing change", { exact: true })
+    .selectOption("physical_overflow");
+  await expect(d.getByLabel("Target unit", { exact: true })).toHaveValue(
+    "UNIT-WARD-C",
+  );
+  await expect(d.getByLabel(/^Total beds after opening/)).toHaveValue("32");
+  await d.getByLabel("Change name").fill("Open twelve planned Ward C beds");
+  await d.getByLabel("Activation delay (minutes)", { exact: true }).fill("0");
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
+
+  d = await openFamily("hospital beds");
   await d
-    .getByLabel("EQ-RES-CLINIC-KIT (CLINIC_KIT, 12 total)", { exact: true })
-    .fill("8");
-  await d.getByLabel("Activation delay (minutes)").fill("4320");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  await expect(d).toContainText("Readiness must occur before the plan ends");
-  await d.getByLabel("Activation delay (minutes)").fill("360");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  d = await openFamily("Sites & transfers");
-  await d.getByLabel("Intervention template").selectOption("route_change");
-  await expect(
-    d.getByLabel("Directed route").locator("option").first(),
-  ).toContainText("FAC-");
-  await expect(
-    d.getByLabel("Directed route").locator("option").first(),
-  ).toContainText("→ FAC-");
-  await d.getByRole("button", { name: "Cancel", exact: true }).click();
-  d = await openFamily("Sites & transfers");
-  await d.getByLabel("Intervention template").selectOption("partner_transfer");
-  await d.getByLabel("Assumption name").fill("Two eligible ward transfers");
-  await d.getByLabel("Maximum transferred patients").fill("2");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  d = await openFamily("Physical, ready & usable capacity");
-  await d.getByLabel("Capacity driver").selectOption("physical_overflow");
-  await d
-    .getByLabel("Assumption name")
-    .fill("Physical overflow without staffing");
-  await d.getByLabel("Physical places to install and enable").fill("20");
-  await d.getByLabel("Activation delay (minutes)").fill("0");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  d = await openFamily("Physical, ready & usable capacity");
-  await d.getByLabel("Capacity driver").selectOption("staff_existing");
-  await d
-    .getByLabel("Assumption name")
-    .fill("Three reserve nurses for existing beds");
+    .getByLabel("Bed or staffing change", { exact: true })
+    .selectOption("staff_existing");
+  await d.getByLabel("Change name").fill("Three extra nurses for Ward A");
   await d.getByLabel("Nurses", { exact: true }).fill("3");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  d = await openFamily("Arrival cohorts");
-  await d.getByLabel("Assumption name").fill("Exogenous discharge-only cohort");
-  await d.getByLabel("discharge (%)", { exact: true }).fill("100");
-  await d.getByLabel("ward (%)", { exact: true }).fill("0");
-  await d.getByLabel("icu (%)", { exact: true }).fill("0");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
-  // Removal and undo must preserve all unrelated collections and exact values.
-  d = await openFamily("Equipment availability");
-  await d.getByLabel("Assumption name").fill("Temporary draft to remove");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
+
+  d = await openFamily("patient care needs");
+  await d
+    .getByLabel("Change name")
+    .fill("New arrivals go home after assessment");
+  await d
+    .getByLabel("Go home after assessment (%)", { exact: true })
+    .fill("100");
+  await d.getByLabel("Ward admission (%)", { exact: true }).fill("0");
+  await d.getByLabel("Intensive care (%)", { exact: true }).fill("0");
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
+  d = await openFamily("equipment");
+  await d.getByLabel("Change name").fill("Temporary draft to remove");
+  await d.getByRole("button", { name: "Apply change", exact: true }).click();
   await page
     .getByRole("button", {
       name: "Temporary draft to remove Planning assumption",
@@ -178,7 +157,7 @@ test("all visual scenario families save canonical inputs and compute actual effe
     .click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "Remove assumption" })
+    .getByRole("button", { name: "Remove change", exact: true })
     .click();
   await expect(
     page.getByRole("button", {
@@ -190,19 +169,22 @@ test("all visual scenario families save canonical inputs and compute actual effe
   await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
     0,
   );
-  const saved = await api(page.request, "/scenarios/" + context.scenario.id);
+  const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
   expect(
     saved.conditions
-      .find((c: any) => c.kind === "arrival_multiplier")
-      .control_points.map((p: any) => p.multiplier),
+      .find((item: any) => item.kind === "arrival_multiplier")
+      .control_points.map((point: any) => point.multiplier),
   ).toEqual([1.7, 1.7]);
   const incident = saved.conditions.find(
-    (c: any) => c.kind === "arrival_batch",
+    (item: any) => item.kind === "arrival_batch",
   );
-  expect(incident.count).toBe(7);
-  expect(incident.source).toBe("user_assumption");
+  expect(incident).toMatchObject({
+    count: 7,
+    source: "user_assumption",
+    care_mix: { discharge: 0, ward: 1, icu: 0 },
+  });
   const staff = saved.conditions.find(
-    (c: any) => c.kind === "staff_unavailability",
+    (item: any) => item.kind === "staff_unavailability",
   );
   expect(staff.staff_ids.length).toBeGreaterThan(0);
   expect(staff.staff_ids.every((id: string) => id.includes("PROVIDER"))).toBe(
@@ -212,55 +194,38 @@ test("all visual scenario families save canonical inputs and compute actual effe
   expect(saved.updates).toHaveLength(2);
   expect(
     saved.updates.every(
-      (u: any) => u.input_kind === "planned_assumption" && !u.state_origin,
+      (item: any) =>
+        item.input_kind === "planned_assumption" && !item.state_origin,
     ),
   ).toBe(true);
+  expect(saved.interventions).toHaveLength(2);
   expect(
-    saved.interventions.find((p: any) => p.kind === "partner_transfer"),
+    saved.interventions.find((item: any) => item.kind === "physical_overflow"),
   ).toMatchObject({
-    max_patients: 2,
-    patient_eligibility_filter: { care_levels: ["ward"] },
+    unit_id: "UNIT-WARD-C",
+    facility_id: "FAC-MAIN",
+    enabled_slots: 32,
   });
-  expect(saved.interventions[0].equipment_allocations).toEqual([
-    { equipment_pool_id: "EQ-RES-CLINIC-KIT", quantity: 8 },
-  ]);
-  if (await page.getByRole("button", { name: "Dismiss notification" }).count())
-    await page.getByRole("button", { name: "Dismiss notification" }).click();
-  await page.locator("main").evaluate((element) => {
-    element.scrollTop = 0;
-  });
-  await page.locator(".scenario-plan-tracks").scrollIntoViewIfNeeded();
-  const railBounds = await page
-    .locator(".plan-family-track")
-    .evaluateAll((elements) =>
-      elements.map((element) => ({
-        name: element.getAttribute("aria-label"),
-        top: element.getBoundingClientRect().top,
-        bottom: element.getBoundingClientRect().bottom,
-      })),
-    );
-  const mainBounds = await page.locator("main").boundingBox();
-  expect(railBounds).toHaveLength(6);
   expect(
-    railBounds.every(
-      (rail) =>
-        rail.top >= mainBounds!.y &&
-        rail.bottom <= mainBounds!.y + mainBounds!.height,
-    ),
-  ).toBe(true);
-  await capture(page, "scenario-all-families", info);
-  const submitted = page.waitForResponse(
-    (r) =>
-      r.url().endsWith("/api/run-groups") && r.request().method() === "POST",
+    saved.interventions.find((item: any) => item.kind === "staff_existing"),
+  ).toMatchObject({ unit_id: "UNIT-WARD-A", nurses: 3 });
+  await expect(page.locator(".optional-change-group")).toHaveCount(5);
+  await expect(page.locator(".empty-track,.condition-palette")).toHaveCount(0);
+  await capture(page, "hospital-optional-changes", info);
+  const submission = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/run-groups") &&
+      response.request().method() === "POST",
   );
   await page
     .getByRole("button", { name: "Run simulation", exact: true })
     .click();
-  const queued = await (await submitted).json();
-  const run = await waitRun(page, queued.id);
-  const after = await api(page.request, "/scenarios/" + context.scenario.id);
+  const response = await submission;
+  expect(response.ok()).toBeTruthy();
+  const run = await waitRun(page, (await response.json()).id);
+  const after = await api(page.request, `/scenarios/${context.scenario.id}`);
   const frozen = after.revisions.find(
-    (r: any) => r.id === run.scenario_revision_id,
+    (revision: any) => revision.id === run.scenario_revision_id,
   );
   for (const collection of ["conditions", "interventions", "updates"])
     expect(frozen[collection]).toEqual(saved[collection]);
@@ -269,101 +234,104 @@ test("all visual scenario families save canonical inputs and compute actual effe
     `/runs/${run.selected_replication_id}/patients?at=2026-10-16T11:01:00Z&limit=500&search=PAT-REPORT-${incident.id}`,
   );
   const planned = patients.items.filter(
-    (p: any) => p.arrival_origin === "synthetic_incident",
+    (patient: any) => patient.arrival_origin === "synthetic_incident",
   );
   expect(planned).toHaveLength(7);
   expect(
     planned.every(
-      (p: any) =>
-        p.source_type === "surge_arrival" &&
-        p.input_kind === "planned_assumption",
+      (patient: any) =>
+        patient.source_type === "surge_arrival" &&
+        patient.input_kind === "planned_assumption",
     ),
   ).toBe(true);
   const details = await Promise.all(
-    planned.map((p: any) =>
+    planned.map((patient: any) =>
       api(
         page.request,
-        `/runs/${run.selected_replication_id}/patients/${p.patient_id}`,
+        `/runs/${run.selected_replication_id}/patients/${patient.patient_id}`,
       ),
     ),
   );
-  expect(details.every((p: any) => p.care_level === "ward")).toBe(true);
+  expect(details.every((patient: any) => patient.care_level === "ward")).toBe(
+    true,
+  );
   const state = await api(
     page.request,
     `/runs/${run.selected_replication_id}/state?at=2026-10-16T12:01:00Z`,
   );
-  expect(state.units.find((u: any) => u.unit_id === "UNIT-ICU").enabled).toBe(
-    10,
-  );
   expect(
-    state.units.find((u: any) => u.unit_id === "UNIT-CLINIC-NORTH").active,
+    state.units.find((unit: any) => unit.unit_id === "UNIT-ICU").enabled,
+  ).toBe(10);
+  expect(
+    state.units.find((unit: any) => unit.unit_id === "UNIT-WARD-C"),
+  ).toMatchObject({ physical: 32, enabled: 32, staffed: 16 });
+  expect(
+    state.units.every((unit: any) => unit.facility_id === "FAC-MAIN"),
   ).toBe(true);
-  expect(
-    state.units.find((u: any) => u.unit_id === "UNIT-OVERFLOW-SOUTH"),
-  ).toMatchObject({ physical: 20, enabled: 20, staffed: 0, available: 0 });
-  expect(
-    state.units.find((u: any) => u.unit_id === "UNIT-WARD-A").staffed,
-  ).toBe(40);
   const immutable = JSON.stringify(frozen);
   await open(page, context.scenario.id, "overview");
-  await expandScenarioDetails(page);
   await page
     .getByLabel("Scenario name", { exact: true })
-    .fill("Later draft edits preserve completed forecast");
+    .fill("Later edits preserve completed hospital forecast");
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
     0,
   );
-  const newest = await api(page.request, "/scenarios/" + context.scenario.id);
+  const newest = await api(page.request, `/scenarios/${context.scenario.id}`);
   expect(
     JSON.stringify(
-      newest.revisions.find((r: any) => r.id === run.scenario_revision_id),
+      newest.revisions.find(
+        (revision: any) => revision.id === run.scenario_revision_id,
+      ),
     ),
   ).toBe(immutable);
   expect(errors).toEqual([]);
   await assertPageHealthy(page);
-  record("scenario-families", {
-    scenario_id: context.scenario.id,
+  record(`hospital-scenario-families-${info.project.name}`, {
+    scenario_id: saved.id,
     run_id: run.id,
     frozen_revision: run.scenario_revision_id,
     all_collections_frozen: true,
-    all_six_resource_rails_visible_together: railBounds,
-    synthetic_incident_count: planned.length,
-    explicit_incident_mix_preserved: true,
+    all_five_hospital_change_groups: true,
+    extra_arrivals: planned.length,
     completed_inputs_immutable: true,
     page_errors: errors,
   });
 });
 
-test("scenario resource forms and independent detail sections remain keyboard accessible on mobile", async ({
+test("optional hospital forms and details are keyboard accessible", async ({
   page,
 }, info) => {
-  test.skip(info.project.name !== "mobile");
-  const context = await scenario(page, "mobile exact scenario controls");
+  const context = await scenario(
+    page,
+    "keyboard hospital controls",
+    { replications: 1 },
+    "hospital_baseline",
+  );
   await open(page, context.scenario.id, "overview");
   await expandScenarioDetails(page);
-  const demandControl = await expandScenarioSection(page, "demand");
-  await demandControl.focus();
+  const demand = await expandScenarioSection(page, "demand");
+  await demand.focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("#scenario-inspector-dock")).toBeHidden();
-  await expect(
-    page.getByRole("heading", { name: "Planning timeline" }),
-  ).toBeVisible();
-  await demandControl.focus();
+  await expect(page.getByTestId("arrival-preview-chart")).toBeVisible();
+  await demand.focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("#scenario-inspector-dock")).toBeVisible();
   await page
-    .getByRole("button", { name: "Add equipment availability", exact: true })
+    .getByRole("button", { name: "Add equipment", exact: true })
     .click();
-  const d = page.getByRole("dialog");
-  await d.getByLabel("Equipment quantity").fill("2");
-  await d.getByRole("button", { name: "Apply assumption" }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Equipment quantity", { exact: true }).fill("2");
+  await dialog
+    .getByRole("button", { name: "Apply change", exact: true })
+    .click();
   await expect(
     page.getByRole("button", {
-      name: "Equipment availability Planning assumption",
+      name: "Equipment Planning assumption",
       exact: true,
     }),
   ).toBeVisible();
   await assertPageHealthy(page);
-  await capture(page, "scenario-mobile-resource-form", info);
+  await capture(page, "hospital-keyboard-parameters", info);
 });

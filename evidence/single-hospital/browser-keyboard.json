@@ -1,0 +1,11 @@
+{
+  "scenario_id": "scenario_6ac781a56fd643b19de3",
+  "run_id": "run_bf4dedc3bb3e4bd3962b",
+  "comparison_id": "comparison_b13699af1b714efab077",
+  "actions": "Tab/Shift+Tab, Enter, ArrowRight, ArrowDown, Home, text entry; no pointer clicks",
+  "calendar_grains": [
+    "day",
+    "week",
+    "month"
+  ]
+}

@@ -8,94 +8,158 @@ import {
   scenario,
   waitRun,
 } from "./helpers";
-import { expandScenarioSection, scenarioSectionNames } from "./scenario-ui";
 
-test("compact setup retains advanced drafts and starts the exact saved simulation", async ({
+test("simple hospital setup keeps its live graph visible and runs the exact optional inputs", async ({
   page,
 }, info) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   if (info.project.name === "desktop")
     await page.setViewportSize({ width: 1280, height: 800 });
-  const context = await scenario(page, "guided setup", {
-    horizon_calendar_days: 3,
-    replications: 2,
-  });
+  const context = await scenario(
+    page,
+    "simple hospital setup",
+    { horizon_calendar_days: 3, replications: 2 },
+    "hospital_baseline",
+  );
   await open(page, context.scenario.id, "overview");
   const editor = page.getByTestId("guided-scenario");
-  for (const title of ["Time period", "Expected arrivals", "Review & run"])
-    await expect(editor.getByRole("heading", { name: title })).toBeVisible();
-  const runButton = editor.getByRole("button", {
-    name: "Run simulation",
+  const more = editor.locator(".more-simulation-parameters");
+  const chart = editor.getByTestId("arrival-preview-chart");
+  await expect(chart).toBeVisible();
+  await expect(more).not.toHaveAttribute("open", "");
+  await expect(
+    editor.getByLabel("Simulation runs", { exact: true }),
+  ).not.toBeVisible();
+  await expect(
+    editor.getByRole("heading", { name: "How long?", exact: true }),
+  ).toBeVisible();
+  await expect(
+    editor.getByRole("heading", { name: "Patient arrivals", exact: true }),
+  ).toBeVisible();
+  await expect(
+    editor.getByRole("heading", { name: "Arrival pattern", exact: true }),
+  ).toBeVisible();
+  await expect(
+    editor.locator(".empty-track,.condition-palette,.json-editor"),
+  ).toHaveCount(0);
+  await expect(
+    editor.getByText(/Synthetic planning data|ED_MAIN|FAC-MAIN/),
+  ).toHaveCount(0);
+  await capture(page, "simple-setup", info);
+
+  await editor
+    .locator(".mantine-SegmentedControl-label")
+    .filter({ hasText: /^1 week$/ })
+    .click();
+  await expect(chart).toHaveAttribute("aria-label", /over 7 days/);
+  const usual = (await chart.getAttribute("data-planned-arrivals"))!;
+  const name = `Intuitive hospital scenario ${Date.now()}`;
+  await editor.getByLabel("Scenario name", { exact: true }).fill(name);
+  await editor
+    .getByLabel("Increase in ED arrivals", { exact: true })
+    .fill("35");
+  await expect(chart).not.toHaveAttribute("data-planned-arrivals", usual);
+  const beforeSlider = (await chart.getAttribute("data-planned-arrivals"))!;
+  const slider = editor.getByRole("slider", {
+    name: "Adjust arrival surge",
     exact: true,
   });
-  await expect(runButton).toHaveCount(1);
+  await slider.focus();
+  await slider.press("ArrowRight");
+  await expect(slider).toHaveAttribute("aria-valuenow", "40");
+  await expect(chart).not.toHaveAttribute(
+    "data-planned-arrivals",
+    beforeSlider,
+  );
+  const steady = (await chart.getAttribute("data-planned-arrivals"))!;
+  await editor
+    .locator(".mantine-SegmentedControl-label")
+    .filter({ hasText: /^Rises & falls$/ })
+    .click();
+  await expect(chart).not.toHaveAttribute("data-planned-arrivals", steady);
+  await editor
+    .locator(".mantine-SegmentedControl-label")
+    .filter({ hasText: /^Steady$/ })
+    .click();
+
+  // All exact settings stay optional. Closing them keeps both the draft and graph.
+  await more.locator(":scope > summary").click();
   await expect(
     editor.getByLabel("Simulation runs", { exact: true }),
   ).toHaveValue("2");
-  for (const title of Object.values(scenarioSectionNames))
-    await expect(
-      editor.getByRole("button", { name: new RegExp(`^${title}`) }),
-    ).toHaveAttribute("aria-expanded", "false");
-  await expect(page.getByLabel("Starts on day", { exact: true })).toHaveCount(
-    0,
-  );
-  const baseline = page.locator(".planning-baseline");
-  const baselineText = await baseline
-    .locator(".planning-baseline-metrics")
-    .innerText();
-  const baselineBounds = await baseline.boundingBox();
-  if (info.project.name === "desktop")
-    expect(baselineBounds!.height).toBeLessThanOrEqual(300);
-  await capture(page, "guided-setup-start", info);
-
-  // Basic fields are sufficient to create a scenario. Exact edits remain available.
-  const name = `Guided editable scenario ${Date.now()}`;
-  await editor.getByLabel("Scenario name", { exact: true }).fill(name);
-  await editor.getByLabel("Increase in ED arrivals").fill("35");
-  const demand = await expandScenarioSection(page, "demand");
-  await page.getByLabel("Starts on day", { exact: true }).fill("2");
-  await page
+  await editor.getByLabel("Planning horizon", { exact: true }).fill("2");
+  const demand = editor.getByRole("button", { name: /^Arrival details/ });
+  await demand.click();
+  await editor.getByLabel("Starts on day", { exact: true }).fill("2");
+  await editor
     .getByLabel("Care mix", { exact: true })
     .selectOption("percentages");
-  await page
+  await editor
     .getByLabel("Discharge after assessment (%)", { exact: true })
     .fill("60");
-  await page.getByLabel("Ward admission (%)", { exact: true }).fill("30");
-  await page.getByLabel("ICU admission (%)", { exact: true }).fill("10");
+  await editor.getByLabel("Ward admission (%)", { exact: true }).fill("30");
+  await editor.getByLabel("ICU admission (%)", { exact: true }).fill("10");
+  const withExactWindow = (await chart.getAttribute("data-planned-arrivals"))!
+    .split(",")
+    .map(Number);
+  expect(withExactWindow).toHaveLength(2);
+  const usualWindow = (await chart.getAttribute("data-usual-arrivals"))!
+    .split(",")
+    .map(Number);
+  expect(withExactWindow[0]).toBeCloseTo(usualWindow[0]);
+  expect(withExactWindow[1] / usualWindow[1]).toBeCloseTo(1.4);
   await demand.click();
-  await expect(page.getByLabel("Starts on day", { exact: true })).toHaveCount(
-    0,
-  );
-  await expandScenarioSection(page, "demand");
-  await expect(page.getByLabel("Starts on day", { exact: true })).toHaveValue(
+  await demand.click();
+  await expect(editor.getByLabel("Starts on day", { exact: true })).toHaveValue(
     "2",
   );
   await expect(
-    page.getByLabel("Ward admission (%)", { exact: true }),
+    editor.getByLabel("Ward admission (%)", { exact: true }),
   ).toHaveValue("30");
-
-  // A quick staffing preset opens its exact form once. Collapsing its section
-  // must not replay a stale form request when the controls mount again.
-  await editor.getByLabel("Scenario preset").selectOption("staff_loss");
+  const resources = editor.getByRole("button", {
+    name: /^Staff, beds & equipment/,
+  });
+  await resources.click();
+  await expect(
+    editor.getByRole("button", { name: "Add hospital beds", exact: true }),
+  ).toBeVisible();
+  await expect(
+    editor.getByRole("button", { name: /sites|shelter|transfers/i }),
+  ).toHaveCount(0);
+  await editor
+    .getByRole("button", { name: "Add hospital beds", exact: true })
+    .click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  await dialog
-    .getByRole("button", { name: "Close dialog", exact: true })
-    .click();
-  const resources = await expandScenarioSection(page, "resources");
+  expect(
+    (
+      await dialog
+        .getByLabel("Target unit", { exact: true })
+        .locator("option")
+        .allTextContents()
+    ).join(" "),
+  ).not.toMatch(/SHELTER|PARTNER/);
+  await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
   await resources.click();
-  await expandScenarioSection(page, "resources");
+  await resources.click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  await editor.getByLabel("Scenario preset").selectOption("sustained");
-  await editor.getByLabel("Increase in ED arrivals").fill("35");
+  await more.locator(":scope > summary").click();
+  await expect(chart).toBeVisible();
+  await expect(
+    editor.getByLabel("Simulation runs", { exact: true }),
+  ).not.toBeVisible();
   await editor.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(
     editor.getByText("Unsaved changes", { exact: true }),
   ).toHaveCount(0);
+  await expect(
+    editor.getByLabel("Increase in ED arrivals", { exact: true }),
+  ).toHaveValue("40%");
   const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
   expect(saved.name).toBe(name);
   expect(saved.replications).toBe(2);
+  expect(saved.horizon_calendar_days).toBe(2);
   const arrival = saved.conditions.find(
     (item: any) => item.kind === "arrival_multiplier",
   );
@@ -105,13 +169,10 @@ test("compact setup retains advanced drafts and starts the exact saved simulatio
     icu: 0.1,
   });
   expect(arrival.control_points.map((point: any) => point.multiplier)).toEqual([
-    1.35, 1.35,
+    1.4, 1.4,
   ]);
   expect(Date.parse(arrival.control_points[0].at)).toBe(
     Date.parse("2026-10-17T05:00:00Z"),
-  );
-  expect(await baseline.locator(".planning-baseline-metrics").innerText()).toBe(
-    baselineText,
   );
   await assertPageHealthy(page);
   const submission = page.waitForResponse(
@@ -119,6 +180,11 @@ test("compact setup retains advanced drafts and starts the exact saved simulatio
       response.url().endsWith("/api/run-groups") &&
       response.request().method() === "POST",
   );
+  const runButton = editor.getByRole("button", {
+    name: "Run simulation",
+    exact: true,
+  });
+  await expect(runButton).toBeEnabled();
   await runButton.click();
   const response = await submission;
   expect(response.ok()).toBeTruthy();
@@ -129,15 +195,141 @@ test("compact setup retains advanced drafts and starts the exact saved simulatio
     .poll(() => new URL(page.url()).searchParams.get("analysis"))
     .toBe("summary");
   expect(run.scenario_context.conditions).toEqual(saved.conditions);
+  await assertPageHealthy(page);
+  await open(page, saved.id, "replay", run.id);
+  await expect(page.locator(".replay-canvas")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Play replay", exact: true }),
+  ).toBeVisible();
+  await open(page, saved.id, "overview", run.id);
+  await page
+    .getByRole("button", { name: "Scenario library", exact: true })
+    .click();
+  const library = page.getByRole("dialog", {
+    name: "Scenario library",
+    exact: true,
+  });
+  await library
+    .getByLabel("Search saved scenarios", { exact: true })
+    .fill(name);
+  const row = library
+    .locator(".library-row")
+    .filter({ has: page.getByText(name, { exact: true }) });
+  await expect(row).toContainText("Results available");
+  await expect(row).not.toContainText("No results yet");
+  await library
+    .getByRole("button", { name: "Close dialog", exact: true })
+    .click();
   expect(errors).toEqual([]);
-  record(`guided-setup-${info.project.name}`, {
+  record(`simple-setup-${info.project.name}`, {
     scenario_id: saved.id,
     run_id: run.id,
     replications: run.completed,
-    baseline_height: baselineBounds!.height,
-    advanced_draft_preserved: true,
-    resource_request_consumed_once: true,
+    fixture: "hospital_baseline",
+    live_graph_updates: true,
+    optional_draft_preserved: true,
+    single_hospital: true,
     exact_saved_conditions_frozen: true,
+    scenario_library_results_status_correct: true,
     page_errors: errors,
+  });
+});
+
+test("arrival percentage accepts sequential negative and positive typing without losing the draft", async ({
+  page,
+}, info) => {
+  const context = await scenario(page, "arrival keyboard editing", {
+    horizon_calendar_days: 2,
+    replications: 1,
+  });
+  await open(page, context.scenario.id, "overview");
+  const editor = page.getByTestId("guided-scenario");
+  const input = editor.getByLabel("Increase in ED arrivals", { exact: true });
+  const chart = editor.getByTestId("arrival-preview-chart");
+  const slider = editor.getByRole("slider", {
+    name: "Adjust arrival surge",
+    exact: true,
+  });
+  const undo = editor.getByRole("button", { name: "Undo", exact: true });
+  const redo = editor.getByRole("button", { name: "Redo", exact: true });
+  const run = editor.getByRole("button", {
+    name: "Run simulation",
+    exact: true,
+  });
+  const baseline = (await chart.getAttribute("data-planned-arrivals"))!;
+  const usual = (await chart.getAttribute("data-usual-arrivals"))!
+    .split(",")
+    .map(Number);
+
+  await input.fill("");
+  await expect(input).toHaveValue("");
+  await expect(chart).toHaveAttribute("data-planned-arrivals", baseline);
+  await input.pressSequentially("-");
+  await expect(chart).toHaveAttribute("data-planned-arrivals", baseline);
+  await input.pressSequentially("20");
+  await expect(input).toHaveValue("-20%");
+  await expect(slider).toHaveAttribute("aria-valuenow", "-20");
+  const reduced = (await chart.getAttribute("data-planned-arrivals"))!
+    .split(",")
+    .map(Number);
+  reduced.forEach((value, index) =>
+    expect(value / usual[index]).toBeCloseTo(0.8),
+  );
+  await input.blur();
+  await expect(input).toHaveValue("-20%");
+  await expect(run).toBeEnabled();
+
+  // Clearing or leaving a minus unfinished keeps the last valid simulation.
+  await input.fill("");
+  await input.pressSequentially("-");
+  await input.blur();
+  await expect(input).toHaveValue("-20%");
+  await expect(slider).toHaveAttribute("aria-valuenow", "-20");
+
+  // One completed typing gesture is one Undo step, rather than a partial digit.
+  await undo.click();
+  await expect(input).toHaveValue("0%");
+  await expect(chart).toHaveAttribute("data-planned-arrivals", baseline);
+  await redo.click();
+  await expect(input).toHaveValue("-20%");
+  await input.fill("");
+  await input.pressSequentially("20");
+  await input.blur();
+  await expect(input).toHaveValue("20%");
+  await expect(slider).toHaveAttribute("aria-valuenow", "20");
+  const increased = (await chart.getAttribute("data-planned-arrivals"))!
+    .split(",")
+    .map(Number);
+  increased.forEach((value, index) =>
+    expect(value / usual[index]).toBeCloseTo(1.2),
+  );
+  await slider.focus();
+  await slider.press("ArrowRight");
+  await expect(input).toHaveValue("25%");
+  await undo.click();
+  await expect(input).toHaveValue("20%");
+  await expect(slider).toHaveAttribute("aria-valuenow", "20");
+  await expect(run).toBeEnabled();
+  await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect(
+    editor.getByText("Unsaved changes", { exact: true }),
+  ).toHaveCount(0);
+  const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
+  const arrival = saved.conditions.find(
+    (condition: any) => condition.kind === "arrival_multiplier",
+  );
+  expect(arrival.control_points.map((point: any) => point.multiplier)).toEqual([
+    1.2, 1.2,
+  ]);
+  await expect(input).toHaveValue("20%");
+  await assertPageHealthy(page);
+  record(`arrival-keyboard-${info.project.name}`, {
+    scenario_id: saved.id,
+    sequential_negative_input: -20,
+    sequential_positive_input: 20,
+    incomplete_input_restores_last_valid_value: true,
+    live_graph_matches_input: true,
+    slider_and_undo_stay_in_sync: true,
+    saved_multiplier: arrival.control_points[0].multiplier,
   });
 });

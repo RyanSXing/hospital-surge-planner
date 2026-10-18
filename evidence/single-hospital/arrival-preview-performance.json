@@ -1,0 +1,23 @@
+{
+  "measurement": "Pure frontend arrival-preview calculation in Node, not browser rendering or simulation compute",
+  "horizon_days": 365,
+  "time_zone": "America/Chicago",
+  "before_repeated_calendar_calculation_ms": [
+    99,
+    61,
+    59
+  ],
+  "after_cold_calculation_ms": 128.9,
+  "after_same_input_calculation_ms": [
+    5.21,
+    0.89,
+    0.77
+  ],
+  "after_changed_arrival_slider_calculation_ms": 1.47,
+  "cached_same_input_outputs_exactly_equal": true,
+  "changed_slider_expected_multiplier": 1.7,
+  "measured_multiplier": 1.6999999999999997,
+  "cache_limit_entries": 16,
+  "focused_tests_passed": 34,
+  "typescript_check_passed": true
+}

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { api, open, record, scenario } from "./helpers";
+import { api, open, record, scenario, waitRun } from "./helpers";
 
 test("observed reset preserves an explicit-offset snapshot cutoff finer than one minute", async ({
   page,
@@ -38,7 +38,15 @@ test("observed reset preserves an explicit-offset snapshot cutoff finer than one
     "POST",
     {},
   );
-  await open(page, context.scenario.id, "analytics-resources");
+  const run = await waitRun(
+    page,
+    (
+      await api(page.request, "/run-groups", "POST", {
+        scenario_id: context.scenario.id,
+      })
+    ).id,
+  );
+  await open(page, context.scenario.id, "summary", run.id);
   await page
     .locator(".page-heading")
     .getByRole("button", { name: "Record update", exact: true })

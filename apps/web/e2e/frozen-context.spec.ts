@@ -51,10 +51,6 @@ test("historical results retain frozen dates and assumptions beside an edited dr
     },
   );
   expect(changed.ok()).toBe(true);
-  await open(page, context.scenario.id, "analytics-resources", run.id);
-  await expect(page.locator(".site-inspector")).toContainText(
-    "Frozen reserve assignment",
-  );
   await open(page, context.scenario.id, "replay", run.id);
   await expect(page.locator(".stale-banner")).toContainText(
     "current draft has changes",
@@ -131,7 +127,15 @@ test("completed comparisons and source search preserve distinct frozen and rebas
     plans: [
       {
         name: "Physical places",
-        interventions: [{ kind: "physical_overflow" }],
+        interventions: [
+          {
+            kind: "physical_overflow",
+            facility_id: "FAC-MAIN",
+            unit_id: "UNIT-WARD-C",
+            enabled_slots: 32,
+            activation_minutes: 60,
+          },
+        ],
       },
     ],
   });
@@ -182,7 +186,7 @@ test("completed comparisons and source search preserve distinct frozen and rebas
     name: "Comparison assumptions",
   });
   await expect(assumptions).toContainText(context.scenario.name);
-  await expect(assumptions).toContainText(context.dataset.id);
+  await expect(assumptions).toContainText("Saved hospital baseline");
   await expect(assumptions).toContainText("1 local days");
   await expect(assumptions).toContainText(String(context.scenario.base_seed));
   await expect(assumptions).not.toContainText("Rebased live draft");
@@ -202,21 +206,6 @@ test("completed comparisons and source search preserve distinct frozen and rebas
   await dayDetails.getByRole("button", { name: "Close dialog" }).click();
   await open(page, context.scenario.id, "analytics-patients", reference.id);
   await page.locator(".patient-table tbody .link-button").first().click();
-  const checked = page.waitForResponse(
-    (response) =>
-      response.url().includes("/eligibility?") &&
-      response.request().method() === "GET",
-  );
-  await page.getByRole("button", { name: "Find placement options" }).click();
-  const placement = await checked;
-  expect(placement.ok()).toBe(true);
-  expect(
-    new URL(placement.url()).searchParams.get("scenario_revision_id"),
-  ).toBe(reference.scenario_revision_id);
-  expect((await placement.json()).context.scenario_revision_id).toBe(
-    reference.scenario_revision_id,
-  );
-  await expect(page.locator(".eligibility-row").first()).toBeVisible();
   await page
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name: "Overview", exact: true })

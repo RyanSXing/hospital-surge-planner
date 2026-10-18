@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T04:51:43.537541+00:00",
+  "sha256": "f8c82aeff9050d1d28f43af948f0ea8aba2e5a9500aaa5e383ffc8adf15099e1",
+  "byte_size": 5601683,
+  "object_key": "backups/hospital-aegis-symbol-motion-20261018T045138Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing workspace before AEGIS branding deployment; no scenario mutations requested"
+}

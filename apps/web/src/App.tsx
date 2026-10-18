@@ -900,7 +900,12 @@ export default function App() {
             onClick={() => setPage("overview")}
             aria-label="AEGIS home"
           >
-            <AegisLogo ref={brandLogo} className="aegis-header-logo" />
+            <AegisLogo
+              ref={brandLogo}
+              variant="symbol"
+              decorative={false}
+              className="aegis-header-logo"
+            />
           </button>
           <Tooltip
             label={navCollapsed ? "Expand navigation" : "Collapse navigation"}

@@ -98,34 +98,21 @@ export default function BrandTransition({
       animations.delete(animation);
       animation.cancel();
     }
-    function composition() {
-      const width = Math.min(440, Math.max(160, innerWidth - 64)),
-        height = (width * 113) / 950;
-      const symbolWidth = (width * 610) / 950,
-        symbolHeight = (symbolWidth * 430) / 610,
-        gap = 24;
-      const top = Math.max(24, (innerHeight - symbolHeight - gap - height) / 2);
-      return {
-        word: {
-          left: (innerWidth - width) / 2,
-          top: top + symbolHeight + gap,
-          width,
-          height,
-        },
-        mark: {
-          left: (innerWidth - symbolWidth) / 2,
-          top,
-          width: symbolWidth,
-          height: symbolHeight,
-        },
-      };
-    }
-    const expanded = composition();
+    // The symbol uses the exact A at the start of the login wordmark. Its
+    // source crop stays unchanged from the first frame through the handoff.
+    const initialSymbol = { ...origin, width: (origin.width * 180) / 950 };
+    const expandedWidth = Math.min(320, Math.max(160, innerWidth - 64));
+    const expandedHeight = (expandedWidth * 113) / 180;
+    const expanded = {
+      left: (innerWidth - expandedWidth) / 2,
+      top: (innerHeight - expandedHeight) / 2,
+      width: expandedWidth,
+      height: expandedHeight,
+    };
     if (symbol.current)
-      Object.assign(symbol.current.style, rectStyle(expanded.mark));
+      Object.assign(symbol.current.style, rectStyle(initialSymbol));
     if (wordmark.current)
       Object.assign(wordmark.current.style, rectStyle(origin));
-    if (symbol.current) symbol.current.style.opacity = "0";
     const onMotionChange = () => {
       reduced = media.matches;
       if (reduced) for (const animation of animations) animation.finish();
@@ -145,17 +132,10 @@ export default function BrandTransition({
       if (!reduced) {
         setPhase("growing");
         await Promise.all([
-          animate(
-            wordmark.current,
-            [rectStyle(origin), rectStyle(expanded.word)],
-            460,
-          ),
+          animate(wordmark.current, [{ opacity: 1 }, { opacity: 0 }], 180),
           animate(
             symbol.current,
-            [
-              { opacity: 0, transform: "translateY(10px)" },
-              { opacity: 1, transform: "translateY(0)" },
-            ],
+            [rectStyle(initialSymbol), rectStyle(expanded)],
             460,
           ),
         ]);
@@ -174,7 +154,11 @@ export default function BrandTransition({
       if (reduced) {
         setPhase("fading");
         await Promise.all([
-          animate(wordmark.current, [{ opacity: 1 }, { opacity: 0 }], 130),
+          animate(
+            wordmark.current,
+            [{ opacity: wordmark.current?.style.opacity || 1 }, { opacity: 0 }],
+            130,
+          ),
           animate(symbol.current, [{ opacity: 1 }, { opacity: 0 }], 130),
           animate(backdrop.current, [{ opacity: 1 }, { opacity: 0 }], 130),
         ]);
@@ -196,14 +180,13 @@ export default function BrandTransition({
         // Measure at flight start, after authentication/layout and any resize.
         destination = destinationRef.current!.getBoundingClientRect();
         setPhase("settling");
-        const current = wordmark.current!.getBoundingClientRect();
+        const current = symbol.current!.getBoundingClientRect();
         await Promise.all([
           animate(
-            wordmark.current,
+            symbol.current,
             [rectStyle(current), rectStyle(destination)],
             660,
           ),
-          animate(symbol.current, [{ opacity: 1 }, { opacity: 0 }], 450),
           animate(backdrop.current, [{ opacity: 1 }, { opacity: 0 }], 620),
         ]);
       }
@@ -212,12 +195,7 @@ export default function BrandTransition({
       await Promise.all([
         destination && destination.width > 0 && destination.height > 0
           ? wait(90)
-          : animate(wordmark.current, [{ opacity: 1 }, { opacity: 0 }], 90),
-        animate(
-          symbol.current,
-          [{ opacity: symbol.current?.style.opacity || 1 }, { opacity: 0 }],
-          90,
-        ),
+          : animate(symbol.current, [{ opacity: 1 }, { opacity: 0 }], 90),
         animate(
           backdrop.current,
           [{ opacity: backdrop.current?.style.opacity || 1 }, { opacity: 0 }],
@@ -249,12 +227,18 @@ export default function BrandTransition({
         ref={backdrop}
         aria-hidden="true"
       />
-      <div className="aegis-transition-symbol" ref={symbol} aria-hidden="true">
+      <div
+        className="aegis-transition-symbol"
+        data-testid="brand-transition-logo"
+        ref={symbol}
+        style={rectStyle({ ...origin, width: (origin.width * 180) / 950 })}
+        aria-hidden="true"
+      >
         <AegisLogo variant="symbol" decorative />
       </div>
       <div
         className="aegis-transition-wordmark"
-        data-testid="brand-transition-logo"
+        data-testid="brand-transition-letters"
         ref={wordmark}
         style={rectStyle(origin)}
         aria-hidden="true"

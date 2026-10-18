@@ -1,0 +1,19 @@
+{
+  "frontend": {
+    "numTotalTests": 184,
+    "numPassedTests": 184,
+    "numFailedTests": 0,
+    "success": true
+  },
+  "production_build": "passed",
+  "desktop_browser_tests": {
+    "startTime": "2026-10-18T04:52:28.809Z",
+    "duration": 11190.667,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "source_artwork_unchanged": true,
+  "tested_manifest": "output/playwright/aegis-symbol-motion/final-tested-build-manifest.json"
+}

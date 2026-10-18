@@ -3,6 +3,9 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { api, capture, record } from "./helpers";
 
+const symbolViewBox = "80 610 180 113";
+const symbolFraction = 180 / 950;
+
 function credentials() {
   const env = readFileSync(
     process.env.E2E_AUTH_ENV_FILE || resolve(process.cwd(), "../../.env"),
@@ -43,10 +46,16 @@ async function observeTransition(page: Page) {
         height: number;
         at: number;
       }>,
+      letters: [] as Array<{
+        phase: string;
+        x: number;
+        y: number;
+        opacity: number;
+      }>,
     };
     (window as any).__aegisTransitionProof = proof;
     let previous: Element | null = null;
-    const sample = () => {
+    const sample = (painted = false) => {
       const overlay = document.querySelector(
         '[data-testid="brand-transition"]',
       );
@@ -58,7 +67,7 @@ async function observeTransition(page: Page) {
         const logo = overlay.querySelector(
           '[data-testid="brand-transition-logo"]',
         );
-        if (logo) {
+        if (logo && painted) {
           const bounds = logo.getBoundingClientRect();
           if (proof.frames.length < 1200)
             proof.frames.push({
@@ -70,16 +79,28 @@ async function observeTransition(page: Page) {
               at: performance.now(),
             });
         }
+        const letters = overlay.querySelector(
+          '[data-testid="brand-transition-letters"]',
+        );
+        if (letters && painted && proof.letters.length < 1200) {
+          const bounds = letters.getBoundingClientRect();
+          proof.letters.push({
+            phase,
+            x: bounds.x,
+            y: bounds.y,
+            opacity: Number(getComputedStyle(letters).opacity),
+          });
+        }
       }
     };
-    new MutationObserver(sample).observe(document, {
+    new MutationObserver(() => sample()).observe(document, {
       childList: true,
       subtree: true,
       attributes: true,
       attributeFilter: ["data-phase"],
     });
     const frame = () => {
-      sample();
+      sample(true);
       requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);
@@ -136,6 +157,9 @@ async function signInScreen(page: Page) {
     login.getByRole("img", { name: "AEGIS", exact: true }),
   ).toBeVisible();
   await expect(
+    login.getByRole("img", { name: "AEGIS", exact: true }),
+  ).toHaveAttribute("viewBox", "80 610 950 113");
+  await expect(
     login.getByLabel("Email or username", { exact: true }),
   ).toBeVisible();
   await expect(login.getByLabel("Password", { exact: true })).toBeVisible();
@@ -167,8 +191,25 @@ async function proof(page: Page) {
           height: number;
           at: number;
         }>;
+        letters: Array<{
+          phase: string;
+          x: number;
+          y: number;
+          opacity: number;
+        }>;
       },
   );
+}
+
+async function symbolHeader(page: Page) {
+  const logo = page
+    .getByRole("button", { name: "AEGIS home", exact: true })
+    .getByRole("img", { name: "AEGIS", exact: true });
+  await expect(logo).toBeVisible();
+  await expect(logo).toHaveAttribute("viewBox", symbolViewBox);
+  await expect(logo).toHaveClass(/aegis-logo--symbol/);
+  expect((await logo.boundingBox())!.width).toBeCloseTo(36, 0);
+  return logo;
 }
 
 test("AEGIS sign-in stays quiet on invalid credentials and transitions only after a successful retry", async ({
@@ -204,10 +245,7 @@ test("AEGIS sign-in stays quiet on invalid credentials and transitions only afte
   await expect(page.getByTestId("brand-transition")).toHaveCount(0, {
     timeout: 20_000,
   });
-  const header = page.getByRole("button", { name: "AEGIS home", exact: true });
-  await expect(
-    header.getByRole("img", { name: "AEGIS", exact: true }),
-  ).toBeVisible();
+  await symbolHeader(page);
   await expect(page.locator(".app-shell")).toBeVisible();
   await expect(page.locator(".login-page")).toHaveCount(0);
   const observed = await proof(page);
@@ -215,6 +253,11 @@ test("AEGIS sign-in stays quiet on invalid credentials and transitions only afte
   expect(observed.phases).toEqual(
     expect.arrayContaining(["growing", "holding", "settling"]),
   );
+  const heldLetters = observed.letters.filter(
+    (frame) => frame.phase === "holding",
+  );
+  expect(heldLetters.length).toBeGreaterThan(0);
+  expect(heldLetters.every((frame) => frame.opacity === 0)).toBe(true);
   expect(network.statuses).toEqual([401, 200]);
   await capture(page, "aegis-header", info);
   record("aegis-login-desktop", {
@@ -222,7 +265,8 @@ test("AEGIS sign-in stays quiet on invalid credentials and transitions only afte
     invalid_credentials_did_not_animate: true,
     transition_starts: observed.starts,
     phases: observed.phases,
-    header_logo_visible: true,
+    symbol_only_header_visible: true,
+    letters_hidden_by_holding: true,
   });
 });
 
@@ -244,6 +288,7 @@ test("AEGIS expansion holds for the real workspace response and duplicate submit
     .getByRole("img", { name: "AEGIS", exact: true })
     .boundingBox();
   expect(original).toBeTruthy();
+  const originalSymbolWidth = original!.width * symbolFraction;
   await fillCredentials(page);
   await login.getByRole("button", { name: "Sign in", exact: true }).click();
   try {
@@ -266,14 +311,20 @@ test("AEGIS expansion holds for the real workspace response and duplicate submit
       .getByTestId("brand-transition-logo")
       .boundingBox();
     expect(expanded).toBeTruthy();
-    expect(expanded!.width).toBeGreaterThan(original!.width * 1.2);
+    await expect(
+      overlay.getByTestId("brand-transition-logo").locator("svg"),
+    ).toHaveAttribute("viewBox", symbolViewBox);
+    expect(expanded!.width).toBeGreaterThan(originalSymbolWidth * 3);
+    expect(expanded!.width).toBeCloseTo(320, 0);
+    const letters = overlay.getByTestId("brand-transition-letters");
+    await expect(letters).toHaveCSS("opacity", "0");
+    await expect(letters).toHaveCSS("clip-path", /24%/);
     const viewport = page.viewportSize()!;
     expect(
       Math.abs(expanded!.x + expanded!.width / 2 - viewport.width / 2),
     ).toBeLessThan(12);
-    // The wordmark sits below the large symbol; their combined artwork is centered.
     expect(expanded!.y + expanded!.height / 2).toBeGreaterThan(
-      viewport.height * 0.4,
+      viewport.height * 0.3,
     );
     expect(expanded!.y + expanded!.height / 2).toBeLessThan(
       viewport.height * 0.75,
@@ -283,10 +334,7 @@ test("AEGIS expansion holds for the real workspace response and duplicate submit
     expect(network.posts).toBe(1);
     network.releaseWorkspace();
     await expect(overlay).toHaveCount(0, { timeout: 20_000 });
-    const headerLogo = page
-      .getByRole("button", { name: "AEGIS home", exact: true })
-      .getByRole("img", { name: "AEGIS", exact: true });
-    await expect(headerLogo).toBeVisible();
+    const headerLogo = await symbolHeader(page);
     const destination = (await headerLogo.boundingBox())!,
       observed = await proof(page);
     const settling = observed.frames.filter(
@@ -304,16 +352,23 @@ test("AEGIS expansion holds for the real workspace response and duplicate submit
     ).toBeLessThan(24);
     expect(Math.abs(last.width - destination.width)).toBeLessThan(24);
     expect(observed.starts).toBe(1);
+    const letterX = observed.letters.map((frame) => frame.x),
+      letterY = observed.letters.map((frame) => frame.y);
+    expect(letterX.length).toBeGreaterThan(2);
+    expect(Math.max(...letterX) - Math.min(...letterX)).toBeLessThan(1);
+    expect(Math.max(...letterY) - Math.min(...letterY)).toBeLessThan(1);
     expect(network.statuses).toEqual([200]);
     record("aegis-transition-desktop", {
       real_login_posts: network.posts,
       delayed_workspace_reads: network.workspaceHeld,
-      original_logo: original,
-      expanded_logo: expanded,
-      header_logo: destination,
+      original_wordmark: original,
+      original_symbol_width: originalSymbolWidth,
+      expanded_symbol: expanded,
+      header_symbol: destination,
       phases: observed.phases,
       last_settling_frame: last,
       one_transition_for_successful_authentication: true,
+      letters_fade_in_place_and_do_not_travel: true,
     });
   } finally {
     network.releaseLogin();
@@ -335,22 +390,22 @@ test("reduced-motion sign-in avoids zoom and existing-session reloads or navigat
   const original = (await login
     .getByRole("img", { name: "AEGIS", exact: true })
     .boundingBox())!;
+  const originalSymbolWidth = original.width * symbolFraction;
   await fillCredentials(page);
   await login.getByRole("button", { name: "Sign in", exact: true }).click();
   const header = page.getByRole("button", { name: "AEGIS home", exact: true });
-  await expect(
-    header.getByRole("img", { name: "AEGIS", exact: true }),
-  ).toBeVisible();
+  await symbolHeader(page);
   await expect(page.getByTestId("brand-transition")).toHaveCount(0);
   const reduced = await proof(page);
   expect(
-    Math.max(original.width, ...reduced.frames.map((frame) => frame.width)),
-  ).toBeLessThanOrEqual(original.width * 1.15);
+    Math.max(
+      originalSymbolWidth,
+      ...reduced.frames.map((frame) => frame.width),
+    ),
+  ).toBeLessThanOrEqual(originalSymbolWidth * 1.15);
   await page.reload();
   await expect(page.locator(".app-shell")).toBeVisible();
-  await expect(
-    header.getByRole("img", { name: "AEGIS", exact: true }),
-  ).toBeVisible();
+  await symbolHeader(page);
   await expect(page.getByTestId("brand-transition")).toHaveCount(0);
   expect((await proof(page)).starts).toBe(0);
   await header.click();
@@ -361,10 +416,10 @@ test("reduced-motion sign-in avoids zoom and existing-session reloads or navigat
     real_login_posts: network.posts,
     prefers_reduced_motion: true,
     maximum_logo_width: Math.max(
-      original.width,
+      originalSymbolWidth,
       ...reduced.frames.map((frame) => frame.width),
     ),
-    login_logo_width: original.width,
+    login_symbol_width: originalSymbolWidth,
     reload_and_navigation_transition_starts: (await proof(page)).starts,
   });
 });

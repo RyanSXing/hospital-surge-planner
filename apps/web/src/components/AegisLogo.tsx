@@ -19,9 +19,9 @@ export default function AegisLogo({
     <svg
       ref={ref}
       className={`aegis-logo aegis-logo--${variant} ${className}`}
-      viewBox={symbol ? "245 120 610 430" : "80 610 950 113"}
-      width={symbol ? 610 : 950}
-      height={symbol ? 430 : 113}
+      viewBox={symbol ? "80 610 180 113" : "80 610 950 113"}
+      width={symbol ? 180 : 950}
+      height={113}
       preserveAspectRatio="xMidYMid meet"
       role={decorative ? undefined : "img"}
       aria-label={decorative ? undefined : "AEGIS"}

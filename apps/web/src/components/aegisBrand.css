@@ -28,7 +28,11 @@
   will-change: left, top, width, height, opacity;
 }
 .aegis-transition-symbol {
-  opacity: 0;
+  opacity: 1;
+}
+.aegis-transition-wordmark {
+  /* Keep only EGIS at its original position as the separate A takes flight. */
+  clip-path: inset(0 0 0 24%);
 }
 .aegis-transition-symbol .aegis-logo,
 .aegis-transition-wordmark .aegis-logo {

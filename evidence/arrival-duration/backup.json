@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T04:06:24.135544+00:00",
+  "sha256": "fc54bd4bdd46bd215b808e9be1a3e7e436c0226f527f957ad83404bccee2345d",
+  "byte_size": 5596618,
+  "object_key": "backups/hospital-arrival-duration-20261018T040618Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing workspace before arrival duration fix deployment; no scenario mutations requested"
+}

@@ -30,6 +30,7 @@ import {
   mixError,
   horizonDays,
   planningEnd,
+  resizedArrivalWindow,
 } from "./scenarioEditor";
 import type { HorizonUnit, MixMode } from "./scenarioEditor";
 import "./scenarios.css";
@@ -525,11 +526,29 @@ export default function Scenarios({ ctx }: { ctx: PlanningContext }) {
             : 11;
     const count = Math.max(1, Math.min(limit, Math.round(amount) || 1));
     const total = horizonDays(startAt, count, unit, ctx.scenario?.timezone);
+    const arrivalWindow = !customArrivalSchedule
+      ? resizedArrivalWindow(
+          ctx.scenario,
+          {
+            startAt,
+            days,
+            startDay,
+            endDay,
+            windowStartAt,
+            windowEndAt,
+            shape,
+          },
+          total,
+        )
+      : null;
     setHorizonUnit(unit);
     setHorizonAmount(count);
     setDays(total);
-    setStartDay((a) => Math.min(a, total - 1));
-    setEndDay(total);
+    if (arrivalWindow) {
+      setEndDay(arrivalWindow.endDay);
+      setWindowEndAt(arrivalWindow.windowEndAt);
+      setArrivalEdited(true);
+    }
   }
   let previewConditions = draftConditions;
   try {

@@ -8,6 +8,7 @@ import {
   horizonDays,
   mixError,
   planningEnd,
+  resizedArrivalWindow,
   applyShortArrivalPulse,
 } from "./scenarioEditor";
 import type { EditorValues } from "./scenarioEditor";
@@ -61,6 +62,64 @@ const values = (): EditorValues => ({
   mix: { "RP-ICU-VENT": 0.3, "RP-WARD": 0.7 },
 });
 describe("scenario input edits", () => {
+  it.each([14, 30, 3])(
+    "resizes a saved whole-week arrival preset to all %i local days",
+    (days) => {
+      const scenario = { ...source(), horizon_calendar_days: 7 };
+      const original = {
+        ...values(),
+        days: 7,
+        endDay: 7,
+        windowStartAt: scenario.start_at,
+        // Chicago has changed to standard time by the end of this week.
+        windowEndAt: "2026-11-08T06:00:00Z",
+      };
+      const resized = resizedArrivalWindow(scenario, original, days);
+      expect(resized).not.toBeNull();
+      const patch = buildScenarioPatch(scenario, {
+        ...original,
+        ...resized!,
+        days,
+        percent: 115,
+      });
+      const condition = patch.conditions.find((c) => c.id === "ed")!;
+      expect(condition.control_points).toEqual([
+        { at: scenario.start_at, multiplier: 2.15 },
+        {
+          at: planningEnd(scenario, scenario.start_at, days),
+          multiplier: 2.15,
+        },
+      ]);
+      expect(condition.end_at).toBe(
+        planningEnd(scenario, scenario.start_at, days),
+      );
+    },
+  );
+  it("keeps deliberate shorter windows, custom curves, and reset endpoints fixed", () => {
+    const scenario = source();
+    expect(resizedArrivalWindow(scenario, values(), 30)).toBeNull();
+    expect(
+      resizedArrivalWindow(
+        scenario,
+        { ...values(), endDay: 3, shape: "custom" },
+        30,
+      ),
+    ).toBeNull();
+    expect(
+      resizedArrivalWindow(
+        scenario,
+        { ...values(), endDay: 3, windowStartAt: "2026-11-01T17:00:00Z" },
+        30,
+      ),
+    ).toBeNull();
+    expect(
+      resizedArrivalWindow(
+        { ...scenario, end_at: "2026-11-04T06:00:00Z" },
+        { ...values(), endDay: 3 },
+        30,
+      ),
+    ).toBeNull();
+  });
   it("does not replace an invalid or skipped local-time input with the default window", () => {
     for (const field of ["windowStartAt", "windowEndAt"] as const) {
       expect(() =>

@@ -9,6 +9,97 @@ import {
   waitRun,
 } from "./helpers";
 
+test("arrival slider follows every day of the selected duration and survives save and reload", async ({
+  page,
+}, info) => {
+  test.skip(
+    info.project.name !== "desktop",
+    "Desktop configuration regression.",
+  );
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  const context = await scenario(page, "arrival duration regression", {
+    horizon_calendar_days: 7,
+    replications: 1,
+    conditions: [
+      {
+        id: "whole-period-arrivals",
+        kind: "arrival_multiplier",
+        entry_stream_id: "ED_MAIN",
+        shape: "step",
+        surge_percent: 115,
+        start_at: "2026-10-16T05:00:00Z",
+        end_at: "2026-10-23T05:00:00Z",
+        control_points: [
+          { at: "2026-10-16T05:00:00Z", multiplier: 2.15 },
+          { at: "2026-10-23T05:00:00Z", multiplier: 2.15 },
+        ],
+      },
+    ],
+  });
+  await open(page, context.scenario.id, "overview");
+  const editor = page.getByTestId("guided-scenario");
+  const chart = editor.getByTestId("arrival-preview-chart");
+  async function expectAllDays(days: number, multiplier: number) {
+    await expect(chart.getByTestId("arrival-day-handle")).toHaveCount(days);
+    const planned = (await chart.getAttribute("data-planned-arrivals"))!
+      .split(",")
+      .map(Number);
+    const usual = (await chart.getAttribute("data-usual-arrivals"))!
+      .split(",")
+      .map(Number);
+    expect(planned).toHaveLength(days);
+    planned.forEach((value, day) =>
+      expect(value / usual[day], `Day ${day + 1}`).toBeCloseTo(multiplier, 2),
+    );
+  }
+  for (const [days, label, end, percent] of [
+    [14, "2 weeks", "2026-10-30T05:00:00.000Z", 120],
+    [30, "30 days", "2026-11-15T06:00:00.000Z", 125],
+    [7, "1 week", "2026-10-23T05:00:00.000Z", 130],
+  ] as const) {
+    await editor
+      .locator(".mantine-SegmentedControl-label")
+      .filter({ hasText: new RegExp(`^${label}$`) })
+      .click();
+    // Changing duration alone must extend the existing plan, before touching the slider.
+    await expectAllDays(days, 1 + (percent - 5) / 100);
+    const slider = editor.getByRole("slider", {
+      name: "Adjust arrival surge",
+      exact: true,
+    });
+    await slider.focus();
+    await slider.press("ArrowRight");
+    await expect(slider).toHaveAttribute("aria-valuenow", String(percent));
+    await expectAllDays(days, 1 + percent / 100);
+    await editor
+      .getByRole("button", { name: "Save draft", exact: true })
+      .click();
+    await expect(
+      editor.getByText("Unsaved changes", { exact: true }),
+    ).toHaveCount(0);
+    const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
+    const arrival = saved.conditions.find(
+      (item: any) => item.id === "whole-period-arrivals",
+    );
+    expect(saved.horizon_calendar_days).toBe(days);
+    expect(Date.parse(arrival.end_at)).toBe(Date.parse(end));
+    expect(Date.parse(arrival.control_points.at(-1).at)).toBe(Date.parse(end));
+    await page.reload();
+    await expectAllDays(days, 1 + percent / 100);
+    if (days === 30) await capture(page, "arrival-duration-30-days", info);
+  }
+  await assertPageHealthy(page);
+  expect(errors).toEqual([]);
+  record("arrival-duration-regression", {
+    scenario_id: context.scenario.id,
+    all_days_update: [14, 30, 7],
+    saved_endpoints_verified: true,
+    reload_verified: true,
+    page_errors: errors,
+  });
+});
+
 test("simple hospital setup keeps its live graph visible and runs the exact optional inputs", async ({
   page,
 }, info) => {

@@ -64,6 +64,37 @@ export function planningEnd(
     atDay(startAt, days, 0, scenario?.timezone || "America/Chicago")
   );
 }
+/** Whole-period presets follow the duration; exact and custom windows stay fixed. */
+export function resizedArrivalWindow(
+  scenario: Scenario | null,
+  value: Pick<
+    EditorValues,
+    | "startAt"
+    | "days"
+    | "startDay"
+    | "endDay"
+    | "windowStartAt"
+    | "windowEndAt"
+    | "shape"
+  >,
+  days: number,
+) {
+  if (scenario?.end_at || value.shape === "custom") return null;
+  const zone = scenario?.timezone || "America/Chicago";
+  const start =
+    value.windowStartAt ?? atDay(value.startAt, value.startDay, 0, zone);
+  const end = value.windowEndAt ?? atDay(value.startAt, value.endDay, 0, zone);
+  if (
+    Date.parse(start) !== Date.parse(value.startAt) ||
+    Date.parse(end) !==
+      Date.parse(planningEnd(scenario, value.startAt, value.days))
+  )
+    return null;
+  return {
+    endDay: days,
+    windowEndAt: planningEnd(scenario, value.startAt, days),
+  };
+}
 export function applyShortArrivalPulse(
   scenario: Scenario,
   startAt: string,

@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-18T04:07:06.116377+00:00",
+  "unit_tests": {
+    "passed": 176,
+    "failed": 0
+  },
+  "desktop_browser_tests": {
+    "startTime": "2026-10-18T04:06:23.806Z",
+    "duration": 25880.668999999998,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "production_build_passed": true,
+  "verified": [
+    "7 \u2192 14 \u2192 30 \u2192 7 day whole-period presets",
+    "Slider updates every day before and after save/reload",
+    "Chicago daylight-saving endpoint",
+    "Exact/custom windows preserved",
+    "Existing daily-dot edits, undo, frozen run inputs, and scheduled batches"
+  ],
+  "backend_changed": false,
+  "mobile_out_of_scope": true
+}

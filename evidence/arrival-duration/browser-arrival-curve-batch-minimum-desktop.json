@@ -1,0 +1,8 @@
+{
+  "scenario_id": "scenario_655cfd9f7ccb44adb662",
+  "fixed_scheduled_minimum": 25,
+  "zero_variable_arrivals_saved": true,
+  "neighbor_day_unchanged": true,
+  "no_empty_undo_at_minimum": true,
+  "reload_retains_exact_curve_and_batch": true
+}

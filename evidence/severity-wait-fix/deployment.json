@@ -1,0 +1,33 @@
+{
+  "deployed_at": "2026-10-18T06:30:25.129531+00:00",
+  "code_commit": "3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c",
+  "image_tag": "3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c",
+  "archive": {
+    "commit": "3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c",
+    "members": 408,
+    "sha256": "a3b54bc6efc92ba547f8dfba5990011c1f269d3d3a9b79c0800e8c05031104b8"
+  },
+  "host": "131.186.0.156",
+  "directory": "/opt/hospital-surge-planner",
+  "steps": [
+    "(build_dir=$(mktemp -d /opt/hospital-surge-planner/.build-XXXXXX) || exit 1; trap 'rm -rf -- \"$build_dir\"' EXIT; tar -xzf release.tar.gz -C \"$build_dir\" && install -m 600 .env \"$build_dir/.env\" && CODE_COMMIT=3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c docker compose --env-file \"$build_dir/.env\" -f \"$build_dir/infra/compose.yaml\" --profile tls build)",
+    "tar -xzf release.tar.gz",
+    "CODE_COMMIT=3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c docker compose --env-file .env -f infra/compose.yaml up -d postgres redis",
+    "CODE_COMMIT=3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c docker compose --env-file .env -f infra/compose.yaml run --rm api .venv/bin/alembic -c infra/alembic.ini upgrade head",
+    "CODE_COMMIT=3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c docker compose --env-file .env -f infra/compose.yaml up -d api worker web",
+    "CODE_COMMIT=3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c docker compose --env-file .env -f infra/compose.yaml --profile tls up -d tls",
+    "CODE_COMMIT=3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c docker compose --env-file .env -f infra/compose.yaml ps"
+  ],
+  "status": "accepted",
+  "accepted_at": "2026-10-18T06:32:54.264000+00:00",
+  "initial_generic_follow_up_list": [
+    "authenticated smoke run",
+    "OCI artifact upload/download",
+    "full workflow verification",
+    "backup and restore test",
+    "record image digests and benchmark"
+  ],
+  "required_next": [],
+  "acceptance_evidence": "evidence/severity-wait-fix/acceptance.json",
+  "acceptance_scope": "Correct severity inpatient stays without stretching ED assessment; preserve historical result model and evidence provenance."
+}

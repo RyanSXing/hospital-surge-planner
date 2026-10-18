@@ -1,0 +1,175 @@
+{
+  "checked_at": "2026-10-18T06:32:10.085069+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+  "scenario_name": "egg wo",
+  "saved_revision": 5,
+  "horizon_calendar_days": 30,
+  "source_run_group_id": "run_22230710c2b74bdea7e1",
+  "corrected_run_group_id": "run_c52206dca21e42d3ac02",
+  "operations_model_version": "1.1",
+  "status": "SUCCEEDED",
+  "replications_completed": 10,
+  "saved_scenario_settings_unchanged": true,
+  "saved_scenario_settings_sha256": "eceeeef628295e37984776df99d86e89dd1b9bc9e3ca165857b24be16d0c1ba2",
+  "frozen_run_settings_match_original": true,
+  "original_scalar_results_preserved": true,
+  "all_replications_match_tested_same_input_counterfactual": true,
+  "replication_checks": [
+    {
+      "replication_index": 9,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    },
+    {
+      "replication_index": 8,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    },
+    {
+      "replication_index": 7,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    },
+    {
+      "replication_index": 5,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    },
+    {
+      "replication_index": 6,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    },
+    {
+      "replication_index": 0,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    },
+    {
+      "replication_index": 2,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0008200041603415044
+    },
+    {
+      "replication_index": 1,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    },
+    {
+      "replication_index": 3,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    },
+    {
+      "replication_index": 4,
+      "all_scalar_metrics_match_counterfactual": true,
+      "patient_conservation_ok": true,
+      "average_wait_per_patient_hours": 0.0
+    }
+  ],
+  "new_results": {
+    "arrivals": {
+      "max": 2168.0,
+      "mean": 2059.2,
+      "min": 1969.0,
+      "p10": 1983.4,
+      "p50": 2057.0,
+      "p90": 2121.2
+    },
+    "discharges": {
+      "max": 2218.0,
+      "mean": 2106.4,
+      "min": 2013.0,
+      "p10": 2031.0,
+      "p50": 2107.5,
+      "p90": 2157.7
+    },
+    "average_wait_per_patient_hours": {
+      "max": 0.0008200041603415044,
+      "mean": 8.200041603415045e-05,
+      "min": 0.0,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 8.200041603415015e-05
+    },
+    "ed_waiting_patient_hours": {
+      "max": 0.0,
+      "mean": 0.0,
+      "min": 0.0,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0
+    },
+    "inpatient_waiting_patient_hours": {
+      "max": 1.7351288032826233,
+      "mean": 0.17351288032826234,
+      "min": 0.0,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.1735128803282617
+    },
+    "ed_utilization": {
+      "max": 0.2841974166319926,
+      "mean": 0.26733452547058156,
+      "min": 0.25652990568873446,
+      "p10": 0.25682864571950587,
+      "p50": 0.26539732568563235,
+      "p90": 0.2814042323397142
+    },
+    "ward_utilization": {
+      "max": 0.2259883263949348,
+      "mean": 0.2169217198812515,
+      "min": 0.20715147199615722,
+      "p10": 0.2097458500425884,
+      "p50": 0.21843110743126254,
+      "p90": 0.22342343211685625
+    },
+    "icu_utilization": {
+      "max": 0.5463000715702045,
+      "mean": 0.42932399207338234,
+      "min": 0.30961045557307537,
+      "p10": 0.3239608613795745,
+      "p50": 0.4326862496322631,
+      "p90": 0.5065367474325267
+    },
+    "medical_supply_average_percent": {
+      "max": 98.40787159382515,
+      "mean": 98.33479270808343,
+      "min": 98.27657071813117,
+      "p10": 98.2802700829351,
+      "p50": 98.34883007560978,
+      "p90": 98.38651356134935
+    },
+    "success_score_percent": {
+      "max": 100.0,
+      "mean": 100.0,
+      "min": 100.0,
+      "p10": 100.0,
+      "p50": 100.0,
+      "p90": 100.0
+    },
+    "peak_inpatient_queue": {
+      "max": 1.0,
+      "mean": 0.1,
+      "min": 0.0,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.09999999999999964
+    }
+  },
+  "old_median_average_wait_per_patient_hours": 190.66076065692798,
+  "new_median_average_wait_per_patient_hours": 0.0,
+  "new_maximum_run_average_wait_per_patient_hours": 0.0008200041603415044,
+  "interpretation": "Median per-patient waiting is zero across ten runs; one run has a small recorded inpatient wait. This is a simulated result under unchanged saved assumptions, not a promise of clinical waiting times.",
+  "live_url": "https://hospital-surge.131.186.0.156.sslip.io/?view=analysis&analysis=summary&scenario=scenario_94af2d4fa6dc4d6f8863&run=run_c52206dca21e42d3ac02"
+}

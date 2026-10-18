@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-18T06:31:00.754557+00:00",
+  "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+  "source_saved_revision": 5,
+  "before_rerun_saved_scenario_identical_to_audited_source": true,
+  "checks": {
+    "id": true,
+    "name": true,
+    "revision": true,
+    "data": true,
+    "dataset_version_id": true
+  }
+}

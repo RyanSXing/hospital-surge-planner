@@ -1,0 +1,41 @@
+{
+  "accepted_at": "2026-10-18T06:32:54.264000+00:00",
+  "application_commit": "3bc6afd21fd0af9ab5bc945447deb5f8d32d5c1c",
+  "status": "accepted",
+  "scope": "Correct severity inpatient stays without stretching ED assessment; preserve historical result model and evidence provenance.",
+  "checks": {
+    "all_original_stored_records_unchanged": true,
+    "original_api_records_preserved_before_intentional_rerun": true,
+    "all_six_services_running_and_healthy": true,
+    "persistent_volumes_preserved": true,
+    "application_services_at_tested_commit": true,
+    "all_hosted_assets_match_tested_bundle": true,
+    "tested_source_unchanged": true,
+    "saved_egg_wo_settings_unchanged": true,
+    "live_ten_runs_match_tested_same_input_counterfactual": true,
+    "original_egg_wo_results_preserved": true,
+    "no_new_browser_warnings_or_errors": true
+  },
+  "backend_tests_passed": 105,
+  "frontend_tests_passed": 254,
+  "desktop_workflows_passed": 3,
+  "hosted_assets_checked": 45,
+  "stored_records_preserved": 23,
+  "live_scenario_result": {
+    "scenario_name": "egg wo",
+    "saved_revision": 5,
+    "old_run": "run_22230710c2b74bdea7e1",
+    "corrected_run": "run_c52206dca21e42d3ac02",
+    "median_wait_hours_before": 190.66076065692798,
+    "median_wait_hours_after": 0.0,
+    "completed_replications": 10
+  },
+  "browser_evidence": [
+    "live-egg-wo-before.jpg",
+    "live-egg-wo-historical-warning.jpg",
+    "live-egg-wo-corrected.jpg"
+  ],
+  "data_preservation": "Existing stored records are byte-identical. One new run and its immutable execution revision were added through the existing app workflow.",
+  "artifact_reproduction": "Frozen legacy1.0 reconstruction and absent-trace export were verified locally; no production export download was performed.",
+  "backup": "Server-side database backup was uploaded to the existing private OCI bucket before deployment."
+}

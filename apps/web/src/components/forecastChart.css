@@ -15,6 +15,28 @@
   background: var(--danger);
 }
 
+.chart-legend .chart-constraint-key.background i {
+  width: 12px;
+  height: 9px;
+  border: 1px solid color-mix(in srgb, var(--warning) 25%, transparent);
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--warning) 12%, transparent);
+  opacity: 1;
+}
+
+.chart-legend .chart-constraint-key.background.disruption i {
+  border-color: color-mix(in srgb, var(--danger) 25%, transparent);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+
 .chart-constraint-period {
   cursor: help;
+}
+
+.chart-tooltip .chart-constraint-explanation {
+  max-width: 34ch;
+  padding-top: 5px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  line-height: 1.4;
 }

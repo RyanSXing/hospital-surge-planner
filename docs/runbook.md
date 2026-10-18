@@ -25,6 +25,7 @@ Copy `.env.example` to a private file or run `make setup`, then configure:
 - Long unique `ADMIN_PASSWORD`, `SESSION_SECRET`, `POSTGRES_PASSWORD`; do not reuse local values for a public host. Restrict the env file to mode 0600.
 - `PUBLIC_BASE_URL=https://<domain>` and `ALLOWED_ORIGINS=https://<domain>`.
 - `DOMAIN=<domain>` resolving to the deployment host. Caddy ACME registration does not require an email.
+- Optional `DOMAIN_ALIASES=<space-separated hostnames>` serves additional exact hostnames with the same HTTPS application. Keep every retained alias in `ALLOWED_ORIGINS` while existing signed-in tabs use it. `PUBLIC_BASE_URL` identifies the primary address. Host-only session cookies require a fresh sign-in on a new hostname; no cookie domain is broadened.
 - `COMPOSE_ARTIFACT_BACKEND=oci`, `ARTIFACT_BACKEND=oci`, `OCI_AUTH=instance_principal`, `OCI_REGION`, `OCI_NAMESPACE`, `OCI_ARTIFACT_BUCKET`, `OCI_BACKUP_BUCKET`.
 - `WORKER_CONCURRENCY`, `JOB_TIMEOUT_SECONDS=1200`, replication/horizon/upload/queue limits appropriate to the measured host.
 

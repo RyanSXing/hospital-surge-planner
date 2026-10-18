@@ -53,6 +53,7 @@ describe("recorded constraint ribbons", () => {
   const render = (
     markers: Parameters<typeof ForecastChart>[0]["markers"],
     rows = days,
+    markerPresentation: "ribbon" | "background" = "ribbon",
   ) =>
     renderToStaticMarkup(
       <ForecastChart
@@ -60,6 +61,7 @@ describe("recorded constraint ribbons", () => {
         keys={["patients"]}
         labels={["Patients"]}
         markers={markers}
+        markerPresentation={markerPresentation}
         height={300}
         timeZone="America/Chicago"
       />,
@@ -217,5 +219,130 @@ describe("recorded constraint ribbons", () => {
     expect(left).toBeGreaterThanOrEqual(42);
     expect(width).toBeGreaterThan(0);
     expect(left + width).toBeLessThanOrEqual(1000 - 32);
+  });
+
+  it("shades only affected period cells behind the plot and preserves clear gaps", () => {
+    const html = render([marker(1), marker(2), marker(4)], days, "background");
+    expect(html).not.toContain("chart-constraint-ribbon");
+    expect(html).toContain(
+      'class="chart-constraint-key constraint background"',
+    );
+    const fills = Array.from(
+      html.matchAll(/<rect[^>]*class="chart-constraint-background"[^>]*>/g),
+      (match) => match[0],
+    );
+    expect(fills).toHaveLength(2);
+    const extents = fills.map((fill) => ({
+      x: Number(fill.match(/ x="([^"]+)"/)![1]),
+      width: Number(fill.match(/ width="([^"]+)"/)![1]),
+    }));
+    expect(extents[0]).toEqual({ x: 158.25, width: 462 });
+    expect(extents[1]).toEqual({ x: 852.75, width: 114.75 });
+    expect(extents[0].x + extents[0].width).toBeLessThan(extents[1].x);
+    for (const fill of fills) {
+      expect(fill).toContain('y="18"');
+      expect(fill).toContain('height="254"');
+      expect(fill).toContain('opacity="0.07"');
+      expect(fill).toContain('pointer-events="none"');
+    }
+    expect(html.indexOf('class="chart-constraint-background"')).toBeLessThan(
+      html.indexOf('stroke="var(--border-subtle)"'),
+    );
+    expect(html).not.toContain('data-period-index="0"');
+    expect(html).not.toContain('data-period-index="3"');
+    expect(
+      bands(html).every((band) => band[0].includes('clip-path="url(')),
+    ).toBe(true);
+  });
+
+  it("keeps overlapping resource reasons in one background period without summing effects", () => {
+    const rows = [
+      {
+        ...days[0],
+        blocker_patient_hours: {
+          nursing_capacity: { mean: 4 },
+          required_equipment_unavailable: { mean: 4 },
+        },
+      },
+      days[1],
+    ];
+    const html = render(
+      recordedConstraintMarkers(rows, rows),
+      rows,
+      "background",
+    );
+    expect(html.match(/class="chart-constraint-background"/g)).toHaveLength(1);
+    expect(html.match(/class="chart-constraint-period"/g)).toHaveLength(1);
+    expect(html).toContain(
+      "No staffed bed available · Required equipment unavailable",
+    );
+    expect(html).toContain('data-recorded-at="2026-10-16T05:00:00.000Z"');
+    expect(html).toContain('data-recorded-end-at="2026-10-17T05:00:00.000Z"');
+    expect(html).toContain(
+      "Period evidence does not identify exact onset or duration.",
+    );
+  });
+
+  it("does not shade missing, zero or unmarked periods in background mode", () => {
+    const rows = [
+      {
+        ...days[0],
+        blocker_patient_hours: { nursing_capacity: { mean: null } },
+      },
+      { ...days[1], blocker_patient_hours: { nursing_capacity: { mean: 0 } } },
+      days[2],
+    ];
+    const html = render(
+      recordedConstraintMarkers(rows, rows),
+      rows,
+      "background",
+    );
+    expect(html).not.toContain("chart-constraint-background");
+    expect(html).not.toContain("chart-constraint-band");
+    expect(html).not.toContain("chart-constraint-key");
+  });
+
+  it("bounds dense background spans without widening isolated constrained periods", () => {
+    const rows = Array.from({ length: 2000 }, () => days[0]);
+    const html = render(
+      [
+        { ...marker(0), index: 0 },
+        { ...marker(0), index: 1999 },
+      ],
+      rows,
+      "background",
+    );
+    const fills = Array.from(
+      html.matchAll(/<rect[^>]*class="chart-constraint-background"[^>]*>/g),
+      (match) => match[0],
+    );
+    expect(fills).toHaveLength(2);
+    for (const fill of fills) {
+      const left = Number(fill.match(/ x="([^"]+)"/)![1]);
+      const width = Number(fill.match(/ width="([^"]+)"/)![1]);
+      expect(left).toBeGreaterThanOrEqual(42);
+      expect(width).toBeGreaterThan(0);
+      expect(width).toBeLessThan(1);
+      expect(left + width).toBeLessThanOrEqual(968);
+    }
+    expect(html.match(/data-period-index=/g)).toHaveLength(2);
+  });
+
+  it("covers the full chart only when every displayed period has recorded evidence", () => {
+    const html = render(
+      days.map((_, index) => marker(index)),
+      days,
+      "background",
+    );
+    const fill = html.match(
+      /<rect[^>]*class="chart-constraint-background"[^>]*>/,
+    )![0];
+    expect(fill).toContain('x="42.5"');
+    expect(fill).toContain('width="925"');
+    expect(html.match(/class="chart-constraint-background"/g)).toHaveLength(1);
+    expect(html.match(/class="chart-constraint-period"/g)).toHaveLength(
+      days.length,
+    );
+    expect(html).not.toContain("chart-constraint-ribbon");
   });
 });

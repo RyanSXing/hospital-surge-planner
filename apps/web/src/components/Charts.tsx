@@ -36,6 +36,7 @@ export function ForecastChart({
   lineDashes,
   timeZone,
   markers = [],
+  markerPresentation = "ribbon",
   yMax,
   dateLabelMode = "auto",
 }: {
@@ -52,6 +53,7 @@ export function ForecastChart({
   lineDashes?: (string | undefined)[];
   timeZone?: string;
   markers?: ForecastConstraintMarker[];
+  markerPresentation?: "ribbon" | "background";
   yMax?: number;
   dateLabelMode?: "auto" | "date";
 }) {
@@ -168,7 +170,11 @@ export function ForecastChart({
     .range([H - pad.bottom, pad.top]);
   const ticks = y.ticks(4);
   return (
-    <div className="chart-wrap" ref={wrapper}>
+    <div
+      className="chart-wrap"
+      data-marker-presentation={markerPresentation}
+      ref={wrapper}
+    >
       <div className="chart-meta">
         <span>{yLabel}</span>
         <div className="chart-legend">
@@ -189,8 +195,8 @@ export function ForecastChart({
             ) ? (
               <span
                 key={kind}
-                className={`chart-constraint-key ${kind}`}
-                title="Recorded in one or more simulations during the marked periods. The ribbon does not show exact onset or duration."
+                className={`chart-constraint-key ${kind} ${markerPresentation}`}
+                title={`Recorded in one or more simulations during the marked periods. ${markerPresentation === "background" ? "Shading" : "The ribbon"} does not show exact onset or duration.`}
               >
                 <i aria-hidden="true" />
                 {kind === "disruption"
@@ -236,21 +242,36 @@ export function ForecastChart({
               key={periods[0].index}
               className="chart-constraint-band"
               data-kind={periods[0].kind || "constraint"}
+              data-presentation={markerPresentation}
               data-first-period={periods[0].index}
               data-last-period={periods.at(-1)!.index}
+              clipPath={
+                markerPresentation === "background"
+                  ? `url(#${fillId}-plot)`
+                  : undefined
+              }
             >
               <rect
-                className="chart-constraint-ribbon"
+                className={
+                  markerPresentation === "background"
+                    ? "chart-constraint-background"
+                    : "chart-constraint-ribbon"
+                }
                 {...bandBounds(periods)}
-                y={pad.top - 10}
-                height={4}
-                rx={2}
+                y={markerPresentation === "background" ? pad.top : pad.top - 10}
+                height={
+                  markerPresentation === "background"
+                    ? H - pad.bottom - pad.top
+                    : 4
+                }
+                rx={markerPresentation === "background" ? 0 : 2}
                 fill={
                   periods[0].kind === "disruption"
                     ? "var(--danger)"
                     : "var(--warning)"
                 }
-                opacity={0.8}
+                opacity={markerPresentation === "background" ? 0.07 : 0.8}
+                pointerEvents="none"
               />
               {periods.map((marker) => (
                 <rect
@@ -260,9 +281,15 @@ export function ForecastChart({
                   data-recorded-at={marker.at || undefined}
                   data-recorded-end-at={marker.endAt || undefined}
                   x={periodLeft(marker.index)}
-                  y={pad.top - 14}
+                  y={
+                    markerPresentation === "background" ? pad.top : pad.top - 14
+                  }
                   width={periodRight(marker.index) - periodLeft(marker.index)}
-                  height={12}
+                  height={
+                    markerPresentation === "background"
+                      ? H - pad.bottom - pad.top
+                      : 12
+                  }
                   fill="transparent"
                 >
                   <title>{periodTitle(marker)}</title>
@@ -468,6 +495,16 @@ export function ForecastChart({
               </b>
             </span>
           ))}
+          {recordedPeriods
+            .filter((marker) => marker.index === hover)
+            .map((marker) => (
+              <small
+                className="chart-constraint-explanation"
+                key={marker.index}
+              >
+                {periodTitle(marker)}
+              </small>
+            ))}
         </div>
       ) : null}
       {rows.length ? (

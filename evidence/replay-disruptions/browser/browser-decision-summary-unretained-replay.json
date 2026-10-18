@@ -1,0 +1,27 @@
+{
+  "scenario_id": "scenario_7f656099e1374710896d",
+  "run_id": "run_44a3e369da124710b215",
+  "selected_replication_id": "run_44a3e369da124710b215_rep_0000",
+  "source_replication_id": "run_44a3e369da124710b215_rep_0001",
+  "first_shortage_at": "2026-10-16T17:21:19.718833Z",
+  "trace_before": {
+    "status": "NOT_REQUESTED",
+    "replication_id": "run_44a3e369da124710b215_rep_0001",
+    "ready": false
+  },
+  "trace_after": {
+    "replication_id": "run_44a3e369da124710b215_rep_0001",
+    "status": "SUCCEEDED",
+    "ready": true
+  },
+  "actual_state_context": {
+    "replication_id": "run_44a3e369da124710b215_rep_0001",
+    "run_group_id": "run_44a3e369da124710b215",
+    "schema_version": "1.0",
+    "scope": "hospital",
+    "state_origin": "simulation",
+    "statistic": "p50",
+    "timezone": "America/Chicago"
+  },
+  "page_errors": []
+}

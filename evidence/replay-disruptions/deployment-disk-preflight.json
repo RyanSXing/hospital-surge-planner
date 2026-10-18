@@ -1,0 +1,14 @@
+{
+  "removed_only_obsolete_release_tags": [
+    "hospital-surge-planner-api:84d225e2776630cf84e17bf7d0913b01553e0cd4",
+    "hospital-surge-planner-web:84d225e2776630cf84e17bf7d0913b01553e0cd4",
+    "hospital-surge-planner-api:2fafb69c498aa38b08745fc8939e6a9a92a0e0a3",
+    "hospital-surge-planner-web:2fafb69c498aa38b08745fc8939e6a9a92a0e0a3"
+  ],
+  "running_images_excluded": true,
+  "named_volumes_untouched": true,
+  "rollback_release_retained": "e409cf10f3e27731ed562415df37b2ef37bbcb79",
+  "prior_release_retained": "fcae90f8caad30494e795474096cf5b970deea09",
+  "free_bytes_before": 4631638016,
+  "free_bytes_after": 7274352640
+}

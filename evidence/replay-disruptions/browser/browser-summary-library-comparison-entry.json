@@ -1,0 +1,11 @@
+{
+  "scenario_id": "scenario_d9b0151c8eee400a87b5",
+  "run_id": "run_b5dada4e0d634ec59c4b",
+  "compared_scenario_id": "scenario_0dc2aa508b794f62a3dc",
+  "compared_run_id": "run_f5049b231c4246048984",
+  "historical_comparison_id": "comparison_2bdbd97b2a5f4617bbdf",
+  "historical_comparison_unchanged": true,
+  "no_legacy_recommendations_or_fetches": true,
+  "cached_reentry_selects_current_scenario": true,
+  "stale_result_protection": true
+}

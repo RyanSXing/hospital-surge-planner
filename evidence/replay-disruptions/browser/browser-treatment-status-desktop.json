@@ -1,0 +1,280 @@
+{
+  "scenario_id": "scenario_06562465f45b462cb55f",
+  "run_id": "run_90c62b02bdfe499183e3",
+  "source_dataset_id": "demo-v1-1-0-hospital_baseline-41021-365",
+  "isolated_dataset_id": "dataset_bb5b1b2dcc014c47b5ec",
+  "boundaries": [
+    {
+      "minutes": 119,
+      "status": {
+        "care_paused": false,
+        "last_resumed_at": null,
+        "reasons": [],
+        "since_at": "2026-10-16T05:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "available",
+        "reasons": [],
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "text": "Treatment available"
+      }
+    },
+    {
+      "minutes": 120,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "treatment_disruption"
+        ],
+        "since_at": "2026-10-16T07:00:00Z",
+        "treatment_disrupted": true
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "treatment_disruption"
+        ],
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · disruption"
+      }
+    },
+    {
+      "minutes": 150,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "treatment_disruption"
+        ],
+        "since_at": "2026-10-16T07:00:00Z",
+        "treatment_disrupted": true
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "treatment_disruption"
+        ],
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · disruption"
+      }
+    },
+    {
+      "minutes": 180,
+      "status": {
+        "care_paused": false,
+        "last_resumed_at": "2026-10-16T08:00:00Z",
+        "reasons": [],
+        "since_at": "2026-10-16T08:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "resumed",
+        "reasons": [],
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": "2026-10-16T08:00:00Z",
+        "text": "Treatment resumed Oct 16, 3:00 AM"
+      }
+    },
+    {
+      "minutes": 181,
+      "status": {
+        "care_paused": false,
+        "last_resumed_at": "2026-10-16T08:00:00Z",
+        "reasons": [],
+        "since_at": "2026-10-16T08:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "resumed",
+        "reasons": [],
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": "2026-10-16T08:00:00Z",
+        "text": "Treatment resumed Oct 16, 3:00 AM"
+      }
+    },
+    {
+      "minutes": 150,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "treatment_disruption"
+        ],
+        "since_at": "2026-10-16T07:00:00Z",
+        "treatment_disrupted": true
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "treatment_disruption"
+        ],
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · disruption"
+      }
+    },
+    {
+      "minutes": 119,
+      "status": {
+        "care_paused": false,
+        "last_resumed_at": null,
+        "reasons": [],
+        "since_at": "2026-10-16T05:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "available",
+        "reasons": [],
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "text": "Treatment available"
+      }
+    },
+    {
+      "minutes": 180,
+      "status": {
+        "care_paused": false,
+        "last_resumed_at": "2026-10-16T08:00:00Z",
+        "reasons": [],
+        "since_at": "2026-10-16T08:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "resumed",
+        "reasons": [],
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": "2026-10-16T08:00:00Z",
+        "text": "Treatment resumed Oct 16, 3:00 AM"
+      }
+    }
+  ],
+  "audit": {
+    "phase": "playback",
+    "nodeReplaced": false,
+    "bedsReplaced": false,
+    "queueStyleChanged": false,
+    "maxLayoutShift": 0,
+    "outside": [],
+    "banners": 0,
+    "observations": [
+      {
+        "phase": "scrubbing",
+        "state": "available",
+        "reasons": "",
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "playhead": 1792126800000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "paused",
+        "reasons": "treatment_disruption",
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "playhead": 1792134000000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "resumed",
+        "reasons": "",
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": "2026-10-16T08:00:00Z",
+        "playhead": 1792137600000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "paused",
+        "reasons": "treatment_disruption",
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "playhead": 1792135800000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "available",
+        "reasons": "",
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "playhead": 1792133940000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "resumed",
+        "reasons": "",
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": "2026-10-16T08:00:00Z",
+        "playhead": 1792137600000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "available",
+        "reasons": "",
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "playhead": 1792132800000,
+        "playing": false
+      },
+      {
+        "phase": "playback",
+        "state": "available",
+        "reasons": "",
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "playhead": 1792132800000,
+        "playing": false
+      },
+      {
+        "phase": "playback",
+        "state": "available",
+        "reasons": "",
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "playhead": 1792132800000,
+        "playing": true
+      },
+      {
+        "phase": "playback",
+        "state": "paused",
+        "reasons": "treatment_disruption",
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "playhead": 1792134060000,
+        "playing": true
+      },
+      {
+        "phase": "playback",
+        "state": "resumed",
+        "reasons": "",
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": "2026-10-16T08:00:00Z",
+        "playhead": 1792137659640,
+        "playing": true
+      },
+      {
+        "phase": "playback",
+        "state": "resumed",
+        "reasons": "",
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": "2026-10-16T08:00:00Z",
+        "playhead": 1792138739640,
+        "playing": false
+      }
+    ]
+  },
+  "analytics": {
+    "resource_days": [],
+    "recorded_interruption_days": 1
+  },
+  "page_errors": []
+}

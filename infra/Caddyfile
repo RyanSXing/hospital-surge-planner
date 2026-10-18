@@ -2,7 +2,7 @@
     auto_https disable_redirects
 }
 
-{$DOMAIN:localhost} {
+{$DOMAIN:localhost} {$DOMAIN_ALIASES:} {
     tls {
         issuer acme {
             disable_http_challenge

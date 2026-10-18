@@ -1,0 +1,1038 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/rsxing/Downloads/Agies/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/replay-treatment-status.spec.ts",
+      "e2e/hospital-operations.spec.ts",
+      "e2e/replay-continuous-playback.spec.ts",
+      "e2e/replay-floorplan.spec.ts",
+      "e2e/replay-route-fit.spec.ts",
+      "--project=desktop",
+      "--workers=1",
+      "--output=../../output/playwright/replay-disruptions/fixed-fit-test-results"
+    ],
+    "configFile": "/Users/rsxing/Downloads/Agies/apps/web/playwright.config.ts",
+    "rootDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "snapshotDir": "/Users/rsxing/Downloads/Agies/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://localhost:5173",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "actionTimeout": 20000,
+          "navigationTimeout": 30000,
+          "serviceWorkers": "block",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../output/playwright/replay-disruptions/browser-fixed-fit-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../../output/playwright/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "hospital-operations.spec.ts",
+      "file": "hospital-operations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12731,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:05:51.145Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "operations-configuration",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-86d6e4ba6319117ae2611f78de4ee4af07c02b0a.png"
+                    },
+                    {
+                      "name": "operations-configuration-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-middle-60b9a37c0cd98008f97351c2c3ed5200abc5aa91.png"
+                    },
+                    {
+                      "name": "operations-configuration-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-configuration-lower-bab4d156829e5ae4203dbf5cc40ac8b9f3f446fd.png"
+                    },
+                    {
+                      "name": "decision-summary-operations",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-e993a734af15e3e731e8b61c910e593963e7d77f.png"
+                    },
+                    {
+                      "name": "decision-summary-operations-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-middle-86e744fed4ab30a24ae6187bc6a7d2392e077c79.png"
+                    },
+                    {
+                      "name": "decision-summary-operations-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/decision-summary-operations-lower-027bafc3a03a32826385da3a9adc2d9095ca9696.png"
+                    },
+                    {
+                      "name": "operations-exact-bottleneck-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-exact-bottleneck-replay-8e18bc9e2effeeb10d71b51f11776e2a56842119.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-cee04087d5e5af12529a51804277ebc269e35746.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-middle-552f77dc2af8dec73e3d96d64de4747dd0c85088.png"
+                    },
+                    {
+                      "name": "operations-supplies-analytics-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-severi-06229-load-and-change-actual-care-desktop/attachments/operations-supplies-analytics-lower-9359558b7bea10344a6c9ffa8dcd691703c9c193.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-64171581d0a3e4ec580d",
+          "file": "hospital-operations.spec.ts",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "Summary opens saved-scenario comparison and keeps historical comparisons intact",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17292,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:06:05.045Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "summary-library-comparison-entry",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-Summar-2f2dc-storical-comparisons-intact-desktop/attachments/summary-library-comparison-entry-50234eb413b2c3a84e042a1aae9068c2291373ce.png"
+                    },
+                    {
+                      "name": "summary-library-comparison-entry-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-Summar-2f2dc-storical-comparisons-intact-desktop/attachments/summary-library-comparison-entry-middle-de7cf12fa83f32710f9811be3b11f0c1d72fe8f6.png"
+                    },
+                    {
+                      "name": "summary-library-comparison-entry-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-Summar-2f2dc-storical-comparisons-intact-desktop/attachments/summary-library-comparison-entry-lower-dfeaad90e37d7f9b4c34e6dfc72b3eec1b65973c.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-d6aa9da1f4a8ab78d65b",
+          "file": "hospital-operations.spec.ts",
+          "line": 553,
+          "column": 1
+        },
+        {
+          "title": "View bottleneck reconstructs a real unretained source and opens its exact recorded state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11829,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:06:22.346Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "decision-summary-unretained-source-replay",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/hospital-operations-View-b-c8f5f-ns-its-exact-recorded-state-desktop/attachments/decision-summary-unretained-source-replay-702b475328d647ec207f5b183d90871dff3f7c39.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eeffe6b2dffa80391666-2dc1c868cebcc6163c74",
+          "file": "hospital-operations.spec.ts",
+          "line": 736,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "replay-continuous-playback.spec.ts",
+      "file": "replay-continuous-playback.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "the visible clock, real beds and patient movement advance continuously through buffered window boundaries",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10843,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:06:34.221Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "continuous-event-playback",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-continuous-playback-59b5e--buffered-window-boundaries-desktop/attachments/continuous-event-playback-27895ff9c07ffc1195a6da11c2c38ffcff1dd783.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "61e2cf8401701e8addae-2277722396cc36c5cd5d",
+          "file": "replay-continuous-playback.spec.ts",
+          "line": 256,
+          "column": 1
+        },
+        {
+          "title": "pausing inside a playback window hydrates the visible exact moment and resume finishes at the unchanged saved horizon",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8945,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:06:45.075Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "continuous-pause-exact-end",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-continuous-playback-8899e-the-unchanged-saved-horizon-desktop/attachments/continuous-pause-exact-end-7b853f3df8f53fcbd0cae16c40809ef4f6fc6716.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "61e2cf8401701e8addae-5211b9756e4eb85611f7",
+          "file": "replay-continuous-playback.spec.ts",
+          "line": 436,
+          "column": 1
+        },
+        {
+          "title": "a delayed future playback window cannot repaint a newer exact seek or resume an old playback session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5844,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:06:54.033Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "continuous-stale-future-buffer",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-continuous-playback-ffa35-ume-an-old-playback-session-desktop/attachments/continuous-stale-future-buffer-b7bf73013e0f76708b403edd7b71b22be63af8f9.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "61e2cf8401701e8addae-70d3e030c0a29890d3d8",
+          "file": "replay-continuous-playback.spec.ts",
+          "line": 617,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "replay-floorplan.spec.ts",
+      "file": "replay-floorplan.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "floor plan separates actual wards and every bed, with meaningful bed, area and patient inspection",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6805,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:06:59.905Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-hospital-footprint",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-floorplan-floor-pla-39fd3-area-and-patient-inspection-desktop/attachments/replay-hospital-footprint-2568e00145e499640167f0831336b890617a99a5.png"
+                    },
+                    {
+                      "name": "replay-floor-plan",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-floorplan-floor-pla-39fd3-area-and-patient-inspection-desktop/attachments/replay-floor-plan-73528c80d6fb117febbc4a65f5a84cc0b9f75727.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "32fc4e5200f763518253-6e7bcc15a7f3983521e8",
+          "file": "replay-floorplan.spec.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "title": "current shortage pressure follows actual paused care and clears after recovery and backward seeks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7324,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:07:06.717Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-floor-plan-recovery",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-floorplan-current-s-95919-recovery-and-backward-seeks-desktop/attachments/replay-floor-plan-recovery-490425342d20d6ed765a059aa8090d76aeed6cc9.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "32fc4e5200f763518253-5a026b755e81761a7738",
+          "file": "replay-floorplan.spec.ts",
+          "line": 121,
+          "column": 1
+        },
+        {
+          "title": "editable bed and staffed-bed parameters rebuild replay inventory per frozen run",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16078,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:07:14.050Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-frozen-editable-beds",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-floorplan-editable--029ec-ay-inventory-per-frozen-run-desktop/attachments/replay-frozen-editable-beds-ef4647d8a5d566f5b67325d94572fe56bf5ca825.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "32fc4e5200f763518253-7020db90b6f9ffbdc6ca",
+          "file": "replay-floorplan.spec.ts",
+          "line": 186,
+          "column": 1
+        },
+        {
+          "title": "a 100-bed ward reflows inside a compact architectural map without overflowing its walls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4971,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:07:30.136Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-100-bed-map",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-floorplan-a-100-bed-365c4-thout-overflowing-its-walls-desktop/attachments/replay-100-bed-map-f2de4cc4900cfb26e0a71f79a12894924f5d1dad.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "32fc4e5200f763518253-24d5507db9460fdbf002",
+          "file": "replay-floorplan.spec.ts",
+          "line": 296,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "replay-route-fit.spec.ts",
+      "file": "replay-route-fit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "the complete hospital and timeline fit 1280×720 in the page and fullscreen without scrolling",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5479,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:07:35.140Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-fit-1280-page",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-the-compl-8b1cc-ullscreen-without-scrolling-desktop/attachments/replay-fit-1280-page-42ef1dcdd4eb612b7468211045b072600850fb3b.png"
+                    },
+                    {
+                      "name": "replay-fit-1280-fullscreen",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-the-compl-8b1cc-ullscreen-without-scrolling-desktop/attachments/replay-fit-1280-fullscreen-ccf4fd4ede05e00276b20071eb5ff1ee7f0eaf58.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aabdf8a7855c9fa7b5aa-20689e39729cfe0f2def",
+          "file": "replay-route-fit.spec.ts",
+          "line": 214,
+          "column": 3
+        },
+        {
+          "title": "the complete hospital and timeline fit 1440×900 in the page and fullscreen without scrolling",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6897,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:07:40.626Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-fit-1440-page",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-the-compl-412a2-ullscreen-without-scrolling-desktop/attachments/replay-fit-1440-page-1963bafde7880dd9a2f02eb4c0fcdf613aa25fe1.png"
+                    },
+                    {
+                      "name": "replay-fit-1440-fullscreen",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-the-compl-412a2-ullscreen-without-scrolling-desktop/attachments/replay-fit-1440-fullscreen-dda41ad2cc646f88ebdb66b1a1bf517114836d10.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aabdf8a7855c9fa7b5aa-56df0e83d8dc421002df",
+          "file": "replay-route-fit.spec.ts",
+          "line": 214,
+          "column": 3
+        },
+        {
+          "title": "the complete hospital and timeline fit 1600×1000 in the page and fullscreen without scrolling",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4992,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:07:47.534Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-fit-1600-page",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-the-compl-3094f-ullscreen-without-scrolling-desktop/attachments/replay-fit-1600-page-256ad71d847a57089f89d5df8612545baa1a9a3d.png"
+                    },
+                    {
+                      "name": "replay-fit-1600-fullscreen",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-the-compl-3094f-ullscreen-without-scrolling-desktop/attachments/replay-fit-1600-fullscreen-9368ac0715f5dd41c0a253f8ad9e2414d93fa942.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aabdf8a7855c9fa7b5aa-639db81ef3a62dcd27c0",
+          "file": "replay-route-fit.spec.ts",
+          "line": 214,
+          "column": 3
+        },
+        {
+          "title": "Fit preserves all 100 frozen ward beds and real corridor alignment after zoom and sidebar changes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7240,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:07:52.536Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-fitted100-beds",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-Fit-prese-90d09-er-zoom-and-sidebar-changes-desktop/attachments/replay-fitted100-beds-ef0cc7826f4813a9f3a91590b7738070bd59f54c.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aabdf8a7855c9fa7b5aa-bfea28b2f6c00c8d9e92",
+          "file": "replay-route-fit.spec.ts",
+          "line": 254,
+          "column": 1
+        },
+        {
+          "title": "the movement sample represents recorded activity across every ward, ICU, emergency care and discharge without inventing equal admissions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23351,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:07:59.782Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-recorded-route-coverage",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-the-movem-19a3f--inventing-equal-admissions-desktop/attachments/replay-recorded-route-coverage-fcfaf66485d3ddf445acfe5287bcfce7b08de2d2.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aabdf8a7855c9fa7b5aa-57feff3ce5203210164c",
+          "file": "replay-route-fit.spec.ts",
+          "line": 467,
+          "column": 1
+        },
+        {
+          "title": "bed indicators switch quickly and glow once only for actual occupancy changes, with reduced motion suppressed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8287,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:08:23.141Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "replay-fast-bed-lights",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-route-fit-bed-indic-ab8db-h-reduced-motion-suppressed-desktop/attachments/replay-fast-bed-lights-26befec825253589de1cf4b8b1c0eb2940aa7716.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aabdf8a7855c9fa7b5aa-bb5ee454f13022655428",
+          "file": "replay-route-fit.spec.ts",
+          "line": 614,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "replay-treatment-status.spec.ts",
+      "file": "replay-treatment-status.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "recorded treatment status survives backward scrubbing and plays through resumption without shifting the hospital",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24233,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:08:31.458Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "treatment-resumed-inline",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-treatment-status-re-90343-thout-shifting-the-hospital-desktop/attachments/treatment-resumed-inline-a43538ef0c4019853f729a204fe858c591fef037.png"
+                    },
+                    {
+                      "name": "treatment-resources-background",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-treatment-status-re-90343-thout-shifting-the-hospital-desktop/attachments/treatment-resources-background-0b659ed7b852ab75a1638b159dbc740df3b3b134.png"
+                    },
+                    {
+                      "name": "treatment-resources-background-middle",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-treatment-status-re-90343-thout-shifting-the-hospital-desktop/attachments/treatment-resources-background-middle-6df5b8d9e28d83ba7a03a9c06ebe37e8c853bb69.png"
+                    },
+                    {
+                      "name": "treatment-resources-background-lower",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-treatment-status-re-90343-thout-shifting-the-hospital-desktop/attachments/treatment-resources-background-lower-bd368249db5fefc6d20c61037b4a8d2d7f1c938a.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "86e272454e5c7af2712b-936ecfd931318875b104",
+          "file": "replay-treatment-status.spec.ts",
+          "line": 500,
+          "column": 1
+        },
+        {
+          "title": "ending a disruption does not falsely resume care while medical supplies remain exhausted",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11608,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:08:55.700Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "treatment-disruption-supply-overlap",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-treatment-status-en-0d708-l-supplies-remain-exhausted-desktop/attachments/treatment-disruption-supply-overlap-2022d633c80e838126e5669bebcf0639c59b8a5b.png"
+                    },
+                    {
+                      "name": "treatment-supply-refill-resumed",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-treatment-status-en-0d708-l-supplies-remain-exhausted-desktop/attachments/treatment-supply-refill-resumed-c7edb36e17e8618fb3fe838857de8d19296f9b1c.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "86e272454e5c7af2712b-c6e99cad6876d1e1f2ba",
+          "file": "replay-treatment-status.spec.ts",
+          "line": 613,
+          "column": 1
+        },
+        {
+          "title": "a saved run without operations history keeps treatment status unavailable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7837,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-18T10:09:07.319Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "treatment-status-unavailable",
+                      "contentType": "image/png",
+                      "path": "/Users/rsxing/Downloads/Agies/output/playwright/replay-disruptions/fixed-fit-test-results/replay-treatment-status-a--c24e4-reatment-status-unavailable-desktop/attachments/treatment-status-unavailable-2e41271331caf2fff0d85b8f3d55720e57998de8.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "86e272454e5c7af2712b-3984df08891f4978c293",
+          "file": "replay-treatment-status.spec.ts",
+          "line": 657,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-18T10:05:50.638Z",
+    "duration": 204998.346,
+    "expected": 19,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -309,29 +309,39 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
       : originalRows;
   const selectedIndex = outcomeRowIndex(rows, selectedTime);
   const scalar = metrics?.scalar_metrics || {};
-  const constraintMarkers = recordedConstraintMarkers(rows, dailyRows).map(
-    (marker) => {
-      const kind = marker.reasons.includes("treatment_disruption")
-        ? ("disruption" as const)
-        : ("constraint" as const);
-      // Hourly samples inherit recorded daily evidence, not an hourly onset.
-      // Keep that source period in the ribbon title instead of implying precision.
-      if (rows[marker.index].blocker_patient_hours) return { ...marker, kind };
-      const recordedDay = dailyRows.find(
-        (day) =>
-          Date.parse(day.start_at) <= Date.parse(marker.at || "") &&
-          Date.parse(marker.at || "") < Date.parse(day.end_at),
-      );
-      return recordedDay
+  const recordedMarkers = recordedConstraintMarkers(rows, dailyRows);
+  const hasRecordedInterruptions = recordedMarkers.some((marker) =>
+    marker.reasons.includes("treatment_disruption"),
+  );
+  const constraintMarkers = recordedMarkers.flatMap((marker) => {
+    const reasons = marker.reasons.filter(
+      (reason) => reason !== "treatment_disruption",
+    );
+    if (!reasons.length) return [];
+    const resourceMarker = {
+      ...marker,
+      reasons,
+      label: reasons.map(bottleneckLabel).join(" · "),
+      kind: "constraint" as const,
+    };
+    // Hourly samples inherit recorded daily evidence, not an hourly onset.
+    // Keep that source period in the ribbon title instead of implying precision.
+    if (rows[marker.index].blocker_patient_hours) return [resourceMarker];
+    const recordedDay = dailyRows.find(
+      (day) =>
+        Date.parse(day.start_at) <= Date.parse(marker.at || "") &&
+        Date.parse(marker.at || "") < Date.parse(day.end_at),
+    );
+    return [
+      recordedDay
         ? {
-            ...marker,
-            kind,
+            ...resourceMarker,
             at: recordedDay.start_at,
             endAt: recordedDay.end_at,
           }
-        : { ...marker, kind };
-    },
-  );
+        : resourceMarker,
+    ];
+  });
   const recordedReasons = [
     ...new Set(constraintMarkers.flatMap((marker) => marker.reasons)),
   ];
@@ -523,6 +533,7 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                       bandKey={definition.keys[0]}
                       yLabel={definition.unit}
                       markers={constraintMarkers}
+                      markerPresentation="background"
                       yMax={plot === "supplies" ? 100 : undefined}
                     />
                   ) : (
@@ -547,23 +558,32 @@ export default function OutcomeAnalytics({ ctx }: { ctx: PlanningContext }) {
                         <details>
                           <summary>About these periods</summary>
                           <small>
-                            Amber shows recorded constraints; red shows recorded
-                            treatment interruptions. Each marked period has
-                            evidence in one or more simulations. Adjacent
-                            periods of the same type join together, and reasons
-                            can overlap. Hover for the recorded dates and
-                            reasons; the ribbon does not show exact onset or
-                            duration. Open Summary to replay the first recorded
-                            bottleneck.
+                            Faint amber shading marks recorded resource
+                            constraints in one or more simulations. Adjacent
+                            periods join together, and reasons can overlap.
+                            Hover for the recorded dates and reasons; shading
+                            does not show exact onset or duration. Open Summary
+                            to replay the first recorded bottleneck.
                           </small>
                         </details>
                       </>
                     ) : (
                       <small>
-                        No positive recorded constraint evidence is available
-                        for the periods shown.
+                        No positive recorded resource constraint evidence is
+                        available for the periods shown.
                       </small>
                     )}
+                    {hasRecordedInterruptions ? (
+                      <details className="outcome-interruption-details">
+                        <summary>Care interruption details</summary>
+                        <small>
+                          Treatment interruptions were recorded in one or more
+                          simulations during the periods shown. Summary and
+                          Replay retain the recorded bottleneck timing and
+                          patient care details.
+                        </small>
+                      </details>
+                    ) : null}
                   </div>
                   <label className="outcome-band">
                     <input

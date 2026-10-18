@@ -4,6 +4,7 @@ import type { FloorJourney, FloorMotionWindow } from "./floorPlanTransitModel";
 import FloorPlanTransit from "./FloorPlanTransit";
 import FloorPlanArchitecture from "./FloorPlanArchitecture";
 import ReplayBedLight from "./ReplayBedLight";
+import ReplayTreatmentStatus from "./ReplayTreatmentStatus";
 import { floorPlanFitScale, floorPlanNaturalWidth } from "./floorPlanFitModel";
 import "./replayFloorPlan.css";
 
@@ -38,13 +39,15 @@ function HospitalRoom({
       data-staffed={unit.staffed ?? "unknown"}
       data-physical={unit.physical ?? "unknown"}
       data-available={unit.available ?? "unknown"}
+      data-treatment-paused={unit.treatmentPaused ? "true" : "false"}
+      data-treatment-reasons={unit.treatmentReasons.join(" ")}
       style={
         {
           "--unit-tint": `rgba(214, 60, 65, ${0.01 + (unit.pressure ?? 0) * 0.19})`,
           "--bed-columns": unit.beds.length > 60 ? 15 : 10,
         } as CSSProperties
       }
-      aria-label={`${unit.name}. ${value(unit.occupied)} occupied, ${value(unit.staffed)} supported. ${unit.pressureText}`}
+      aria-label={`${unit.name}. ${value(unit.occupied)} occupied, ${value(unit.staffed)} supported. ${unit.treatmentPaused ? "Treatment paused. " : ""}${unit.pressureText}`}
     >
       <button
         className="floor-plan-unit-heading"
@@ -99,16 +102,20 @@ function HospitalRoom({
         >
           <span className="floor-unit-pressure-bar">
             <i
-              style={{ width: `${Math.round((unit.pressure ?? 0) * 100)}%` }}
+              style={{
+                width: `${Math.round((unit.treatmentPaused ? 1 : (unit.pressure ?? 0)) * 100)}%`,
+              }}
             />
           </span>
-          {unit.reasons.length
-            ? "Constraint"
-            : unit.pressure === null
-              ? "Unavailable"
-              : unit.utilization !== null && unit.utilization >= 0.85
-                ? "High occupancy"
-                : "Capacity"}
+          {unit.treatmentPaused
+            ? "Treatment paused"
+            : unit.reasons.length
+              ? "Constraint"
+              : unit.pressure === null
+                ? "Unavailable"
+                : unit.utilization !== null && unit.utilization >= 0.85
+                  ? "High occupancy"
+                  : "Capacity"}
         </button>
       </div>
       <span className="floor-plan-door" aria-hidden="true">
@@ -261,6 +268,7 @@ export default function ReplayFloorPlan({
           <i className="floor-key-move" />
           Recorded moves
         </span>
+        <ReplayTreatmentStatus status={plan.treatmentStatus} />
         <span className="floor-pressure-key">
           Lower pressure <i className="floor-pressure-gradient" /> Higher
           pressure
@@ -278,11 +286,16 @@ export default function ReplayFloorPlan({
             height: fitSize.contentHeight * mapScale,
           }}
         >
+          {/* Scale paint, not intrinsic layout: measuring CSS zoom feeds the fit
+              result back into ResizeObserver and can make the map oscillate. */}
           <div
             ref={building}
             className="floor-plan-building"
             style={
-              { width: fitSize.contentWidth, zoom: mapScale } as CSSProperties
+              {
+                width: fitSize.contentWidth,
+                transform: `scale(${mapScale})`,
+              } as CSSProperties
             }
           >
             <FloorPlanArchitecture

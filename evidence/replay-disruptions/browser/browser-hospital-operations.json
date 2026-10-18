@@ -1,0 +1,119 @@
+{
+  "scenario_id": "scenario_2de50c3763094e70a4ee",
+  "run_id": "run_bb09b93685c146b49a36",
+  "hospital_operations": {
+    "severity_mix": {
+      "low": {
+        "percentage": 45,
+        "average_stay_hours": 12
+      },
+      "medium": {
+        "percentage": 35,
+        "average_stay_hours": 36
+      },
+      "high": {
+        "percentage": 20,
+        "average_stay_hours": 72
+      }
+    },
+    "supplies": {
+      "initial_percent": 100,
+      "capacity": 30,
+      "usage_per_patient_day": 1,
+      "refill_every_days": 1,
+      "refill_percent": 100
+    },
+    "disruption_chance_percent": 100
+  },
+  "graph_disruption_chance": {
+    "chance_percent": 100,
+    "planned_arrivals_unchanged": "108.00,92.00,86.00",
+    "normal_arrival_values": [
+      {
+        "at": "2026-10-16T05:00:00.000Z",
+        "value": "108"
+      },
+      {
+        "at": "2026-10-17T05:00:00.000Z",
+        "value": "92"
+      },
+      {
+        "at": "2026-10-18T05:00:00.000Z",
+        "value": "86"
+      }
+    ],
+    "numeric_and_slider_undo_redo_verified": true,
+    "saved_chance_restored": true
+  },
+  "actual_disruption_events": {
+    "treatment_disruption_started": 1,
+    "treatment_disruption_ended": 1,
+    "medical_supplies_refilled": 1,
+    "arrival": 92,
+    "queue_entry": 92,
+    "staffing_change": 2
+  },
+  "analytics_graphs_without_interruption_overlay": [
+    "Medical supplies",
+    "Arrivals and discharges",
+    "Ward beds",
+    "Intensive care beds",
+    "Emergency department",
+    "Patients waiting",
+    "Time spent waiting",
+    "Busiest hospital unit",
+    "Staffing coverage deficit",
+    "Equipment coverage deficit",
+    "Daily peak bed queue",
+    "Daily ward capacity"
+  ],
+  "analytics_recorded_resource_periods": [],
+  "supplies_daily": [
+    {
+      "at": "2026-10-16T05:00:00Z",
+      "percent": {
+        "max": 100,
+        "mean": 100,
+        "min": 99.99999999999999,
+        "p10": 99.99999999999999,
+        "p50": 100,
+        "p90": 100
+      }
+    },
+    {
+      "at": "2026-10-17T05:00:00Z",
+      "percent": {
+        "max": 100,
+        "mean": 99.99999999999997,
+        "min": 99.99999999999994,
+        "p10": 99.99999999999994,
+        "p50": 99.99999999999997,
+        "p90": 100
+      }
+    },
+    {
+      "at": "2026-10-18T05:00:00Z",
+      "percent": {
+        "max": 100.00000000000001,
+        "mean": 100,
+        "min": 99.99999999999999,
+        "p10": 99.99999999999999,
+        "p50": 100,
+        "p90": 100.00000000000001
+      }
+    }
+  ],
+  "replay_shortage_time": "2026-10-16T05:34:29.972019Z",
+  "replay_shortage_replication": "run_bb09b93685c146b49a36_rep_0001",
+  "trace_initially_retained": true,
+  "replay_state_context": {
+    "replication_id": "run_bb09b93685c146b49a36_rep_0001",
+    "run_group_id": "run_bb09b93685c146b49a36",
+    "schema_version": "1.0",
+    "scope": "hospital",
+    "state_origin": "simulation",
+    "statistic": "p50",
+    "timezone": "America/Chicago"
+  },
+  "page_errors": []
+}

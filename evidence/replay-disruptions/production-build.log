@@ -1,0 +1,43 @@
+
+> hospital-surge-planner-web@1.0.0 build
+> tsc -b && vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 3017 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                    0.77 kB │ gzip:   0.42 kB
+dist/assets/Charts-Do5oxVCB.css                    0.86 kB │ gzip:   0.33 kB
+dist/assets/Analytics-DKFYiEmH.css                 1.17 kB │ gzip:   0.49 kB
+dist/assets/OutcomeSummaryCards-C6tQ9VU-.css       1.58 kB │ gzip:   0.61 kB
+dist/assets/Compare-DkdDg5AD.css                   5.04 kB │ gzip:   1.32 kB
+dist/assets/PlanningOverview-BLa2BHWm.css          5.31 kB │ gzip:   1.28 kB
+dist/assets/OutcomeAnalytics-BAZMhTMe.css          6.12 kB │ gzip:   1.55 kB
+dist/assets/Overview-BjPG06IU.css                  9.03 kB │ gzip:   2.01 kB
+dist/assets/Patients-tZHzOCqc.css                 12.29 kB │ gzip:   2.57 kB
+dist/assets/Replay-C4ynoH2H.css                   31.52 kB │ gzip:   6.40 kB
+dist/assets/Scenarios-QsWBTq5X.css                31.90 kB │ gzip:   6.56 kB
+dist/assets/index-CNsvxFYI.css                   332.40 kB │ gzip:  52.83 kB
+dist/assets/minus-2uxSRJpk.js                      0.11 kB │ gzip:   0.13 kB
+dist/assets/chevron-left-0aRVwFM8.js               0.13 kB │ gzip:   0.14 kB
+dist/assets/clock-3-NiGy5F3M.js                    0.18 kB │ gzip:   0.17 kB
+dist/assets/get-auto-contrast-value-dGvo_HRL.js    0.19 kB │ gzip:   0.16 kB
+dist/assets/resultsMetrics-C0HUAvpW.js             0.23 kB │ gzip:   0.18 kB
+dist/assets/PlanningOverview-NoHOwRbd.js           0.74 kB │ gzip:   0.40 kB
+dist/assets/usePatientPage-CMoldWRe.js             1.16 kB │ gzip:   0.69 kB
+dist/assets/Analytics-D9SN8bQA.js                  2.15 kB │ gzip:   1.00 kB
+dist/assets/model-BkXTBOuU.js                      3.20 kB │ gzip:   1.40 kB
+dist/assets/Tabs-CBu0YhxX.js                       4.24 kB │ gzip:   1.73 kB
+dist/assets/Accordion-DDuPJUfK.js                  6.49 kB │ gzip:   2.62 kB
+dist/assets/Overview-D75IZgxg.js                   7.95 kB │ gzip:   2.92 kB
+dist/assets/OutcomeAnalytics-OHy8-68k.js          19.36 kB │ gzip:   6.66 kB
+dist/assets/Compare-DKrsh93d.js                   19.59 kB │ gzip:   6.85 kB
+dist/assets/OutcomeSummaryCards-DAAgByxb.js       24.56 kB │ gzip:   8.10 kB
+dist/assets/DataSetup-Cd-hSv8r.js                 29.38 kB │ gzip:  10.21 kB
+dist/assets/Patients-DnNEo4HQ.js                  34.05 kB │ gzip:   9.78 kB
+dist/assets/Charts-rb7iikJE.js                    74.95 kB │ gzip:  25.57 kB
+dist/assets/Replay-BxRv40Zv.js                    83.43 kB │ gzip:  27.00 kB
+dist/assets/Scenarios-Dc7V0XzX.js                127.54 kB │ gzip:  40.05 kB
+dist/assets/index-DbDpOFRa.js                    562.39 kB │ gzip: 175.14 kB
+✓ built in 2.67s

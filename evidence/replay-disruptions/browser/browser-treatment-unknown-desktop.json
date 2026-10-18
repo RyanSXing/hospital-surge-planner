@@ -1,0 +1,19 @@
+{
+  "scenario_id": "scenario_fe037f4b2e0946638eea",
+  "run_id": "run_452202e8b8f0414aa35b",
+  "initial": {
+    "state": "unknown",
+    "reasons": [],
+    "since": null,
+    "resumed": null,
+    "text": "Care status unavailable"
+  },
+  "later": {
+    "state": "unknown",
+    "reasons": [],
+    "since": null,
+    "resumed": null,
+    "text": "Care status unavailable"
+  },
+  "recorded_treatment_status": null
+}

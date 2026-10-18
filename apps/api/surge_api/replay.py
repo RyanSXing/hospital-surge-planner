@@ -10,6 +10,8 @@ from urllib.parse import urlencode
 from surge_engine import state_at
 from surge_engine.common import dt
 
+from .treatment_status import treatment_index_for
+
 _cache = OrderedDict()
 _flow_indexes = OrderedDict()
 _lock = threading.RLock()
@@ -26,8 +28,10 @@ def _flow_index(trace, main, units):
     if not isinstance(events, list):
         return None
     key = (
-        trace["replication_id"], trace.get("model_version"),
-        trace.get("hospital_operations_model_version"), trace["start_at"],
+        trace["replication_id"],
+        trace.get("model_version"),
+        trace.get("hospital_operations_model_version"),
+        trace["start_at"],
     )
     index = _flow_indexes.get(key)
     if index is None:
@@ -52,8 +56,7 @@ def _flow_index(trace, main, units):
             if not isinstance(at, (int, float)):
                 continue
             facility = (
-                units.get(event.get("from_unit_id"), {}).get("facility_id")
-                if kind == "discharges" else None
+                units.get(event.get("from_unit_id"), {}).get("facility_id") if kind == "discharges" else None
             ) or original_facilities.get(event.get("patient_id"), main)
             index[facility][kind].append(at)
         index = {
@@ -63,8 +66,14 @@ def _flow_index(trace, main, units):
         entries = sum(len(times) for groups in index.values() for times in groups.values())
         while _flow_indexes and (
             len(_flow_indexes) >= 4
-            or sum(len(times) for cached in _flow_indexes.values()
-                   for groups in cached.values() for times in groups.values()) + entries > _FLOW_INDEX_MAX_EVENTS
+            or sum(
+                len(times)
+                for cached in _flow_indexes.values()
+                for groups in cached.values()
+                for times in groups.values()
+            )
+            + entries
+            > _FLOW_INDEX_MAX_EVENTS
         ):
             _flow_indexes.popitem(last=False)
         if entries <= _FLOW_INDEX_MAX_EVENTS:
@@ -97,13 +106,20 @@ def flow_counter_for(trace, main, units):
     return lambda minute: _flow_counts(index, minute)
 
 
-def exact_state(trace, at, *, flow_counter=None):
+def exact_state(trace, at, *, flow_counter=None, treatment_counter=None):
     minute = (
         float(at or 0)
         if at is None or isinstance(at, (int, float))
         else (dt(at) - dt(trace["start_at"])).total_seconds() / 60
     )
-    key = (trace["replication_id"], trace.get("model_version"), trace["start_at"], minute)
+    key = (
+        trace["replication_id"],
+        trace.get("model_version"),
+        trace.get("hospital_operations_model_version"),
+        trace["start_at"],
+        id(trace.get("operations_history")),
+        minute,
+    )
     with _lock:
         if key in _cache:
             value = _cache.pop(key)
@@ -192,8 +208,17 @@ def exact_state(trace, at, *, flow_counter=None):
             queue_counts=dict(queues),
             blocker_summary=dict(blockers),
             blocker_counts_by_unit={unit_id: dict(reasons) for unit_id, reasons in unit_blockers.items()},
-            flow_counts=(flow_counter(minute) if flow_counter is not None else flow_counts_at(trace, minute, main, units)),
+            flow_counts=(
+                flow_counter(minute)
+                if flow_counter is not None
+                else flow_counts_at(trace, minute, main, units)
+            ),
             flow_counts_start_at=trace["start_at"],
+            treatment_status=(
+                treatment_counter(minute)
+                if treatment_counter is not None
+                else treatment_index_for(trace).at(minute)
+            ),
             patient_groups=[
                 dict(
                     zip(

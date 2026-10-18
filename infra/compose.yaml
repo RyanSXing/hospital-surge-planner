@@ -103,6 +103,7 @@ services:
     profiles: [tls]
     environment:
       DOMAIN: ${DOMAIN:-localhost}
+      DOMAIN_ALIASES: ${DOMAIN_ALIASES:-}
       TLS_EMAIL: ${TLS_EMAIL:-}
     ports:
       - 443:443

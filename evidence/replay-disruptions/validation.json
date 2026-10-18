@@ -1,0 +1,518 @@
+{
+  "checked_at": "2026-10-18T10:10:34.130885+00:00",
+  "frontend_tests": 447,
+  "backend_tests": 65,
+  "backend_frozen_model_repeat": {
+    "report": "backend-frozen-models.xml",
+    "tests": 4,
+    "passed": 4,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "already_in_unique_backend_total": true,
+    "additional_unique_tests": 0
+  },
+  "unique_desktop_browser_cases": 19,
+  "all_passed": true,
+  "all_final_checks_passed": true,
+  "frontend": {
+    "passed": 447,
+    "failed": 0,
+    "report": "frontend-results.json"
+  },
+  "backend": {
+    "report": "backend-tests.xml",
+    "tests": 65,
+    "passed": 65,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "browser": {
+    "report": "browser-results.json",
+    "stats": {
+      "startTime": "2026-10-18T10:05:50.638Z",
+      "duration": 204998.346,
+      "expected": 19,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "cases": [
+      {
+        "file": "hospital-operations.spec.ts",
+        "title": "severity pie, disruptions, and supplies survive save/reload and change actual care",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 12731,
+        "error": null
+      },
+      {
+        "file": "hospital-operations.spec.ts",
+        "title": "Summary opens saved-scenario comparison and keeps historical comparisons intact",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 17292,
+        "error": null
+      },
+      {
+        "file": "hospital-operations.spec.ts",
+        "title": "View bottleneck reconstructs a real unretained source and opens its exact recorded state",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 11829,
+        "error": null
+      },
+      {
+        "file": "replay-continuous-playback.spec.ts",
+        "title": "the visible clock, real beds and patient movement advance continuously through buffered window boundaries",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 10843,
+        "error": null
+      },
+      {
+        "file": "replay-continuous-playback.spec.ts",
+        "title": "pausing inside a playback window hydrates the visible exact moment and resume finishes at the unchanged saved horizon",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 8945,
+        "error": null
+      },
+      {
+        "file": "replay-continuous-playback.spec.ts",
+        "title": "a delayed future playback window cannot repaint a newer exact seek or resume an old playback session",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 5844,
+        "error": null
+      },
+      {
+        "file": "replay-floorplan.spec.ts",
+        "title": "floor plan separates actual wards and every bed, with meaningful bed, area and patient inspection",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 6805,
+        "error": null
+      },
+      {
+        "file": "replay-floorplan.spec.ts",
+        "title": "current shortage pressure follows actual paused care and clears after recovery and backward seeks",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 7324,
+        "error": null
+      },
+      {
+        "file": "replay-floorplan.spec.ts",
+        "title": "editable bed and staffed-bed parameters rebuild replay inventory per frozen run",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 16078,
+        "error": null
+      },
+      {
+        "file": "replay-floorplan.spec.ts",
+        "title": "a 100-bed ward reflows inside a compact architectural map without overflowing its walls",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 4971,
+        "error": null
+      },
+      {
+        "file": "replay-route-fit.spec.ts",
+        "title": "the complete hospital and timeline fit 1280×720 in the page and fullscreen without scrolling",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 5479,
+        "error": null
+      },
+      {
+        "file": "replay-route-fit.spec.ts",
+        "title": "the complete hospital and timeline fit 1440×900 in the page and fullscreen without scrolling",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 6897,
+        "error": null
+      },
+      {
+        "file": "replay-route-fit.spec.ts",
+        "title": "the complete hospital and timeline fit 1600×1000 in the page and fullscreen without scrolling",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 4992,
+        "error": null
+      },
+      {
+        "file": "replay-route-fit.spec.ts",
+        "title": "Fit preserves all 100 frozen ward beds and real corridor alignment after zoom and sidebar changes",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 7240,
+        "error": null
+      },
+      {
+        "file": "replay-route-fit.spec.ts",
+        "title": "the movement sample represents recorded activity across every ward, ICU, emergency care and discharge without inventing equal admissions",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 23351,
+        "error": null
+      },
+      {
+        "file": "replay-route-fit.spec.ts",
+        "title": "bed indicators switch quickly and glow once only for actual occupancy changes, with reduced motion suppressed",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 8287,
+        "error": null
+      },
+      {
+        "file": "replay-treatment-status.spec.ts",
+        "title": "recorded treatment status survives backward scrubbing and plays through resumption without shifting the hospital",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 24233,
+        "error": null
+      },
+      {
+        "file": "replay-treatment-status.spec.ts",
+        "title": "ending a disruption does not falsely resume care while medical supplies remain exhausted",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 11608,
+        "error": null
+      },
+      {
+        "file": "replay-treatment-status.spec.ts",
+        "title": "a saved run without operations history keeps treatment status unavailable",
+        "project": "desktop",
+        "status": "passed",
+        "classification": "expected",
+        "attempts": 1,
+        "duration_ms": 7837,
+        "error": null
+      }
+    ]
+  },
+  "initial_browser_run": {
+    "report": "browser-initial-results.json",
+    "cases": 13,
+    "passed": 12,
+    "failed": 1,
+    "real_regression": true,
+    "failures": [
+      {
+        "file": "replay-treatment-status.spec.ts",
+        "title": "ending a disruption does not falsely resume care while medical supplies remain exhausted",
+        "project": "desktop",
+        "status": "failed",
+        "classification": "unexpected",
+        "attempts": 1,
+        "duration_ms": 10667,
+        "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m8.15625\u001b[39m"
+      }
+    ],
+    "diagnosis": "CSS zoom changed measured natural layout and produced a fit feedback loop.",
+    "recorded_maximum_map_shift_px": 8.15625,
+    "repair": "Use natural layout measurements with a paint transform in an explicitly sized frame; CSS zoom caused the prior measured feedback loop.",
+    "all_initial_cases_rechecked_in_final_run": true,
+    "diagnosis_report": "layout-fit-diagnosis.json"
+  },
+  "production_build": "TypeScript and Vite passed; production-build.log retained",
+  "formatting_observations": {
+    "source": "Completed root frozen checks; consolidator does not rerun checks",
+    "prettier_changed_web_files": 14,
+    "prettier_passed": true,
+    "ruff_backend_files": 4,
+    "ruff_passed": true,
+    "git_diff_check_passed": true
+  },
+  "frozen_manifest": {
+    "path": "final-tested-build-manifest.json",
+    "sha256": "56c426619c5dd8b6107296df6bb6f3c0d9356a2193992da5c290584219163ad6",
+    "hashes_regenerated": false,
+    "all_hashes_match": true,
+    "groups": {
+      "application_files": {
+        "checked": 234,
+        "matched": 234,
+        "mismatches": []
+      },
+      "production_bundle_files": {
+        "checked": 48,
+        "matched": 48,
+        "mismatches": []
+      },
+      "verification_files": {
+        "checked": 125,
+        "matched": 125,
+        "mismatches": []
+      }
+    }
+  },
+  "scope": "Recorded pause/resume Replay room highlighting with fixed compact status; background resource-constraint shading in Analytics with no treatment-interruption overlays; restrained supplies accent; unchanged simulation logic and saved results.",
+  "copied_evidence": [
+    {
+      "source": "output/playwright/replay-disruptions/frontend-results.json",
+      "path": "evidence/replay-disruptions/frontend-results.json",
+      "sha256": "5de6b8f482c5d518aa95640f61023c991ca76937fa7be0feadadb5dd70a85a99"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/backend-tests.xml",
+      "path": "evidence/replay-disruptions/backend-tests.xml",
+      "sha256": "ff90b4482f4f7ea3a784351c4a184493767e4ae7372580a5f819bc6ac117f13d"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/backend-frozen-models.xml",
+      "path": "evidence/replay-disruptions/backend-frozen-models.xml",
+      "sha256": "0c5a15ab1babd8f92aec71ea80010915e35e6e69837591c3a3d200682e4200d1"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit-results.json",
+      "path": "evidence/replay-disruptions/browser-results.json",
+      "sha256": "5a415bd697f65f53c7205736ed47f50220d4c6354616acbe0deaf0d99ae85aeb"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-results.json",
+      "path": "evidence/replay-disruptions/browser-initial-results.json",
+      "sha256": "08c084a2736097417882ccfda1fc3b4479227796dbb376dbfeff9a711dc3f3a1"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/final-tested-build-manifest.json",
+      "path": "evidence/replay-disruptions/final-tested-build-manifest.json",
+      "sha256": "56c426619c5dd8b6107296df6bb6f3c0d9356a2193992da5c290584219163ad6"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/manifest-before-fit-fix.json",
+      "path": "evidence/replay-disruptions/manifest-before-fit-fix.json",
+      "sha256": "9cf37b2c7067caf08abaaaeb90d3cf4819920d3152367368b71df3372ad86ccb"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/production-build.log",
+      "path": "evidence/replay-disruptions/production-build.log",
+      "sha256": "3cd1fc0dd6599b86c3df68597deecce675f6bfb2c78853ac9d939295da13e90c"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/layout-fit-diagnosis.json",
+      "path": "evidence/replay-disruptions/layout-fit-diagnosis.json",
+      "sha256": "3d61f168b376994d0ac3e96386d593719c1651d207f869f6181eea775b1cc114"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-continuous-event-playback.json",
+      "path": "evidence/replay-disruptions/browser/browser-continuous-event-playback.json",
+      "sha256": "90f65d25bd824bd2e132ce38ff6fb8c65a0d5d114f2bffeb1477dc15d0956881"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-continuous-pause-exact-end.json",
+      "path": "evidence/replay-disruptions/browser/browser-continuous-pause-exact-end.json",
+      "sha256": "32178c8a1e6e0c510fbc1a4d85b62e74d3ca9fc516dc782235acba74604166bd"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-continuous-stale-future-buffer.json",
+      "path": "evidence/replay-disruptions/browser/browser-continuous-stale-future-buffer.json",
+      "sha256": "35c6d242f2b2692b35c040876cbec2cfb8ea0d63645219d1c01d85b64e90f9e4"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-decision-summary-unretained-replay.json",
+      "path": "evidence/replay-disruptions/browser/browser-decision-summary-unretained-replay.json",
+      "sha256": "a90c7abc9910d21bf68196d95003e23bd8beaf534c816f8e911cb0b861e67e7f"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-hospital-operations.json",
+      "path": "evidence/replay-disruptions/browser/browser-hospital-operations.json",
+      "sha256": "a4f3663e8b3924e1bef7f0c99011f0ddeadce810d5f2501a6c107b7ba8f5ac53"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-100-bed-map.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-100-bed-map.json",
+      "sha256": "8c584b04722c724a982a85fd73fcdfea92ef343b2322e1889fb0c1b27959738c"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-editable-beds.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-editable-beds.json",
+      "sha256": "7dcb710c7137244402b74468723dd0d36e30d611e7c8e1e70d8dcaf0a445cdef"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-fast-bed-lights.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-fast-bed-lights.json",
+      "sha256": "054f4e28b5eb97aeb479fffe39c543e09508b68dc4418e82ecda9b4a6d96be90"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-fit-1280.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-fit-1280.json",
+      "sha256": "97c8a92faa044673ef0865ceaef30d646f6f2c060756b275b56344dab20951de"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-fit-1440.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-fit-1440.json",
+      "sha256": "8baff3002ce035f7a91ca31dbcc857067cc0b88756c55d08e136ed75cdc573c9"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-fit-1600.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-fit-1600.json",
+      "sha256": "de9da5de77a829e109d1eb22464c171da7cb3e6ff37cf45839a7ce092d441223"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-fit100-and-zoom.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-fit100-and-zoom.json",
+      "sha256": "ef45801677e5e38ea3e10448f9c6526b2cf36c6a9f880dea7eafd6e38d593441"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-floor-plan.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-floor-plan.json",
+      "sha256": "6580b9abbd20cfae81375e060f9fd27cb8914720a78915410ade15695ba1312f"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-replay-recorded-route-coverage.json",
+      "path": "evidence/replay-disruptions/browser/browser-replay-recorded-route-coverage.json",
+      "sha256": "4c515233d58a7ecb13c3a0fb9069db769cc4b98c170a06e47da3e0f36c2cd526"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-summary-library-comparison-entry.json",
+      "path": "evidence/replay-disruptions/browser/browser-summary-library-comparison-entry.json",
+      "sha256": "795edbf843e4cbac9afeeca2dae1d6075b8092db490c09b55fed95c1d56afdb5"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-treatment-overlap-desktop.json",
+      "path": "evidence/replay-disruptions/browser/browser-treatment-overlap-desktop.json",
+      "sha256": "eab82c9d9e7e8a7ea9b19fcce1369129e79b6dbcfbae2eaed454cf00a95866a8"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-treatment-status-desktop.json",
+      "path": "evidence/replay-disruptions/browser/browser-treatment-status-desktop.json",
+      "sha256": "25c389535f6c9a42eed3b04056386c2b429cb25c66d07ef95e86249d0c39bb8c"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-treatment-unknown-desktop.json",
+      "path": "evidence/replay-disruptions/browser/browser-treatment-unknown-desktop.json",
+      "sha256": "965aef8fa624782be5db12da178116a20e4ce25cebc63389b50aba0f86b6d016"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-treatment-resumed-inline.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-treatment-resumed-inline.png",
+      "sha256": "13dac3cb43ca33e5762c2b4408427d8108638a98ff765e533d3067b28d367e75"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-treatment-disruption-supply-overlap.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-treatment-disruption-supply-overlap.png",
+      "sha256": "ab7253133b5a216e9945c539a1cb0594ae5aed12b3859133672f4b1e5ad32c6f"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-treatment-supply-refill-resumed.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-treatment-supply-refill-resumed.png",
+      "sha256": "df58d620f9dbee5e09ade77513b549a60637dea84412211e2bfc52f565204f52"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-treatment-status-unavailable.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-treatment-status-unavailable.png",
+      "sha256": "0c8aa81ebea578f5421ca747eb6da3836da4196154ecba006a4425406ab1df90"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-treatment-resources-background.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-treatment-resources-background.png",
+      "sha256": "af378b870bac48bc1f6a3f24c890b4ef175743024e530ba6f17e1dd3753a61d8"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-floor-plan.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-floor-plan.png",
+      "sha256": "7ecf601b6f1ba76fed4fb0d1d3f971a4f48c1cbbeace2682179538193c1a2aab"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-100-bed-map.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-100-bed-map.png",
+      "sha256": "7a28dcc7f0139918214bffdf4c04a1658a0a35cff4c064ffcb91c3896ef541c9"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-frozen-editable-beds.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-frozen-editable-beds.png",
+      "sha256": "39dfaa52417a2a5e7c9301fc1860b19c93b8891d38216855803740798e69626e"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-fitted100-beds.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-fitted100-beds.png",
+      "sha256": "9beab6df917ca20ae2516c589bba746ac314341b4d73cf7f2a302cfafee4972c"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-recorded-route-coverage.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-recorded-route-coverage.png",
+      "sha256": "dacf93c0abf9c942ae0ddf63c47e810ad2c6abad21a117ae18ccf6768541c466"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-continuous-event-playback.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-continuous-event-playback.png",
+      "sha256": "9a6cb75da5c96bdaca5dbf976371ea27c551a38e31c538cc3489b619bf96e5a9"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-fast-bed-lights.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-fast-bed-lights.png",
+      "sha256": "42d687d6326de4671dce228c8293f4cac0aa98bea2c544ddc50d18fb7e21b43c"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-fit-1280-page.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-fit-1280-page.png",
+      "sha256": "067d0eb6fb526f6d46696cbb277cb6619be0de3309a1c411c056bb26d7a499c1"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-fit-1280-fullscreen.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-fit-1280-fullscreen.png",
+      "sha256": "7cddbaddca7c29d2f46759f7551d1044c94e60304db9940fb360d0f9a6cdd349"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-fit-1440-page.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-fit-1440-page.png",
+      "sha256": "a029a45bc2161df82650f8f9e05f6841a0689ee9189ccb40dd9a421fda918c25"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-fit-1440-fullscreen.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-fit-1440-fullscreen.png",
+      "sha256": "5837357025d165b9ee36296cec0be721a1912f2cd64a699c44728bdd83cf032a"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-fit-1600-page.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-fit-1600-page.png",
+      "sha256": "d58b1c9bb1a213508c00068c9b9ce37365e27f25db9656ebacfbb8d8dc7e617b"
+    },
+    {
+      "source": "output/playwright/replay-disruptions/browser-fixed-fit/browser-desktop-replay-fit-1600-fullscreen.png",
+      "path": "evidence/replay-disruptions/browser/browser-desktop-replay-fit-1600-fullscreen.png",
+      "sha256": "7348eba3305111e153e6e562b53b9d9373dab9330b4b5150c17697ee2ba8c9f2"
+    }
+  ]
+}

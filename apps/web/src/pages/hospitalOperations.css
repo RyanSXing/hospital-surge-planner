@@ -246,3 +246,14 @@
   max-width: 960px;
   margin: 8px 0 0;
 }
+
+.supplies-panel {
+  --supplies-accent: #3a817d;
+  border-color: #d5e3e1;
+}
+.supplies-panel h4 {
+  color: #356a67;
+}
+.supplies-panel .mantine-Slider-root {
+  --slider-color: var(--supplies-accent);
+}

@@ -344,12 +344,13 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
   expect(metrics.data).toHaveLength(3);
   for (const day of metrics.data) {
     expect(median(day.arrivals)).toBeGreaterThan(0);
-    expect(median(day.medical_supply_average_percent)).toBeGreaterThanOrEqual(
-      0,
-    );
-    expect(median(day.medical_supply_average_percent)).toBeLessThanOrEqual(100);
+    expect(median(day.medical_supply_average_percent)).toBeCloseTo(100, 8);
     expect(median(day.treatment_disruption_hours)).toBeCloseTo(24, 8);
   }
+  expect(median(metrics.scalar_metrics.success_score_percent)).toBe(0);
+  expect(
+    median(metrics.scalar_metrics.average_wait_per_patient_hours),
+  ).toBeGreaterThan(0);
   const disruptionEvents = await api(
     page.request,
     `/runs/${run.selected_replication_id}/events?start_at=2026-10-17T05%3A00%3A00Z&end_at=2026-10-18T05%3A00%3A00Z&limit=200`,
@@ -450,34 +451,76 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
     .click();
   await expect(outcomes.locator(".outcome-chart svg[role=img]")).toBeVisible();
   await expect(outcomes).toContainText("supplies");
-  // A shortage indicator must be visible beside/on the chart, not just in a hidden table.
+  // Actual care pauses remain in saved evidence. Analytics deliberately omits
+  // their graph overlay, keeping only independently recorded resource limits.
   await expect(
     outcomes.locator("[data-testid=constraint-markers]"),
   ).toBeVisible();
-  await expect(
-    outcomes.locator("[data-testid=constraint-markers]"),
-  ).toContainText("Treatment interrupted");
-  const disruptionRibbon = outcomes.locator(
-    '.chart-constraint-band[data-kind="disruption"]',
+  const positive = (value: any) => {
+    const amount =
+      typeof value === "number" ? value : (value?.mean ?? value?.p50);
+    return typeof amount === "number" && Number.isFinite(amount) && amount > 0;
+  };
+  const resourceIndexes = metrics.data.flatMap((day: any, index: number) =>
+    Object.entries(day.blocker_patient_hours || {}).some(
+      ([reason, value]) => reason !== "treatment_disruption" && positive(value),
+    ) || positive(day.medical_supplies_shortage_hours)
+      ? [index]
+      : [],
   );
-  await expect(disruptionRibbon).toHaveCount(1);
-  await expect(disruptionRibbon).toHaveAttribute("data-first-period", "0");
-  await expect(disruptionRibbon).toHaveAttribute("data-last-period", "2");
-  const recordedPeriods = disruptionRibbon.locator(".chart-constraint-period");
-  await expect(recordedPeriods).toHaveCount(metrics.data.length);
+  const recordedPeriods = outcomes.locator(".chart-constraint-period");
+  await expect(recordedPeriods).toHaveCount(resourceIndexes.length);
   expect(
     await recordedPeriods.evaluateAll((periods) =>
       periods.map((period) => ({
+        index: Number(period.getAttribute("data-period-index")),
         start: Date.parse(period.getAttribute("data-recorded-at") || ""),
         end: Date.parse(period.getAttribute("data-recorded-end-at") || ""),
       })),
     ),
   ).toEqual(
-    metrics.data.map((day: any) => ({
-      start: Date.parse(day.start_at || day.at),
-      end: Date.parse(day.end_at),
+    resourceIndexes.map((index: number) => ({
+      index,
+      start: Date.parse(metrics.data[index].start_at || metrics.data[index].at),
+      end: Date.parse(metrics.data[index].end_at),
     })),
   );
+  const interruptionDetails = outcomes.locator(".outcome-interruption-details");
+  await expect(interruptionDetails).not.toHaveAttribute("open");
+  await interruptionDetails.getByText("Care interruption details").click();
+  await expect(interruptionDetails.locator("small")).toBeVisible();
+  await expect(interruptionDetails).toContainText(
+    "Treatment interruptions were recorded",
+  );
+  await interruptionDetails.getByText("Care interruption details").click();
+  const chartNames = await outcomes
+    .getByRole("tablist", { name: "Choose a forecast chart" })
+    .getByRole("tab")
+    .allTextContents();
+  for (const name of chartNames) {
+    await outcomes.getByRole("tab", { name, exact: true }).click();
+    await expect(outcomes.locator(".chart-constraint-ribbon")).toHaveCount(0);
+    await expect(
+      outcomes.locator('.chart-constraint-band[data-kind="disruption"]'),
+    ).toHaveCount(0);
+    await expect(
+      outcomes.locator(".chart-constraint-key.disruption"),
+    ).toHaveCount(0);
+    expect(
+      (
+        await outcomes
+          .locator(".chart-constraint-period title")
+          .allTextContents()
+      ).join("\n"),
+    ).not.toContain("Treatment interrupted");
+    if (!resourceIndexes.length)
+      await expect(
+        outcomes.locator(".chart-constraint-background"),
+      ).toHaveCount(0);
+  }
+  await outcomes
+    .getByRole("tab", { name: "Medical supplies", exact: true })
+    .click();
   await assertPageHealthy(page);
   await capture(page, "operations-supplies-analytics", info);
   expect(errors).toEqual([]);
@@ -493,6 +536,8 @@ test("severity pie, disruptions, and supplies survive save/reload and change act
       saved_chance_restored: true,
     },
     actual_disruption_events: disruptionEvents.event_type_counts,
+    analytics_graphs_without_interruption_overlay: chartNames,
+    analytics_recorded_resource_periods: resourceIndexes,
     supplies_daily: metrics.data.map((row: any) => ({
       at: row.at || row.start_at,
       percent: row.medical_supply_average_percent,

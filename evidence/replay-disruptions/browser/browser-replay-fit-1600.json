@@ -1,0 +1,58 @@
+{
+  "scenario": "scenario_e777d67ad5044689b8f6",
+  "run": "run_1c92ebab40a2438fb706",
+  "normal": {
+    "outside": [],
+    "fitMode": "fit",
+    "fitScale": 0.9992,
+    "mapScale": 0.9992,
+    "rooms": 5,
+    "beds": 142,
+    "mapHeight": 430.7489013671875,
+    "smallestRoomLabelPx": 11.990399807602612,
+    "canvas": {
+      "x": 225,
+      "y": 285.546875,
+      "width": 1360,
+      "height": 657.453125
+    },
+    "viewport": {
+      "width": 1600,
+      "height": 1000
+    },
+    "scroll": {
+      "page": 0,
+      "main": 0,
+      "canvasTop": 0,
+      "canvasLeft": 0
+    },
+    "fullscreen": false
+  },
+  "fullscreen": {
+    "outside": [],
+    "fitMode": "fit",
+    "fitScale": 0.9993,
+    "mapScale": 0.9993,
+    "rooms": 5,
+    "beds": 142,
+    "mapHeight": 430.7919921875,
+    "smallestRoomLabelPx": 11.991600242820946,
+    "canvas": {
+      "x": 13,
+      "y": 114.546875,
+      "width": 1574,
+      "height": 846.453125
+    },
+    "viewport": {
+      "width": 1600,
+      "height": 1000
+    },
+    "scroll": {
+      "page": 0,
+      "main": 0,
+      "canvasTop": 0,
+      "canvasLeft": 0
+    },
+    "fullscreen": true
+  }
+}

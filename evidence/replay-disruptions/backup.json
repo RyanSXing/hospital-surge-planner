@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T09:55:02.642141+00:00",
+  "sha256": "9057ac43ab2e76ba045c021d7ebf93e449762476325bd78ae7be7447ae0888d4",
+  "byte_size": 5712882,
+  "object_key": "backups/hospital-replay-disruptions-20261018T095457Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing scenarios and saved results before recorded Replay treatment status and Analytics shading release"
+}

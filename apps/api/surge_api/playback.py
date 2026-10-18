@@ -17,6 +17,7 @@ from surge_engine.common import dt, iso
 
 from .db import canonical
 from .replay import exact_state, flow_counter_for
+from .treatment_status import treatment_index_for
 
 MAX_WINDOW_MINUTES = 240
 MAX_FRAMES = 10000
@@ -83,9 +84,10 @@ def _positive(counter):
 class _FloorCounters:
     """Incremental full-population counts; overlapping reasons stay separate."""
 
-    def __init__(self, patients, units, blockers, flow_counter):
+    def __init__(self, patients, units, blockers, flow_counter, treatment_counter):
         self.units, self.blockers = units, blockers
         self.flow_counter = flow_counter
+        self.treatment_counter = treatment_counter
         self.main = self._main()
         self.patients, self.contributions = {}, {}
         self.members = defaultdict(set)
@@ -219,6 +221,7 @@ class _FloorCounters:
             },
             "flow_counts": self.flow_counter(minute),
             "flow_counts_start_at": trace["start_at"],
+            "treatment_status": self.treatment_counter(minute),
             "patient_groups": groups,
         }
 
@@ -241,7 +244,9 @@ def playback_window(trace, start_at, end_at):
             "playback_window_unavailable",
             409,
         )
-    timeline = defaultdict(lambda: {"slots": {}, "units": {}, "patients": {}, "blockers": {}})
+    timeline = defaultdict(
+        lambda: {"slots": {}, "units": {}, "patients": {}, "blockers": {}, "operations": {}}
+    )
     change_count = 0
 
     def add(minute, kind, identity, record):
@@ -266,6 +271,11 @@ def playback_window(trace, start_at, end_at):
             blockers[group] = current
         for record in history:
             add(record["start_elapsed_minutes"], "blockers", group, record)
+    treatment_index = treatment_index_for(trace)
+    for minute in treatment_index.changes(lower, upper):
+        # Hospital-wide pause/resume remains observable with no patients and
+        # without any unit, slot, queue or physical movement change.
+        add(minute, "operations", "treatment_status", None)
     events = []
     for event in trace["events"]:
         # Flow counts use the exact same numeric trace index as /state.
@@ -292,9 +302,9 @@ def playback_window(trace, start_at, end_at):
         (unit["facility_id"] for unit in index_units.values() if unit.get("kind") == "ed"), "FAC-MAIN"
     )
     flow_counter = flow_counter_for(trace, main, index_units)
-    initial = exact_state(trace, start_at, flow_counter=flow_counter)
+    initial = exact_state(trace, start_at, flow_counter=flow_counter, treatment_counter=treatment_index.at)
     units = {unit["unit_id"]: unit for unit in initial["units"]}
-    counters = _FloorCounters(initial["patients"], units, blockers, flow_counter)
+    counters = _FloorCounters(initial["patients"], units, blockers, flow_counter, treatment_index.at)
     initial_state = {
         "at": start_at,
         "elapsed_minutes": lower,

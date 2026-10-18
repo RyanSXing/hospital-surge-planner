@@ -1,0 +1,258 @@
+{
+  "scenario_id": "scenario_4f39d3631af0486c8e47",
+  "run_id": "run_9e0630c305cf41d2a218",
+  "boundaries": [
+    {
+      "minutes": 119,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "medical_supplies"
+        ],
+        "since_at": "2026-10-16T05:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "medical_supplies"
+        ],
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · supplies"
+      }
+    },
+    {
+      "minutes": 120,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "treatment_disruption",
+          "medical_supplies"
+        ],
+        "since_at": "2026-10-16T07:00:00Z",
+        "treatment_disrupted": true
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "medical_supplies",
+          "treatment_disruption"
+        ],
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · disruption and supplies"
+      }
+    },
+    {
+      "minutes": 150,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "treatment_disruption",
+          "medical_supplies"
+        ],
+        "since_at": "2026-10-16T07:00:00Z",
+        "treatment_disrupted": true
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "medical_supplies",
+          "treatment_disruption"
+        ],
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · disruption and supplies"
+      }
+    },
+    {
+      "minutes": 180,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "medical_supplies"
+        ],
+        "since_at": "2026-10-16T08:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "medical_supplies"
+        ],
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · supplies"
+      }
+    },
+    {
+      "minutes": 181,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "medical_supplies"
+        ],
+        "since_at": "2026-10-16T08:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "medical_supplies"
+        ],
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · supplies"
+      }
+    },
+    {
+      "minutes": 1439,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "medical_supplies"
+        ],
+        "since_at": "2026-10-16T08:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "medical_supplies"
+        ],
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · supplies"
+      }
+    },
+    {
+      "minutes": 1440,
+      "status": {
+        "care_paused": false,
+        "last_resumed_at": "2026-10-17T05:00:00Z",
+        "reasons": [],
+        "since_at": "2026-10-17T05:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "resumed",
+        "reasons": [],
+        "since": "2026-10-17T05:00:00Z",
+        "resumed": "2026-10-17T05:00:00Z",
+        "text": "Treatment resumed Oct 17, 12:00 AM"
+      }
+    },
+    {
+      "minutes": 1441,
+      "status": {
+        "care_paused": false,
+        "last_resumed_at": "2026-10-17T05:00:00Z",
+        "reasons": [],
+        "since_at": "2026-10-17T05:00:00Z",
+        "treatment_disrupted": false
+      },
+      "ui": {
+        "state": "resumed",
+        "reasons": [],
+        "since": "2026-10-17T05:00:00Z",
+        "resumed": "2026-10-17T05:00:00Z",
+        "text": "Treatment resumed Oct 17, 12:00 AM"
+      }
+    },
+    {
+      "minutes": 150,
+      "status": {
+        "care_paused": true,
+        "last_resumed_at": null,
+        "reasons": [
+          "treatment_disruption",
+          "medical_supplies"
+        ],
+        "since_at": "2026-10-16T07:00:00Z",
+        "treatment_disrupted": true
+      },
+      "ui": {
+        "state": "paused",
+        "reasons": [
+          "medical_supplies",
+          "treatment_disruption"
+        ],
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "text": "Treatment paused · disruption and supplies"
+      }
+    }
+  ],
+  "audit": {
+    "phase": "scrubbing",
+    "nodeReplaced": false,
+    "bedsReplaced": false,
+    "queueStyleChanged": false,
+    "maxLayoutShift": 0,
+    "outside": [],
+    "banners": 0,
+    "observations": [
+      {
+        "phase": "scrubbing",
+        "state": "paused",
+        "reasons": "medical_supplies",
+        "since": "2026-10-16T05:00:00Z",
+        "resumed": null,
+        "playhead": 1792126800000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "paused",
+        "reasons": "treatment_disruption medical_supplies",
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "playhead": 1792134000000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "paused",
+        "reasons": "medical_supplies",
+        "since": "2026-10-16T08:00:00Z",
+        "resumed": null,
+        "playhead": 1792137600000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "resumed",
+        "reasons": "",
+        "since": "2026-10-17T05:00:00Z",
+        "resumed": "2026-10-17T05:00:00Z",
+        "playhead": 1792213200000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "paused",
+        "reasons": "treatment_disruption medical_supplies",
+        "since": "2026-10-16T07:00:00Z",
+        "resumed": null,
+        "playhead": 1792135800000,
+        "playing": false
+      },
+      {
+        "phase": "scrubbing",
+        "state": "resumed",
+        "reasons": "",
+        "since": "2026-10-17T05:00:00Z",
+        "resumed": "2026-10-17T05:00:00Z",
+        "playhead": 1792213260000,
+        "playing": false
+      }
+    ]
+  }
+}

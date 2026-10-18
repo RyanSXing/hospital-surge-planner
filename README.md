@@ -6,7 +6,7 @@ The complete initial scope is P0 and P1 in [the build specification](docs/refere
 
 ## Hosted application
 
-Open [Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io). Private sign-in details are saved locally in `data/deployment/access.md`, outside version control. [Hosted verification](docs/hosted-verification.md) records the deployed release, completed workloads, measured performance limits, recovery and backup evidence.
+Open [AEGIS Console](https://aegisconsole.131.186.0.156.sslip.io). The previous hospital-surge address remains available for saved links. Private sign-in details are saved locally in `data/deployment/access.md`, outside version control. [Hosted verification](docs/hosted-verification.md) records the deployed release, completed workloads, measured performance limits, recovery and backup evidence.
 
 The app has two primary pages: **Configuration** for the current hospital baseline and simulation inputs, and **Analysis** with **Summary**, **Replay**, **Analytics**, and **Comparison**. Analytics includes outcomes and patient/unit inspection. Main setup uses duration, draggable daily arrivals, editable bed counts and per-unit nurse/provider/support sliders. Exact optional settings are under **More parameters**. Summary identifies recorded bottlenecks; Analytics presents its charts in one bookmarked workspace. Replay shows recorded bed occupancy on a hospital floor plan; Comparison compares two saved library scenarios. See the [replay and comparison guide](docs/replay-and-scenario-comparison.md), [single-hospital workflow](docs/single-hospital-workflow.md), and [workflow guide](docs/overview-analysis-flow.md).
 

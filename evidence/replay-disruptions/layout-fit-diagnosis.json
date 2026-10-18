@@ -1,0 +1,331 @@
+{
+  "source_trace": "output/playwright/replay-disruptions/test-results/replay-treatment-status-en-0d708-l-supplies-remain-exhausted-desktop/trace.zip",
+  "source_test": "ending a disruption does not falsely resume care while medical supplies remain exhausted",
+  "layout_audit_max_shift_px": 8.15625,
+  "evidence": [
+    {
+      "at": "2026-10-16T05%3A00%3A00Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 19
+        },
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 15
+        },
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 13
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T05%3A00%3A00Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 19
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 15
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 13
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T06%3A59%3A00.000Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 12
+        },
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 14
+        },
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 13
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T06%3A59%3A00.000Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 12
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 14
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 13
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T07%3A00%3A00.000Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 12
+        },
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 16
+        },
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 11
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T07%3A00%3A00.000Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 12
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 16
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 11
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T07%3A30%3A00.000Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 31
+        },
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 22
+        },
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 36
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T07%3A30%3A00.000Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 31
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 22
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 36
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T08%3A00%3A00.000Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 14
+        },
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 12
+        },
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 12
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T08%3A00%3A00.000Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 14
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 12
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 12
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T08%3A01%3A00.000Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 10
+        },
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 12
+        },
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 15
+        }
+      ]
+    },
+    {
+      "at": "2026-10-16T08%3A01%3A00.000Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 10
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 12
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 15
+        }
+      ]
+    },
+    {
+      "at": "2026-10-17T04%3A59%3A00.000Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 18
+        },
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 9
+        },
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 11
+        }
+      ]
+    },
+    {
+      "at": "2026-10-17T04%3A59%3A00.000Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 18
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 9
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 11
+        }
+      ]
+    },
+    {
+      "at": "2026-10-17T05%3A00%3A00.000Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 11
+        },
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 13
+        },
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 13
+        }
+      ]
+    },
+    {
+      "at": "2026-10-17T05%3A00%3A00.000Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 11
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 13
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 13
+        }
+      ]
+    },
+    {
+      "at": "2026-10-17T05%3A01%3A00.000Z",
+      "node": "floor-plan-scaled-frame",
+      "styles": [
+        {
+          "style": "width: 870.162px; height: 365.98px;",
+          "occurrences": 27
+        },
+        {
+          "style": "width: 876.282px; height: 365.977px;",
+          "occurrences": 22
+        },
+        {
+          "style": "width: 878.322px; height: 365.967px;",
+          "occurrences": 27
+        }
+      ]
+    },
+    {
+      "at": "2026-10-17T05%3A01%3A00.000Z",
+      "node": "floor-plan-building",
+      "styles": [
+        {
+          "style": "width: 1020px; zoom: 0.8531;",
+          "occurrences": 27
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8591;",
+          "occurrences": 22
+        },
+        {
+          "style": "width: 1020px; zoom: 0.8611;",
+          "occurrences": 27
+        }
+      ]
+    }
+  ]
+}

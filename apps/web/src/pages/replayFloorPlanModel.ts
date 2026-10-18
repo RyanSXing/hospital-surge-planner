@@ -1,5 +1,10 @@
 import type { Entity } from "../types";
 import { humanLabel } from "../presentation";
+import {
+  recordedTreatmentStatus,
+  treatmentPauseLabel,
+  type RecordedTreatmentStatus,
+} from "./replayTreatmentModel";
 
 export type FloorBedStatus =
   | "occupied"
@@ -35,6 +40,8 @@ export interface FloorUnit {
   pressure: number | null;
   pressureText: string;
   reasons: string[];
+  treatmentPaused: boolean;
+  treatmentReasons: string[];
 }
 export interface FloorPlan {
   at: string | null;
@@ -45,6 +52,7 @@ export interface FloorPlan {
   bedWaiting: number | null;
   discharges: number | null;
   mainFacility: string;
+  treatmentStatus: RecordedTreatmentStatus | null;
 }
 export const floorStatusLabel: Record<FloorBedStatus, string> = {
   occupied: "Occupied",
@@ -104,6 +112,10 @@ export function buildReplayFloorPlan(
       : null;
   };
   const queue = state?.queue_counts?.[main];
+  const treatmentStatus = recordedTreatmentStatus(
+    state?.treatment_status,
+    state?.at,
+  );
   const floorUnits: FloorUnit[] = [...units.values()]
     .filter(
       (u) =>
@@ -230,6 +242,9 @@ export function buildReplayFloorPlan(
         : ratio !== null
           ? `${Math.round(ratio * 100)}% of supported capacity occupied`
           : "Pressure evidence unavailable";
+      const treatmentPaused = Boolean(
+        treatmentStatus?.carePaused && exact?.active === true,
+      );
       return {
         id,
         name:
@@ -260,8 +275,12 @@ export function buildReplayFloorPlan(
             : null,
         utilization: ratio,
         pressure,
-        pressureText,
+        pressureText: treatmentPaused
+          ? `${treatmentPauseLabel(treatmentStatus!)}. ${pressureText}`
+          : pressureText,
         reasons: [...reasons],
+        treatmentPaused,
+        treatmentReasons: treatmentPaused ? treatmentStatus!.reasons : [],
       };
     })
     .sort(
@@ -278,6 +297,7 @@ export function buildReplayFloorPlan(
     replicationId:
       state?.replication_id || state?.context?.replication_id || null,
     mainFacility: main,
+    treatmentStatus,
     units: floorUnits,
     total:
       count(state?.patient_counts?.by_facility?.[main]) ??

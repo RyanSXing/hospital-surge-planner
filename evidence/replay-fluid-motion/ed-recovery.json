@@ -1,0 +1,17 @@
+{
+  "run": "run_6f38eaef83674e1d8221",
+  "replication": "run_6f38eaef83674e1d8221_rep_0000",
+  "states": [
+    {
+      "at": "2026-10-17T05:00:00.000Z",
+      "emergency_waiting": 14
+    },
+    {
+      "at": "2026-10-17T17:00:00.000Z",
+      "emergency_waiting": 0
+    }
+  ],
+  "backward_seek_restores_recorded_queue": true,
+  "reduced_motion_has_no_journey_animation": true,
+  "prior_seek_target_restored_after_playback": true
+}

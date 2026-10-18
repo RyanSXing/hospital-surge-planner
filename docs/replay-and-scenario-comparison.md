@@ -10,6 +10,10 @@ Staffing and equipment are shared unit constraints. A ready physical bed is not 
 
 Noncapacity areas show counts. Waiting counts use the complete aggregate state, not a bounded patient sample. “Discharged so far” counts actual discharge events since the run began; the model does not invent a discharge-bay capacity or dwell time. Missing evidence is unavailable, not zero. Corridor movement illustrates recorded patient location changes during playback. Routes follow measured corridor junctions and room doors. Seeking, changing runs, resizing the map or enabling reduced motion clears movement.
 
+ED waiting is the number currently awaiting assessment, not cumulative arrivals. It falls when treatment places become available. It can keep growing when supplies pause care or patients awaiting inpatient beds continue occupying ED places. Recorded unit constraints distinguish these causes from an apparent shortage of physical beds.
+
+Dragging the replay timeline updates the actual recorded state before releasing the pointer. One exact-state read runs at a time; newer pointer positions replace the pending destination, so rapid dragging cannot build a backlog or let an older event lookup overwrite the final selection. Bed fills crossfade without replacing bed elements or changing their recorded counts. During playback, a short trail and a larger marker make each sampled recorded movement easier to follow along the corridors. Reduced motion shows the same exact states without animated fills or movement.
+
 ## Comparison
 
 Analysis → Comparison selects two active scenarios from the saved library. Each side uses the latest complete ordinary simulation matching that scenario's current saved configuration revision, frozen inputs, dataset, period and model version. Unsaved draft edits are excluded. Starting a run checks the expected saved revision before enqueueing; a concurrent edit requires a refresh.

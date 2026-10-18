@@ -21,6 +21,68 @@ export interface FloorAnchor {
   y: number;
   corridorX?: number;
 }
+export interface FloorTransitStamp {
+  key: string;
+  zoom: number;
+}
+
+/** A consumed window never restarts after a rerender, pause, resize or zoom. */
+export function floorTransitWindowAction(
+  previous: FloorTransitStamp | null,
+  next: FloorTransitStamp & { active: boolean; from: string; to: string },
+): "clear" | "hold" | "start" {
+  if (
+    !next.active ||
+    !next.key ||
+    !Number.isFinite(Date.parse(next.from)) ||
+    !Number.isFinite(Date.parse(next.to)) ||
+    Date.parse(next.to) <= Date.parse(next.from)
+  )
+    return "clear";
+  if (previous?.key === next.key)
+    return previous.zoom === next.zoom ? "hold" : "clear";
+  return "start";
+}
+
+/** Visual pacing only: actual event times and saved patient states are unchanged. */
+export function floorTransitTiming(
+  journey: FloorJourney,
+  from: string,
+  to: string,
+  motionDurationMs = 1000,
+): { delayMs: number; durationMs: number } | null {
+  const start = Date.parse(from),
+    end = Date.parse(to),
+    eventTimes = journey.moves.map((move) => Date.parse(move.at));
+  if (
+    !Number.isFinite(start) ||
+    !Number.isFinite(end) ||
+    end <= start ||
+    !Number.isFinite(motionDurationMs) ||
+    motionDurationMs <= 0 ||
+    !eventTimes.length ||
+    eventTimes.some(
+      (at, index) =>
+        !Number.isFinite(at) ||
+        at <= start ||
+        at > end ||
+        (index > 0 && at < eventTimes[index - 1]),
+    ) ||
+    journey.moves.some(
+      (move, index) => index > 0 && move.from !== journey.moves[index - 1].to,
+    )
+  )
+    return null;
+  const cadence = Math.min(5000, motionDurationMs);
+  // Start events in recorded order, but reserve almost the whole frame for a
+  // legible walk rather than making late-window routes race through the map.
+  const delayMs =
+    (Math.min(120, cadence * 0.12) * (eventTimes[0] - start)) / (end - start);
+  return {
+    delayMs,
+    durationMs: cadence - delayMs - Math.min(24, cadence * 0.024),
+  };
+}
 export function floorMotionIsCurrent(
   window: FloorMotionWindow | null,
   context: {

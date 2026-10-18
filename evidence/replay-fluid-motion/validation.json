@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-18T07:57:02.446148+00:00",
+  "frontend_tests": 368,
+  "backend_tests": 165,
+  "unique_desktop_browser_cases": 15,
+  "all_passed": true,
+  "production_build": "TypeScript and Vite passed",
+  "python_lint": "Ruff passed",
+  "frozen_application_and_bundle_unchanged": true,
+  "independent_review": "Two late-navigation defects found, corrected and covered by exact-state browser regressions. ED queue diagnosis confirms current, noncumulative counts.",
+  "preservation": "Original private database backup retained; all 23 protected API projections and SQL records unchanged through the previous deployment; final hosted verification follows.",
+  "scope": [
+    "Exact live state updates during held pointer drag, latest-target coalescing, reverse seeks, cached previous destinations after playback, old-replication and event/checkpoint late-response guards.",
+    "420ms occupied-bed fade, sampled real corridor head/trail movement, reduced motion, stable DOM/layout, 100-bed geometry and immutable per-run capacities.",
+    "Controlled ED queue drainage over 7/14/30 days with zero/two treatment places; real overloaded-run supply depletion and inpatient boarding diagnosis.",
+    "Existing saved-scenario comparison implementation and prior configuration/navigation checks remain preserved; final hosted comparison/API verification follows."
+  ]
+}

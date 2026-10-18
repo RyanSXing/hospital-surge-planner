@@ -1,0 +1,34 @@
+{
+  "run": "run_9187477d69aa467dbdb0",
+  "previous_replication": "run_9187477d69aa467dbdb0_rep_0001",
+  "selected_replication": "run_9187477d69aa467dbdb0_rep_0000",
+  "late_response_did_not_repaint": true,
+  "scene_audit": {
+    "replaced": false,
+    "maxTopShift": 0,
+    "pointerUps": 1,
+    "frames": [
+      {
+        "at": "2026-10-16T05:00:00Z",
+        "rep": "run_9187477d69aa467dbdb0_rep_0001",
+        "retaining": "false"
+      },
+      {
+        "at": "2026-10-16T05:00:00Z",
+        "rep": "run_9187477d69aa467dbdb0_rep_0001",
+        "retaining": "true"
+      },
+      {
+        "at": "",
+        "rep": "",
+        "retaining": "true"
+      },
+      {
+        "at": "2026-10-16T05:00:00Z",
+        "rep": "run_9187477d69aa467dbdb0_rep_0000",
+        "retaining": "false"
+      }
+    ],
+    "transitions": []
+  }
+}

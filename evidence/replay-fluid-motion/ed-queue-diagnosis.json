@@ -1,0 +1,333 @@
+{
+  "checked_at": "2026-10-18T07:51:47.712146+00:00",
+  "method": "Read-only API inspection of existing saved runs and local immutable trace; isolated deterministic engine/API projection tests. No production simulation, scenario mutation or artifact rewrite.",
+  "meaning": "ED waiting counts patients currently in ed_waiting state, before bounded patient sampling. It is not cumulative arrivals or discharges.",
+  "production_current": {
+    "run_id": "run_2088efd055e04fac8875",
+    "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+    "scenario_name": "egg wo",
+    "source_draft_revision": 5,
+    "operations_model_version": "1.2",
+    "selected_replication_id": "run_2088efd055e04fac8875_rep_0000",
+    "replications": 10,
+    "hourly_ensemble_points": 722,
+    "hourly_points_with_any_ed_queue": 0,
+    "ed_waiting_patient_hours_all_replications": 0,
+    "ed_unserved_at_horizon_all_replications": 0,
+    "selected_states": [
+      {
+        "elapsed_hours": 0,
+        "ed_waiting": 0,
+        "ed_occupied": 12,
+        "ed_supported": 30,
+        "ed_available": 18
+      },
+      {
+        "elapsed_hours": 6,
+        "ed_waiting": 0,
+        "ed_occupied": 3,
+        "ed_supported": 30,
+        "ed_available": 27
+      },
+      {
+        "elapsed_hours": 24,
+        "ed_waiting": 0,
+        "ed_occupied": 2,
+        "ed_supported": 30,
+        "ed_available": 28
+      },
+      {
+        "elapsed_hours": 48,
+        "ed_waiting": 0,
+        "ed_occupied": 5,
+        "ed_supported": 30,
+        "ed_available": 23
+      },
+      {
+        "elapsed_hours": 120,
+        "ed_waiting": 0,
+        "ed_occupied": 13,
+        "ed_supported": 30,
+        "ed_available": 17
+      },
+      {
+        "elapsed_hours": 240,
+        "ed_waiting": 0,
+        "ed_occupied": 6,
+        "ed_supported": 30,
+        "ed_available": 22
+      },
+      {
+        "elapsed_hours": 480,
+        "ed_waiting": 0,
+        "ed_occupied": 6,
+        "ed_supported": 30,
+        "ed_available": 24
+      },
+      {
+        "elapsed_hours": 720,
+        "ed_waiting": 0,
+        "ed_occupied": 12,
+        "ed_supported": 30,
+        "ed_available": 17
+      },
+      {
+        "elapsed_hours": 721,
+        "ed_waiting": 0,
+        "ed_occupied": 9,
+        "ed_supported": 30,
+        "ed_available": 21
+      }
+    ],
+    "conclusion": "The current production result has no ED waiting backlog."
+  },
+  "local_overloaded_review": {
+    "run_id": "run_6dec9e40db4a44eb9b05",
+    "scenario_id": "scenario_83ed73d370784066a9d2",
+    "source_draft_revision": 1,
+    "operations_model_version": "1.2",
+    "selected_replication_id": "run_6dec9e40db4a44eb9b05_rep_0000",
+    "horizon_days": 14,
+    "replications": 3,
+    "start_at": "2026-10-16T05:00:00Z",
+    "ed_arrival_multiplier": 1.7,
+    "ed_supported_places": 24,
+    "supplies": {
+      "initial_percent": 100,
+      "capacity": 200,
+      "usage_per_patient_day": 1,
+      "refill_every_days": 2,
+      "refill_percent": 70,
+      "units_per_refill": 140
+    },
+    "selected_queue_observations": [
+      {
+        "elapsed_hours": 0,
+        "ed_waiting": 0,
+        "waiting_for_inpatient_bed": 0,
+        "ed_occupied": 12,
+        "ed_assessing": 12,
+        "ed_boarding": 0
+      },
+      {
+        "elapsed_hours": 24,
+        "ed_waiting": 14,
+        "waiting_for_inpatient_bed": 0,
+        "ed_occupied": 24,
+        "ed_assessing": 24,
+        "ed_boarding": 0
+      },
+      {
+        "elapsed_hours": 36,
+        "ed_waiting": 0,
+        "waiting_for_inpatient_bed": 0,
+        "ed_occupied": 21,
+        "ed_assessing": 21,
+        "ed_boarding": 0
+      },
+      {
+        "elapsed_hours": 47,
+        "ed_waiting": 6,
+        "waiting_for_inpatient_bed": 0,
+        "ed_occupied": 24,
+        "ed_assessing": 24,
+        "ed_boarding": 0
+      },
+      {
+        "elapsed_hours": 48,
+        "ed_waiting": 4,
+        "waiting_for_inpatient_bed": 0,
+        "ed_occupied": 24,
+        "ed_assessing": 24,
+        "ed_boarding": 0
+      },
+      {
+        "elapsed_hours": 60,
+        "ed_waiting": 0,
+        "waiting_for_inpatient_bed": 0,
+        "ed_occupied": 14,
+        "ed_assessing": 14,
+        "ed_boarding": 0
+      },
+      {
+        "elapsed_hours": 72,
+        "ed_waiting": 6,
+        "waiting_for_inpatient_bed": 0,
+        "ed_occupied": 24,
+        "ed_assessing": 24,
+        "ed_boarding": 0
+      },
+      {
+        "elapsed_hours": 84,
+        "ed_waiting": 33,
+        "waiting_for_inpatient_bed": 4,
+        "ed_occupied": 24,
+        "ed_assessing": 21,
+        "ed_boarding": 3
+      },
+      {
+        "elapsed_hours": 96,
+        "ed_waiting": 138,
+        "waiting_for_inpatient_bed": 3,
+        "ed_occupied": 24,
+        "ed_assessing": 22,
+        "ed_boarding": 2
+      },
+      {
+        "elapsed_hours": 120,
+        "ed_waiting": 264,
+        "waiting_for_inpatient_bed": 20,
+        "ed_occupied": 24,
+        "ed_assessing": 5,
+        "ed_boarding": 19
+      },
+      {
+        "elapsed_hours": 168,
+        "ed_waiting": 550,
+        "waiting_for_inpatient_bed": 20,
+        "ed_occupied": 24,
+        "ed_assessing": 5,
+        "ed_boarding": 19
+      },
+      {
+        "elapsed_hours": 240,
+        "ed_waiting": 969,
+        "waiting_for_inpatient_bed": 23,
+        "ed_occupied": 24,
+        "ed_assessing": 4,
+        "ed_boarding": 20
+      },
+      {
+        "elapsed_hours": 300,
+        "ed_waiting": 1336,
+        "waiting_for_inpatient_bed": 22,
+        "ed_occupied": 24,
+        "ed_assessing": 2,
+        "ed_boarding": 22
+      },
+      {
+        "elapsed_hours": 336,
+        "ed_waiting": 1592,
+        "waiting_for_inpatient_bed": 19,
+        "ed_occupied": 24,
+        "ed_assessing": 8,
+        "ed_boarding": 16
+      }
+    ],
+    "hourly_ensemble_median_declining_steps": 20,
+    "selected_trace_supply_events": [
+      {
+        "event": "depleted",
+        "at": "2026-10-18T04:57:03.504077Z",
+        "elapsed_minutes": 2877.05840129
+      },
+      {
+        "event": "refilled",
+        "at": "2026-10-18T05:00:00Z",
+        "elapsed_minutes": 2880,
+        "added_units": 140,
+        "stock_percent": 70
+      },
+      {
+        "event": "depleted",
+        "at": "2026-10-19T13:17:17.912037Z",
+        "elapsed_minutes": 4817.29853394
+      },
+      {
+        "event": "refilled",
+        "at": "2026-10-20T05:00:00Z",
+        "elapsed_minutes": 5760,
+        "added_units": 140,
+        "stock_percent": 70
+      },
+      {
+        "event": "depleted",
+        "at": "2026-10-21T15:31:05.009666Z",
+        "elapsed_minutes": 7831.08349443
+      },
+      {
+        "event": "refilled",
+        "at": "2026-10-22T05:00:00Z",
+        "elapsed_minutes": 8640,
+        "added_units": 140,
+        "stock_percent": 70
+      }
+    ],
+    "selected_trace_supply_consumption_first_two_days": [
+      94.47765592059305,
+      105.52234407940688
+    ],
+    "selected_trace_supply_shortage_hours_on_oct19": 15.711691100918218,
+    "later_every_other_day_supply_pause_hours_range": [
+      12.631360247877636,
+      13.481941759555014
+    ],
+    "selected_states_at_120h": {
+      "ed_assessing": 5,
+      "ed_boarding": 19,
+      "ed_waiting": 264,
+      "inpatient_occupied": 92,
+      "inpatient_places": 92
+    },
+    "selected_states_at_336h": {
+      "ed_assessing": 8,
+      "ed_boarding": 16,
+      "ed_waiting": 1592,
+      "inpatient_occupied": 92,
+      "inpatient_places": 92,
+      "medical_supply_block_present": true
+    },
+    "conclusion": "Queue can and does drain early. Later arrivals exceed effective throughput: full inpatient units leave ED boarders occupying treatment places, and insufficient replenishment repeatedly pauses care."
+  },
+  "preserved_historical_comparison": {
+    "run_id": "run_22230710c2b74bdea7e1",
+    "operations_model_version": "1.0",
+    "median_ed_waiting_patient_hours": 389797.05678330886,
+    "median_ed_unserved_at_horizon": 1065.5,
+    "note": "Frozen historical severity model previously scaled ED assessments. Stored results remain unchanged; current production model1.2 does not apply inpatient severity stays to ED-only assessment."
+  },
+  "verification": {
+    "new_test_file": "tests/test_ed_waiting_queue.py",
+    "passed": 6,
+    "duration_seconds": 1.57,
+    "horizons_days": [
+      7,
+      14,
+      30
+    ],
+    "supported_ed_places": [
+      0,
+      2
+    ],
+    "burst_patients": 12,
+    "assessment_minutes": 60,
+    "turnover_minutes": 0,
+    "two_place_waiting_counts_at_hours_0_through_5": [
+      10,
+      8,
+      6,
+      4,
+      2,
+      0
+    ],
+    "assertions": [
+      "exact assessment start schedule",
+      "exact current ED queue",
+      "current queue distinct from cumulative flow totals",
+      "full counts before one-patient transport sample",
+      "zero-capacity no-treatment case",
+      "backward seeks",
+      "patient conservation",
+      "source inputs unchanged"
+    ],
+    "portable_three_day_prefix": {
+      "horizon_days": 3,
+      "replications": 1,
+      "replication_index": 0,
+      "ed_queue_at_24h": 14,
+      "ed_queue_at_36h": 0,
+      "clinical_event_prefix_matches_existing_14_day_trace": true
+    }
+  },
+  "source_changes": "Only a new focused regression test; no engine or API implementation changes."
+}

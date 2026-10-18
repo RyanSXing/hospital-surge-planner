@@ -1,0 +1,149 @@
+{
+  "checked_at": "2026-10-18T07:57:02.372944+00:00",
+  "unique_desktop_cases": 15,
+  "all_latest_case_results_passed": true,
+  "mobile_requested": false,
+  "cases": [
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "held timeline drag publishes exact intermediate map states, coalesces fast changes, and seeks backward without replacing the map",
+      "status": "passed",
+      "duration_ms": 7153
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "a late seek response from the previous replication cannot repaint the newly selected run",
+      "status": "passed",
+      "duration_ms": 6787
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "recorded playback keeps patient markers and trails on the same continuous route and clears them when paused",
+      "status": "passed",
+      "duration_ms": 5025
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "the emergency waiting count can drain using recorded treatment events, with exact reduced-motion seeks",
+      "status": "passed",
+      "duration_ms": 7344
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "late event and checkpoint lookups cannot override a newer native timeline seek",
+      "status": "passed",
+      "duration_ms": 5581
+    },
+    {
+      "file": "replay-clinical-capacity.spec.ts",
+      "project": "desktop",
+      "title": "replay displays actual separate hospital capacity and no offsite inventory",
+      "status": "passed",
+      "duration_ms": 5185
+    },
+    {
+      "file": "replay-clinical-capacity.spec.ts",
+      "project": "desktop",
+      "title": "replay holds a stepdown patient in the recorded ICU bed until actual ward entry",
+      "status": "passed",
+      "duration_ms": 7019
+    },
+    {
+      "file": "replay-controls.spec.ts",
+      "project": "desktop",
+      "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
+      "status": "passed",
+      "duration_ms": 10304
+    },
+    {
+      "file": "replay-evidence.spec.ts",
+      "project": "desktop",
+      "title": "replay exposes complete filtered events, patient history and recorded resources",
+      "status": "passed",
+      "duration_ms": 7467
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "floor plan separates actual wards and every bed, with meaningful bed, area and patient inspection",
+      "status": "passed",
+      "duration_ms": 5854
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "current shortage pressure follows actual paused care and clears after recovery and backward seeks",
+      "status": "passed",
+      "duration_ms": 5178
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "editable bed and staffed-bed parameters rebuild replay inventory per frozen run",
+      "status": "passed",
+      "duration_ms": 12919
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "a 100-bed ward reflows inside a compact architectural map without overflowing its walls",
+      "status": "passed",
+      "duration_ms": 4564
+    },
+    {
+      "file": "replay-journey.spec.ts",
+      "project": "desktop",
+      "title": "recorded arrivals occupy an actual ED bed only during care and increment cumulative discharges",
+      "status": "passed",
+      "duration_ms": 5488
+    },
+    {
+      "file": "replay-simple.spec.ts",
+      "project": "desktop",
+      "title": "recorded floor plan stays stable through buffered playback, delayed seek and backwards seek",
+      "status": "passed",
+      "duration_ms": 14053
+    }
+  ],
+  "executions": [
+    {
+      "report": "output/playwright/replay-fluid-motion/browser-new-final.json",
+      "stats": {
+        "startTime": "2026-10-18T07:53:04.336Z",
+        "duration": 35065.104999999996,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/replay-fluid-motion/browser-regression-final.json",
+      "stats": {
+        "startTime": "2026-10-18T07:53:50.826Z",
+        "duration": 95690.617,
+        "expected": 9,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/replay-fluid-motion/browser-acceptance-final.json",
+      "stats": {
+        "startTime": "2026-10-18T07:56:11.060Z",
+        "duration": 46892.810000000005,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "resolved_test_contract_correction": "An absent facility entry in the sparse queue_counts map is checked against complete recorded patient_groups, consistent with the replay projection."
+}

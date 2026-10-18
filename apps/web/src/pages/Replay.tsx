@@ -2,6 +2,7 @@ import ReplayCampusContext from "./ReplayCampusContext";
 import ReplayFloorPlan from "./ReplayFloorPlan";
 import ReplayDischargeHistory from "./ReplayDischargeHistory";
 import { buildReplayFloorPlan } from "./replayFloorPlanModel";
+import { createReplaySeekQueue } from "./replaySeekQueue";
 import { fetchReplayJourneyEvents } from "./replayJourney";
 import {
   recordedFloorJourneys,
@@ -95,12 +96,19 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   const queryClient = useQueryClient();
   const latestContext = useRef(ctx);
   latestContext.current = ctx;
+  const navigationGeneration = useRef(0);
   const displayClock = useRef<HTMLSpanElement>(null);
   const scrubber = useRef<HTMLInputElement>(null);
   const [buffering, setBuffering] = useState(false);
   const [motionWindow, setMotionWindow] = useState<FloorMotionWindow | null>(
     null,
   );
+  const [scrubTarget, setScrubTarget] = useState<{
+    rep: string | undefined;
+    at: string;
+    pending: boolean;
+  } | null>(null);
+  const [dragging, setDragging] = useState(false);
   const playbackExpectedTime = useRef(ctx.selectedTime);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailTab, setDetailTab] = useState<string | null>("patient");
@@ -182,6 +190,44 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     endMs = Date.parse(end),
     currentMs = Date.parse(ctx.selectedTime),
     durationHours = (endMs - startMs) / 3600000;
+  const seekQueue = useMemo(
+    () =>
+      createReplaySeekQueue<Entity>({
+        load: async (at) => {
+          if (!rep) throw new Error("Select a simulation run to replay.");
+          const state = await queryClient.fetchQuery<Entity>({
+            queryKey: ["run-state", rep, at],
+            queryFn: () =>
+              api(`/runs/${rep}/state?at=${encodeURIComponent(at)}`),
+            staleTime: Infinity,
+          });
+          if (
+            state.replication_id !== rep ||
+            Date.parse(state.at) !== Date.parse(at)
+          )
+            throw new Error(
+              "The recorded state does not match the selected moment.",
+            );
+          return state;
+        },
+        publish: (_state, at) => latestContext.current.setTime(at),
+        status: (at, pending) => setScrubTarget({ rep, at, pending }),
+        error: (failure) =>
+          setError(`Replay could not load that moment. ${failure.message}`),
+      }),
+    [rep, queryClient],
+  );
+  useEffect(() => {
+    seekQueue.activate();
+    return () => seekQueue.cancel();
+  }, [seekQueue]);
+  const seeking = Boolean(
+    scrubTarget && scrubTarget.rep === rep && scrubTarget.pending,
+  );
+  const sliderMs =
+    scrubTarget && scrubTarget.rep === rep && (dragging || seeking)
+      ? Date.parse(scrubTarget.at)
+      : currentMs;
   const currentRep = replications.find(
       (r) => (r.replication_id || r.id) === rep,
     ),
@@ -304,8 +350,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     ),
     { page, setPage } = census;
   useEffect(() => {
+    navigationGeneration.current += 1;
     setEventCursor(null);
     setPlaying(false);
+    setDragging(false);
   }, [rep]);
   useEffect(() => {
     let ignore = false;
@@ -483,19 +531,24 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   }, []);
   async function chooseReplication(id: string) {
     setPlaying(false);
+    cancelScrub();
     setError("");
     if (!id || id === rep) return;
+    const navigation = navigationGeneration.current;
     try {
       const result = await post(`/runs/${id}/trace`);
+      if (!isCurrentNavigation(navigation, rep)) return;
       if (result.ready || result.status === "SUCCEEDED") ctx.setReplication(id);
       else setPendingRep(id);
     } catch (e) {
-      setError((e as Error).message);
+      if (isCurrentNavigation(navigation, rep)) setError((e as Error).message);
     }
   }
   async function step(direction: "before" | "after") {
     if (!rep || stepping) return;
     setPlaying(false);
+    cancelScrub();
+    const navigation = navigationGeneration.current;
     setStepping(true);
     setError("");
     try {
@@ -513,6 +566,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       const result = await api(
         `/runs/${rep}/events?at=${encodeURIComponent(ctx.selectedTime)}&direction=${direction}&${direction === "after" ? "after_sequence" : "before_sequence"}=${sequence}&limit=1`,
       );
+      if (!isCurrentNavigation(navigation, rep)) return;
       const next = items(result)[0];
       if (next) {
         setEventCursor(next);
@@ -524,7 +578,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             : "No earlier recorded event within this run.",
         );
     } catch (e) {
-      setError((e as Error).message);
+      if (isCurrentNavigation(navigation, rep)) setError((e as Error).message);
     } finally {
       setStepping(false);
     }
@@ -532,28 +586,58 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   async function restoreCheckpoint() {
     if (!rep) return;
     setPlaying(false);
+    cancelScrub();
+    const navigation = navigationGeneration.current;
     setError("");
     try {
       const result = await api(
         `/runs/${rep}/checkpoints?at=${encodeURIComponent(ctx.selectedTime)}`,
       );
+      if (!isCurrentNavigation(navigation, rep)) return;
       const checkpoint = items(result).at(-1);
       if (checkpoint?.at) ctx.setTime(checkpoint.at);
       else ctx.notify("No saved checkpoint exists before the selected time.");
     } catch (e) {
-      setError((e as Error).message);
+      if (isCurrentNavigation(navigation, rep)) setError((e as Error).message);
     }
   }
   function pauseAtVisibleTime() {
     setPlaying(false);
+    cancelScrub();
     const visibleAt = floorPlan.at;
     if (visibleAt && visibleAt !== ctx.selectedTime) ctx.setTime(visibleAt);
   }
 
   function move(at: string) {
     setPlaying(false);
+    cancelScrub();
     setEventCursor(null);
     ctx.setTime(at);
+  }
+  function cancelScrub() {
+    navigationGeneration.current += 1;
+    seekQueue.cancel();
+    seekQueue.activate();
+    setDragging(false);
+    setScrubTarget(null);
+  }
+  function scrub(at: string) {
+    navigationGeneration.current += 1;
+    setPlaying(false);
+    setMotionWindow(null);
+    setEventCursor(null);
+    seekQueue.request(at);
+  }
+  function isCurrentNavigation(
+    generation: number,
+    replication: string | undefined,
+  ) {
+    const current = latestContext.current;
+    return (
+      generation === navigationGeneration.current &&
+      replication ===
+        (current.activeReplicationId || current.run?.selected_replication_id)
+    );
   }
   if (!ctx.run || ctx.run.status !== "SUCCEEDED")
     return (
@@ -581,7 +665,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       </div>
     );
   return (
-    <div className="replay-page planning-panels">
+    <div
+      className="replay-page planning-panels"
+      data-seeking={seeking || undefined}
+    >
       <div className="page-heading">
         <div>
           <div className="eyebrow">SIMULATION EXPLORER</div>
@@ -681,7 +768,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
               <Button
                 primary
                 disabled={
-                  (!playing && unavailable) || (!playing && currentMs >= endMs)
+                  seeking ||
+                  (!playing && unavailable) ||
+                  (!playing && currentMs >= endMs)
                 }
                 onClick={() =>
                   playing ? pauseAtVisibleTime() : setPlaying(true)
@@ -723,9 +812,11 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                   ? buffering
                     ? "Preparing the next moment…"
                     : "Playing"
-                  : unavailable
-                    ? "Loading selected time…"
-                    : "Paused"}
+                  : seeking
+                    ? "Updating recorded moment…"
+                    : unavailable
+                      ? "Loading selected time…"
+                      : "Paused"}
               </span>
             </div>
             <Button
@@ -745,15 +836,24 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
               min={0}
               max={Math.max(0, (endMs - startMs) / 60000)}
               step={1}
+              data-seeking={seeking || undefined}
               value={Math.max(
                 0,
                 Math.min(
                   (endMs - startMs) / 60000,
-                  (currentMs - startMs) / 60000,
+                  (sliderMs - startMs) / 60000,
                 ),
               )}
+              onPointerDown={() => {
+                setPlaying(false);
+                setDragging(true);
+                setScrubTarget({ rep, at: ctx.selectedTime, pending: false });
+              }}
+              onPointerUp={() => setDragging(false)}
+              onPointerCancel={() => setDragging(false)}
+              onBlur={() => setDragging(false)}
               onChange={(e) =>
-                move(
+                scrub(
                   new Date(
                     startMs + Number(e.target.value) * 60000,
                   ).toISOString(),
@@ -797,7 +897,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             <div ref={floorViewport} className="replay-floor-viewport">
               <ReplayFloorPlan
                 plan={floorPlan}
-                retaining={unavailable}
+                retaining={unavailable || seeking}
                 zoom={zoom}
                 selectedPatientId={patientId(ctx.selectedPatient || {})}
                 selectedUnitId={ctx.selectedUnit}

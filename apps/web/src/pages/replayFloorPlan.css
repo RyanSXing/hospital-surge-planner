@@ -65,12 +65,33 @@
   left: 0;
   top: 0;
   display: block;
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border: 1.5px solid #fff;
   border-radius: 50%;
   background: #287d89;
-  box-shadow: 0 0 3px #296a7277;
+  box-shadow:
+    0 0 0 2px #287d8917,
+    0 1px 4px #296a7255;
+  will-change: offset-distance, opacity;
+}
+.floor-transit-route {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.floor-transit-trail {
+  fill: none;
+  stroke: #338b95;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 12 100;
+  stroke-dashoffset: 12;
+  opacity: 0;
 }
 .floor-plan-key > .floor-pressure-key {
   margin-left: auto;
@@ -264,6 +285,8 @@
   margin-right: 30px;
 }
 .floor-plan-bed {
+  position: relative;
+  overflow: hidden;
   display: block;
   width: 100%;
   height: 12px;
@@ -276,12 +299,23 @@
   background: #fff !important;
   box-shadow: none;
   transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease;
+    background-color 0.42s cubic-bezier(0.2, 0.65, 0.25, 1),
+    border-color 0.42s cubic-bezier(0.2, 0.65, 0.25, 1);
+}
+.floor-plan-bed::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #518fc4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.42s cubic-bezier(0.2, 0.65, 0.25, 1);
 }
 .floor-plan-bed--occupied {
-  background: #518fc4 !important;
   border-color: #518fc4 !important;
+}
+.floor-plan-bed--occupied::after {
+  opacity: 1;
 }
 .floor-plan-bed--reserved {
   background: repeating-linear-gradient(
@@ -561,11 +595,18 @@
   font-size: 22px;
   color: #35566f;
 }
-.hospital-floor-plan--still * {
+.hospital-floor-plan--still *,
+.hospital-floor-plan--still *::before,
+.hospital-floor-plan--still *::after {
   transition: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  .hospital-floor-plan * {
+  .hospital-floor-plan *,
+  .hospital-floor-plan *::before,
+  .hospital-floor-plan *::after {
     transition: none !important;
+  }
+  .hospital-floor-plan .floor-plan-transit {
+    display: none;
   }
 }

@@ -129,6 +129,7 @@ export default function ReplayFloorPlan({
   journeys = [],
   motionWindow = null,
   moving = false,
+  motionDurationMs = 1000,
   onBedSelect,
   onUnitSelect,
   onAreaSelect,
@@ -142,6 +143,7 @@ export default function ReplayFloorPlan({
   journeys?: FloorJourney[];
   motionWindow?: FloorMotionWindow | null;
   moving?: boolean;
+  motionDurationMs?: number;
   onBedSelect: (bed: FloorBed, unit: FloorUnit) => void;
   onUnitSelect: (unit: FloorUnit) => void;
   onAreaSelect: (area: "ed" | "bed" | "discharge") => void;
@@ -324,6 +326,7 @@ export default function ReplayFloorPlan({
             to={motionWindow?.to || ""}
             active={moving && !reducedMotion}
             zoom={zoom}
+            motionDurationMs={motionDurationMs}
           />
         </div>
       </div>

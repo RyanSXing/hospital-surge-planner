@@ -3,9 +3,15 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  Fragment,
   type RefObject,
 } from "react";
-import type { FloorJourney } from "./floorPlanTransitModel";
+import {
+  floorTransitTiming,
+  floorTransitWindowAction,
+  type FloorJourney,
+  type FloorTransitStamp,
+} from "./floorPlanTransitModel";
 import {
   floorGraphJourneyPath,
   measureFloorCorridorGraph,
@@ -19,6 +25,7 @@ export default function FloorPlanTransit({
   to,
   active,
   zoom,
+  motionDurationMs = 1000,
 }: {
   building: RefObject<HTMLDivElement | null>;
   journeys: FloorJourney[];
@@ -27,62 +34,98 @@ export default function FloorPlanTransit({
   to: string;
   active: boolean;
   zoom: number;
+  motionDurationMs?: number;
 }) {
   const overlay = useRef<HTMLDivElement>(null),
-    lastWindow = useRef("");
+    lastWindow = useRef<FloorTransitStamp | null>(null);
   const [routes, setRoutes] = useState<
-    Array<{ journey: FloorJourney; path: string; delay: number }>
+    Array<{
+      journey: FloorJourney;
+      path: string;
+      delayMs: number;
+      durationMs: number;
+    }>
   >([]);
   useLayoutEffect(() => {
-    setRoutes([]);
     const node = building.current;
-    if (!active || !node || !windowKey) {
-      lastWindow.current = "";
+    const action = floorTransitWindowAction(lastWindow.current, {
+      key: windowKey,
+      zoom,
+      active,
+      from,
+      to,
+    });
+    if (!node || action === "clear") {
+      setRoutes((current) => (current.length ? [] : current));
+      if (lastWindow.current?.key === windowKey)
+        lastWindow.current = { key: windowKey, zoom };
       return;
     }
-    if (lastWindow.current === windowKey) return;
-    lastWindow.current = windowKey;
+    if (action === "hold") return;
+    lastWindow.current = { key: windowKey, zoom };
     const graph = measureFloorCorridorGraph(node);
-    if (!graph) return;
+    if (!graph) {
+      setRoutes([]);
+      return;
+    }
     setRoutes(
       journeys.flatMap((journey) => {
         const path = floorGraphJourneyPath(journey, graph);
-        const fraction =
-          (Date.parse(journey.moves[0].at) - Date.parse(from)) /
-          (Date.parse(to) - Date.parse(from));
-        return path
+        const timing = floorTransitTiming(journey, from, to, motionDurationMs);
+        return path && timing
           ? [
               {
                 journey,
                 path,
-                delay: Math.max(0, Math.min(500, fraction * 500)),
+                ...timing,
               },
             ]
           : [];
       }),
     );
-  }, [active, windowKey, zoom, building, journeys, from, to]);
-  useEffect(() => {
+  }, [active, windowKey, zoom, building, journeys, from, to, motionDurationMs]);
+  useLayoutEffect(() => {
     const animations = [
       ...(overlay.current?.querySelectorAll<HTMLElement>(
         ".floor-transit-marker",
       ) || []),
-    ].map((marker) =>
-      marker.animate(
+    ].flatMap((marker) => {
+      const timing = {
+        duration: Number(marker.dataset.duration),
+        delay: Number(marker.dataset.delay),
+        fill: "both" as FillMode,
+        easing: "linear",
+      };
+      const head = marker.animate(
         [
           { offsetDistance: "0%", opacity: 0 },
-          { offsetDistance: "8%", opacity: 0.9, offset: 0.08 },
-          { offsetDistance: "92%", opacity: 0.9, offset: 0.92 },
+          { offsetDistance: "9%", opacity: 1, offset: 0.09 },
+          { offsetDistance: "91%", opacity: 1, offset: 0.91 },
           { offsetDistance: "100%", opacity: 0 },
         ],
-        {
-          duration: 900 - Number(marker.dataset.delay),
-          delay: Number(marker.dataset.delay),
-          fill: "both",
-          easing: "linear",
-        },
-      ),
-    );
+        timing,
+      );
+      const trail =
+        marker.previousElementSibling?.querySelector<SVGPathElement>(
+          ".floor-transit-trail",
+        );
+      return [
+        head,
+        ...(trail
+          ? [
+              trail.animate(
+                [
+                  { strokeDashoffset: "12", opacity: 0 },
+                  { strokeDashoffset: "3", opacity: 0.55, offset: 0.09 },
+                  { strokeDashoffset: "-79", opacity: 0.55, offset: 0.91 },
+                  { strokeDashoffset: "-88", opacity: 0 },
+                ],
+                timing,
+              ),
+            ]
+          : []),
+      ];
+    });
     return () => animations.forEach((animation) => animation.cancel());
   }, [routes]);
   useEffect(() => {
@@ -91,7 +134,10 @@ export default function FloorPlanTransit({
     let width = node?.offsetWidth,
       height = node?.offsetHeight;
     const observer = new ResizeObserver(() => {
-      if (node && (node.offsetWidth !== width || node.offsetHeight !== height)) {
+      if (
+        node &&
+        (node.offsetWidth !== width || node.offsetHeight !== height)
+      ) {
         width = node.offsetWidth;
         height = node.offsetHeight;
         // Keep the last window consumed: a resize must not replay earlier moves.
@@ -113,24 +159,41 @@ export default function FloorPlanTransit({
       data-testid="floor-plan-transit"
       data-window-from={active ? from : ""}
       data-window-to={active ? to : ""}
+      data-motion-duration={motionDurationMs}
     >
       {active
-        ? routes.map(({ journey, path, delay }) => (
-            <span
-              key={`${windowKey}:${journey.patientId}`}
-              className="floor-transit-marker"
-              data-patient-id={journey.patientId}
-              data-from={journey.moves[0].from}
-              data-to={journey.moves.at(-1)!.to}
-              data-events={journey.moves.map((move) => move.eventId).join(",")}
-              data-delay={delay}
-              data-path={path}
-              style={{
-                offsetPath: `path("${path}")`,
-                offsetAnchor: "center",
-                opacity: 0,
-              }}
-            />
+        ? routes.map(({ journey, path, delayMs, durationMs }) => (
+            <Fragment key={journey.patientId}>
+              <svg
+                className="floor-transit-route"
+                aria-hidden="true"
+                data-patient-id={journey.patientId}
+              >
+                <path
+                  className="floor-transit-trail"
+                  d={path}
+                  pathLength="100"
+                />
+              </svg>
+              <span
+                className="floor-transit-marker"
+                data-patient-id={journey.patientId}
+                data-from={journey.moves[0].from}
+                data-to={journey.moves.at(-1)!.to}
+                data-events={journey.moves
+                  .map((move) => move.eventId)
+                  .join(",")}
+                data-delay={delayMs}
+                data-duration={durationMs}
+                data-window-to={to}
+                data-path={path}
+                style={{
+                  offsetPath: `path("${path}")`,
+                  offsetAnchor: "center",
+                  opacity: 0,
+                }}
+              />
+            </Fragment>
           ))
         : null}
     </div>

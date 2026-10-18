@@ -3,6 +3,8 @@ import {
   corridorRoute,
   floorJourneyPath,
   floorMotionIsCurrent,
+  floorTransitTiming,
+  floorTransitWindowAction,
   recordedFloorJourneys,
 } from "./floorPlanTransitModel";
 
@@ -14,6 +16,127 @@ const event = (event_type: string, minute: number, fields: any = {}) => ({
   event_id: `${event_type}-${minute}`,
   occurred_at: new Date(Date.parse(from) + minute * 60000).toISOString(),
   ...fields,
+});
+
+describe("smooth recorded window pacing", () => {
+  const journey = (minute: number) => ({
+    patientId: "P1",
+    moves: [
+      {
+        from: "ED",
+        to: "WARD-A",
+        at: event("admission", minute).occurred_at,
+        eventId: "admission",
+      },
+    ],
+  });
+  it("gives early and late recorded moves enough time to remain readable, finishing within their frame", () => {
+    const early = floorTransitTiming(journey(1), from, to)!,
+      late = floorTransitTiming(journey(240), from, to)!;
+    expect(late.delayMs).toBeGreaterThan(early.delayMs);
+    for (const timing of [early, late]) {
+      expect(timing.durationMs).toBeGreaterThanOrEqual(850);
+      expect(timing.delayMs + timing.durationMs).toBe(976);
+    }
+    expect(floorTransitTiming(journey(240), from, to, 500)).toEqual({
+      delayMs: 60,
+      durationMs: 428,
+    });
+    const shortFrame = floorTransitTiming(journey(240), from, to, 60)!;
+    expect(shortFrame.delayMs + shortFrame.durationMs).toBeLessThan(60);
+  });
+  it("rejects stale, future, malformed, backwards and discontinuous movement evidence", () => {
+    for (const input of [
+      journey(0),
+      journey(-1),
+      journey(241),
+      { patientId: "P1", moves: [] },
+    ])
+      expect(floorTransitTiming(input, from, to)).toBeNull();
+    expect(floorTransitTiming(journey(1), "bad", to)).toBeNull();
+    expect(floorTransitTiming(journey(1), to, from)).toBeNull();
+    expect(floorTransitTiming(journey(1), from, to, Infinity)).toBeNull();
+    expect(floorTransitTiming(journey(1), from, to, 0)).toBeNull();
+    expect(
+      floorTransitTiming(
+        {
+          patientId: "P1",
+          moves: [
+            ...journey(10).moves,
+            {
+              from: "WARD-A",
+              to: "discharge",
+              at: event("discharge", 5).occurred_at,
+              eventId: "discharge",
+            },
+          ],
+        },
+        from,
+        to,
+      ),
+    ).toBeNull();
+    expect(
+      floorTransitTiming(
+        {
+          patientId: "P1",
+          moves: [
+            ...journey(10).moves,
+            {
+              from: "ICU",
+              to: "discharge",
+              at: event("discharge", 20).occurred_at,
+              eventId: "discharge",
+            },
+          ],
+        },
+        from,
+        to,
+      ),
+    ).toBeNull();
+  });
+  it("starts each exact window once, and holds the running animation on an ordinary rerender", () => {
+    const next = { key: "REP1|first", zoom: 1, active: true, from, to };
+    expect(floorTransitWindowAction(null, next)).toBe("start");
+    const consumed = { key: next.key, zoom: next.zoom };
+    expect(floorTransitWindowAction(consumed, next)).toBe("hold");
+    expect(floorTransitWindowAction(consumed, { ...next, active: false })).toBe(
+      "clear",
+    );
+    // The component retains the consumed stamp while paused or resized.
+    expect(floorTransitWindowAction(consumed, next)).toBe("hold");
+    expect(floorTransitWindowAction(consumed, { ...next, zoom: 1.1 })).toBe(
+      "clear",
+    );
+    expect(
+      floorTransitWindowAction(
+        { key: next.key, zoom: 1.1 },
+        { ...next, zoom: 1.1 },
+      ),
+    ).toBe("hold");
+    expect(
+      floorTransitWindowAction(consumed, {
+        ...next,
+        key: "REP1|second",
+        from: to,
+        to: event("x", 480).occurred_at,
+      }),
+    ).toBe("start");
+    expect(
+      floorTransitWindowAction(consumed, { ...next, key: "REP2|first" }),
+    ).toBe("start");
+  });
+  it("clears inactive or invalid windows without accepting a fabricated forward step", () => {
+    const next = { key: "REP1|first", zoom: 1, active: true, from, to };
+    for (const update of [
+      { active: false },
+      { key: "" },
+      { from: to, to: from },
+      { to: "bad" },
+    ])
+      expect(floorTransitWindowAction(null, { ...next, ...update })).toBe(
+        "clear",
+      );
+  });
 });
 const units = ["ED", "WARD-A", "WARD-B", "ICU"];
 describe("recorded floor-plan movements", () => {

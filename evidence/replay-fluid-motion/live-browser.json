@@ -1,0 +1,50 @@
+{
+  "checked_at": "2026-10-18T08:01:44.398736+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "code_commit": "34ebb293ce1bf34b2c0a7711712388fe43553055",
+  "all_checks_passed": true,
+  "browser": "ChatGPT in-app browser",
+  "checks": [
+    {
+      "name": "saved_egg_wo_exact_inventory",
+      "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+      "run_id": "run_2088efd055e04fac8875",
+      "ward_a_physical_beds": 100,
+      "ward_a_occupied": 26,
+      "ed_waiting": 0,
+      "passed": true
+    },
+    {
+      "name": "native_timeline_key_updates_live_recorded_state",
+      "selected_at": "2026-10-16T05:01:00Z",
+      "slider_elapsed_minutes": 1,
+      "ed_waiting": 0,
+      "passed": true
+    },
+    {
+      "name": "two_saved_scenarios_restore_with_history",
+      "left_scenario_id": "scenario-demo-v1-1-0-hospital_baseline-41021-365",
+      "left_saved_revision": 4,
+      "right_scenario_id": "scenario_6cd01bff3f2e42fcbd59",
+      "right_saved_revision": 2,
+      "simulations_per_side": 10,
+      "opened_right_result": "run_e4effd4adbdf4c54b019",
+      "browser_back_restored_pair_and_egg_wo_context": true,
+      "passed": true
+    },
+    {
+      "name": "hospital_footprint_rendered_with_logical_waiting_and_clinical_wings",
+      "screenshot": "live-hospital-map.png",
+      "passed": true
+    }
+  ],
+  "replay_console_errors": [],
+  "comparison_console_errors": [],
+  "screenshots": [
+    "live-hospital-map.png",
+    "live-comparison.png"
+  ],
+  "scenario_mutations": 0,
+  "new_production_simulations": 0,
+  "production_export_downloads": 0
+}

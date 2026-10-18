@@ -1,0 +1,106 @@
+{
+  "checked_at": "2026-10-18T07:59:49.176322+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "all_checks_passed": true,
+  "checks": [
+    {
+      "check": "saved_library_pair_uses_current_revisions",
+      "passed": true,
+      "sides": [
+        {
+          "position": "left",
+          "scenario_id": "scenario-demo-v1-1-0-hospital_baseline-41021-365",
+          "revision": 4,
+          "state": "ready",
+          "run_id": "run_7648202b2e6f4d5e9d6b"
+        },
+        {
+          "position": "right",
+          "scenario_id": "scenario_6cd01bff3f2e42fcbd59",
+          "revision": 2,
+          "state": "ready",
+          "run_id": "run_e4effd4adbdf4c54b019"
+        }
+      ],
+      "comparable": true
+    },
+    {
+      "check": "incompatible_horizons_do_not_fabricate_differences",
+      "passed": true,
+      "reasons": [
+        "different_horizon",
+        "different_end"
+      ]
+    },
+    {
+      "check": "edited_100_bed_inventory_is_recorded_exactly",
+      "passed": true,
+      "run_id": "run_2088efd055e04fac8875",
+      "replication_id": "run_2088efd055e04fac8875_rep_0000",
+      "at": "2026-10-16T05:00:00Z",
+      "units": [
+        {
+          "unit_id": "UNIT-ED",
+          "physical": 30,
+          "staffed": 30,
+          "occupied": 12,
+          "available": 18,
+          "installed_slots": 30
+        },
+        {
+          "unit_id": "UNIT-ICU",
+          "physical": 12,
+          "staffed": 12,
+          "occupied": 8,
+          "available": 4,
+          "installed_slots": 12
+        },
+        {
+          "unit_id": "UNIT-WARD-A",
+          "physical": 100,
+          "staffed": 100,
+          "occupied": 26,
+          "available": 74,
+          "installed_slots": 100
+        },
+        {
+          "unit_id": "UNIT-WARD-B",
+          "physical": 40,
+          "staffed": 40,
+          "occupied": 25,
+          "available": 15,
+          "installed_slots": 40
+        },
+        {
+          "unit_id": "UNIT-WARD-C",
+          "physical": 20,
+          "staffed": 20,
+          "occupied": 13,
+          "available": 7,
+          "installed_slots": 20
+        }
+      ],
+      "flow_counts": {
+        "FAC-MAIN": {
+          "arrivals": 0,
+          "discharges": 0
+        }
+      }
+    },
+    {
+      "check": "read_only_scenario_preserved",
+      "passed": true,
+      "scenario_id": "scenario_94af2d4fa6dc4d6f8863",
+      "revision": 5
+    }
+  ],
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  },
+  "production_export_downloads": 0,
+  "scenario_mutations": 0,
+  "new_simulations": 0
+}

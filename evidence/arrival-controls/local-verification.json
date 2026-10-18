@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-18T04:20:40.435168+00:00",
+  "frontend_tests": {
+    "passed": 184,
+    "failed": 0
+  },
+  "desktop_browser_tests": {
+    "startTime": "2026-10-18T04:19:14.946Z",
+    "duration": 43302.367999999995,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "exact_imported_curve_browser_tests": {
+    "startTime": "2026-10-18T04:20:07.206Z",
+    "duration": 14205.071,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "engine_regressions": {
+    "passed": 2,
+    "actual_long_horizon_runs": 4,
+    "log_summary": "2 passed in 2.17s"
+  },
+  "browser_actual_long_horizon_runs": 2,
+  "production_build_passed": true,
+  "baseline_waiting_panel_removed": true,
+  "controls_stay_visible_after_dot_edits": true,
+  "scale_preserves_daily_shape_and_scheduled_batches": true,
+  "reset_undo_and_preset_reload_verified": true,
+  "backend_changed": false,
+  "mobile_out_of_scope": true
+}

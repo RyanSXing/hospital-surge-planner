@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T04:16:46.641700+00:00",
+  "sha256": "5a58b067d8a56fd3aacad852cfaaf74ab8a28867a56477e44e4cc03a44e21568",
+  "byte_size": 5596713,
+  "object_key": "backups/hospital-arrival-controls-20261018T041641Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing workspace before arrival controls fix deployment; no scenario mutations requested"
+}

@@ -77,8 +77,7 @@
   gap: 6px;
 }
 .planning-baseline-metrics {
-  display: grid;
-  grid-template-columns: minmax(0, 2.4fr) minmax(220px, 1fr);
+  min-width: 0;
 }
 .baseline-capacity-chart {
   padding: 18px 20px;
@@ -164,52 +163,6 @@
   font-size: 12px;
   margin-top: 5px;
 }
-.baseline-queue-summary {
-  padding: 20px;
-  border-left: 1px solid #edf1f5;
-  background: #fafcfe;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.planning-baseline-metric {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: #607287;
-  font-size: 13px;
-}
-.planning-baseline-metric strong {
-  font-size: 37px;
-  line-height: 1.15;
-  color: #294b69;
-  font-weight: 650;
-  letter-spacing: -1px;
-}
-.planning-baseline-metric .baseline-pressure {
-  color: #946108;
-}
-.baseline-assessment {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  color: #5e7588;
-  border-top: 1px solid #e6edf3;
-  padding-top: 14px;
-  margin-top: 16px;
-  font-size: 13px;
-}
-.baseline-assessment strong {
-  color: #3e5c73;
-  font-size: 18px;
-}
-.baseline-queue-summary p {
-  font-size: 12px;
-  color: #607287;
-  line-height: 1.6;
-  margin: 14px 0 0;
-}
 .planning-baseline-footer {
   display: flex;
   flex-wrap: wrap;
@@ -275,9 +228,6 @@
   overflow: hidden;
 }
 @media (max-width: 1000px) {
-  .planning-baseline-metrics {
-    grid-template-columns: minmax(0, 2fr) minmax(180px, 1fr);
-  }
   .planning-baseline-source {
     justify-content: flex-start;
   }
@@ -310,9 +260,6 @@
     padding: 14px;
     gap: 10px;
   }
-  .planning-baseline-metrics {
-    grid-template-columns: 1fr;
-  }
   .baseline-capacity-chart {
     padding: 16px 14px;
   }
@@ -323,30 +270,6 @@
   }
   .baseline-capacity-label small {
     font-size: 12px;
-  }
-  .baseline-queue-summary {
-    border-left: 0;
-    border-top: 1px solid #edf1f5;
-    padding: 14px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    align-items: start;
-  }
-  .planning-baseline-metric strong {
-    font-size: 29px;
-  }
-  .baseline-assessment {
-    flex-direction: column;
-    align-items: flex-start;
-    border: 0;
-    border-left: 1px solid #e0e9f1;
-    padding: 0 0 0 14px;
-    margin: 0;
-  }
-  .baseline-queue-summary > p {
-    grid-column: 1 / -1;
-    margin: 0;
   }
   .planning-baseline-footer {
     padding: 10px 14px;
@@ -398,17 +321,6 @@
   }
   .baseline-capacity-row + .baseline-capacity-row {
     margin-top: 9px;
-  }
-  .baseline-queue-summary {
-    padding: 14px 18px;
-  }
-  .planning-baseline-metric strong {
-    font-size: 30px;
-  }
-  .baseline-assessment {
-    margin-top: 12px;
-    padding-top: 10px;
-    font-size: 12px;
   }
   .planning-baseline-footer {
     padding: 4px 16px;

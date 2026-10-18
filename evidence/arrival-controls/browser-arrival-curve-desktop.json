@@ -1,0 +1,21 @@
+{
+  "scenario_id": "scenario_e068398db05f4d0b9a86",
+  "run_group_id": "run_2067c55bdd8b4b8a911b",
+  "initial_daily_arrivals": [
+    108,
+    117,
+    86
+  ],
+  "edited_daily_arrivals": [
+    108,
+    141,
+    86
+  ],
+  "unchanged_neighbor_days": true,
+  "stable_axis_while_dragging": "140",
+  "one_undo_per_drag_and_held_key": true,
+  "scheduled_batch_preserved": true,
+  "other_stream_and_care_mix_preserved": true,
+  "saved_reloaded_and_frozen_conditions_match": true,
+  "browser_errors": []
+}

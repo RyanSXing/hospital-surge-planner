@@ -1,4 +1,6 @@
 import { expect, test, type Locator } from "@playwright/test";
+import { plannedArrivals } from "../src/pages/plannedArrivalSeries";
+import { atDay } from "../src/api";
 import {
   api,
   assertPageHealthy,
@@ -13,6 +15,198 @@ async function chartValues(chart: Locator) {
   const serialized = await chart.getAttribute("data-planned-arrivals");
   expect(serialized).toBeTruthy();
   return serialized!.split(",").map(Number);
+}
+
+for (const days of [14, 30]) {
+  test(`${days}-day edited curve keeps controls available and drives actual simulated arrivals`, async ({
+    page,
+  }, info) => {
+    test.skip(info.project.name !== "desktop", "Desktop arrival workflow.");
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    const context = await scenario(
+      page,
+      `editable ${days}-day curve actual run`,
+      {
+        horizon_calendar_days: 7,
+        replications: 1,
+        conditions: [
+          {
+            id: "whole-period-ed",
+            kind: "arrival_multiplier",
+            entry_stream_id: "ED_MAIN",
+            shape: "step",
+            surge_percent: -80,
+            start_at: "2026-10-16T05:00:00Z",
+            end_at: "2026-10-23T05:00:00Z",
+          },
+        ],
+      },
+    );
+    await open(page, context.scenario.id, "overview");
+    await expect(
+      page.getByText("Patients awaiting a bed", { exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText("Awaiting ED assessment", { exact: true }),
+    ).toHaveCount(0);
+    const editor = page.getByTestId("guided-scenario");
+    const chart = editor.getByTestId("arrival-preview-chart");
+    await editor
+      .locator(".mantine-SegmentedControl-label")
+      .filter({ hasText: days === 14 ? /^2 weeks$/ : /^30 days$/ })
+      .click();
+    const handles = chart.getByTestId("arrival-day-handle");
+    await expect(handles).toHaveCount(days);
+    const zeroDay = days === 14 ? 9 : 20;
+    await handles.nth(zeroDay).focus();
+    await handles.nth(zeroDay).press("Home");
+    await expect.poll(async () => (await chartValues(chart))[zeroDay]).toBe(0);
+    const last = handles.last();
+    await last.focus();
+    await last.press("ArrowUp");
+    await last.press("ArrowUp");
+    const main = editor.locator(".simulation-main-controls");
+    await expect(
+      main.getByLabel("Increase in ED arrivals", { exact: true }),
+    ).toBeEnabled();
+    await expect(
+      main.getByRole("radio", { name: "Steady", exact: true }),
+    ).toBeChecked();
+    await expect(
+      editor.getByText("Custom daily curve", { exact: true }),
+    ).toHaveCount(0);
+    const beforeScaling = await chartValues(chart);
+    const slider = main.getByRole("slider", {
+      name: "Adjust arrival surge",
+      exact: true,
+    });
+    await slider.focus();
+    await slider.press("ArrowRight");
+    const scaled = await chartValues(chart);
+    expect(scaled[zeroDay]).toBe(0);
+    const scale = scaled[0] / beforeScaling[0];
+    expect(scale).toBeGreaterThan(1);
+    scaled.forEach((value, index) =>
+      expect(value).toBeCloseTo(beforeScaling[index] * scale, 1),
+    );
+    const serialized = (await chart.getAttribute("data-planned-arrivals"))!;
+    await main
+      .getByRole("button", { name: "Reset daily edits", exact: true })
+      .click();
+    expect((await chartValues(chart))[zeroDay]).toBeGreaterThan(0);
+    await editor.getByRole("button", { name: "Undo", exact: true }).click();
+    await expect(chart).toHaveAttribute("data-planned-arrivals", serialized);
+    await editor
+      .getByRole("button", { name: "Save draft", exact: true })
+      .click();
+    await expect(
+      editor.getByText("Unsaved changes", { exact: true }),
+    ).toHaveCount(0);
+    const saved = await api(page.request, `/scenarios/${context.scenario.id}`);
+    await page.reload();
+    await expect(chart).toHaveAttribute("data-planned-arrivals", serialized);
+    await expect(
+      main.getByLabel("Increase in ED arrivals", { exact: true }),
+    ).toBeEnabled();
+    await expect(
+      main.getByRole("slider", { name: "Adjust arrival surge", exact: true }),
+    ).toBeEnabled();
+    const dataset = await api(
+      page.request,
+      `/datasets/${saved.dataset_version_id}`,
+    );
+    const direct = dataset.entry_streams.find(
+      (entry: any) => entry.entry_stream_id === "DIRECT_WARD_MAIN",
+    );
+    const directExpected = plannedArrivals({
+      conditions: saved.conditions,
+      stream: "DIRECT_WARD_MAIN",
+      baselineRate: direct.expected_arrivals_per_local_day,
+      start: saved.start_at,
+      end: atDay(saved.start_at, days, 0, saved.timezone),
+      days,
+      timeZone: saved.timezone,
+      hourWeights: direct.hour_weights,
+      weekdayWeights: direct.weekday_weights,
+    }).reduce((sum, day) => sum + day.planned, 0);
+    const expectedArrivals =
+      scaled.reduce((sum, value) => sum + value, 0) + directExpected;
+    await capture(page, `arrival-controls-${days}-days`, info);
+    const submission = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/run-groups") &&
+        response.request().method() === "POST",
+    );
+    await editor
+      .getByRole("button", { name: "Run simulation", exact: true })
+      .click();
+    const completed = await waitRun(page, (await (await submission).json()).id);
+    expect(completed.scenario_context.conditions).toEqual(saved.conditions);
+    const metrics = await api(
+      page.request,
+      `/run-groups/${completed.id}/metrics?grain=day`,
+    );
+    expect(metrics.scalar_metrics.expected_arrivals.p50).toBeCloseTo(
+      expectedArrivals,
+      0,
+    );
+    const start = atDay(saved.start_at, zeroDay, 0, saved.timezone),
+      end = atDay(saved.start_at, zeroDay + 1, 0, saved.timezone);
+    const events = await api(
+      page.request,
+      `/runs/${completed.selected_replication_id}/events?event_type=arrival&start_at=${encodeURIComponent(start)}&end_at=${encodeURIComponent(end)}&limit=200`,
+    );
+    expect(events.total).toBeLessThan(200);
+    expect(
+      events.items.filter((event: any) => event.payload.entry_type === "ed"),
+    ).toHaveLength(0);
+    const finalStart = atDay(saved.start_at, days - 1, 0, saved.timezone),
+      finalEnd = atDay(saved.start_at, days, 0, saved.timezone);
+    const finalEvents = await api(
+      page.request,
+      `/runs/${completed.selected_replication_id}/events?event_type=arrival&start_at=${encodeURIComponent(finalStart)}&end_at=${encodeURIComponent(finalEnd)}&limit=200`,
+    );
+    const actualFinalEd = finalEvents.items.filter(
+      (event: any) => event.payload.entry_type === "ed",
+    ).length;
+    expect(actualFinalEd).toBeGreaterThan(0);
+    // A pattern must keep its selection after canonical windows are saved and reloaded.
+    await open(page, saved.id, "overview", completed.id);
+    await main
+      .locator(".mantine-SegmentedControl-label")
+      .filter({ hasText: /^Builds up$/ })
+      .click();
+    await editor
+      .getByRole("button", { name: "Save draft", exact: true })
+      .click();
+    await expect(
+      editor.getByText("Unsaved changes", { exact: true }),
+    ).toHaveCount(0);
+    await page.reload();
+    await expect(
+      main.getByRole("radio", { name: "Builds up", exact: true }),
+    ).toBeChecked();
+    await assertPageHealthy(page);
+    expect(errors).toEqual([]);
+    record(`arrival-controls-${days}-days`, {
+      scenario_id: saved.id,
+      run_group_id: completed.id,
+      planned_ed_arrivals: scaled,
+      expected_total_arrivals: expectedArrivals,
+      engine_expected_total_arrivals:
+        metrics.scalar_metrics.expected_arrivals.p50,
+      actual_total_arrivals: metrics.scalar_metrics.arrivals.p50,
+      zero_ed_day: zeroDay + 1,
+      actual_zero_day_ed_arrivals: 0,
+      actual_last_day_ed_arrivals: actualFinalEd,
+      controls_remain_available: true,
+      slider_preserves_daily_shape: true,
+      reset_and_undo_verified: true,
+      saved_reloaded_and_frozen_match: true,
+      browser_errors: errors,
+    });
+  });
 }
 
 test("dragged daily arrivals keep a stable axis, one undo and exact saved simulation inputs", async ({
@@ -120,15 +314,13 @@ test("dragged daily arrivals keep a stable axis, one undo and exact saved simula
   expect(dragged[0]).toBe(initial[0]);
   expect(dragged[2]).toBe(initial[2]);
   const mainControls = editor.locator(".simulation-main-controls");
-  await expect(mainControls.getByTestId("custom-arrival-state")).toContainText(
-    "Custom daily curve",
-  );
+  await expect(mainControls.getByTestId("custom-arrival-state")).toHaveCount(0);
   await expect(
     mainControls.getByLabel("Increase in ED arrivals", { exact: true }),
-  ).toHaveCount(0);
+  ).toBeEnabled();
   await expect(
     mainControls.getByRole("radio", { name: "Steady", exact: true }),
-  ).toHaveCount(0);
+  ).toBeChecked();
   await undo.click();
   await expect(chart).toHaveAttribute(
     "data-planned-arrivals",
@@ -205,12 +397,10 @@ test("dragged daily arrivals keep a stable axis, one undo and exact saved simula
     expect(window.care_mix_override).toEqual(careMix);
   await page.reload();
   await expect(chart).toHaveAttribute("data-planned-arrivals", finalSerialized);
-  await expect(mainControls.getByTestId("custom-arrival-state")).toContainText(
-    "Custom daily curve",
-  );
+  await expect(mainControls.getByTestId("custom-arrival-state")).toHaveCount(0);
   await expect(
     mainControls.getByLabel("Increase in ED arrivals", { exact: true }),
-  ).toHaveCount(0);
+  ).toBeEnabled();
   await expect(day).toHaveAttribute("aria-valuemin", "25");
   await capture(page, "arrival-curve-edited", info);
 

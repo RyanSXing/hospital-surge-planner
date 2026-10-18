@@ -131,7 +131,9 @@ test("custom imported curves, multiple windows and exact time edits retain canon
   await page
     .getByRole("button", { name: "Add another arrival interval", exact: true })
     .click();
-  await page.getByLabel("Increase in ED arrivals").fill("25");
+  await page
+    .getByLabel("Selected interval increase in ED arrivals", { exact: true })
+    .fill("25");
   await page.getByLabel("Starts on day", { exact: true }).fill("3");
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(
@@ -269,12 +271,17 @@ test("editing exact stepped arrivals preserves their step behavior", async ({
   });
   await open(page, context.scenario.id, "overview");
   await expect(
+    page.getByLabel("Increase in ED arrivals", { exact: true }),
+  ).toBeEnabled();
+  await expandScenarioDetails(page);
+  await expect(
     page.getByRole("radio", { name: "Custom", exact: true }),
   ).toBeChecked();
   await expect(
-    page.getByLabel("Increase in ED arrivals", { exact: true }),
+    page.getByLabel("Selected interval increase in ED arrivals", {
+      exact: true,
+    }),
   ).toBeDisabled();
-  await expandScenarioDetails(page);
   await page.getByLabel("Point 2 multiplier", { exact: true }).fill("2.3");
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(page.getByText("Unsaved changes", { exact: true })).toHaveCount(

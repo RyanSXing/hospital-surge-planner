@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { ArrowRight, Clock3, Database, Hospital, Layers } from "lucide-react";
 import type { PlanningContext } from "../types";
 import { fmt, localDate, unitId } from "../api";
-import { isActive, nameOf, queueStats, statsFor } from "../model";
+import { isActive, nameOf, statsFor } from "../model";
 import { Button } from "../components/ui";
 import "./planningOverview.css";
 
@@ -49,8 +49,7 @@ export default function PlanningOverview({
   };
   const ward = statsFor(baseline, "ward"),
     icu = statsFor(baseline, "icu"),
-    ed = statsFor(baseline, "ed"),
-    queue = queueStats(baseline);
+    ed = statsFor(baseline, "ed");
   const units = (dataset?.units || []).filter(
     (unit) => unit.facility_id === facilityId,
   );
@@ -184,21 +183,6 @@ export default function PlanningOverview({
                 </div>
               </div>
             ))}
-          </div>
-          <div className="baseline-queue-summary">
-            <div className="planning-baseline-metric">
-              <span>Patients awaiting a bed</span>
-              <strong className={queue.total ? "baseline-pressure" : ""}>
-                {fmt(queue.total)}
-              </strong>
-              <span>
-                {fmt(queue.ward)} ward · {fmt(queue.icu)} ICU
-              </span>
-            </div>
-            <div className="baseline-assessment">
-              <span>Awaiting ED assessment</span>
-              <strong>{fmt(queue.ed)}</strong>
-            </div>
           </div>
         </div>
 

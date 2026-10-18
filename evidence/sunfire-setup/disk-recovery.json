@@ -1,0 +1,20 @@
+{
+  "removed_obsolete_unused_tags": [
+    "hospital-surge-planner-api:e409cf10f3e27731ed562415df37b2ef37bbcb79",
+    "hospital-surge-planner-web:e409cf10f3e27731ed562415df37b2ef37bbcb79",
+    "hospital-surge-planner-api:fcae90f8caad30494e795474096cf5b970deea09",
+    "hospital-surge-planner-web:fcae90f8caad30494e795474096cf5b970deea09"
+  ],
+  "protected_current_and_rollback_tags": [
+    "hospital-surge-planner-api:56f76da2710ea52ba538d132c13d43e1feb380a1",
+    "hospital-surge-planner-web:56f76da2710ea52ba538d132c13d43e1feb380a1",
+    "hospital-surge-planner-api:ac0fe41c141d4a0f8bf94964335f09320176265c",
+    "hospital-surge-planner-web:ac0fe41c141d4a0f8bf94964335f09320176265c"
+  ],
+  "protected_image_ids_unchanged": true,
+  "no_force_removal": true,
+  "volumes_touched": false,
+  "free_bytes_before": 647737344,
+  "free_bytes_after": 5529751552,
+  "reason": "First app-image build ran out of disk before service replacement. Two superseded unused app versions were removed without force; running and rollback images and all data volumes were retained. Retry used the same committed source."
+}

@@ -48,5 +48,14 @@
     "errors": 0,
     "skipped": 0,
     "subset_of_backend_tests": true
+  },
+  "hosted_acceptance": {
+    "source_commit": "b77ea61352df60820ffb9cd28a0c72becb90fc3d",
+    "real_model_setup_questions": 0,
+    "all23_stored_records_unchanged": true,
+    "all4_scenarios_unchanged": true,
+    "saved_results_and_replay_checked": true,
+    "no_production_simulations_or_actions_executed": true,
+    "screenshot": "evidence/sunfire-setup/live-setup.png"
   }
 }

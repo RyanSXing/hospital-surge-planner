@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-18T12:21:44.159886+00:00",
+  "base_url": "https://aegisconsole.131.186.0.156.sslip.io",
+  "code_commit": "b77ea61352df60820ffb9cd28a0c72becb90fc3d",
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  },
+  "guide_version": "sunfire-planning-v2",
+  "model": "openai.gpt-oss-120b",
+  "actual_model_response": true,
+  "request": "Set up a massive influx scenario using sensible defaults. Do not save or run.",
+  "clarification_questions": 0,
+  "response": "Prepared changes are shown below; the card shows their current status. Assumptions: additional patients arrive at the simulation start; additional arrivals are spread over 60 minutes; a one-time stress-test influx of 200 additional patients.",
+  "proposal": {
+    "kind": "edit",
+    "mode": "proposal",
+    "status": "READY",
+    "additional_patients": 200,
+    "at": "2026-10-16T05:00:00Z",
+    "spread_minutes": 60.0
+  },
+  "all_existing_configuration_retained": true,
+  "saved_scenario_exactly_unchanged": true,
+  "production_scenarios_created": 0,
+  "production_simulations_created": 0,
+  "production_actions_applied": 0
+}

@@ -1,0 +1,25 @@
+{
+  "scenario_id": "scenario_602df4d9a20d42c48d76",
+  "run_id": "run_33b99ed68c344a6aa102",
+  "sample_count": 91,
+  "recorded_times": [
+    "2026-10-16T05:00:00Z"
+  ],
+  "summary": {
+    ".hospital-floor-plan": {
+      "{\"x\":225,\"y\":258.546875,\"width\":1040,\"height\":404.453125,\"offsetHeight\":404,\"zoom\":\"1\",\"transform\":\"none\"}": 91
+    },
+    ".floor-plan-key": {
+      "{\"x\":225,\"y\":258.546875,\"width\":1040,\"height\":27,\"offsetHeight\":27,\"zoom\":\"1\",\"transform\":\"none\"}": 91
+    },
+    "[data-testid=\"replay-treatment-status\"]": {
+      "{\"x\":800.03125,\"y\":264.546875,\"width\":200,\"height\":14,\"offsetHeight\":14,\"zoom\":\"1\",\"transform\":\"none\"}": 91
+    },
+    ".floor-plan-scaled-frame": {
+      "{\"x\":311.96875,\"y\":291.296875,\"width\":866.078125,\"height\":365.953125,\"offsetHeight\":366,\"zoom\":\"1\",\"transform\":\"none\"}": 91
+    },
+    ".floor-plan-building": {
+      "{\"x\":311.96875,\"y\":291.296875,\"width\":866.08203125,\"height\":366.04168701171875,\"offsetHeight\":431,\"zoom\":\"1\",\"transform\":\"matrix(0.8491, 0, 0, 0.8491, 0, 0)\"}": 91
+    }
+  }
+}

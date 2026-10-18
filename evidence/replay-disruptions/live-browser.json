@@ -1,0 +1,32 @@
+{
+  "base_url": "https://aegisconsole.131.186.0.156.sslip.io",
+  "configuration_saved_draft": true,
+  "configuration_console_errors": [],
+  "new_hostname_sign_in_succeeded": true,
+  "supplies_accent": "rgb(58, 129, 125)",
+  "summary_loaded": true,
+  "analytics_plot": {
+    "backgrounds": 1,
+    "interruption_legend": false,
+    "interruption_marks": 0,
+    "presentation": "background",
+    "ribbons": 0
+  },
+  "analytics_console_errors": [],
+  "replay_initial": {
+    "bed_count": 134,
+    "state": "available",
+    "status": "Treatment available",
+    "transform": "matrix(0.8491, 0, 0, 0.8491, 0, 0)",
+    "ward_a_physical": "32",
+    "zoom": "1"
+  },
+  "replay_play_pause_worked": true,
+  "replay_console_errors": [],
+  "comparison_console_errors": [],
+  "comparison_opened": true,
+  "returned_to_saved_configuration": true,
+  "original_open_draft_left_untouched": true,
+  "checked_at": "2026-10-18T10:17:35.209Z",
+  "all_checks_passed": true
+}

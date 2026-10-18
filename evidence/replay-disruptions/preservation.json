@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-10-18T10:09:44.875599+00:00",
-  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "checked_at": "2026-10-18T10:14:41.316710+00:00",
+  "base_url": "https://aegisconsole.131.186.0.156.sslip.io",
   "records": [
     {
       "path": "/datasets/demo-v1-1-0-hospital_baseline-41021-365",

@@ -1,0 +1,33 @@
+{
+  "accepted_at": "2026-10-18T10:17:49.530279+00:00",
+  "status": "accepted",
+  "code_commit": "ac0fe41c141d4a0f8bf94964335f09320176265c",
+  "base_url": "https://aegisconsole.131.186.0.156.sslip.io",
+  "frontend_tests": 447,
+  "backend_tests": 65,
+  "desktop_browser_cases": 19,
+  "hosted_assets_match_tested_bundle": 48,
+  "protected_stored_records_unchanged": 23,
+  "active_scenarios_preserved": 4,
+  "named_volumes_preserved": true,
+  "all_six_services_healthy": true,
+  "existing_host_and_storage_reused": true,
+  "new_production_simulations": 0,
+  "scenario_mutations": 0,
+  "production_export_downloads": 0,
+  "evidence": {
+    "validation": "validation.json",
+    "browser": "browser-results.json",
+    "runtime": "runtime-preservation.json",
+    "stored_data": "stored-record-preservation.json",
+    "api": "live-api.json",
+    "live_browser": "live-browser.json",
+    "assets": "live-assets.json",
+    "tested_source": "tested-build-manifest.json",
+    "hostname": "hostname-acceptance.json"
+  },
+  "primary_url": "https://aegisconsole.131.186.0.156.sslip.io",
+  "previous_address_retained": true,
+  "exact_https_hosts_verified": 2,
+  "new_hostname_requires_fresh_sign_in": true
+}

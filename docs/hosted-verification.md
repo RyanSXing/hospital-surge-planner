@@ -1,8 +1,20 @@
 # Hosted verification record
 
-[AEGIS hospital planning](https://hospital-surge.131.186.0.156.sslip.io) runs application release **`e409cf10f3e27731ed562415df37b2ef37bbcb79`**, with base model/generator **1.1.0** and current hospital-operations model **1.3**. Frozen operations models 1.0–1.2 remain supported. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
+[AEGIS Console](https://aegisconsole.131.186.0.156.sslip.io) runs application release **`ac0fe41c141d4a0f8bf94964335f09320176265c`**, with base model/generator **1.1.0** and current hospital-operations model **1.3**. Frozen operations models 1.0–1.2 remain supported. The previous hospital-surge address remains an exact HTTPS alias. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
 
-## Configuration polish and daily disruption chance — 2026-10-18
+## Recorded Replay treatment status and resource shading — 2026-10-18
+
+Active treatment rooms turn red during recorded pauses, including empty rooms. The fixed map key shows the reason and actual resumption time. A disruption ending while supplies remain exhausted does not falsely resume care. Missing history remains unavailable. Bed occupancy and queue areas are unchanged. Natural layout measurements with paint scaling remove a CSS-zoom feedback loop that could move the map by eight pixels.
+
+Analytics now uses faint background shading for recorded resource-constraint periods, preserving gaps and source precision. Treatment-interruption lines and legend keys are removed from every chart. Routine controls remain navy, supplies uses muted teal, and severity retains its distinct colors.
+
+The final build passed **447 frontend tests**, **65 distinct focused replay/API tests** and **19 desktop flows**. The four repeated historical-model checks are included in the 65. An initial 13-case browser run exposed the real map-sizing regression; the repaired build passed every final case, with zero measured layout shift in the pause/resume audits. Coverage includes exact state boundaries, continuous playback, backward seeking, overlapping supply pauses, actual refill, unavailable history, edited bed counts, 100-bed rooms, three desktop viewport sizes, fullscreen, zoom, routes, reduced motion, saved-scenario comparison and configuration save/reload. [Validation](../evidence/replay-disruptions/validation.json), [browser attempts](../evidence/replay-disruptions/browser-results.json), [source and bundle hashes](../evidence/replay-disruptions/tested-build-manifest.json).
+
+Both exact HTTPS addresses pass certificate verification, normal login, protected-read enforcement, unrelated-origin rejection and secure host-only cookie checks. The new hostname requires a fresh sign-in. All **48 hosted frontend files** match the tested build. All six services run with healthy reported checks and unchanged named volumes. The **four active scenarios, 23 protected stored records and workspace defaults** are unchanged. A fresh private backup preceded deployment. Read-only live browser checks cover Configuration, Summary, resource shading, actual Replay play/pause with 134 installed beds including 32 in Ward A, and honest missing-result Comparison. This acceptance creates **no production simulations or scenario edits**. [Acceptance](../evidence/replay-disruptions/acceptance.json), [hostnames](../evidence/replay-disruptions/hostname-acceptance.json), [live API](../evidence/replay-disruptions/live-api.json), [browser](../evidence/replay-disruptions/live-browser.json), [stored records](../evidence/replay-disruptions/stored-record-preservation.json).
+
+The first runtime snapshot caught the web health check still starting; the settled snapshot confirms every reported check healthy. Earlier performance, security scans and restore results retain their original release attribution. Existing host and storage are reused.
+
+## Previous configuration polish and daily disruption chance — 2026-10-18
 
 Save status now sits beside **Save draft** in reserved inline space. Bed/staff inputs have centered values with minus/plus controls, severity colors are brighter, and Analytics uses narrow recorded-period ribbons rather than repeated dots or plot-wide constraint shading. The arrivals-chart header exposes daily treatment disruption chance. Model 1.3 samples reproducible independent local days; arrivals continue while care pauses. Zero chance preserves previous random trajectories and saved dated pauses remain available in a collapsed list.
 

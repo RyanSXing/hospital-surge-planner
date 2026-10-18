@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T12:07:38.663159+00:00",
+  "sha256": "1c6a7476fd377bae4eb335d0f2de9b0f0b1cceb623920e59ba8d85bc4ad77703",
+  "byte_size": 5731969,
+  "object_key": "backups/hospital-sunfire-setup-20261018T120733Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing scenarios and saved results before the Sunfire scenario-setup conversation repair"
+}

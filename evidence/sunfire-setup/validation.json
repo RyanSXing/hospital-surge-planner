@@ -1,0 +1,52 @@
+{
+  "verified_at": "2026-10-18T12:15:54.936709+00:00",
+  "backend_assistant_provider_results_conversation": {
+    "tests": 208,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "existing_api_worker_configuration_comparison": {
+    "tests": 87,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "unique_backend_tests": 295,
+  "real_model_desktop_flows": {
+    "passed": 2,
+    "failed": 0,
+    "coverage": [
+      "composed incident and bed closure",
+      "shared draft/manual controls",
+      "guarded Undo",
+      "save/run and recorded results navigation",
+      "delayed-response stale-draft rejection"
+    ]
+  },
+  "additional_cli_flow": {
+    "provider": "Actual OCI model",
+    "vague_setup_required_questions": 0,
+    "proposed_extra_patients": 200,
+    "first_day_before": 108,
+    "first_day_after_apply": 308,
+    "first_day_after_undo": 108,
+    "other_days_unchanged": true,
+    "saved_scenario_unchanged": true,
+    "note": "An API restart during one manual Undo attempt caused a transient500; retry restored the draft. Automated full flows completed without this interruption."
+  },
+  "source_files": {
+    "apps/api/surge_api/sunfire.py": "b00e64924cc4ff50536904a5b9c0ecfda47d2b7d7318b948de4acaee1731d3c5",
+    "apps/api/surge_api/sunfire_tools.py": "b0ef4ece8a4467914e527b68445e01442e1fac3d42cc7727252696a01ba6f834",
+    "apps/api/surge_api/sunfire_requests.py": "6ccf790f7883a460b702413b3fb3fc8d6471bf9fe6d60ffb95e55b3ec6953cd9",
+    "tests/test_sunfire.py": "2550ab81f4856f25ebd624ebe1f9e87c295b23912d06531a5d4ade0b0e577fe6",
+    "tests/test_sunfire_conversation.py": "eb94d8ec210a24d4aa9207040feb3f91c2edd5b2a86353d570208c07480574ba"
+  },
+  "conversation_after_final_staffed_target_guard": {
+    "tests": 43,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "subset_of_backend_tests": true
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "verified_at": "2026-10-18T12:15:54.936177+00:00",
+  "provider": "Actual OCI Generative AI; no provider-response mocks",
+  "production_scenario_mutations": 0,
+  "cases": [
+    {
+      "case": "vague_surge",
+      "message": "massive influx simulation",
+      "status": "SUCCEEDED",
+      "text": "Prepared changes are shown below; the card shows their current status. Assumptions: additional patients arrive at the simulation start; additional arrivals are spread over 60 minutes; a one-time stress-test influx of 200 additional patients.",
+      "model": "openai.gpt-oss-120b"
+    },
+    {
+      "case": "delegated_setup",
+      "message": "Set up a massive influx scenario. You decide the details; use sensible defaults. Do not run it.",
+      "status": "SUCCEEDED",
+      "text": "Prepared changes are shown below; the card shows their current status. Assumptions: additional patients arrive at the simulation start; additional arrivals are spread over 60 minutes; a one-time stress-test influx of 200 additional patients.",
+      "model": "openai.gpt-oss-120b"
+    },
+    {
+      "case": "bare_local_date",
+      "message": "Add 400 extra emergency patients Nov 7 12 pm. Keep everything else unchanged.",
+      "status": "SUCCEEDED",
+      "text": "Prepared changes are shown below; the card shows their current status. Assumptions: additional arrivals are spread over 60 minutes.",
+      "model": "openai.gpt-oss-120b"
+    },
+    {
+      "case": "specific_missing_closure",
+      "message": "An accident brings 100 extra patients and 10 beds are unavailable. Please set this up.",
+      "status": "SUCCEEDED",
+      "text": "Which hospital unit should lose the 10 beds? I\u2019ll use the current simulation period and keep the other settings.",
+      "model": "openai.gpt-oss-120b"
+    },
+    {
+      "case": "legacy_short_date_count_followup",
+      "model": "openai.gpt-oss-120b",
+      "seeded_legacy_history": true,
+      "actual_current_model_call": true,
+      "text": "Prepared changes are shown below; the card shows their current status. Assumptions: additional arrivals are spread over 60 minutes.",
+      "action": {
+        "kind": "edit",
+        "mode": "proposal",
+        "rows": [
+          {
+            "field": "incident.sunfire_incident_c4f45d5dbaa143f393b6.count",
+            "label": "Additional emergency patients",
+            "before": 0,
+            "after": 400,
+            "unit": "patients",
+            "start_at": "2026-11-07T12:00:00-06:00",
+            "end_at": "2026-11-07T13:00:00-06:00"
+          }
+        ]
+      },
+      "saved_revision_unchanged": true
+    },
+    {
+      "case": "ordinary_beds_one_unit_question_then_short_answer",
+      "model": "openai.gpt-oss-120b",
+      "seeded_legacy_history": false,
+      "first_question": "Which hospital unit should lose the 10 beds? I\u2019ll use the current simulation period and keep the other settings.",
+      "short_answer": "Ward A",
+      "text": "Prepared changes are shown below; the card shows their current status. Assumptions: additional patients arrive at the simulation start; additional arrivals are spread over 60 minutes.",
+      "action": {
+        "kind": "edit",
+        "mode": "direct",
+        "rows": [
+          {
+            "field": "unit.UNIT-WARD-A.enabled_capacity",
+            "label": "Ward A enabled bed availability",
+            "before": 40,
+            "after": 30,
+            "unit": "beds"
+          },
+          {
+            "field": "incident.sunfire_incident_54e2c3a31b2e4546aa9c.count",
+            "label": "Additional emergency patients",
+            "before": 0,
+            "after": 100,
+            "unit": "patients",
+            "start_at": "2026-10-16T05:00:00Z",
+            "end_at": "2026-10-16T06:00:00+00:00"
+          }
+        ]
+      },
+      "saved_revision_unchanged": true
+    }
+  ]
+}

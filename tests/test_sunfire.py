@@ -916,7 +916,8 @@ def test_rejected_second_change_never_partially_publishes_first_change(sf, monke
     )
     result = turn(sf, "Set a name and remove10beds")
     assert result["status"] == "SUCCEEDED" and result["actions"] == []
-    assert "When" in result["text"] and "No action was applied" in result["text"]
+    assert "Which ward" in result["text"]
+    assert "No action was applied" in result["text"]
 
 
 def test_invalid_model_schema_can_repair_within_bounded_loop(sf, monkeypatch):

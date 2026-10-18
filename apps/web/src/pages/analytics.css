@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--surface-app, #f5f7fa);
+  background: var(--surface-app, var(--canvas));
 }
 
 .analytics-sections {
@@ -19,7 +19,7 @@
   min-height: 48px;
   padding: 8px 24px 0;
   overflow-x: auto;
-  border-bottom: 1px solid var(--border, #dfe4ea);
+  border-bottom: 1px solid var(--border);
   background: var(--surface, #fff);
 }
 
@@ -33,15 +33,15 @@
   border: 0;
   border-bottom: 2px solid transparent;
   border-radius: 7px 7px 0 0;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font: inherit;
   font-size: 13px;
   font-weight: 600;
 }
 
 .analytics-sections button:hover {
-  background: #f5f7fa;
-  color: var(--text, #172033);
+  background: var(--canvas);
+  color: var(--text);
 }
 
 .analytics-sections button[aria-current="page"] {
@@ -59,7 +59,7 @@
   display: grid;
   min-height: 240px;
   place-items: center;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 13px;
 }
 

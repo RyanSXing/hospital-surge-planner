@@ -193,8 +193,8 @@ test("editable bed and staffed-bed parameters rebuild replay inventory per froze
   await open(page, context.scenario.id, "overview");
   const controls = page.locator("#hospital-capacity-parameters");
   async function configure(physical: number, staffed: number) {
-    await controls.getByText("Ward A", { exact: true }).click();
-    const total = controls.getByLabel("Ward A total beds", { exact: true });
+    await controls.getByRole("radio", { name: "Ward A", exact: true }).check();
+    const total = controls.getByLabel("Ward A installed beds", { exact: true });
     await total.fill(String(physical));
     await total.press("Tab");
     const supported = controls.getByLabel("Ward A staffed beds", {

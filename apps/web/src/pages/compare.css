@@ -3,7 +3,7 @@
   height: 100%;
   overflow: auto;
   padding-bottom: 28px;
-  background: var(--surface-app, #f5f7fa);
+  background: var(--surface-app, var(--canvas));
 }
 .saved-scenario-comparison > .page-heading {
   background: transparent;
@@ -21,7 +21,7 @@
 .scenario-comparison-side {
   min-width: 0;
   padding: 16px;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-radius: 9px;
   background: var(--surface, #fff);
 }
@@ -60,12 +60,12 @@
   flex-direction: column;
   gap: 4px;
   padding: 10px 0;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
 }
 .scenario-comparison-state > span {
-  color: var(--text, #172033);
+  color: var(--text);
 }
 .scenario-comparison-state small {
   font-size: 11px;
@@ -77,7 +77,7 @@
 }
 .scenario-comparison-saved-note {
   margin: 8px 24px 14px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
 }
 .scenario-comparison-outcomes,
@@ -85,7 +85,7 @@
 .scenario-comparison-details {
   min-width: 0;
   margin: 0 24px 14px;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-radius: 9px;
   background: var(--surface, #fff);
 }
@@ -100,13 +100,13 @@
 .scenario-comparison-outcomes h2,
 .scenario-comparison-chart h2 {
   margin: 0;
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 15px;
   font-weight: 600;
 }
 .scenario-comparison-outcomes > header > span,
 .scenario-comparison-chart-heading > span {
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
 }
 .scenario-comparison-outcomes table,
@@ -121,14 +121,14 @@
 .scenario-comparison-details th,
 .scenario-comparison-details td {
   padding: 9px 16px;
-  border-top: 1px solid var(--border, #e7edf3);
+  border-top: 1px solid var(--border, var(--border-subtle));
   text-align: left;
   vertical-align: top;
   overflow-wrap: anywhere;
 }
 .scenario-comparison-outcomes thead th,
 .scenario-comparison-details thead th {
-  color: var(--muted, #667085);
+  color: var(--muted);
   background: #fafbfd;
   font-size: 11px;
   font-weight: 500;
@@ -146,8 +146,8 @@
 .scenario-comparison-outcomes > p {
   margin: 0;
   padding: 10px 16px;
-  border-top: 1px solid var(--border, #e7edf3);
-  color: var(--muted, #667085);
+  border-top: 1px solid var(--border, var(--border-subtle));
+  color: var(--muted);
   font-size: 11px;
   line-height: 1.5;
 }
@@ -161,7 +161,7 @@
   flex-wrap: wrap;
   gap: 3px;
   padding: 9px 12px;
-  border-bottom: 1px solid var(--border, #e7edf3);
+  border-bottom: 1px solid var(--border, var(--border-subtle));
   background: #fafbfd;
 }
 .scenario-chart-bookmarks button {
@@ -170,13 +170,13 @@
   border: 1px solid transparent;
   border-radius: 5px;
   background: transparent;
-  color: var(--muted, #667085);
+  color: var(--muted);
   cursor: pointer;
   font: inherit;
   font-size: 12px;
 }
 .scenario-chart-bookmarks button:hover {
-  background: #f0f5fa;
+  background: var(--raised);
   color: #2b7fbd;
 }
 .scenario-chart-bookmarks button[aria-pressed="true"] {
@@ -193,7 +193,7 @@
   min-height: 270px;
   place-items: center;
   padding: 24px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 13px;
   text-align: center;
 }
@@ -206,7 +206,7 @@
   justify-content: space-between;
   min-height: 45px;
   padding: 11px 16px;
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -216,7 +216,7 @@
   display: none;
 }
 .scenario-comparison-details[open] > summary {
-  border-bottom: 1px solid var(--border, #e7edf3);
+  border-bottom: 1px solid var(--border, var(--border-subtle));
 }
 .scenario-comparison-details[open] > summary > svg {
   transform: rotate(180deg);
@@ -226,7 +226,7 @@
 }
 .scenario-comparison-details p {
   margin: 10px 16px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -240,10 +240,10 @@
   gap: 9px;
   margin: 0 24px 14px;
   padding: 12px 14px;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-radius: 8px;
   background: #fff;
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 12px;
   line-height: 1.5;
 }
@@ -258,5 +258,5 @@
 }
 .scenario-comparison-caution p {
   margin: 3px 0 0;
-  color: var(--muted, #667085);
+  color: var(--muted);
 }

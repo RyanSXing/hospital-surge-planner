@@ -42,7 +42,7 @@ test("desktop configuration saves editable beds and all staff roles into a real 
   await expect(
     controls.getByRole("radio", { name: "ICU", exact: true }),
   ).toBeChecked();
-  const totalBeds = controls.getByLabel(`${sourceIcu.name} total beds`, {
+  const totalBeds = controls.getByLabel(`${sourceIcu.name} installed beds`, {
     exact: true,
   });
   const staffedBeds = controls.getByLabel(`${sourceIcu.name} staffed beds`, {

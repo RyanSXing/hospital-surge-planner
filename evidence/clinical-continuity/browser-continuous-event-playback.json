@@ -1,0 +1,205 @@
+{
+  "raw_report": "output/playwright/clinical-continuity/browser-final/browser-continuous-event-playback.json",
+  "raw_sha256": "e82c14e56d72ea223ede158ff0c1d68b24f20b3de5cdde78dd7f513647fb846b",
+  "note": "Large sampled arrays condensed; full original retained locally.",
+  "results": {
+    "run": "run_a31175f8c4a546efb033",
+    "checked_exact_times": [
+      "2026-10-16T05:03:59.040Z",
+      "2026-10-16T09:03:59.040Z",
+      "2026-10-16T13:03:57.600Z"
+    ],
+    "complete_windows": [
+      {
+        "start_at": "2026-10-16T05:00:00Z",
+        "end_at": "2026-10-16T09:00:00Z",
+        "frames": 39
+      },
+      {
+        "start_at": "2026-10-16T09:00:00Z",
+        "end_at": "2026-10-16T13:00:00Z",
+        "frames": 50
+      },
+      {
+        "start_at": "2026-10-16T13:00:00Z",
+        "end_at": "2026-10-16T17:00:00Z",
+        "frames": 81
+      }
+    ],
+    "state_requests_during_playback": 0,
+    "crossing_journeys": 20,
+    "audit": {
+      "frames": {
+        "observations": 202,
+        "first": {
+          "real": 280.966,
+          "playhead": 1792126800000,
+          "text": "Oct 16, 12:00:00 AM CDT",
+          "slider": 0,
+          "session": "",
+          "at": "2026-10-16T05:00:00Z",
+          "validUntil": "",
+          "validUntilMs": null,
+          "retaining": false,
+          "playing": false,
+          "rep": "run_a31175f8c4a546efb033_rep_0000"
+        },
+        "last": {
+          "real": 3630.9,
+          "playhead": 1792173837600,
+          "text": "Oct 16, 01:03:57 PM CDT",
+          "slider": 784,
+          "session": "run_a31175f8c4a546efb033_rep_0000:1",
+          "at": "2026-10-16T18:01:52.988531Z",
+          "validUntil": "2026-10-16T18:04:48.176Z",
+          "validUntilMs": 1792173888176.9246,
+          "retaining": false,
+          "playing": true,
+          "rep": "run_a31175f8c4a546efb033_rep_0000"
+        }
+      },
+      "snapshots": {
+        "observations": 95,
+        "first": {
+          "playhead": 1792127039040,
+          "at": "2026-10-16T05:00:00Z",
+          "validUntil": "2026-10-16T05:31:00.000Z",
+          "validUntilMs": 1792128660000,
+          "occupied": {
+            "observations": 84,
+            "first": [
+              "SLOT-ED-001",
+              "PAT-PLAN-000073"
+            ],
+            "last": [
+              "SLOT-WC-013",
+              "PAT-PLAN-000064"
+            ]
+          },
+          "units": [
+            {
+              "id": "UNIT-WARD-A",
+              "occupied": "26",
+              "staffed": "32",
+              "available": "6"
+            },
+            {
+              "id": "UNIT-WARD-B",
+              "occupied": "25",
+              "staffed": "32",
+              "available": "7"
+            },
+            {
+              "id": "UNIT-WARD-C",
+              "occupied": "13",
+              "staffed": "16",
+              "available": "3"
+            },
+            {
+              "id": "UNIT-ICU",
+              "occupied": "8",
+              "staffed": "12",
+              "available": "4"
+            },
+            {
+              "id": "UNIT-ED",
+              "occupied": "12",
+              "staffed": "24",
+              "available": "12"
+            }
+          ],
+          "ed": "0",
+          "waiting": "0",
+          "discharges": "0"
+        },
+        "last": {
+          "playhead": 1792173837600,
+          "at": "2026-10-16T18:01:52.988531Z",
+          "validUntil": "2026-10-16T18:04:48.176Z",
+          "validUntilMs": 1792173888176.9246,
+          "occupied": {
+            "observations": 86,
+            "first": [
+              "SLOT-ED-001",
+              "PAT-ED_MAIN-20261016-000720-b-0003"
+            ],
+            "last": [
+              "SLOT-WC-013",
+              "PAT-PLAN-000064"
+            ]
+          },
+          "units": [
+            {
+              "id": "UNIT-WARD-A",
+              "occupied": "29",
+              "staffed": "32",
+              "available": "3"
+            },
+            {
+              "id": "UNIT-WARD-B",
+              "occupied": "21",
+              "staffed": "32",
+              "available": "11"
+            },
+            {
+              "id": "UNIT-WARD-C",
+              "occupied": "12",
+              "staffed": "16",
+              "available": "4"
+            },
+            {
+              "id": "UNIT-ICU",
+              "occupied": "9",
+              "staffed": "12",
+              "available": "3"
+            },
+            {
+              "id": "UNIT-ED",
+              "occupied": "15",
+              "staffed": "24",
+              "available": "9"
+            }
+          ],
+          "ed": "0",
+          "waiting": "0",
+          "discharges": "40"
+        }
+      },
+      "motion": {
+        "observations": 1213,
+        "first": {
+          "node": 1,
+          "real": 531,
+          "playhead": 1792129199040,
+          "patient": "PAT-PLAN-000078",
+          "events": "RUN-cc51f632b54e9fd0811c-E00000005",
+          "path": "M455.00,320.19 L470.00,320.19 L670.99,320.19 L670.99,205.80 L670.99,140.86 L202.67,140.86 L202.67,129.87",
+          "distance": 2.19,
+          "absoluteDistance": 19.154397000000003,
+          "x": 709.2589111328125,
+          "y": 671.83935546875,
+          "trailPath": "M455.00,320.19 L470.00,320.19 L670.99,320.19 L670.99,205.80 L670.99,140.86 L202.67,140.86 L202.67,129.87"
+        },
+        "last": {
+          "node": 43,
+          "real": 3630.9,
+          "playhead": 1792173837600,
+          "patient": "PAT-ED_MAIN-20261016-000600-b-0001",
+          "events": "RUN-cc51f632b54e9fd0811c-E00000313",
+          "path": "M455.00,320.19 L470.00,320.19 L670.99,320.19 L709.98,320.19 L724.98,320.19",
+          "distance": 12.2,
+          "absoluteDistance": 32.93756,
+          "x": 723.0296630859375,
+          "y": 671.83935546875,
+          "trailPath": "M455.00,320.19 L470.00,320.19 L670.99,320.19 L709.98,320.19 L724.98,320.19"
+        }
+      },
+      "blanks": 0,
+      "replaced": false,
+      "bedsReplaced": false,
+      "banners": 0,
+      "maxTopShift": 0
+    },
+    "errors": []
+  }
+}

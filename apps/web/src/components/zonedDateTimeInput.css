@@ -9,7 +9,7 @@
   margin: 0;
 }
 .zoned-date-time > label > span {
-  color: #243449;
+  color: var(--text);
   font-size: 12px;
 }
 .zoned-date-time > input,
@@ -26,6 +26,6 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #946108;
+  color: var(--warning);
   font-size: 12px;
 }

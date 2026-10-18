@@ -70,7 +70,7 @@ export default function ReplayCampusContext() {
         <circle cx="327" cy="190" r="7" fill="#d45d63" />
         <g
           fill="#304e62"
-          fontFamily="system-ui,sans-serif"
+          fontFamily="var(--font-ui)"
           fontSize="11"
           textAnchor="middle"
         >
@@ -128,7 +128,7 @@ export default function ReplayCampusContext() {
           x="359"
           y="254"
           fill="#a8464b"
-          fontFamily="system-ui,sans-serif"
+          fontFamily="var(--font-ui)"
           fontSize="10"
         >
           Adult ED entrance
@@ -143,7 +143,7 @@ export default function ReplayCampusContext() {
           x="565"
           y="35"
           fill="#577285"
-          fontFamily="system-ui,sans-serif"
+          fontFamily="var(--font-ui)"
           fontSize="12"
           textAnchor="middle"
         >
@@ -153,7 +153,7 @@ export default function ReplayCampusContext() {
           x="20"
           y="373"
           fill="#536b7d"
-          fontFamily="system-ui,sans-serif"
+          fontFamily="var(--font-ui)"
           fontSize="10"
         >
           LOCAL REFERENCE · SIMPLIFIED GEOMETRY · NOT TO SCALE

@@ -1,0 +1,182 @@
+{
+  "run": "run_45ae22b7f9284f97a621",
+  "checked": [
+    {
+      "recorded_four_hour_chunk": 0,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 1,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 2,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 3,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 4,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 5,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 6,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 7,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 8,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 9,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 10,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-C",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 11,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "UNIT-WARD-C",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 12,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 13,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 14,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 15,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-ICU",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 16,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    },
+    {
+      "recorded_four_hour_chunk": 17,
+      "represented": [
+        "UNIT-ED",
+        "UNIT-WARD-A",
+        "UNIT-WARD-B",
+        "discharge"
+      ]
+    }
+  ],
+  "actual_admissions_by_unit": {
+    "UNIT-WARD-A": 27,
+    "UNIT-ICU": 7,
+    "UNIT-WARD-B": 19
+  },
+  "max_concurrent_markers": 12,
+  "displayed_moves_never_precede_recorded_events": true,
+  "no_equal_distribution_assumed": true
+}

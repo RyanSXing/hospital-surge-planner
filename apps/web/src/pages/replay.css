@@ -11,7 +11,7 @@
 .replay-planned-places {
   margin: 12px 0;
   font-size: 12px;
-  color: #607287;
+  color: var(--muted);
 }
 .replay-planned-places summary {
   cursor: pointer;
@@ -99,7 +99,7 @@
   gap: 8px;
 }
 .replay-jump label {
-  color: #526a7a;
+  color: var(--text-secondary);
   font-size: 12px;
 }
 .replay-jump input {
@@ -109,7 +109,7 @@
   font-size: 12px;
 }
 .replay-patient-resources summary {
-  color: #087d91;
+  color: var(--accent);
   font-size: 12px;
   margin: 12px 0;
   cursor: pointer;
@@ -119,23 +119,23 @@
   align-items: flex-start;
   gap: 10px;
   border: 0;
-  border-bottom: 1px solid #d5e1e8;
+  border-bottom: 1px solid var(--border);
   padding: 10px 0;
   background: transparent;
-  color: #526a7a;
+  color: var(--text-secondary);
   cursor: pointer;
 }
 .replay-event-list > button strong {
   display: block;
   font-size: 12px;
-  color: #223b4b;
+  color: var(--text);
   font-weight: 500;
   margin-bottom: 3px;
 }
 .replay-event-list > button small {
   display: block;
   font-size: 12px;
-  color: #526a7a;
+  color: var(--text-secondary);
   overflow-wrap: anywhere;
 }
 .replay-page > .patient-census {
@@ -158,7 +158,7 @@
   gap: 6px;
   margin: 12px 0;
   font-size: 12px;
-  color: var(--muted, #526a7a);
+  color: var(--muted, var(--text-secondary));
 }
 .replay-evidence-label select {
   width: 100%;
@@ -192,7 +192,7 @@
   gap: 6px;
 }
 .replay-patient-history {
-  border-top: 1px solid #d5e1e8;
+  border-top: 1px solid var(--border);
   margin-top: 16px;
   padding-top: 12px;
 }
@@ -212,16 +212,16 @@
 }
 .replay-patient-history .link-button small {
   display: block;
-  color: #526a7a;
+  color: var(--text-secondary);
   margin-top: 4px;
 }
 .replay-patient-history summary {
   font-size: 12px;
   cursor: pointer;
-  color: #087d91;
+  color: var(--accent);
 }
 .replay-care-path {
-  border-left: 1px solid #d5e1e8;
+  border-left: 1px solid var(--border);
   list-style: none;
   padding-left: 12px;
   max-height: 250px;
@@ -244,7 +244,7 @@
   margin: 14px 0 8px;
 }
 .replay-annotations {
-  border: 1px solid #d5e1e8;
+  border: 1px solid var(--border);
   background: #ffffff;
   padding: 10px 16px;
   margin-top: 0;
@@ -264,8 +264,8 @@
 .replay-annotation-track {
   height: 18px;
   position: relative;
-  background: #f4f7f9;
-  border: 1px solid #d5e1e8;
+  background: var(--canvas);
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 .replay-annotation-track > button {
@@ -274,29 +274,29 @@
   height: 12px;
   min-width: 6px;
   padding: 0;
-  border: 1px solid #09839b;
-  background: #cfeaf0;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
   border-radius: 2px;
 }
 .replay-annotation-track > button.planned {
   border-style: dashed;
-  background: #edf5f8;
+  background: var(--accent-soft);
 }
 .replay-annotation-track.staff > button {
   border-color: #8560a8;
   background: #eee4f7;
 }
 .replay-annotation-track.intervention > button {
-  border-color: #218c70;
+  border-color: var(--success);
   background: #def0e9;
 }
 .replay-annotation-track.shortage > button {
-  border-color: #b77812;
+  border-color: var(--warning);
   background: #fff0d3;
 }
 .replay-annotation-track > small {
   display: block;
-  color: #526a7a;
+  color: var(--text-secondary);
   font-size: 12px;
   padding: 4px 8px;
 }
@@ -305,7 +305,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: #497184;
+  background: var(--text-secondary);
   z-index: 2;
   pointer-events: none;
 }
@@ -374,7 +374,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     overscroll-behavior: contain;
-    border-block: 1px solid #d5e1e8;
+    border-block: 1px solid var(--border);
   }
   .replay-page .replay-canvas {
     min-height: 0;
@@ -392,7 +392,7 @@
     flex-direction: column;
     gap: 7px;
     font-size: 13px;
-    color: #223b4b;
+    color: var(--text);
   }
   .replay-mobile-navigation select {
     width: 100%;
@@ -402,7 +402,7 @@
     margin: 9px 0 0;
     font-size: 12px;
     line-height: 1.5;
-    color: #526a7a;
+    color: var(--text-secondary);
   }
   .replay-page .replay-inspector {
     display: flex;
@@ -444,8 +444,8 @@
 
 /* Focused white replay surface; advanced evidence lives in an accessible drawer. */
 .replay-page {
-  background: #f5f8fa;
-  color: #223b4b;
+  background: var(--canvas);
+  color: var(--text);
   padding: 0 20px 24px;
 }
 .replay-page > .page-heading {
@@ -475,7 +475,7 @@
   gap: 8px 16px;
   margin-bottom: 14px;
   padding: 12px 15px;
-  border: 1px solid #dbe5eb;
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: #fff;
 }
@@ -491,11 +491,11 @@
 .replay-location a,
 .replay-location p {
   font-size: 11px;
-  color: #5d7382;
+  color: var(--text-secondary);
 }
 .replay-location a {
   margin-left: auto;
-  color: #127d92;
+  color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -514,7 +514,7 @@
   min-height: 0;
 }
 .replay-page .replay-scene {
-  border: 1px solid #d5e2e9;
+  border: 1px solid var(--border);
   border-radius: 12px;
   background: #fff;
   overflow: hidden;
@@ -523,18 +523,18 @@
   padding: 10px 14px;
   min-height: 44px;
   background: #fff;
-  border-bottom: 1px solid #e2eaf0;
+  border-bottom: 1px solid var(--border-subtle);
   gap: 12px;
   flex-wrap: wrap;
 }
 .replay-page .scene-tag {
-  color: #557080;
+  color: var(--text-secondary);
   font-size: 10px;
   letter-spacing: 1px;
 }
 .replay-page .scene-legend {
   gap: 12px;
-  color: #526b7c;
+  color: var(--text-secondary);
   font-size: 11px;
   flex-wrap: wrap;
 }
@@ -543,7 +543,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f6f9fb;
+  background: var(--raised);
   overflow: auto;
   container-type: normal;
 }
@@ -557,8 +557,8 @@
 }
 .replay-page .replay-summary {
   background: #fff;
-  color: #587181;
-  border-top: 1px solid #e2eaf0;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-subtle);
   padding: 11px 14px;
   min-height: 44px;
   gap: 14px;
@@ -566,14 +566,14 @@
   flex-wrap: wrap;
 }
 .replay-page .replay-summary strong {
-  color: #263f50;
+  color: var(--text);
   font-size: 15px;
 }
 .replay-page .replay-summary .amber {
-  color: #a9630b;
+  color: var(--warning);
 }
 .replay-playback-panel {
-  border: 1px solid #d5e2e9;
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: #fff;
   margin-top: 12px;
@@ -592,9 +592,9 @@
 .replay-page .playback-buttons > button:not(.button) {
   min-width: 32px;
   height: 32px;
-  border: 1px solid #d7e2e8;
+  border: 1px solid var(--border);
   border-radius: 6px;
-  color: #526a79;
+  color: var(--text-secondary);
   background: #fff;
 }
 .replay-page .replay-speed {
@@ -608,14 +608,14 @@
   font-size: 13px;
 }
 .replay-page .replay-time span {
-  color: #607287;
+  color: var(--muted);
   font-size: 11px;
 }
 .replay-page .replay-scrubber {
   padding: 2px 14px 12px;
   height: auto;
   background: transparent;
-  color: #607287;
+  color: var(--muted);
   font-size: 11px;
   gap: 12px;
 }
@@ -625,7 +625,7 @@
 }
 .replay-advanced {
   margin-top: 12px;
-  border: 1px solid #d7e2e8;
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: #fff;
   padding: 16px;
@@ -679,29 +679,29 @@
 }
 .replay-detail-drawer .inspector-header h2 {
   font-size: 14px;
-  color: #263f50;
+  color: var(--text);
 }
 .replay-detail-drawer .inspector-section h3 {
-  color: #263f50;
+  color: var(--text);
   font-size: 14px;
 }
 .replay-detail-drawer .detail-list dt,
 .replay-detail-drawer .small-copy,
 .replay-detail-drawer .muted {
-  color: #617786;
+  color: var(--text-secondary);
 }
 .replay-detail-drawer .detail-list dd {
-  color: #263f50;
+  color: var(--text);
 }
 .replay-detail-drawer .replay-event-list > button {
   color: #607988;
   border-color: #e0e8ed;
 }
 .replay-detail-drawer .replay-event-list > button strong {
-  color: #263f50;
+  color: var(--text);
 }
 .replay-detail-drawer .replay-count {
-  color: #263f50;
+  color: var(--text);
 }
 .replay-detail-drawer .replay-recorded-capacity {
   border: 0;
@@ -739,10 +739,10 @@
   .replay-mobile-navigation {
     display: block;
     background: #fff;
-    border-top: 1px solid #e2eaf0;
+    border-top: 1px solid var(--border-subtle);
   }
   .replay-mobile-navigation p {
-    color: #617786;
+    color: var(--text-secondary);
   }
   .replay-page .replay-controls {
     padding: 10px;
@@ -1104,9 +1104,9 @@
     font-size: 11px;
   }
   .replay-page .scene-legend .button[aria-pressed="true"] {
-    border-color: #a5c8e2;
-    background: #f0f7fc;
-    color: #176caf;
+    border-color: var(--border);
+    background: var(--accent-soft);
+    color: var(--accent);
   }
   .replay-page .replay-floor-viewport {
     flex: 1 1 0;
@@ -1151,7 +1151,7 @@
     width: 100vw;
     height: 100dvh !important;
     padding: 12px;
-    background: #f5f8fa;
+    background: var(--canvas);
   }
   .replay-map-tools {
     flex: 0 0 auto;
@@ -1159,7 +1159,7 @@
     gap: 4px;
     align-items: center;
     padding-left: 8px;
-    border-left: 1px solid #dce6ed;
+    border-left: 1px solid var(--border);
   }
   .replay-map-tools > .button {
     height: 26px;
@@ -1168,9 +1168,9 @@
     font-size: 11px;
   }
   .replay-map-tools > .button[aria-pressed="true"] {
-    border-color: #a5c8e2;
-    background: #f0f7fc;
-    color: #176caf;
+    border-color: var(--border);
+    background: var(--accent-soft);
+    color: var(--accent);
   }
   .replay-page .heading-actions > .replay-campus-reference {
     position: relative;
@@ -1181,7 +1181,7 @@
   }
   .replay-campus-reference > summary {
     cursor: pointer;
-    color: #567388;
+    color: var(--text-secondary);
     padding: 6px 3px;
     font-size: 10px;
     white-space: nowrap;
@@ -1195,7 +1195,7 @@
     max-height: calc(100dvh - 160px);
     overflow: auto;
     padding: 16px;
-    border: 1px solid #d8e3eb;
+    border: 1px solid var(--border);
     border-radius: 8px;
     background: #fff;
     box-shadow: 0 8px 24px #233b4c20;
@@ -1208,12 +1208,12 @@
   }
   .replay-campus-popover > p {
     margin: 10px 0;
-    color: #607287;
+    color: var(--muted);
     font-size: 11px;
     line-height: 1.5;
   }
   .replay-campus-popover > a {
-    color: #176caf;
+    color: var(--accent);
     font-size: 11px;
     text-decoration: underline;
   }

@@ -57,17 +57,17 @@
   justify-content: center;
   gap: 8px;
   padding: 13px 15px;
-  color: #607287;
+  color: var(--muted);
   border-bottom: 2px solid transparent;
   font-size: 13px;
 }
 .analysis-bar nav > button.active {
-  color: #176caf;
+  color: var(--accent);
   border-bottom-color: var(--cyan);
-  background: #f1f6fa;
+  background: var(--raised);
 }
 .analysis-bar nav > button:hover {
-  background: #f1f6fa;
+  background: var(--raised);
 }
 .analysis-run-context {
   display: flex;
@@ -81,7 +81,7 @@
 .analysis-run-context small {
   padding: 2px 6px;
   font-size: 10px;
-  background: #f1f6fa;
+  background: var(--raised);
   border: 1px solid var(--border);
 }
 .status-dot.running {

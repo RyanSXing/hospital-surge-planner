@@ -55,7 +55,7 @@
   min-height: 38px;
 }
 .guided-scenario .undo-actions button:disabled {
-  color: #607287;
+  color: var(--muted);
 }
 .setup-guide {
   display: flex;
@@ -110,7 +110,7 @@
   flex-direction: column;
   gap: 6px;
   margin-bottom: 13px;
-  color: #334d60;
+  color: var(--text);
   font-size: 13px;
   font-weight: 600;
 }
@@ -155,7 +155,7 @@
   margin-bottom: 16px;
   padding: 9px 10px;
   border-radius: 6px;
-  background: #f3f7fb;
+  background: var(--raised);
 }
 .setup-horizon-fields {
   display: grid;
@@ -206,7 +206,7 @@
   line-height: 1.5;
 }
 .setup-validation {
-  background: #fff7e8;
+  background: var(--warning-soft);
   color: #915d1b;
 }
 .scenario-details .mantine-Accordion-item {
@@ -230,7 +230,7 @@
   font-size: 12px;
   line-height: 1.5;
   font-weight: 400;
-  color: #607287;
+  color: var(--muted);
   margin-top: 4px;
 }
 .scenario-details .mantine-Accordion-content {
@@ -338,7 +338,7 @@
 .guided-scenario .condition-tile small {
   display: block;
   font-size: 12px;
-  color: #607287;
+  color: var(--muted);
   line-height: 1.4;
 }
 .guided-scenario .condition-tile:hover {
@@ -357,7 +357,7 @@
 }
 .guided-scenario .arrival-canvas {
   height: 168px;
-  background: #f8fbfe;
+  background: var(--raised);
   border-radius: 6px;
 }
 .guided-scenario .arrival-canvas svg {
@@ -370,16 +370,16 @@
   font-size: 14px;
 }
 .guided-scenario .track-label > span {
-  color: #607287;
+  color: var(--muted);
   font-size: 12px;
 }
 .guided-scenario .track-dates,
 .guided-scenario .timeline-ruler {
-  color: #607287;
+  color: var(--muted);
   font-size: 12px;
 }
 .guided-scenario .scenario-summary {
-  background: #f1f7fc;
+  background: var(--accent-soft);
   border: 1px solid #dce9f4;
   color: #3e6889;
   padding: 12px;
@@ -390,7 +390,7 @@
   position: relative;
   min-height: 48px;
   margin: 12px 0 4px;
-  background: #f0f5fa;
+  background: var(--raised);
   border: 1px solid #cfdfec;
   border-radius: 6px;
   touch-action: none;
@@ -431,7 +431,7 @@
 .window-instruction {
   font-size: 12px;
   line-height: 1.5;
-  color: #607287;
+  color: var(--muted);
   margin: 12px 0 0;
 }
 .care-mix-fields {
@@ -452,7 +452,7 @@
 .care-mix-fields small {
   font-size: 12px;
   line-height: 1.55;
-  color: #607287;
+  color: var(--muted);
   margin: 0;
 }
 .care-mix-fields pre,
@@ -483,7 +483,7 @@
 .library-row > div > small {
   display: block;
   margin-top: 5px;
-  color: #607287;
+  color: var(--muted);
   overflow-wrap: anywhere;
   line-height: 1.5;
 }
@@ -532,13 +532,13 @@
   background: #fafcfe;
   border: 1px dashed #c8d9e7;
   border-radius: 6px;
-  color: #607287;
+  color: var(--muted);
   font-size: 13px;
   padding: 10px;
 }
 .plan-family-rail .empty-track span {
   display: block;
-  color: #607287;
+  color: var(--muted);
   font-size: 12px;
   margin-top: 4px;
 }
@@ -650,7 +650,7 @@
   line-height: 1.6;
 }
 .plan-form-fields > small {
-  color: #607287;
+  color: var(--muted);
   line-height: 1.6;
 }
 .capacity-concepts {
@@ -685,7 +685,7 @@
 .preserved-assumptions {
   margin: 12px;
   font-size: 13px;
-  color: #607287;
+  color: var(--muted);
 }
 .scenario-plan-form .modal-actions {
   position: sticky;
@@ -835,7 +835,7 @@
   margin: 0;
   font-size: 14px;
   line-height: 1.4;
-  color: #2c4355;
+  color: var(--text);
   font-weight: 650;
 }
 .simulation-control-heading > span {
@@ -855,14 +855,14 @@
   margin: 9px 0 0;
   font-size: 12px;
   line-height: 1.5;
-  color: #607287;
+  color: var(--muted);
 }
 .simulation-control .mantine-Slider-root {
   margin: 16px 8px 28px;
 }
 .simulation-control .mantine-Slider-markLabel {
   font-size: 11px;
-  color: #607287;
+  color: var(--muted);
 }
 .simulation-control .mantine-Slider-thumb {
   width: 20px;
@@ -882,7 +882,7 @@
   white-space: normal;
 }
 .arrival-preview {
-  border: 1px solid #dce5ee;
+  border: 1px solid var(--border);
   border-radius: 9px;
   padding: 16px 18px 12px;
   background: #fff;
@@ -900,11 +900,11 @@
 .arrival-preview-heading h3 {
   font-size: 15px;
   margin: 0 0 4px;
-  color: #2c4355;
+  color: var(--text);
 }
 .arrival-preview-heading p {
   margin: 0;
-  color: #607287;
+  color: var(--muted);
   font-size: 12px;
 }
 .preview-live {
@@ -932,7 +932,7 @@
 .arrival-preview svg text {
   font-family: inherit;
   font-size: 13px;
-  fill: #607287;
+  fill: var(--muted);
 }
 .arrival-preview-footer {
   display: flex;
@@ -944,7 +944,7 @@
 .arrival-preview-footer p {
   margin: 0;
   font-size: 12px;
-  color: #607287;
+  color: var(--muted);
 }
 .arrival-preview-footer strong {
   color: #2b4e6a;
@@ -954,7 +954,7 @@
   display: flex;
   gap: 16px;
   font-size: 11px;
-  color: #607287;
+  color: var(--muted);
 }
 .arrival-preview-legend span {
   display: inline-flex;
@@ -1067,7 +1067,7 @@
 .optional-change-heading p {
   margin: 0;
   font-size: 12px;
-  color: #607287;
+  color: var(--muted);
 }
 .optional-change-list {
   display: grid;
@@ -1100,7 +1100,7 @@
 }
 .optional-change-row small {
   font-size: 11px;
-  color: #607287;
+  color: var(--muted);
 }
 .optional-change-row > span:last-child {
   font-size: 12px;
@@ -1108,7 +1108,7 @@
 }
 .optional-change-row:hover {
   border-color: #a2bfd6;
-  background: #f0f6fc;
+  background: var(--accent-soft);
 }
 @media (max-width: 1000px) {
   .simulation-workspace {
@@ -1165,12 +1165,12 @@
   display: grid;
   gap: 18px;
   padding: 14px;
-  border: 1px solid #e0e8ef;
+  border: 1px solid var(--border);
   border-radius: 6px;
 }
 .arrival-window-controls > p {
   margin: 0;
-  color: #607287;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
 }

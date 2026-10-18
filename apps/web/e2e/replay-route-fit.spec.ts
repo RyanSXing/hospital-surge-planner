@@ -315,6 +315,11 @@ test("Fit preserves all 100 frozen ward beds and real corridor alignment after z
           ];
           const width = building.getBoundingClientRect().width;
           const mapScale = floor.dataset.mapScale;
+          const playhead = Number(
+            document.querySelector<HTMLElement>(
+              '[data-testid="replay-playhead"]',
+            )?.dataset.playheadMs,
+          );
           const started = performance.now();
           (window as any).__fitResizeObservation = new Promise((resolve) => {
             const samples: any[] = [];
@@ -343,6 +348,7 @@ test("Fit preserves all 100 frozen ward beds and real corridor alignment after z
                     mapScale,
                     nodes: oldNodes.length,
                     windowTo: samples[0].windowTo,
+                    playhead,
                   },
                   samples,
                 });
@@ -381,20 +387,25 @@ test("Fit preserves all 100 frozen ward beds and real corridor alignment after z
   ).toEqual([]);
   const collapsed = await expectCompleteFit(page);
   const settled = await expectSettledHospitalGeometry(page);
-  const sameWindow =
-    (await page
-      .getByTestId("floor-plan-transit")
-      .getAttribute("data-window-to")) === resizeMotion.original.windowTo;
-  if (sameWindow) {
-    await expect(page.locator(".floor-transit-marker")).toHaveCount(0);
-    await expect(page.locator(".floor-transit-trail")).toHaveCount(0);
-  }
-  await expect
-    .poll(() =>
-      page.getByTestId("floor-plan-transit").getAttribute("data-window-to"),
-    )
-    .not.toBe(resizeMotion.original.windowTo);
   const resizedPathsAligned = await expectMotionPathsOnCurrentGraph(page);
+  const resizedEventIds = await page
+    .locator(".floor-transit-marker")
+    .evaluateAll((markers) =>
+      markers.flatMap(
+        (marker) => (marker as HTMLElement).dataset.events?.split(",") || [],
+      ),
+    );
+  const consumedEvents = new Set(
+    (
+      await fetchReplayJourneyEvents(
+        (path) => api(page.request, path),
+        run.selected_replication_id,
+        run.start_at,
+        new Date(resizeMotion.original.playhead).toISOString(),
+      )
+    ).map((event: any) => String(event.event_id || event.sequence_number)),
+  );
+  expect(resizedEventIds.every((id) => !consumedEvents.has(id))).toBe(true);
   await expectHospitalFlowGeometry(page);
   await page.getByRole("button", { name: "Pause replay", exact: true }).click();
   await expect(ward.locator(".floor-plan-bed")).toHaveCount(100);
@@ -468,97 +479,105 @@ test("the movement sample represents recorded activity across every ward, ICU, e
   );
   await expectCompleteFit(page);
   await page.evaluate(() => {
-    const audit: any = { running: true, windows: {} };
+    const audit: any = { running: true, movements: {}, maxConcurrent: 0 };
     (window as any).__routeCoverage = audit;
     const sample = () => {
       if (!audit.running) return;
       const overlay = document.querySelector<HTMLElement>(
         '[data-testid="floor-plan-transit"]',
       );
-      if (overlay?.dataset.windowFrom && overlay.dataset.windowTo) {
-        const key = `${overlay.dataset.windowFrom}|${overlay.dataset.windowTo}`;
-        const window = (audit.windows[key] ||= {
-          from: overlay.dataset.windowFrom,
-          to: overlay.dataset.windowTo,
-          markers: {},
+      if (overlay) {
+        const markers = [
+          ...overlay.querySelectorAll<HTMLElement>(".floor-transit-marker"),
+        ];
+        audit.maxConcurrent = Math.max(audit.maxConcurrent, markers.length);
+        const playhead = Number(
+          document.querySelector<HTMLElement>('[data-testid="replay-playhead"]')
+            ?.dataset.playheadMs,
+        );
+        markers.forEach((marker) => {
+          if (Number(getComputedStyle(marker).opacity) < 0.05) return;
+          const key = `${marker.dataset.patientId}|${marker.dataset.events}`;
+          audit.movements[key] ||= {
+            patient: marker.dataset.patientId,
+            from: marker.dataset.from,
+            to: marker.dataset.to,
+            events: marker.dataset.events?.split(",") || [],
+            path: marker.dataset.path,
+            firstVisibleAt: playhead,
+          };
         });
-        overlay
-          .querySelectorAll<HTMLElement>(".floor-transit-marker")
-          .forEach((marker) => {
-            window.markers[marker.dataset.patientId!] = {
-              patient: marker.dataset.patientId,
-              from: marker.dataset.from,
-              to: marker.dataset.to,
-              events: marker.dataset.events?.split(",") || [],
-              path: marker.dataset.path,
-            };
-          });
       }
       requestAnimationFrame(sample);
     };
     requestAnimationFrame(sample);
   });
-  await page.getByLabel("Replay speed", { exact: true }).selectOption("16");
+  await page.getByLabel("Replay speed", { exact: true }).selectOption("4");
   await page.getByRole("button", { name: "Play replay", exact: true }).click();
   await expect
-    .poll(() => Date.parse(new URL(page.url()).searchParams.get("at") || ""))
+    .poll(
+      async () =>
+        Number(
+          await page
+            .getByTestId("replay-playhead")
+            .getAttribute("data-playhead-ms"),
+        ),
+      { timeout: 45000, intervals: [50] },
+    )
     .toBe(Date.parse(run.end_at));
   await expect(
     page.getByRole("button", { name: "Play replay", exact: true }),
   ).toBeDisabled();
-  const windows: any[] = await page.evaluate(() => {
+  const shown: any = await page.evaluate(() => {
     (window as any).__routeCoverage.running = false;
-    return Object.values((window as any).__routeCoverage.windows);
+    return (window as any).__routeCoverage;
   });
-  const nonempty = windows.filter(
-    (window) => Object.keys(window.markers).length,
+  expect(shown.maxConcurrent).toBeLessThanOrEqual(12);
+  const byId = new Map(
+    evidence.map((event: any) => [
+      String(event.event_id || event.sequence_number),
+      event,
+    ]),
   );
-  expect(nonempty.length).toBeGreaterThanOrEqual(3);
-  const checked: any[] = [];
-  const allExpected = new Set<string>();
-  for (const window of nonempty) {
-    const real = evidence.filter(
-      (event: any) =>
-        Date.parse(event.occurred_at) > Date.parse(window.from) &&
-        Date.parse(event.occurred_at) <= Date.parse(window.to),
-    );
-    const byId = new Map(
-      real.map((event: any) => [
-        String(event.event_id || event.sequence_number),
-        event,
-      ]),
-    );
-    const expected = new Set(
-      real.flatMap((event: any) => touchedUnits(event, units)),
-    );
-    const represented = new Set<string>();
-    const markers: any[] = Object.values(window.markers);
-    expect(markers.length).toBeLessThanOrEqual(12);
-    for (const marker of markers) {
-      expect(marker.events.length).toBeGreaterThan(0);
-      for (const id of marker.events) {
-        expect(
-          byId.has(id),
-          `Marker event ${id} must exist in its recorded window`,
-        ).toBe(true);
-        const event = byId.get(id);
-        expect(event.patient_id).toBe(marker.patient);
-        touchedUnits(event, units).forEach((unit) => represented.add(unit));
-      }
-    }
-    for (const unit of expected) {
-      allExpected.add(unit);
+  const represented = new Set<string>();
+  const observedByChunk = new Map<number, Set<string>>();
+  for (const marker of Object.values(shown.movements) as any[]) {
+    expect(marker.events.length).toBeGreaterThan(0);
+    for (const id of marker.events) {
       expect(
-        represented.has(unit),
-        `Recorded ${unit} activity should appear in window ${window.from}`,
+        byId.has(id),
+        `Displayed move ${id} must exist in the immutable trace`,
       ).toBe(true);
+      const event: any = byId.get(id);
+      expect(event.patient_id).toBe(marker.patient);
+      expect(Date.parse(event.occurred_at)).toBeLessThanOrEqual(
+        marker.firstVisibleAt + 1,
+      );
+      const chunk = Math.floor(
+        (Date.parse(event.occurred_at) - Date.parse(run.start_at)) /
+          (4 * 3600000),
+      );
+      if (!observedByChunk.has(chunk)) observedByChunk.set(chunk, new Set());
+      touchedUnits(event, units).forEach((unit) => {
+        represented.add(unit);
+        observedByChunk.get(chunk)!.add(unit);
+      });
     }
+  }
+  expect(observedByChunk.size).toBeGreaterThanOrEqual(3);
+  const checked: any[] = [];
+  const allExpected = new Set(
+    evidence.flatMap((event: any) => touchedUnits(event, units)),
+  );
+  for (const unit of allExpected)
+    expect(
+      represented.has(unit),
+      `Recorded ${unit} activity must be represented`,
+    ).toBe(true);
+  for (const [chunk, locations] of observedByChunk) {
     checked.push({
-      from: window.from,
-      to: window.to,
-      expected: [...expected].sort(),
-      represented: [...represented].sort(),
-      patients_shown: markers.length,
+      recorded_four_hour_chunk: chunk,
+      represented: [...locations].sort(),
     });
   }
   for (const unit of [
@@ -585,6 +604,8 @@ test("the movement sample represents recorded activity across every ward, ICU, e
     run: run.id,
     checked,
     actual_admissions_by_unit: admissions,
+    max_concurrent_markers: shown.maxConcurrent,
+    displayed_moves_never_precede_recorded_events: true,
     no_equal_distribution_assumed: true,
   });
   await capture(page, "replay-recorded-route-coverage", info);

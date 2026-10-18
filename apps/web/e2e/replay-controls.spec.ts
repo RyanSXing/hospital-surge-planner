@@ -24,9 +24,15 @@ test("playback speed, pause, seek and exact event stepping preserve frozen resul
   await expect(page.getByLabel("Play replay", { exact: true })).toBeEnabled();
   const at = () => new URL(page.url()).searchParams.get("at");
   const originalAt = at();
+  const clock = async () =>
+    Number(
+      await page
+        .getByTestId("replay-playhead")
+        .getAttribute("data-playhead-ms"),
+    );
   await page.getByLabel("Replay speed", { exact: true }).selectOption("1");
   await page.getByLabel("Play replay", { exact: true }).click();
-  await expect.poll(at).not.toBe(originalAt);
+  await expect.poll(clock).toBeGreaterThan(Date.parse(originalAt!));
   await page.getByLabel("Pause replay", { exact: true }).click();
   const paused = at();
   await page.waitForTimeout(1300);
@@ -68,7 +74,7 @@ test("playback speed, pause, seek and exact event stepping preserve frozen resul
   await expect(page.getByLabel("Play replay", { exact: true })).toBeEnabled();
   const reducedAt = at();
   await page.getByLabel("Play replay", { exact: true }).click();
-  await expect.poll(at).not.toBe(reducedAt);
+  await expect.poll(clock).toBeGreaterThan(Date.parse(reducedAt!));
   await page.getByLabel("Pause replay", { exact: true }).click();
   await expect(page.getByTestId("replay-floor-plan")).toHaveAttribute(
     "data-retaining",

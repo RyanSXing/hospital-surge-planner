@@ -1,120 +1,259 @@
+.planning-overview-page > .page-heading.planning-overview-heading {
+  padding: 16px 0 12px;
+}
+.planning-overview-page > .planning-overview-configuration {
+  margin-top: 0;
+  border-color: var(--border, #cbd2da);
+  border-radius: 4px;
+  background: var(--surface, #fff);
+}
 .configuration-inputs {
   grid-column: 1 / -1;
   min-width: 0;
-  border-top: 1px solid #e0e8ef;
-  padding-top: 20px;
-  scroll-margin-top: 90px;
+  border-top: 1px solid var(--border, #cbd2da);
+  padding-top: 18px;
+  scroll-margin-top: 28px;
 }
 .configuration-inputs > header {
   display: flex;
-  align-items: start;
+  align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 .configuration-inputs h3 {
   margin: 0;
-  color: #2c4355;
+  color: var(--text, #1b2431);
   font-size: 15px;
+  font-weight: 600;
 }
 .configuration-inputs header p,
 .configuration-inputs header > span {
-  margin: 5px 0 0;
-  color: #607287;
-  font-size: 12px;
+  margin: 4px 0 0;
+  color: var(--muted, #596579);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.configuration-inputs header > span {
+  margin: 0;
+  white-space: nowrap;
 }
 .configuration-inputs > .mantine-SegmentedControl-root {
-  max-width: 100%;
-  overflow-x: auto;
-  margin-bottom: 18px;
+  width: 100%;
+  padding: 3px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border, #cbd2da);
+  border-radius: 4px;
+  background: var(--raised, #f1f3f5);
+}
+.configuration-inputs .mantine-SegmentedControl-label {
+  padding: 7px 12px;
+  color: var(--text-secondary, #344054);
+  font-size: 12px;
+  line-height: 1.3;
+}
+.configuration-inputs .mantine-SegmentedControl-label[data-active] {
+  color: var(--accent, #164b75);
+  font-weight: 600;
+}
+.configuration-inputs .mantine-SegmentedControl-indicator {
+  border: 1px solid var(--border, #cbd2da);
+  border-radius: 3px;
+  background: var(--surface, #fff);
+  box-shadow: 0 1px 2px #1b24310a;
+}
+.configuration-resource-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.86fr) minmax(0, 1.7fr);
+  gap: 14px;
+  align-items: stretch;
+}
+.configuration-capacity-panel,
+.configuration-staff-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border, #cbd2da);
+  border-radius: 4px;
+  background: var(--surface, #fff);
+}
+.configuration-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 39px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border, #cbd2da);
+  background: var(--raised, #f1f3f5);
+}
+.configuration-panel-heading h4 {
+  margin: 0;
+  color: var(--text, #1b2431);
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.configuration-panel-heading > span {
+  color: var(--muted, #596579);
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: right;
 }
 .configuration-capacity-fields {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 220px));
-  gap: 16px;
-  margin-bottom: 19px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 12px 14px 10px;
 }
 .configuration-capacity-fields .mantine-NumberInput-label {
-  font-size: 13px;
+  color: var(--text-secondary, #344054);
+  font-size: 12px;
   font-weight: 600;
+  line-height: 1.4;
 }
 .configuration-capacity-fields .mantine-NumberInput-description {
+  min-height: 28px;
+  margin: 3px 0 5px;
+  color: var(--muted, #596579);
   font-size: 11px;
-  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.configuration-inputs .mantine-NumberInput-input {
+  height: 32px;
+  min-height: 32px;
+  padding-left: 9px;
+  border-color: var(--border, #cbd2da);
+  border-radius: 3px;
+  background: var(--surface, #fff);
+  color: var(--text, #1b2431);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: normal;
+  text-align: right;
+}
+.configuration-inputs .mantine-NumberInput-input:focus {
+  border-color: var(--accent, #164b75);
+}
+.configuration-inputs .mantine-NumberInput-control {
+  border-color: var(--border, #cbd2da);
+  color: var(--muted, #596579);
+}
+.configuration-capacity-relationship {
+  padding: 0 14px;
+}
+.configuration-capacity-relationship > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 7px;
+  color: var(--text-secondary, #344054);
+  font-size: 11px;
+}
+.configuration-capacity-relationship strong {
+  color: var(--text, #1b2431);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.configuration-capacity-relationship strong span {
+  color: var(--muted, #596579);
+  font-size: 10px;
+  font-weight: 400;
+}
+.configuration-capacity-relationship .mantine-Progress-root {
+  background: var(--raised, #f1f3f5);
+}
+.configuration-capacity-relationship .mantine-Progress-section {
+  background: var(--accent, #164b75);
+}
+.configuration-capacity-relationship p,
+.configuration-capacity-minimum {
+  margin: 6px 0 0;
+  color: var(--muted, #596579);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.configuration-capacity-minimum {
+  padding: 0 14px 12px;
 }
 .configuration-staff-sliders {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
 }
 .configuration-staff-control {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 76px minmax(110px, 1.3fr);
+  align-items: center;
+  gap: 14px;
+  min-height: 62px;
+  padding: 10px 14px;
+}
+.configuration-staff-control + .configuration-staff-control {
+  border-top: 1px solid var(--border, #cbd2da);
+}
+.configuration-staff-role label {
+  display: block;
+  color: var(--text-secondary, #344054);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.configuration-staff-role > span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted, #596579);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.configuration-staff-control .mantine-NumberInput-root,
+.configuration-staff-adjustment {
   min-width: 0;
 }
-.configuration-staff-control > div:first-child {
+.configuration-staff-adjustment {
+  padding: 5px 6px 0;
+}
+.configuration-staff-adjustment .mantine-Slider-bar {
+  background: var(--accent, #164b75);
+}
+.configuration-staff-adjustment .mantine-Slider-thumb {
+  border-color: var(--accent, #164b75);
+}
+.configuration-slider-range {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.configuration-staff-control label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #334d60;
-}
-.configuration-staff-control .mantine-NumberInput-root {
-  width: 74px;
-  flex-shrink: 0;
-}
-.configuration-staff-control .mantine-Slider-root {
-  margin: 0 8px 8px;
-}
-.configuration-staff-control > span {
-  font-size: 11px;
-  color: #607287;
+  margin-top: 4px;
+  color: var(--muted, #596579);
+  font-size: 9px;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
 }
 .configuration-capacity-readback {
-  margin-top: 18px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  background: #f2f7fc;
-  padding: 10px 12px;
-  border-radius: 6px;
+  align-items: center;
+  gap: 10px 16px;
+  margin-top: 12px;
+  padding: 9px 12px;
+  border: 1px solid var(--border, #cbd2da);
+  border-radius: 4px;
+  background: var(--raised, #f1f3f5);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.configuration-supported-total {
+  flex: 0 0 auto;
+  color: var(--accent, #164b75);
   font-size: 12px;
-  color: #48677e;
+  font-variant-numeric: tabular-nums;
 }
-.configuration-capacity-readback strong {
-  color: #27689c;
+.configuration-supported-message {
+  color: var(--text-secondary, #344054);
 }
-.configuration-capacity-readback.has-shortage {
-  background: #fff7e9;
-}
-.configuration-capacity-readback.has-shortage strong {
-  color: #946316;
+.configuration-capacity-readback.has-shortage .configuration-supported-total {
+  color: var(--warning, #946316);
 }
 .configuration-inputs-note {
-  font-size: 11px;
-  color: #607287;
-  margin: 8px 0 0;
-}
-.baseline-chart-heading {
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.baseline-edit-capacity {
-  color: #246cab;
-  font-size: 12px;
-  text-underline-offset: 3px;
-}
-@media (max-width: 760px) {
-  .configuration-staff-sliders {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .configuration-capacity-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
+  margin: 7px 0 0;
+  color: var(--muted, #596579);
+  font-size: 10px;
+  line-height: 1.5;
 }

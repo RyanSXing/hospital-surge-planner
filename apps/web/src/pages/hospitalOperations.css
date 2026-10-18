@@ -1,6 +1,6 @@
 .hospital-operations {
   grid-column: 1 / -1;
-  border-top: 1px solid #e0e8ef;
+  border-top: 1px solid var(--border);
   padding-top: 20px;
   min-width: 0;
 }
@@ -14,13 +14,13 @@
 .hospital-operations h3,
 .hospital-operations h4 {
   margin: 0;
-  color: #2c4355;
+  color: var(--text);
   font-size: 15px;
 }
 .hospital-operations > header > span,
 .hospital-operations p,
 .operations-readback {
-  color: #607287;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
 }
@@ -64,12 +64,12 @@
   touch-action: none;
 }
 .severity-pie-total {
-  fill: #2c4355;
+  fill: var(--text);
   font-size: 21px;
   font-weight: 600;
 }
 .severity-pie-caption {
-  fill: #607287;
+  fill: var(--muted);
   font-size: 11px;
 }
 .severity-pie-handle {
@@ -85,7 +85,7 @@
 }
 .severity-chart-wrap > span {
   font-size: 10px;
-  color: #607287;
+  color: var(--muted);
 }
 .severity-field-head,
 .severity-row {
@@ -96,18 +96,20 @@
 }
 .severity-field-head {
   font-size: 10px;
-  color: #607287;
+  color: var(--muted);
   margin-bottom: 6px;
 }
-.severity-field-head > span:last-child {
+.severity-field-head > span:nth-child(n + 2) {
   text-align: right;
 }
 .severity-row {
+  align-items: start;
   margin-bottom: 10px;
 }
 .severity-row > label {
   display: flex;
   align-items: center;
+  min-height: 30px;
   gap: 6px;
   color: #3e566a;
   font-size: 12px;
@@ -165,7 +167,11 @@
   gap: 12px;
 }
 .supply-fields .mantine-NumberInput-label {
+  display: flex;
+  align-items: end;
+  min-height: 2.7em;
   font-size: 11px;
+  line-height: 1.35;
   margin-bottom: 4px;
   color: #526c81;
 }
@@ -193,13 +199,13 @@
   align-items: end;
   gap: 10px;
   padding: 10px;
-  background: #f7f9fc;
+  background: var(--raised);
   border: 1px solid #e3eaf1;
   border-radius: 6px;
 }
 .disruption-row > span {
   font-size: 11px;
-  color: #607287;
+  color: var(--muted);
   padding-bottom: 6px;
 }
 .disruption-remove {
@@ -225,7 +231,7 @@
 }
 .operations-definitions {
   margin-top: 12px;
-  color: #607287;
+  color: var(--muted);
   font-size: 11px;
 }
 .operations-definitions summary {

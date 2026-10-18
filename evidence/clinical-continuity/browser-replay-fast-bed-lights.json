@@ -1,0 +1,4244 @@
+{
+  "run": "run_c415f0bc4e554a04b375",
+  "transition_durations_ms": [
+    90
+  ],
+  "turned_on": "SLOT-ED-015",
+  "turned_off": "SLOT-ED-002",
+  "unchanged_bed_glows": 1,
+  "changes": [
+    {
+      "slot": "SLOT-WA-027",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "change": "off",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "change": "on",
+      "at": 324.5
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "change": "on",
+      "at": 507.40000009536743
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "change": "on",
+      "at": 507.40000009536743
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "change": "on",
+      "at": 507.40000009536743
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "change": "off",
+      "at": 507.40000009536743
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "change": "off",
+      "at": 507.40000009536743
+    }
+  ],
+  "samples": [
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 0.7999999523162842,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 0.7999999523162842,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 0.7999999523162842,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 0.7999999523162842,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 0.7999999523162842,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 0.7999999523162842,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 0.7999999523162842,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 0.7999999523162842,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 0.7999999523162842,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 0.7000000476837158,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 0.7000000476837158,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 0.7000000476837158,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 0.7000000476837158,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 0.7000000476837158,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 18.699999928474426,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.712312
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 18.600000023841858,
+      "opacity": 0.287688
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 30.59999990463257,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 30.5,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 30.5,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 30.5,
+      "opacity": 0.464265
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 30.5,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 30.5,
+      "opacity": 0.535735
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 47.89999997615814,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.25779
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 47.800000071525574,
+      "opacity": 0.74221
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 64,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 64,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 64,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 64,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 64,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 64,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 64,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 64,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 64,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.100316
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 63.90000009536743,
+      "opacity": 0.899684
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 81.09999990463257,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 81,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 81,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 81,
+      "opacity": 0.00940178
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 81,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 81,
+      "opacity": 0.990598
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 99.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 99.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 99.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 99.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 99.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 99.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 99.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 99.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 99.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 99.30000007152557,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 99.30000007152557,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 99.30000007152557,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 99.30000007152557,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 99.30000007152557,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 114.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 114.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 114.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 114.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 114.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 114.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 114.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 114.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 114.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 114.60000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 114.60000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 114.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 114.60000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 114.60000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 130.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 130.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 130.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 130.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 130.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 130.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 130.19999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 130.19999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 130.19999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 130.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 130.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 130.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 130.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 130.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 147.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 147.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 147.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 147.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 147.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 147.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 147.79999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 147.79999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 147.79999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 147.70000004768372,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 147.70000004768372,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 147.70000004768372,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 147.70000004768372,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 147.70000004768372,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 164.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 164.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 164.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 164.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 164.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 164.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "off",
+      "elapsed": 164.19999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "off",
+      "elapsed": 164.19999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 164.19999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 164.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 164.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 164.10000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 164.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "on",
+      "elapsed": 164.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 183.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 183.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 183.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 183.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 183.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 183.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 0.7999999523162842,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 0.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 183.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 183.60000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 183.60000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 0.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 183.60000002384186,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 183.60000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 0.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 0.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 199.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 199.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 199.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 199.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 199.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 199.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 16.199999928474426,
+      "opacity": 0.285673
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 16.09999990463257,
+      "opacity": 0.285673
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 199.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 199,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 199,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 16.09999990463257,
+      "opacity": 0.285673
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 199,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 199,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 16.09999990463257,
+      "opacity": 0.714327
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 16.09999990463257,
+      "opacity": 0.714327
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 214,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 214,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 214,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 214,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 214,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 214,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 31.100000023841858,
+      "opacity": 0.535379
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 31,
+      "opacity": 0.535379
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 214,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 213.90000009536743,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 213.90000009536743,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 31,
+      "opacity": 0.535379
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 213.90000009536743,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 213.90000009536743,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 31,
+      "opacity": 0.464621
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 31,
+      "opacity": 0.464621
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 231.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 231.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 231.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 231.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 231.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 231.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 48.199999928474426,
+      "opacity": 0.741921
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 48.09999990463257,
+      "opacity": 0.741921
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 231.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 231,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 231,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 48.09999990463257,
+      "opacity": 0.741921
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 231,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 231,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 48.09999990463257,
+      "opacity": 0.258079
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 48.09999990463257,
+      "opacity": 0.258079
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "on",
+      "elapsed": 247.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "on",
+      "elapsed": 247.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "on",
+      "elapsed": 247.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "on",
+      "elapsed": 247.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "on",
+      "elapsed": 247.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "on",
+      "elapsed": 247.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 64.69999992847443,
+      "opacity": 0.900254
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 64.59999990463257,
+      "opacity": 0.900254
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "off",
+      "elapsed": 247.59999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "on",
+      "elapsed": 247.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "on",
+      "elapsed": 247.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 64.59999990463257,
+      "opacity": 0.900254
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "off",
+      "elapsed": 247.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "on",
+      "elapsed": 247.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 64.59999990463257,
+      "opacity": 0.0997461
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 64.59999990463257,
+      "opacity": 0.0997461
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 81.39999997615814,
+      "opacity": 0.990527
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 81.29999995231628,
+      "opacity": 0.990527
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 81.29999995231628,
+      "opacity": 0.990527
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 81.29999995231628,
+      "opacity": 0.00947325
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 81.29999995231628,
+      "opacity": 0.00947325
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 98.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 98,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 98,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 98,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 98,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 114.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 114.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 114.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 114.59999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 114.59999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 131.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 131.29999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 131.29999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 131.29999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 131.29999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 148.10000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 148,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 148,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 148,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 148,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 164.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 164.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 164.59999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 164.59999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 164.59999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 181.29999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 181.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 181.19999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 181.19999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 181.19999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 219.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 219.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 219.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 219.79999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 219.79999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 228,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 227.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 227.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 227.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 227.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 231.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 231.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 231.79999995231628,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 231.79999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 231.79999995231628,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-005",
+      "target": "on",
+      "elapsed": 252.60000002384186,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-006",
+      "target": "on",
+      "elapsed": 252.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-001",
+      "target": "on",
+      "elapsed": 252.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-021",
+      "target": "off",
+      "elapsed": 252.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "off",
+      "elapsed": 252.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 3.6999999284744263,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 3.6999999284744263,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 14.5,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 14.5,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 29.09999990463257,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 29.09999990463257,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 44.699999928474426,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 44.699999928474426,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 62.299999952316284,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 62.299999952316284,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 78.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 78.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 96.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 96.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 112.69999992847443,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 112.69999992847443,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 128.39999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 128.39999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-027",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-028",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-029",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-030",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-031",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WA-032",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-WB-008",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WB-010",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-002",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-004",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-WC-005",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ICU-009",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ICU-010",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    },
+    {
+      "slot": "SLOT-ED-002",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-005",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-006",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-007",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-008",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-009",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-010",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-011",
+      "target": "on",
+      "elapsed": 145.89999997615814,
+      "opacity": 1
+    },
+    {
+      "slot": "SLOT-ED-015",
+      "target": "off",
+      "elapsed": 145.89999997615814,
+      "opacity": 0
+    }
+  ],
+  "reducedChanges": []
+}

@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-10-18T08:52:11.836819+00:00",
+  "sha256": "2b50301efd2dd8224389f9ea07affc7fec7897d05f46e75e44ccff0a78f242f6",
+  "byte_size": 5701987,
+  "object_key": "backups/hospital-clinical-continuity-20261018T085206Z.dump",
+  "format": "postgresql-custom-dump",
+  "created_before_interface_deployment": true,
+  "private_oci_storage": true,
+  "existing_resources_reused": true,
+  "retention_deletions": 0,
+  "reason": "Preserve existing scenarios and saved results before the clinical visual system, configuration and continuous playback release"
+}

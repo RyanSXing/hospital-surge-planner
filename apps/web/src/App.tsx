@@ -182,6 +182,11 @@ export default function App() {
     [mobileNav, setMobileNav] = useState(false),
     [user, setUser] = useState<Entity | null>(null),
     [activeReplicationId, setReplication] = useState("");
+  const replaySelection = useRef({ replicationId: "", selectedTime });
+  replaySelection.current = {
+    replicationId: activeReplicationId || run?.selected_replication_id || "",
+    selectedTime,
+  };
   const setDataset = useCallback((value: Dataset | null) => {
     setPresentationTimezone(value?.timezone || "America/Chicago");
     setDatasetState(value);
@@ -358,6 +363,22 @@ export default function App() {
     if (url.href !== location.href) history.pushState({}, "", url);
   }, []);
   const setTime = useCallback((t: string) => setSelectedTime(t), []);
+  const preserveReplayTime = useCallback(
+    (replicationId: string, expectedTime: string, at: string) => {
+      const current = replaySelection.current;
+      const expected = Date.parse(expectedTime);
+      if (
+        !replicationId ||
+        current.replicationId !== replicationId ||
+        !Number.isFinite(expected) ||
+        !Number.isFinite(Date.parse(at)) ||
+        current.selectedTime !== expectedTime
+      )
+        return;
+      setSelectedTime((value) => (value === expectedTime ? at : value));
+    },
+    [],
+  );
   const selectedDay = Math.max(
     0,
     localDayIndex(
@@ -695,6 +716,7 @@ export default function App() {
       setPage("comparison");
     },
     setTime,
+    preserveReplayTime,
     setDay,
     setFacility,
     setPatient: (patient) => {

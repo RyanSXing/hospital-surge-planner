@@ -340,7 +340,7 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
                   x2={right}
                   y1={y(value)}
                   y2={y(value)}
-                  stroke="#e6edf3"
+                  stroke="var(--border-subtle)"
                 />
                 <text x={left - 10} y={y(value) + 4} textAnchor="end">
                   {fmt(value, 0)}
@@ -352,7 +352,7 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
             <>
               <path
                 d={`${path} L${right},${bottom} L${left},${bottom} Z`}
-                fill="#e8f2fc"
+                fill="var(--accent-soft)"
                 aria-hidden="true"
               />
               <path
@@ -362,7 +362,7 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
                     : baselinePath
                 }
                 fill="none"
-                stroke="#8495a7"
+                stroke="#8491a2"
                 strokeWidth={1.5}
                 strokeDasharray="5 5"
                 aria-hidden="true"
@@ -370,7 +370,7 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
               <path
                 d={path}
                 fill="none"
-                stroke="#2378bf"
+                stroke="var(--accent)"
                 strokeWidth={3}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -454,7 +454,7 @@ export default function ArrivalPreview(options: ArrivalPreviewProps) {
                   cy={y(point.planned)}
                   r={canEdit && activeAt === point.at ? 5 : 3.5}
                   fill="#fff"
-                  stroke="#2378bf"
+                  stroke="var(--accent)"
                   strokeWidth={2}
                 />
               </g>

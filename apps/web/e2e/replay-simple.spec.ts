@@ -22,9 +22,15 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
   );
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  let requests = 0;
+  let requests = 0,
+    playbackWindows = 0;
   await page.route("**/runs/*/state?**", async (route) => {
     requests++;
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await route.continue();
+  });
+  await page.route("**/runs/*/playback-window?**", async (route) => {
+    playbackWindows++;
     await new Promise((resolve) => setTimeout(resolve, 400));
     await route.continue();
   });
@@ -180,6 +186,11 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
   await expect
     .poll(() => page.evaluate(() => (window as any).__floorMonitor.seen.length))
     .toBeGreaterThanOrEqual(4);
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as any).__floorMonitor.motion.length),
+    )
+    .toBeGreaterThan(10);
   await page.getByLabel("Pause replay", { exact: true }).click();
   const paused = new URL(page.url()).searchParams.get("at")!;
   await expectFloorPlanAt(page, run.selected_replication_id, paused);
@@ -228,7 +239,9 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
     sameRoot: true,
     sameBeds: true,
   });
-  expect(requests).toBeGreaterThanOrEqual(5);
+  expect(requests).toBeGreaterThanOrEqual(3);
+  expect(requests).toBeLessThanOrEqual(6);
+  expect(playbackWindows).toBeGreaterThan(0);
   expect(continuity.motion.length).toBeGreaterThan(10);
   expect(continuity.motion.every((sample: any) => sample.inside)).toBe(true);
   expect(continuity.motion.every((sample: any) => sample.pathOnGraph)).toBe(
@@ -274,7 +287,13 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
   await expect(floor).toHaveClass(/hospital-floor-plan--still/);
   await page.getByLabel("Play replay", { exact: true }).click();
   await expect
-    .poll(() => Date.parse(new URL(page.url()).searchParams.get("at") || ""))
+    .poll(async () =>
+      Number(
+        await page
+          .getByTestId("replay-playhead")
+          .getAttribute("data-playhead-ms"),
+      ),
+    )
     .toBeGreaterThan(Date.parse(run.start_at));
   await expect(page.locator(".floor-transit-marker")).toHaveCount(0);
   await page.getByLabel("Reduced motion", { exact: true }).uncheck();
@@ -294,7 +313,7 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
     )
     .toBeGreaterThan(0);
   // A sidebar change resizes the map without firing window.resize. Old paths
-  // must be discarded, and only a later recorded window may animate again.
+  // must be discarded. Only new recorded moves after the resize may animate.
   const beforeResize = await page.evaluate(() => {
     const building = document.querySelector<HTMLElement>(
       ".floor-plan-building",
@@ -305,7 +324,17 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
     (window as any).__beforeSidebarResizeMarkers = [
       ...overlay.querySelectorAll(".floor-transit-marker"),
     ];
-    return { width: building.offsetWidth, to: overlay.dataset.windowTo };
+    return {
+      width: building.offsetWidth,
+      to: overlay.dataset.windowTo,
+      eventIds: [
+        ...overlay.querySelectorAll<HTMLElement>(".floor-transit-marker"),
+      ].flatMap((marker) => marker.dataset.events?.split(",") || []),
+      playhead: Number(
+        document.querySelector<HTMLElement>('[data-testid="replay-playhead"]')
+          ?.dataset.playheadMs,
+      ),
+    };
   });
   await page
     .getByRole("button", { name: /^(Collapse|Expand) navigation$/ })
@@ -332,12 +361,6 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
       to: overlay.getAttribute("data-window-to"),
       markers: overlay.childElementCount,
     }));
-  if (afterResize.to === beforeResize.to) expect(afterResize.markers).toBe(0);
-  await expect
-    .poll(() =>
-      page.getByTestId("floor-plan-transit").getAttribute("data-window-to"),
-    )
-    .not.toBe(beforeResize.to);
   await expect
     .poll(() =>
       page
@@ -350,6 +373,27 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
         ),
     )
     .toBeGreaterThan(0);
+  const newEvents = await page
+    .locator(".floor-transit-marker")
+    .evaluateAll((markers) =>
+      markers.flatMap(
+        (marker) => (marker as HTMLElement).dataset.events?.split(",") || [],
+      ),
+    );
+  expect(newEvents.every((id) => !beforeResize.eventIds.includes(id))).toBe(
+    true,
+  );
+  const consumedEvents = new Set(
+    (
+      await fetchReplayJourneyEvents(
+        (path) => api(page.request, path),
+        run.selected_replication_id,
+        run.start_at,
+        new Date(beforeResize.playhead).toISOString(),
+      )
+    ).map((event: any) => String(event.event_id || event.sequence_number)),
+  );
+  expect(newEvents.every((id) => !consumedEvents.has(id))).toBe(true);
   const resizedMotion = await page.evaluate(() => {
     const architecture = document.querySelector<SVGElement>(
       '[data-testid="hospital-footprint"]',
@@ -374,11 +418,19 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
   await page.getByLabel("Reduced motion", { exact: true }).check();
   await expect(page.locator(".floor-transit-marker")).toHaveCount(0);
   await expect(page.getByLabel("Play replay", { exact: true })).toBeVisible();
-  const reducedPlayingAt = new URL(page.url()).searchParams.get("at");
+  const reducedPlayingAt = Number(
+    await page.getByTestId("replay-playhead").getAttribute("data-playhead-ms"),
+  );
   await page.getByLabel("Play replay", { exact: true }).click();
   await expect
-    .poll(() => new URL(page.url()).searchParams.get("at"))
-    .not.toBe(reducedPlayingAt);
+    .poll(async () =>
+      Number(
+        await page
+          .getByTestId("replay-playhead")
+          .getAttribute("data-playhead-ms"),
+      ),
+    )
+    .toBeGreaterThan(reducedPlayingAt);
   await page.getByLabel("Pause replay", { exact: true }).click();
   await expect(page.locator(".floor-transit-marker")).toHaveCount(0);
   await capture(page, "replay-stable-floor-plan", info);
@@ -387,6 +439,7 @@ test("recorded floor plan stays stable through buffered playback, delayed seek a
     run: run.id,
     continuity,
     requests,
+    playback_windows: playbackWindows,
     delayed_state_ms: 400,
     sidebar_resize: {
       before: beforeResize,

@@ -1,0 +1,259 @@
+{
+  "checked_at": "2026-10-18T09:08:11.317810+00:00",
+  "unique_desktop_cases": 28,
+  "all_latest_case_results_passed": true,
+  "mobile_requested": false,
+  "cases": [
+    {
+      "file": "configuration-controls.spec.ts",
+      "project": "desktop",
+      "title": "desktop configuration saves editable beds and all staff roles into a real immutable simulation",
+      "status": "passed",
+      "duration_ms": 9297,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "navigation-flow.spec.ts",
+      "project": "desktop",
+      "title": "Analytics outcomes match recorded metrics and preserve trajectory context",
+      "status": "passed",
+      "duration_ms": 15447,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "navigation-flow.spec.ts",
+      "project": "desktop",
+      "title": "Configuration setup to complete Analysis workflow preserves baseline and browser context",
+      "status": "passed",
+      "duration_ms": 34707,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "navigation-flow.spec.ts",
+      "project": "desktop",
+      "title": "root, legacy aliases and invalid navigation canonicalize without losing context",
+      "status": "passed",
+      "duration_ms": 2726,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-clinical-capacity.spec.ts",
+      "project": "desktop",
+      "title": "replay displays actual separate hospital capacity and no offsite inventory",
+      "status": "passed",
+      "duration_ms": 4412,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-clinical-capacity.spec.ts",
+      "project": "desktop",
+      "title": "replay holds a stepdown patient in the recorded ICU bed until actual ward entry",
+      "status": "passed",
+      "duration_ms": 3321,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-continuous-playback.spec.ts",
+      "project": "desktop",
+      "title": "a delayed future playback window cannot repaint a newer exact seek or resume an old playback session",
+      "status": "passed",
+      "duration_ms": 3224,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-continuous-playback.spec.ts",
+      "project": "desktop",
+      "title": "pausing inside a playback window hydrates the visible exact moment and resume finishes at the unchanged saved horizon",
+      "status": "passed",
+      "duration_ms": 6050,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-continuous-playback.spec.ts",
+      "project": "desktop",
+      "title": "the visible clock, real beds and patient movement advance continuously through buffered window boundaries",
+      "status": "passed",
+      "duration_ms": 6108,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-controls.spec.ts",
+      "project": "desktop",
+      "title": "playback speed, pause, seek and exact event stepping preserve frozen results",
+      "status": "passed",
+      "duration_ms": 7066,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-evidence.spec.ts",
+      "project": "desktop",
+      "title": "replay exposes complete filtered events, patient history and recorded resources",
+      "status": "passed",
+      "duration_ms": 9057,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "a 100-bed ward reflows inside a compact architectural map without overflowing its walls",
+      "status": "passed",
+      "duration_ms": 12473,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "current shortage pressure follows actual paused care and clears after recovery and backward seeks",
+      "status": "passed",
+      "duration_ms": 4859,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "editable bed and staffed-bed parameters rebuild replay inventory per frozen run",
+      "status": "passed",
+      "duration_ms": 14384,
+      "evidence_report": "output/playwright/clinical-continuity/browser-bed-acceptance.json"
+    },
+    {
+      "file": "replay-floorplan.spec.ts",
+      "project": "desktop",
+      "title": "floor plan separates actual wards and every bed, with meaningful bed, area and patient inspection",
+      "status": "passed",
+      "duration_ms": 5705,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-journey.spec.ts",
+      "project": "desktop",
+      "title": "recorded arrivals occupy an actual ED bed only during care and increment cumulative discharges",
+      "status": "passed",
+      "duration_ms": 5544,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "a late seek response from the previous replication cannot repaint the newly selected run",
+      "status": "passed",
+      "duration_ms": 6631,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "held timeline drag publishes exact intermediate map states, coalesces fast changes, and seeks backward without replacing the map",
+      "status": "passed",
+      "duration_ms": 6128,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "late event and checkpoint lookups cannot override a newer native timeline seek",
+      "status": "passed",
+      "duration_ms": 5472,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "recorded playback keeps patient markers and trails on the same continuous route and clears them when paused",
+      "status": "passed",
+      "duration_ms": 4817,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-live-scrub.spec.ts",
+      "project": "desktop",
+      "title": "the emergency waiting count can drain using recorded treatment events, with exact reduced-motion seeks",
+      "status": "passed",
+      "duration_ms": 5271,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "Fit preserves all 100 frozen ward beds and real corridor alignment after zoom and sidebar changes",
+      "status": "passed",
+      "duration_ms": 10426,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "bed indicators switch quickly and glow once only for actual occupancy changes, with reduced motion suppressed",
+      "status": "passed",
+      "duration_ms": 5012,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "the complete hospital and timeline fit 1280\u00d7720 in the page and fullscreen without scrolling",
+      "status": "passed",
+      "duration_ms": 4651,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "the complete hospital and timeline fit 1440\u00d7900 in the page and fullscreen without scrolling",
+      "status": "passed",
+      "duration_ms": 6622,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "the complete hospital and timeline fit 1600\u00d71000 in the page and fullscreen without scrolling",
+      "status": "passed",
+      "duration_ms": 6607,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-route-fit.spec.ts",
+      "project": "desktop",
+      "title": "the movement sample represents recorded activity across every ward, ICU, emergency care and discharge without inventing equal admissions",
+      "status": "passed",
+      "duration_ms": 22671,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    },
+    {
+      "file": "replay-simple.spec.ts",
+      "project": "desktop",
+      "title": "recorded floor plan stays stable through buffered playback, delayed seek and backwards seek",
+      "status": "passed",
+      "duration_ms": 16537,
+      "evidence_report": "output/playwright/clinical-continuity/browser-final.json"
+    }
+  ],
+  "executions": [
+    {
+      "report": "output/playwright/clinical-continuity/browser-final.json",
+      "stats": {
+        "startTime": "2026-10-18T09:01:02.834Z",
+        "duration": 234975.626,
+        "expected": 27,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "report": "output/playwright/clinical-continuity/browser-bed-acceptance.json",
+      "stats": {
+        "startTime": "2026-10-18T09:06:51.363Z",
+        "duration": 15550.804,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "resolved_findings": [
+    "One original inventory test used an ambiguous Ward A text selector after the new editor heading was added. The action now targets the named unit radio; its targeted final acceptance passes. Application and tested bundle did not change."
+  ]
+}

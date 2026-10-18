@@ -1,0 +1,5 @@
+{
+  "tests": 47,
+  "all_passed": true,
+  "scope": "Complete recorded playback windows and exact-state equivalence, authorization, frozen revision and read-only boundaries, replay annotations/floor state, and ED queue recovery."
+}

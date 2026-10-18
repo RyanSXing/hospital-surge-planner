@@ -5,7 +5,7 @@
   min-width: 0;
   min-height: 0;
   background: #fff;
-  color: #334c5d;
+  color: var(--text);
   overflow: hidden;
 }
 .floor-plan-key {
@@ -14,9 +14,9 @@
   gap: 12px;
   padding: 6px 10px;
   flex: 0 0 auto;
-  border-bottom: 1px solid #e8edf2;
+  border-bottom: 1px solid var(--border-subtle);
   font-size: 9px;
-  color: #6b7e8d;
+  color: var(--muted);
   flex-wrap: wrap;
 }
 .floor-plan-key > span {
@@ -31,8 +31,8 @@
   background: #fff;
 }
 .floor-key-bed--occupied {
-  background: #4b8ec9;
-  border-color: #4b8ec9;
+  background: var(--bed-occupied);
+  border-color: var(--bed-occupied);
 }
 .floor-key-bed--reserved {
   background: repeating-linear-gradient(
@@ -57,7 +57,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #338b95;
+  background: var(--movement);
 }
 .floor-plan-transit {
   position: absolute;
@@ -75,10 +75,10 @@
   height: 9px;
   border: 1.5px solid #fff;
   border-radius: 50%;
-  background: #287d89;
+  background: var(--movement);
   box-shadow:
-    0 0 0 2px #287d8917,
-    0 1px 4px #296a7255;
+    0 0 0 2px #21616b17,
+    0 1px 4px #21616b55;
   will-change: offset-distance, opacity;
 }
 .floor-transit-route {
@@ -91,7 +91,7 @@
 }
 .floor-transit-trail {
   fill: none;
-  stroke: #338b95;
+  stroke: var(--movement);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -145,14 +145,14 @@
   overflow: visible;
 }
 .floor-plan-outline {
-  fill: #f5f7f9;
+  fill: var(--canvas);
   stroke: #9eafbd;
   stroke-width: 3;
   stroke-linejoin: miter;
 }
 .floor-plan-network-edge {
   fill: none;
-  stroke: #cbd8e2;
+  stroke: var(--border);
   stroke-width: 1;
   stroke-dasharray: 3 5;
 }
@@ -255,7 +255,7 @@
     border-color 0.4s ease;
 }
 .floor-plan-unit--selected {
-  outline: 2px solid #2485c3;
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 .floor-plan-unit-heading {
@@ -283,7 +283,7 @@
 }
 .floor-plan-occupancy small {
   font-size: 9px;
-  color: #798c9c;
+  color: var(--muted);
 }
 .floor-plan-beds {
   display: grid;
@@ -320,13 +320,13 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: #518fc4;
+  background: var(--bed-occupied);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.42s cubic-bezier(0.2, 0.65, 0.25, 1);
 }
 .floor-plan-bed--occupied {
-  border-color: #518fc4 !important;
+  border-color: var(--bed-occupied) !important;
 }
 .floor-plan-bed--occupied::after {
   opacity: 1;
@@ -362,7 +362,7 @@
 .floor-plan-unit-heading:focus-visible,
 .floor-plan-unit-footer button:focus-visible,
 .floor-plan-count-area:focus-visible {
-  outline: 2px solid #1976c9;
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 .floor-plan-bed--selected {
@@ -377,10 +377,10 @@
   margin-top: auto;
   padding-top: 3px;
   font-size: 9px;
-  color: #6f8292;
+  color: var(--muted);
 }
 .floor-plan-unit-footer b {
-  color: #385e7a;
+  color: var(--text-secondary);
   font-size: 11px;
   font-weight: 650;
 }
@@ -427,7 +427,7 @@
   left: 1px;
   width: 32px;
   height: 4px;
-  background: #f5f7f9;
+  background: var(--canvas);
 }
 .floor-plan-door svg {
   position: relative;
@@ -464,7 +464,7 @@
 }
 .floor-plan-corridor > span {
   padding: 0 12px;
-  background: #f5f7f9;
+  background: var(--canvas);
 }
 .floor-plan-entrance {
   display: flex;
@@ -517,7 +517,7 @@
   border: 2px solid #a6b6c4 !important;
   border-radius: 0 !important;
   background: #fff !important;
-  color: #49687f;
+  color: var(--text-secondary);
 }
 .floor-plan-count-area strong {
   font-size: 11px;
@@ -556,7 +556,7 @@
   top: calc(50% - 16px);
   width: 4px;
   height: 32px;
-  background: #f5f7f9;
+  background: var(--canvas);
 }
 .floor-plan-count-area--discharge::after {
   content: "";

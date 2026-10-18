@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { NumberInput, SegmentedControl, Slider } from "@mantine/core";
-import type { Dataset } from "../types";
+import { NumberInput, Progress, SegmentedControl, Slider } from "@mantine/core";
+import type { Dataset, Entity } from "../types";
 import { fmt } from "../api";
 import { humanLabel } from "../presentation";
 import {
@@ -49,6 +49,13 @@ export default function ConfigurationInputs({
   const staffed = target.staffed_capacity ?? readback.supported;
   const minimum = minimumPhysicalBeds(dataset, unit);
   const noun = unit.kind === "ed" ? "places" : "beds";
+  const policy = dataset.capacity_policies?.find(
+    (item: Entity) => item.capacity_policy_id === unit.capacity_policy_id,
+  );
+  const minimumProvider = Number(
+    policy?.minimum_provider_count ?? (unit.kind === "ed" ? 2 : 1),
+  );
+  const minimumSupport = Number(policy?.minimum_support_count ?? 1);
   function update(key: string, next: UnitTarget) {
     if (disabled) return;
     if (editing.current !== key) {
@@ -116,12 +123,14 @@ export default function ConfigurationInputs({
       <header>
         <div>
           <h3 id="hospital-capacity-title">Beds & staffing</h3>
-          <p>Set the capacity and people available for each shift.</p>
+          <p>Choose a unit, then set its beds and people per shift.</p>
         </div>
-        <span>At the start of the simulation</span>
+        <span>Starting resources</span>
       </header>
       <SegmentedControl
         aria-label="Hospital unit to configure"
+        size="sm"
+        fullWidth
         value={unit.unit_id}
         onChange={(next) => {
           editing.current = null;
@@ -132,110 +141,172 @@ export default function ConfigurationInputs({
           label: u.kind === "ed" ? "Emergency" : humanLabel(u.name || u.kind),
         }))}
       />
-      <div className="configuration-capacity-fields">
-        <NumberInput
-          label={`Total ${noun}`}
-          aria-label={`${unit.name} total ${noun}`}
-          description={`Includes occupied ${noun}`}
-          value={inputValues[inputKey("beds")] ?? physical}
-          min={minimum}
-          max={1000}
-          allowDecimal={false}
-          disabled={disabled}
-          onChange={(next) =>
-            typeNumber("beds", next, minimum, 1000, changeBeds)
-          }
-          onBlur={() =>
-            finishNumber("beds", physical, minimum, 1000, changeBeds)
-          }
-        />
-        <NumberInput
-          label={`Staffed ${noun}`}
-          aria-label={`${unit.name} staffed ${noun}`}
-          description="Adjusts the nurse count to match"
-          value={inputValues[inputKey("staffed")] ?? staffed}
-          min={0}
-          max={enabled}
-          allowDecimal={false}
-          disabled={disabled}
-          onChange={(next) =>
-            typeNumber("staffed", next, 0, enabled, changeStaffed)
-          }
-          onBlur={() =>
-            finishNumber("staffed", staffed, 0, enabled, changeStaffed)
-          }
-        />
-      </div>
-      <div className="configuration-staff-sliders">
-        {staffRoles.map(({ key, label }) => {
-          const count = target[key] ?? baseline[key];
-          const maximum = Math.min(
-            500,
-            Math.max(key === "rn" ? 30 : 10, Math.ceil(count / 10) * 10),
-          );
-          const change = (next: number) =>
-            update(key, {
-              [key]: next,
-              ...(key === "rn"
-                ? {
-                    staffed_capacity: Math.min(
-                      enabled,
-                      Math.floor(next * ratio),
-                    ),
-                  }
-                : {}),
-            });
-          return (
-            <div
-              className="configuration-staff-control"
-              key={`${unit.unit_id}-${key}`}
-            >
-              <div>
-                <label htmlFor={`configuration-${unit.unit_id}-${key}`}>
-                  {label}
-                </label>
-                <NumberInput
-                  id={`configuration-${unit.unit_id}-${key}`}
-                  aria-label={`${unit.name} ${label.toLowerCase()}`}
-                  value={inputValues[inputKey(key)] ?? count}
-                  min={0}
-                  max={500}
-                  allowDecimal={false}
-                  disabled={disabled}
-                  onChange={(next) => typeNumber(key, next, 0, 500, change)}
-                  onBlur={() => finishNumber(key, count, 0, 500, change)}
-                />
-              </div>
-              <Slider
-                thumbLabel={`${unit.name} ${label.toLowerCase()} per shift`}
-                min={0}
-                max={maximum}
-                step={1}
-                value={count}
-                disabled={disabled}
-                label={(next) => `${next} per shift`}
-                onChange={(next) => {
-                  clearInput(key);
-                  clearInput("staffed");
-                  change(next);
-                }}
-                onChangeEnd={() => {
-                  editing.current = null;
-                }}
-              />
-              <span>{fmt(count)} per shift</span>
+      <div className="configuration-resource-layout">
+        <div className="configuration-capacity-panel">
+          <div className="configuration-panel-heading">
+            <h4>Bed capacity</h4>
+            <span>{humanLabel(unit.name || unit.kind)}</span>
+          </div>
+          <div className="configuration-capacity-fields">
+            <NumberInput
+              label={`Installed ${noun}`}
+              aria-label={`${unit.name} installed ${noun}`}
+              description="Physical capacity in this unit"
+              size="sm"
+              value={inputValues[inputKey("beds")] ?? physical}
+              min={minimum}
+              max={1000}
+              allowDecimal={false}
+              disabled={disabled}
+              onChange={(next) =>
+                typeNumber("beds", next, minimum, 1000, changeBeds)
+              }
+              onBlur={() =>
+                finishNumber("beds", physical, minimum, 1000, changeBeds)
+              }
+            />
+            <NumberInput
+              label={`Staffed ${noun}`}
+              aria-label={`${unit.name} staffed ${noun}`}
+              description="Adjusts nurses to match"
+              size="sm"
+              value={inputValues[inputKey("staffed")] ?? staffed}
+              min={0}
+              max={enabled}
+              allowDecimal={false}
+              disabled={disabled}
+              onChange={(next) =>
+                typeNumber("staffed", next, 0, enabled, changeStaffed)
+              }
+              onBlur={() =>
+                finishNumber("staffed", staffed, 0, enabled, changeStaffed)
+              }
+            />
+          </div>
+          <div className="configuration-capacity-relationship">
+            <div>
+              <span>Staffed target</span>
+              <strong>
+                {fmt(staffed)}{" "}
+                <span>
+                  / {fmt(physical)} {noun}
+                </span>
+              </strong>
             </div>
-          );
-        })}
+            <Progress
+              value={
+                physical > 0 ? Math.min(100, (100 * staffed) / physical) : 0
+              }
+              size={6}
+              radius="xl"
+              aria-label={`${unit.name} staffed target as a share of installed ${noun}`}
+              aria-valuetext={`${fmt(staffed)} staffed of ${fmt(physical)} installed ${noun}`}
+              transitionDuration={100}
+            />
+            <p>
+              {fmt(Math.max(0, physical - staffed))} {noun} without staffing
+              {enabled < physical ? ` · ${fmt(enabled)} enabled` : ""}
+            </p>
+          </div>
+          <p className="configuration-capacity-minimum">
+            {minimum > 0
+              ? `Keep at least ${fmt(minimum)} ${noun} for occupied or reserved places.`
+              : `Installed ${noun} include both occupied and empty places.`}
+          </p>
+        </div>
+        <div className="configuration-staff-panel">
+          <div className="configuration-panel-heading">
+            <h4>People per shift</h4>
+            <span>Qualified staff available in this unit</span>
+          </div>
+          <div className="configuration-staff-sliders">
+            {staffRoles.map(({ key, label }) => {
+              const count = target[key] ?? baseline[key];
+              const maximum = Math.min(
+                500,
+                Math.max(key === "rn" ? 30 : 10, Math.ceil(count / 10) * 10),
+              );
+              const change = (next: number) =>
+                update(key, {
+                  [key]: next,
+                  ...(key === "rn"
+                    ? {
+                        staffed_capacity: Math.min(
+                          enabled,
+                          Math.floor(next * ratio),
+                        ),
+                      }
+                    : {}),
+                });
+              return (
+                <div
+                  className="configuration-staff-control"
+                  key={`${unit.unit_id}-${key}`}
+                >
+                  <div className="configuration-staff-role">
+                    <label htmlFor={`configuration-${unit.unit_id}-${key}`}>
+                      {label}
+                    </label>
+                    <span>
+                      {key === "rn"
+                        ? `1 nurse for up to ${ratio} ${noun}`
+                        : `At least ${key === "provider" ? minimumProvider : minimumSupport} per shift`}
+                    </span>
+                  </div>
+                  <NumberInput
+                    id={`configuration-${unit.unit_id}-${key}`}
+                    aria-label={`${unit.name} ${label.toLowerCase()}`}
+                    size="sm"
+                    value={inputValues[inputKey(key)] ?? count}
+                    min={0}
+                    max={500}
+                    allowDecimal={false}
+                    disabled={disabled}
+                    onChange={(next) => typeNumber(key, next, 0, 500, change)}
+                    onBlur={() => finishNumber(key, count, 0, 500, change)}
+                  />
+                  <div className="configuration-staff-adjustment">
+                    <Slider
+                      thumbLabel={`${unit.name} ${label.toLowerCase()} per shift`}
+                      min={0}
+                      max={maximum}
+                      step={1}
+                      size="sm"
+                      thumbSize={14}
+                      value={count}
+                      disabled={disabled}
+                      label={(next) => `${next} per shift`}
+                      onChange={(next) => {
+                        clearInput(key);
+                        clearInput("staffed");
+                        change(next);
+                      }}
+                      onChangeEnd={() => {
+                        editing.current = null;
+                      }}
+                    />
+                    <div
+                      className="configuration-slider-range"
+                      aria-hidden="true"
+                    >
+                      <span>0</span>
+                      <span>{fmt(maximum)}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
       <div
         className={`configuration-capacity-readback${readback.usable < staffed ? " has-shortage" : ""}`}
         role="status"
       >
-        <strong>
+        <strong className="configuration-supported-total">
           {fmt(readback.usable)} {noun} supported
         </strong>
-        <span>
+        <span className="configuration-supported-message">
           {!readback.gate
             ? "More doctors or support staff are needed to receive patients."
             : readback.supported < staffed
@@ -246,8 +317,8 @@ export default function ConfigurationInputs({
         </span>
       </div>
       <p className="configuration-inputs-note">
-        Scheduled changes in More parameters can adjust these starting settings
-        later.
+        These settings apply from the start. Schedule later changes in More
+        parameters.
       </p>
     </section>
   );

@@ -4,17 +4,17 @@ The October 2026 interface redesign follows the user's light hospital-management
 
 ## Working through a forecast
 
-1. **Overview** shows the saved starting census as occupancy bars. Choose a duration, emergency-arrival level and arrival pattern beside the live arrivals chart. Open **More parameters** for optional precise edits. **Run simulation** saves the inputs and opens the completed forecast in Analysis.
-2. **Summary** shows the same four outcome cards as Analytics, the full forecast timeline, a waiting chart, a short finding and the next useful action. Exact calendar/time controls are available directly in the timeline. Bed status remains an optional section.
+1. **Configuration** starts with the simulation editor. Choose a duration, arrival level and pattern beside the editable arrivals chart. Set installed and staffed beds and people per shift in **Beds & staffing**. The duplicate baseline capacity card has been removed; **Inspect baseline data** retains access to the source census. Open **More parameters** for optional precise edits. **Run simulation** saves the inputs and opens the completed forecast in Analysis.
+2. **Summary** shows the recorded impact, a compact Decision summary and the full forecast timeline. Supporting definitions and evidence remain collapsed. Exact calendar/time controls are available directly in the timeline. Bed status remains an optional section.
 3. **Replay** follows one explicitly selected recorded run. Play, pause, speed, event stepping, and time remain separate from the ensemble forecast. Patient, capacity, and event evidence are available in an inspection drawer; exact timing tools and the full census are optional.
 4. **Analytics** contains Outcomes and Patients & units. Charts are the starting point; full metric tables and exact records remain available when needed.
-5. **Comparison** evaluates response plans against matched inputs. The chart and paired waiting reduction guide selection. Save a chosen response as a proposed scenario; source scenarios and earlier results remain intact.
+5. **Comparison** compares two saved scenarios from the library. Results must match their saved revisions and compatible horizons before an improvement is shown; source scenarios and earlier results remain intact.
 
 The sidebar collapses by choice and remembers the preference in the browser. Repeated sidebar guidance and connection status have been removed; the planning guide stays available as a secondary tool. Data & setup, the planning guide, alerts, and workspace options remain secondary tools. Optional arrival timing, patient care needs, staffing, equipment, internal bed capacity and calculation settings are grouped under **More parameters**. Alternate-site, shelter and transfer planning controls and the separate Resources page have been removed from the current single-hospital workflow.
 
 ## Components and visual language
 
-Mantine 8 supplies shared buttons, badges, alerts, dialogs, native selects, tabs, expandable sections, and replay drawers. Lucide supplies the established icon set. D3/SVG charts and the Canvas replay remain application-specific visualizations; their data tables and recorded evidence remain accessible. The shell uses a white surface, restrained blue/teal/amber accents, compact rows, clear selected states, and visible focus indicators.
+Mantine 8 supplies shared buttons, badges, alerts, dialogs, native selects, tabs, sliders, expandable sections, and replay drawers. Lucide supplies the established icon set. D3/SVG charts and the hospital floor plan remain application-specific visualizations; their data tables and recorded evidence remain accessible. The desktop shell uses white surfaces, dark navy actions, neutral borders, compact rows, clear selected states, and visible focus indicators. Inter variable fonts are hosted locally with their OFL license. Stronger heading weights, darker labels and tabular numbers provide a consistent clinical appearance across forms, charts, tables, navigation and replay.
 
 Dataset timestamps and units remain visible where they explain the result. Technical IDs, execution estimates, individual resource ledgers, and reproducibility details are secondary. A failed forecast read displays an explicit retry action; missing or unobserved statistics remain distinct from zero. A selected-time reconstruction error cannot silently substitute the starting census.
 
@@ -26,7 +26,7 @@ Sources: [Vanderbilt University Medical Center location](https://www.vanderbilth
 
 The care-zone geometry, patient positions, operational data, resource assumptions, and transitions are synthetic. The local reference does not represent actual Vanderbilt capacity, a hospital floor plan, or real patient locations. The blue hospital application mark is also an original SVG. Artwork is drawn locally in Canvas/SVG; no remote map tiles or downloaded artwork are required.
 
-Recorded patient identities remain stable during animation. Playback buffers upcoming recorded states and uses a continuous presentation clock. Pausing and seeking reconstruct the exact displayed time; changing the run and reduced motion preserve exact state. Interpolated positions are presentation only, never additional clinical events.
+Recorded patient identities remain stable during animation. Playback prefetches bounded read-only windows from the saved trace and advances a continuous presentation clock. Bed occupancy, unit counts and pressure change only at their recorded timestamps; the clock cannot advance beyond the committed exact state. Motion starts when a recorded movement becomes due and continues across transport boundaries. Pausing and seeking reconstruct the exact displayed time. Leaving Replay preserves the visible moment only when the selected run and parent time still match, so an old clock cannot overwrite a newer selection. Changing runs, delayed responses and reduced motion preserve exact state. Interpolated positions are presentation only, never additional clinical events. No new simulation or saved-input change is required for playback.
 
 ## Verification
 

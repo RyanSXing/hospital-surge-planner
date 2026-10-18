@@ -3,13 +3,13 @@
   padding: 32px;
   display: grid;
   place-items: center;
-  background: #f5f7fa;
+  background: var(--canvas);
 }
 .login-card.aegis-login-card {
   width: 400px;
   max-width: 100%;
   padding: 44px 40px 38px;
-  border: 1px solid #dce4ed;
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 12px 44px #23354d09;
@@ -27,7 +27,7 @@
   font-weight: 600;
   line-height: 1.4;
   text-align: center;
-  color: #243449;
+  color: var(--text);
 }
 .login-card.aegis-login-card form {
   margin-top: 28px;
@@ -37,7 +37,7 @@
   display: flex;
   flex-direction: column;
   gap: 7px;
-  color: #40566b;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 .aegis-login-card .mantine-Input-input {

@@ -116,6 +116,11 @@ export interface PlanningContext {
   setPage: (p: PageId) => void;
   compareScenarios?: () => void;
   setTime: (t: string) => void;
+  preserveReplayTime?: (
+    replicationId: string,
+    expectedTime: string,
+    at: string,
+  ) => void;
   setDay: (d: number) => void;
   setFacility: (s: string) => void;
   setPatient: (p: Entity | null) => void;

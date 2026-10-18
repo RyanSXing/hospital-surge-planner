@@ -1,0 +1,247 @@
+{
+  "run": "run_806d016ae3b046a69b35",
+  "recorded_slots": 154,
+  "actual_wards": [
+    "A",
+    "B",
+    "C"
+  ],
+  "patient_and_empty_bed_inspection": true,
+  "numeric_queue_and_discharge_areas": true,
+  "hospital_geometry": {
+    "nodes": {
+      "entrance": {
+        "x": 670.0000000000001,
+        "y": 395.57608150214145
+      },
+      "junction:entry": {
+        "x": 750.9985412703785,
+        "y": 395.57608150214145
+      },
+      "ed-waiting": {
+        "x": 750.9985412703785,
+        "y": 320.1560257203207
+      },
+      "bed-waiting": {
+        "x": 750.9985412703785,
+        "y": 205.78275431492222
+      },
+      "junction:wards": {
+        "x": 750.9985412703785,
+        "y": 140.84769695767352
+      },
+      "discharge": {
+        "x": 804.9914226698254,
+        "y": 320.1560257203207
+      },
+      "junction:exit": {
+        "x": 789.9949819701019,
+        "y": 320.1560257203207
+      },
+      "junction:emergency": {
+        "x": 550.0050180298981,
+        "y": 320.1560257203207
+      },
+      "junction:critical": {
+        "x": 789.9949819701019,
+        "y": 205.78275431492222
+      },
+      "UNIT-WARD-A": {
+        "x": 229.3329521186589,
+        "y": 129.85447713295446
+      },
+      "portal:UNIT-WARD-A": {
+        "x": 229.3329521186589,
+        "y": 140.84769695767352
+      },
+      "UNIT-WARD-B": {
+        "x": 670,
+        "y": 129.85447713295446
+      },
+      "portal:UNIT-WARD-B": {
+        "x": 670,
+        "y": 140.84769695767352
+      },
+      "UNIT-WARD-C": {
+        "x": 1110.6670478813412,
+        "y": 129.85447713295446
+      },
+      "portal:UNIT-WARD-C": {
+        "x": 1110.6670478813412,
+        "y": 140.84769695767352
+      },
+      "UNIT-ICU": {
+        "x": 804.9914226698254,
+        "y": 205.78275431492224
+      },
+      "portal:UNIT-ICU": {
+        "x": 789.9949819701019,
+        "y": 205.78275431492224
+      },
+      "UNIT-ED": {
+        "x": 535.0085773301747,
+        "y": 320.1560257203207
+      },
+      "portal:UNIT-ED": {
+        "x": 550.0050180298981,
+        "y": 320.1560257203207
+      }
+    },
+    "edges": [
+      [
+        "entrance",
+        "junction:entry"
+      ],
+      [
+        "junction:entry",
+        "ed-waiting"
+      ],
+      [
+        "ed-waiting",
+        "bed-waiting"
+      ],
+      [
+        "bed-waiting",
+        "junction:wards"
+      ],
+      [
+        "ed-waiting",
+        "junction:exit"
+      ],
+      [
+        "junction:exit",
+        "discharge"
+      ],
+      [
+        "ed-waiting",
+        "junction:emergency"
+      ],
+      [
+        "bed-waiting",
+        "junction:critical"
+      ],
+      [
+        "UNIT-WARD-A",
+        "portal:UNIT-WARD-A"
+      ],
+      [
+        "portal:UNIT-WARD-A",
+        "junction:wards"
+      ],
+      [
+        "UNIT-WARD-B",
+        "portal:UNIT-WARD-B"
+      ],
+      [
+        "portal:UNIT-WARD-B",
+        "junction:wards"
+      ],
+      [
+        "UNIT-WARD-C",
+        "portal:UNIT-WARD-C"
+      ],
+      [
+        "portal:UNIT-WARD-C",
+        "junction:wards"
+      ],
+      [
+        "UNIT-ICU",
+        "portal:UNIT-ICU"
+      ],
+      [
+        "portal:UNIT-ICU",
+        "junction:critical"
+      ],
+      [
+        "UNIT-ED",
+        "portal:UNIT-ED"
+      ],
+      [
+        "portal:UNIT-ED",
+        "junction:emergency"
+      ]
+    ],
+    "rooms": [
+      {
+        "x": 13.995635480972332,
+        "y": 7.990804168465767,
+        "width": 430.67463327537314,
+        "height": 121.86367296448869,
+        "id": "UNIT-WARD-A",
+        "kind": "ward"
+      },
+      {
+        "x": 454.66268336231343,
+        "y": 7.990804168465767,
+        "width": 430.67463327537314,
+        "height": 121.86367296448869,
+        "id": "UNIT-WARD-B",
+        "kind": "ward"
+      },
+      {
+        "x": 895.3297312436546,
+        "y": 7.990804168465767,
+        "width": 430.67463327537314,
+        "height": 121.86367296448869,
+        "id": "UNIT-WARD-C",
+        "kind": "ward"
+      },
+      {
+        "x": 804.9914226698254,
+        "y": 157.83011051335615,
+        "width": 521.0129418492024,
+        "height": 95.9052876031322,
+        "id": "UNIT-ICU",
+        "kind": "icu"
+      },
+      {
+        "x": 13.995635480972332,
+        "y": 265.71378557841547,
+        "width": 521.0129418492024,
+        "height": 108.88448028381045,
+        "id": "UNIT-ED",
+        "kind": "ed"
+      }
+    ],
+    "violations": [],
+    "wardRoute": [
+      "entrance",
+      "junction:entry",
+      "ed-waiting",
+      "bed-waiting",
+      "junction:wards",
+      "portal:UNIT-WARD-A",
+      "UNIT-WARD-A"
+    ],
+    "edRoute": [
+      "entrance",
+      "junction:entry",
+      "ed-waiting",
+      "junction:emergency",
+      "portal:UNIT-ED",
+      "UNIT-ED"
+    ],
+    "criticalRoute": [
+      "UNIT-ED",
+      "portal:UNIT-ED",
+      "junction:emergency",
+      "ed-waiting",
+      "bed-waiting",
+      "junction:critical",
+      "portal:UNIT-ICU",
+      "UNIT-ICU"
+    ],
+    "dischargeRoute": [
+      "UNIT-ED",
+      "portal:UNIT-ED",
+      "junction:emergency",
+      "ed-waiting",
+      "junction:exit",
+      "discharge"
+    ],
+    "outlinePaths": 1,
+    "outlineXCoordinates": 6,
+    "mapHeight": 424.234375
+  },
+  "errors": []
+}

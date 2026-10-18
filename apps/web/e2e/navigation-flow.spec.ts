@@ -1,5 +1,6 @@
 import { test, expect, type Page, type Route } from "@playwright/test";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import {
   api,
@@ -90,16 +91,28 @@ async function outcomeTime(page: Page) {
   await expect(control).toHaveAttribute("aria-expanded", "true");
 }
 async function baseline(page: Page) {
-  const region = page.locator(".planning-baseline");
+  // Configuration no longer duplicates the source census. Check the immutable
+  // serialized dataset and its explicit inspection action instead.
+  await expect(page.locator(".planning-baseline")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Inspect baseline data", exact: true }),
+  ).toBeVisible();
+  const params = new URL(page.url()).searchParams;
+  const datasetId =
+    params.get("dataset") ||
+    (await api(page.request, "/scenarios/" + params.get("scenario")))
+      .dataset_version_id;
+  const dataset = await api(page.request, "/datasets/" + datasetId);
   return {
-    dataset: await region.getAttribute("data-baseline-dataset"),
-    at: await region.getAttribute("data-baseline-at"),
-    metrics: await region.locator(".planning-baseline-metrics").innerText(),
-    census: await region.locator(".planning-baseline-identity").innerText(),
+    dataset: dataset.id,
+    at: dataset.snapshot_at,
+    serialized_sha256: createHash("sha256")
+      .update(JSON.stringify(dataset))
+      .digest("hex"),
   };
 }
 
-test("Overview setup to complete Analysis workflow preserves baseline and browser context", async ({
+test("Configuration setup to complete Analysis workflow preserves baseline and browser context", async ({
   page,
 }, info) => {
   test.skip(
@@ -121,6 +134,21 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   ).toBeVisible();
   const source = await baseline(page),
     name = "E2E navigation surge " + Date.now();
+  const originalSaved = await api(
+    page.request,
+    "/scenarios/" + context.scenario.id,
+  );
+  await page
+    .getByRole("button", { name: "Inspect baseline data", exact: true })
+    .click();
+  await expectRoute(page, "data");
+  await expect(
+    page.getByRole("heading", { name: "Data & setup", exact: true }),
+  ).toBeVisible();
+  expect(new URL(page.url()).searchParams.get("dataset")).toBe(source.dataset);
+  await primary(page, "Configuration");
+  await expectRoute(page, "overview");
+  expect(await baseline(page)).toEqual(source);
   await page.getByLabel("Scenario name", { exact: true }).fill(name);
   await page.getByLabel("Increase in ED arrivals").fill("70");
   await moreParameters(page);
@@ -129,8 +157,7 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
     .getByRole("combobox", { name: "Simulation runs", exact: true })
     .selectOption("10");
   const original = await api(page.request, "/scenarios/" + context.scenario.id);
-  expect(original.revision).toBe(context.scenario.revision);
-  expect(original.name).toBe(context.scenario.name);
+  expect(original).toEqual(originalSaved);
   await primary(page, "Analysis");
   await expectRoute(page, "analysis", "summary");
   await expect(
@@ -146,6 +173,9 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   await expect(page.getByLabel("Increase in ED arrivals")).toHaveValue(/70%?/);
   await expect(page.getByLabel("Planning horizon")).toHaveValue("3");
   expect(await baseline(page)).toEqual(source);
+  expect(await api(page.request, "/scenarios/" + context.scenario.id)).toEqual(
+    originalSaved,
+  );
   // A dialog retained inside hidden Overview must not capture keyboard input.
   await page
     .getByRole("button", { name: "Scenario library", exact: true })
@@ -207,6 +237,9 @@ test("Overview setup to complete Analysis workflow preserves baseline and browse
   const selectedAt = new URL(page.url()).searchParams.get("at")!;
   await primary(page, "Configuration");
   expect(await baseline(page)).toEqual(source);
+  expect(await api(page.request, "/scenarios/" + context.scenario.id)).toEqual(
+    saved,
+  );
   await exportResults(page);
   await expect(
     page.getByRole("button", { name: "Generate export", exact: true }),
@@ -574,6 +607,9 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     compared_scenario_run_id: alternativeRun.id,
     branch_run_id: branch.id,
     baseline_unchanged_after_seek: true,
+    baseline_serialized_sha256: source.serialized_sha256,
+    baseline_inspection_accessible: true,
+    saved_inputs_unchanged_by_navigation: true,
     unsaved_setup_retained: true,
     hidden_overview_dialog_does_not_trap_focus: true,
     context_keys: contextKeys,

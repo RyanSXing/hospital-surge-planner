@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-18T09:04:03.513698+00:00",
+  "scope": "Native desktop review of frozen production build on localhost",
+  "all_checks_passed": true,
+  "configuration": {
+    "duplicate_capacity_card_removed": true,
+    "baseline_inspection_action_preserved": true,
+    "bed_staff_fields_aligned": true,
+    "white_panels_with_neutral_borders": true,
+    "installed_input_accessible_label_matches_visible_label": true
+  },
+  "rendered_replay_heading": {
+    "font_family": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+    "font_weight": "650",
+    "color": "rgb(27, 36, 49)",
+    "letter_spacing": "-0.7px"
+  },
+  "replay": {
+    "whole_hospital_fits": true,
+    "play_and_pause_verified": true,
+    "clock_advances_between_recorded_changes": true,
+    "recorded_movement_visible": true,
+    "console_errors": []
+  },
+  "screenshots": [
+    "configuration-desktop.png",
+    "beds-staffing-desktop.png",
+    "replay-desktop.png"
+  ]
+}

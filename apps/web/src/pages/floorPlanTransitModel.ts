@@ -15,6 +15,15 @@ export interface FloorMotionWindow {
   from: string;
   to: string;
   events: Entity[];
+  windows?: Array<{ from: string; to: string; events: Entity[] }>;
+  playback?: FloorPlaybackClock;
+}
+export interface FloorPlaybackClock {
+  session: string;
+  atMs: number;
+  startMs: number;
+  speed: number;
+  active: boolean;
 }
 export interface FloorAnchor {
   x: number;
@@ -24,6 +33,13 @@ export interface FloorAnchor {
 export interface FloorTransitStamp {
   key: string;
   zoom: number;
+}
+/** Keep recorded sub-millisecond boundaries that Date.parse alone truncates. */
+export function floorRecordedTime(at: string): number {
+  const milliseconds = Date.parse(at);
+  const digits = at.match(/\.(\d+)(?:Z|[+-]\d{2}:\d{2})$/)?.[1];
+  if (!digits || digits.length <= 3) return milliseconds;
+  return milliseconds + Number(`0.${digits.slice(3)}`);
 }
 
 /** A consumed window never restarts after a rerender, pause, resize or zoom. */
@@ -51,9 +67,9 @@ export function floorTransitTiming(
   to: string,
   motionDurationMs = 1000,
 ): { delayMs: number; durationMs: number } | null {
-  const start = Date.parse(from),
-    end = Date.parse(to),
-    eventTimes = journey.moves.map((move) => Date.parse(move.at));
+  const start = floorRecordedTime(from),
+    end = floorRecordedTime(to),
+    eventTimes = journey.moves.map((move) => floorRecordedTime(move.at));
   if (
     !Number.isFinite(start) ||
     !Number.isFinite(end) ||
@@ -127,12 +143,12 @@ export function recordedFloorJourneys(
     .filter(
       (event) =>
         event.patient_id &&
-        Date.parse(event.occurred_at) > Date.parse(from) &&
-        Date.parse(event.occurred_at) <= Date.parse(to),
+        floorRecordedTime(event.occurred_at) > floorRecordedTime(from) &&
+        floorRecordedTime(event.occurred_at) <= floorRecordedTime(to),
     )
     .sort(
       (a, b) =>
-        Date.parse(a.occurred_at) - Date.parse(b.occurred_at) ||
+        floorRecordedTime(a.occurred_at) - floorRecordedTime(b.occurred_at) ||
         Number(a.sequence_number || 0) - Number(b.sequence_number || 0) ||
         String(a.patient_id).localeCompare(String(b.patient_id)) ||
         String(a.event_id || "").localeCompare(String(b.event_id || "")),

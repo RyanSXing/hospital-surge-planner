@@ -113,6 +113,18 @@ describe("floor plan presentation", () => {
     expect(html).toContain('data-retaining="true"');
     expect(html).toContain("Holding the last recorded moment");
   });
+  it("exposes the exact numerical validity boundary of an event frame without ISO truncation", () => {
+    const until = Date.parse("2026-10-16T05:00:01Z") + 0.5;
+    const html = renderToStaticMarkup(
+      <ReplayFloorPlan
+        plan={plan()}
+        validUntil={new Date(until).toISOString()}
+        validUntilMs={until}
+        {...handlers}
+      />,
+    );
+    expect(html).toContain(`data-valid-until-ms="${until}"`);
+  });
   it("labels 88% supported occupancy consistently as high occupancy", () => {
     const fairlyFull = plan();
     fairlyFull.units[0].reasons = [];

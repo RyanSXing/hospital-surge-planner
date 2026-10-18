@@ -3,13 +3,21 @@ import ReplayFloorPlan from "./ReplayFloorPlan";
 import ReplayDischargeHistory from "./ReplayDischargeHistory";
 import { buildReplayFloorPlan } from "./replayFloorPlanModel";
 import { createReplaySeekQueue } from "./replaySeekQueue";
-import { fetchReplayJourneyEvents } from "./replayJourney";
+import {
+  advancePlaybackClock,
+  createPlaybackBuffer,
+  createPlaybackProjection,
+  playbackTimestamp,
+  type PreparedPlaybackWindow,
+  type ReplayPlaybackWindow,
+} from "./replayPlayback";
 import {
   recordedFloorJourneys,
-  floorMotionIsCurrent,
+  floorRecordedTime,
   type FloorMotionWindow,
+  type FloorPlaybackClock,
 } from "./floorPlanTransitModel";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import "./replay.css";
 import { Drawer, Tabs, NativeSelect } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
@@ -97,8 +105,30 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   const latestContext = useRef(ctx);
   latestContext.current = ctx;
   const navigationGeneration = useRef(0);
+  const pauseLatest = useRef<() => void>(() => {});
+  pauseLatest.current = pauseAtVisibleTime;
   const displayClock = useRef<HTMLSpanElement>(null);
   const scrubber = useRef<HTMLInputElement>(null);
+  const playbackRoot = useRef<HTMLDivElement>(null);
+  const playhead = useRef(Date.parse(ctx.selectedTime));
+  const awaitingExactAt = useRef<string | null>(null);
+  const playbackSerial = useRef(0);
+  const playbackLive = useRef<{
+    rep: string;
+    clock: FloorPlaybackClock;
+    state: Entity;
+    validUntilMs: number;
+  } | null>(null);
+  const [playbackSnapshot, setPlaybackSnapshot] = useState<{
+    rep: string;
+    state: Entity;
+    validUntilMs: number;
+    clock?: FloorPlaybackClock;
+    playheadMs?: number;
+  } | null>(null);
+  const committedPlayback = useRef<{ session: string; state: Entity } | null>(
+    null,
+  );
   const [buffering, setBuffering] = useState(false);
   const [motionWindow, setMotionWindow] = useState<FloorMotionWindow | null>(
     null,
@@ -130,6 +160,22 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     [stepping, setStepping] = useState(false),
     [eventCursor, setEventCursor] = useState<Entity | null>(null),
     [selectedDetail, setSelectedDetail] = useState<Entity | null>(null);
+  useEffect(
+    () => () => {
+      const live = playbackLive.current;
+      if (!live?.clock.active) return;
+      // Page navigation may unmount Replay before a normal pause. Commit only
+      // this visible moment; App rejects it if navigation selected a different
+      // run or explicitly changed the parent timestamp in the meantime.
+      live.clock.active = false;
+      latestContext.current.preserveReplayTime?.(
+        live.rep,
+        playbackExpectedTime.current,
+        playbackTimestamp(live.clock.atMs),
+      );
+    },
+    [],
+  );
   useEffect(() => {
     const update = () =>
       setFullscreen(
@@ -197,9 +243,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
           (ctx.resultScenario || ctx.scenario)?.timezone || "America/Chicago",
         )
       : "");
-  const startMs = Date.parse(start),
-    endMs = Date.parse(end),
-    currentMs = Date.parse(ctx.selectedTime),
+  const startMs = floorRecordedTime(start),
+    endMs = floorRecordedTime(end),
+    currentMs = floorRecordedTime(ctx.selectedTime),
     durationHours = (endMs - startMs) / 3600000;
   const seekQueue = useMemo(
     () =>
@@ -221,7 +267,10 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             );
           return state;
         },
-        publish: (_state, at) => latestContext.current.setTime(at),
+        publish: (_state, at) => {
+          awaitingExactAt.current = at;
+          latestContext.current.setTime(at);
+        },
         status: (at, pending) => setScrubTarget({ rep, at, pending }),
         error: (failure) =>
           setError(`Replay could not load that moment. ${failure.message}`),
@@ -288,38 +337,97 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     Date.parse(ctx.state.at) === Date.parse(ctx.selectedTime)
   )
     retainedState.current.state = ctx.state;
-  const floorState = retainedState.current.state;
+  const localPlayback = playbackSnapshot?.rep === rep ? playbackSnapshot : null;
+  const floorState = localPlayback?.state || retainedState.current.state;
   const floorPlan = useMemo(
     () => buildReplayFloorPlan(ctx.dataset, floorState),
     [ctx.dataset, floorState],
   );
+  const motionUnitIds = floorPlan.units.map((unit) => unit.id).join("|");
   const floorJourneys = useMemo(
     () =>
       motionWindow
-        ? recordedFloorJourneys(
-            motionWindow.events,
-            floorPlan.units.map((unit) => unit.id),
-            motionWindow.from,
-            motionWindow.to,
+        ? (motionWindow.windows || [motionWindow]).flatMap((window) =>
+            recordedFloorJourneys(
+              window.events,
+              motionUnitIds.split("|"),
+              window.from,
+              window.to,
+            ),
           )
         : [],
-    [motionWindow, floorPlan.units],
+    [motionWindow, motionUnitIds],
   );
   useEffect(() => {
     if (!playing || reduced) setMotionWindow(null);
   }, [playing, reduced, rep, speed]);
   useEffect(() => {
     if (playing && playbackExpectedTime.current !== ctx.selectedTime) {
+      if (playbackLive.current) playbackLive.current.clock.active = false;
+      playbackLive.current = null;
       setPlaying(false);
       setMotionWindow(null);
     }
+    awaitingExactAt.current = ctx.selectedTime;
   }, [ctx.selectedTime]);
+  useEffect(() => {
+    if (
+      !playing &&
+      !unavailable &&
+      ctx.state &&
+      ctx.state.replication_id === rep &&
+      floorRecordedTime(ctx.state.at) === currentMs &&
+      floorRecordedTime(awaitingExactAt.current || "") === currentMs
+    )
+      setPlaybackSnapshot(null);
+  }, [playing, unavailable, ctx.state, rep, currentMs]);
   const patientTotal = floorPlan.total;
   const displayedScene = {
     total: floorPlan.total,
     queue: floorPlan.bedWaiting,
     at: floorPlan.at || ctx.selectedTime,
   };
+  function paintClock(atMs: number) {
+    playhead.current = atMs;
+    const at = new Date(atMs).toISOString();
+    if (displayClock.current) {
+      displayClock.current.textContent = timestamp(at);
+      displayClock.current.dataset.playheadMs = String(atMs);
+      displayClock.current.dataset.playbackSession = playbackLive.current?.clock
+        .active
+        ? playbackLive.current.clock.session
+        : "";
+    }
+    if (playbackRoot.current)
+      playbackRoot.current.dataset.playheadMs = String(atMs);
+    if (scrubber.current)
+      scrubber.current.value = String((atMs - startMs) / 60000);
+  }
+  useLayoutEffect(() => {
+    if (!playing && Number.isFinite(Date.parse(displayedScene.at)))
+      paintClock(Date.parse(displayedScene.at));
+  }, [playing, displayedScene.at]);
+  useLayoutEffect(() => {
+    const snapshot = playbackSnapshot;
+    if (
+      !snapshot?.clock?.active ||
+      snapshot.rep !== rep ||
+      snapshot.playheadMs === undefined
+    )
+      return;
+    snapshot.clock.atMs = snapshot.playheadMs;
+    playbackLive.current = {
+      rep: snapshot.rep,
+      clock: snapshot.clock,
+      state: snapshot.state,
+      validUntilMs: snapshot.validUntilMs,
+    };
+    committedPlayback.current = {
+      session: snapshot.clock.session,
+      state: snapshot.state,
+    };
+    paintClock(snapshot.playheadMs);
+  }, [playbackSnapshot, rep]);
   const inspectedPresence = inspected
     ? replayPresence(inspected, ctx.selectedTime)
     : "unknown";
@@ -362,6 +470,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     { page, setPage } = census;
   useEffect(() => {
     navigationGeneration.current += 1;
+    if (playbackLive.current) playbackLive.current.clock.active = false;
+    playbackLive.current = null;
+    setPlaybackSnapshot(null);
     setEventCursor(null);
     setPlaying(false);
     setDragging(false);
@@ -426,123 +537,159 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
       clearInterval(timer);
     };
   }, [pendingRep, ctx.setReplication, ctx.notify]);
-  // Read ahead into the same immutable state cache used by the rest of the app.
-  // Publish the next frame only once it is ready, so a sample boundary never
-  // swaps the scene for a loading screen.
+  // A video clock runs through complete, bounded recorded-change windows.
+  // Clinical state changes only at their recorded boundaries; loading a window
+  // never publishes its future end state or restarts the scene.
   useEffect(() => {
-    if (!playing || !rep || !Number.isFinite(endMs)) return;
-    let active = true;
-    let frame = 0;
-    let cursor = Date.parse(latestContext.current.selectedTime);
-    let nextDue = performance.now();
-    let waiting = false;
-    const pending = new Set<number>();
-    const ready = new Set<number>();
-    const recordedWindows = new Map<number, FloorMotionWindow>();
-    playbackExpectedTime.current = latestContext.current.selectedTime;
-    const readAhead = () => {
-      for (let index = 1; index <= 3; index++) {
-        const at = Math.min(endMs, cursor + index * speed * 3600000);
-        if (at <= cursor || ready.has(at) || pending.has(at)) continue;
-        pending.add(at);
-        const instant = new Date(at).toISOString();
-        const intervalStart = new Date(
-          cursor + (index - 1) * speed * 3600000,
-        ).toISOString();
-        void Promise.all([
-          queryClient.fetchQuery({
-            queryKey: ["run-state", rep, instant],
-            queryFn: () =>
-              api(`/runs/${rep}/state?at=${encodeURIComponent(instant)}`),
-            staleTime: Infinity,
-          }),
-          reduced
-            ? Promise.resolve([])
-            : queryClient.fetchQuery({
-                queryKey: [
-                  "replay-journey-events",
-                  rep,
-                  intervalStart,
-                  instant,
-                ],
-                queryFn: () =>
-                  fetchReplayJourneyEvents(api, rep, intervalStart, instant),
-                staleTime: Infinity,
-                gcTime: 5 * 60 * 1000,
-              }),
-        ])
-          .then(([, events]) => {
-            if (active) {
-              ready.add(at);
-              recordedWindows.set(at, {
-                rep,
-                from: intervalStart,
-                to: instant,
-                events,
-              });
-            }
-          })
-          .catch((failure) => {
-            if (active) {
-              setError(
-                `Playback could not load the next moment. ${failure.message}`,
-              );
-              setPlaying(false);
-            }
-          })
-          .finally(() => pending.delete(at));
-      }
+    if (!playing || !rep || !Number.isFinite(endMs) || !floorState) return;
+    let active = true,
+      frame = 0,
+      lastWall = performance.now(),
+      waiting = true;
+    const prior = playbackLive.current;
+    let cursor =
+      prior?.rep === rep && prior.clock.atMs >= currentMs
+        ? prior.clock.atMs
+        : currentMs;
+    let visibleState =
+      prior?.rep === rep && cursor === prior.clock.atMs
+        ? prior.state
+        : floorState;
+    const clock: FloorPlaybackClock = {
+      session: `${rep}:${++playbackSerial.current}`,
+      atMs: cursor,
+      startMs: cursor,
+      speed,
+      active: true,
     };
+    playbackLive.current = {
+      rep,
+      clock,
+      state: visibleState,
+      validUntilMs: cursor,
+    };
+    playbackExpectedTime.current = latestContext.current.selectedTime;
+    const projectors = new Map<
+      PreparedPlaybackWindow,
+      ReturnType<typeof createPlaybackProjection>
+    >();
+    let lastPublished: Entity | null = null;
+    const buffer = createPlaybackBuffer({
+      replication: rep,
+      runStartMs: startMs,
+      startMs: cursor,
+      endMs,
+      lookAhead: Math.max(4, Math.ceil((speed * 3) / 4)),
+      load: (from, to) =>
+        api<ReplayPlaybackWindow>(
+          `/runs/${rep}/playback-window?${new URLSearchParams({ start_at: from, end_at: to })}`,
+        ),
+      changed: () => {
+        if (!active || !clock.active) return;
+        const windows = buffer.windows();
+        if (!reduced && windows.length)
+          setMotionWindow({
+            rep,
+            from: windows[0].value.start_at,
+            to: windows.at(-1)!.value.end_at,
+            events: [],
+            windows: windows.map(({ value }) => ({
+              from: value.start_at,
+              to: value.end_at,
+              events: value.events,
+            })),
+            playback: clock,
+          });
+      },
+      failure: (failure) => {
+        if (!active || !clock.active) return;
+        setError(
+          `Playback could not load the next recorded interval. ${failure.message}`,
+        );
+        pauseAtVisibleTime();
+      },
+    });
     const tick = (now: number) => {
-      if (!active) return;
+      if (!active || !clock.active) return;
       if (document.hidden) {
-        setPlaying(false);
+        pauseAtVisibleTime();
         return;
       }
-      if (now >= nextDue) {
-        if (cursor >= endMs) {
-          setPlaying(false);
-          return;
+      const elapsed = Math.min(100, Math.max(0, now - lastWall));
+      lastWall = now;
+      const next = advancePlaybackClock(
+        cursor,
+        elapsed,
+        speed,
+        buffer.runway(),
+        endMs,
+      );
+      cursor = next.atMs;
+      if (waiting !== next.buffering) {
+        waiting = next.buffering;
+        setBuffering(waiting);
+      }
+      const windows = buffer.windows();
+      const window = windows.find(
+        (value) => cursor >= value.startMs && cursor <= value.endMs + 0.001,
+      );
+      if (window) {
+        if (!projectors.has(window))
+          projectors.set(window, createPlaybackProjection(window));
+        const projected = projectors.get(window)!.at(cursor);
+        visibleState = projected.state;
+        if (
+          committedPlayback.current?.session === clock.session &&
+          committedPlayback.current.state === visibleState
+        ) {
+          clock.atMs = cursor;
+          playbackLive.current = {
+            rep,
+            clock,
+            state: visibleState,
+            validUntilMs: projected.validUntilMs,
+          };
+          paintClock(cursor);
+        } else if (visibleState !== lastPublished) {
+          lastPublished = visibleState;
+          setPlaybackSnapshot({
+            rep,
+            state: visibleState,
+            validUntilMs: projected.validUntilMs,
+            clock,
+            playheadMs: cursor,
+          });
         }
-        const next = Math.min(endMs, cursor + speed * 3600000);
-        if (ready.has(next)) {
-          cursor = next;
-          ready.delete(next);
-          nextDue = now + 1000;
-          playbackExpectedTime.current = new Date(cursor).toISOString();
-          setMotionWindow(recordedWindows.get(next) || null);
-          recordedWindows.delete(next);
-          latestContext.current.setTime(playbackExpectedTime.current);
-          if (waiting) {
-            waiting = false;
-            setBuffering(false);
-          }
-          readAhead();
-        } else if (!waiting) {
-          waiting = true;
-          setBuffering(true);
-        }
+        for (const value of projectors.keys())
+          if (!windows.includes(value)) projectors.delete(value);
+      }
+      buffer.advance(clock.atMs);
+      if (next.ended && clock.atMs >= endMs) {
+        pauseAtVisibleTime();
+        return;
       }
       frame = requestAnimationFrame(tick);
     };
-    readAhead();
+    setBuffering(true);
+    buffer.start();
     frame = requestAnimationFrame(tick);
     return () => {
       active = false;
+      clock.active = false;
       cancelAnimationFrame(frame);
+      buffer.cancel();
       setBuffering(false);
     };
   }, [playing, speed, rep, endMs, queryClient, reduced]);
   useEffect(() => {
     const listener = () => {
-      if (document.hidden) setPlaying(false);
+      if (document.hidden) pauseLatest.current();
     };
     document.addEventListener("visibilitychange", listener);
     return () => document.removeEventListener("visibilitychange", listener);
   }, []);
   async function chooseReplication(id: string) {
-    setPlaying(false);
-    cancelScrub();
+    pauseAtVisibleTime();
     setError("");
     if (!id || id === rep) return;
     const navigation = navigationGeneration.current;
@@ -557,15 +704,14 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   }
   async function step(direction: "before" | "after") {
     if (!rep || stepping) return;
-    setPlaying(false);
-    cancelScrub();
+    const visibleAt = pauseAtVisibleTime();
     const navigation = navigationGeneration.current;
     setStepping(true);
     setError("");
     try {
       const sameInstant =
         eventCursor &&
-        Date.parse(eventCursor.occurred_at) === Date.parse(ctx.selectedTime);
+        Date.parse(eventCursor.occurred_at) === Date.parse(visibleAt);
       const sequence =
         direction === "after"
           ? sameInstant
@@ -575,7 +721,7 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             ? eventCursor.sequence_number
             : Number.MAX_SAFE_INTEGER;
       const result = await api(
-        `/runs/${rep}/events?at=${encodeURIComponent(ctx.selectedTime)}&direction=${direction}&${direction === "after" ? "after_sequence" : "before_sequence"}=${sequence}&limit=1`,
+        `/runs/${rep}/events?at=${encodeURIComponent(visibleAt)}&direction=${direction}&${direction === "after" ? "after_sequence" : "before_sequence"}=${sequence}&limit=1`,
       );
       if (!isCurrentNavigation(navigation, rep)) return;
       const next = items(result)[0];
@@ -596,13 +742,12 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
   }
   async function restoreCheckpoint() {
     if (!rep) return;
-    setPlaying(false);
-    cancelScrub();
+    const visibleAt = pauseAtVisibleTime();
     const navigation = navigationGeneration.current;
     setError("");
     try {
       const result = await api(
-        `/runs/${rep}/checkpoints?at=${encodeURIComponent(ctx.selectedTime)}`,
+        `/runs/${rep}/checkpoints?at=${encodeURIComponent(visibleAt)}`,
       );
       if (!isCurrentNavigation(navigation, rep)) return;
       const checkpoint = items(result).at(-1);
@@ -613,19 +758,43 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     }
   }
   function pauseAtVisibleTime() {
+    const live =
+      playbackLive.current?.rep === rep ? playbackLive.current : null;
+    const visibleAt = live ? playbackTimestamp(live.clock.atMs) : floorPlan.at;
+    if (live) {
+      live.clock.active = false;
+      setPlaybackSnapshot({
+        rep: live.rep,
+        state: {
+          ...live.state,
+          at: visibleAt,
+          elapsed_minutes: (live.clock.atMs - startMs) / 60000,
+        },
+        validUntilMs: live.validUntilMs,
+      });
+    }
     setPlaying(false);
     cancelScrub();
-    const visibleAt = floorPlan.at;
-    if (visibleAt && visibleAt !== ctx.selectedTime) ctx.setTime(visibleAt);
+    if (visibleAt) {
+      awaitingExactAt.current = visibleAt;
+      playbackExpectedTime.current = visibleAt;
+      if (visibleAt !== ctx.selectedTime) ctx.setTime(visibleAt);
+    }
+    return visibleAt || ctx.selectedTime;
   }
 
   function move(at: string) {
     setPlaying(false);
     cancelScrub();
     setEventCursor(null);
+    awaitingExactAt.current = at;
     ctx.setTime(at);
   }
   function cancelScrub() {
+    if (playbackLive.current) playbackLive.current.clock.active = false;
+    playbackLive.current = null;
+    awaitingExactAt.current = null;
+    setMotionWindow(null);
     navigationGeneration.current += 1;
     seekQueue.cancel();
     seekQueue.activate();
@@ -633,6 +802,9 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     setScrubTarget(null);
   }
   function scrub(at: string) {
+    if (playbackLive.current) playbackLive.current.clock.active = false;
+    playbackLive.current = null;
+    awaitingExactAt.current = null;
     navigationGeneration.current += 1;
     setPlaying(false);
     setMotionWindow(null);
@@ -677,8 +849,13 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
     );
   return (
     <div
+      ref={playbackRoot}
       className="replay-page planning-panels"
       data-seeking={seeking || undefined}
+      data-playhead-ms={playhead.current}
+      data-playback-session={
+        playing ? motionWindow?.playback?.session || "preparing" : ""
+      }
     >
       <div className="page-heading">
         <div>
@@ -856,7 +1033,22 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             </div>
             <div className="replay-time">
               <strong>
-                <span ref={displayClock}>{timestamp(displayedScene.at)}</span>
+                <span
+                  ref={displayClock}
+                  data-testid="replay-playhead"
+                  data-playhead-ms={playhead.current}
+                  data-playback-session={
+                    playing
+                      ? motionWindow?.playback?.session || "preparing"
+                      : ""
+                  }
+                >
+                  {timestamp(
+                    playing
+                      ? new Date(playhead.current).toISOString()
+                      : displayedScene.at,
+                  )}
+                </span>
               </strong>
               <span>
                 {playing
@@ -892,13 +1084,13 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
                 0,
                 Math.min(
                   (endMs - startMs) / 60000,
-                  (sliderMs - startMs) / 60000,
+                  ((playing ? playhead.current : sliderMs) - startMs) / 60000,
                 ),
               )}
               onPointerDown={() => {
-                setPlaying(false);
+                const at = pauseAtVisibleTime();
                 setDragging(true);
-                setScrubTarget({ rep, at: ctx.selectedTime, pending: false });
+                setScrubTarget({ rep, at, pending: false });
               }}
               onPointerUp={() => setDragging(false)}
               onPointerCancel={() => setDragging(false)}
@@ -921,20 +1113,22 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
             <div className="replay-floor-viewport">
               <ReplayFloorPlan
                 plan={floorPlan}
-                retaining={unavailable || seeking}
+                retaining={(!playing && unavailable) || seeking}
+                validUntil={
+                  localPlayback
+                    ? new Date(localPlayback.validUntilMs).toISOString()
+                    : undefined
+                }
+                validUntilMs={localPlayback?.validUntilMs}
                 zoom={zoom}
                 selectedPatientId={patientId(ctx.selectedPatient || {})}
                 selectedUnitId={ctx.selectedUnit}
                 reducedMotion={reduced}
                 journeys={floorJourneys}
                 motionWindow={motionWindow}
-                moving={floorMotionIsCurrent(motionWindow, {
-                  playing,
-                  reduced,
-                  rep,
-                  selectedAt: ctx.selectedTime,
-                  recordedAt: floorPlan.at,
-                })}
+                moving={Boolean(
+                  playing && !reduced && motionWindow?.playback?.active,
+                )}
                 onBedSelect={(bed, unit) => {
                   pauseAtVisibleTime();
                   if (bed.patientId) {
@@ -1241,8 +1435,8 @@ export default function Replay({ ctx }: { ctx: PlanningContext }) {
               type="checkbox"
               checked={reduced}
               onChange={(e) => {
+                pauseAtVisibleTime();
                 setReduced(e.target.checked);
-                setPlaying(false);
               }}
             />
             Reduced motion

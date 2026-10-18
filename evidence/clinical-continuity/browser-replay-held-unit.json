@@ -1,0 +1,12 @@
+{
+  "run": "run_0407eaeae5fe4c9a873a",
+  "before": {
+    "at": "2026-10-16T06:15:00Z",
+    "unit": "UNIT-ICU"
+  },
+  "after": {
+    "at": "2026-10-16T08:00:00Z",
+    "unit": "UNIT-WARD-A"
+  },
+  "actual_slot_identity": true
+}

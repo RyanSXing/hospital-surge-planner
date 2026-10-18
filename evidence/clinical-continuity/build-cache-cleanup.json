@@ -1,0 +1,7 @@
+{
+  "checked_at": "2026-10-18T09:03:14.686598+00:00",
+  "operation": "docker builder prune --all --force",
+  "unused_build_cache_reclaimed": "2.822GB",
+  "reason": "Make room for the authorized release build on the existing OCI host. Running services and saved-data volumes were not removed.",
+  "filesystem_after": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1        48G   41G  7.0G  86% /"
+}

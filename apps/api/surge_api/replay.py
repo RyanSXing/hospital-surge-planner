@@ -13,9 +13,10 @@ from surge_engine.common import dt
 _cache = OrderedDict()
 _flow_indexes = OrderedDict()
 _lock = threading.RLock()
+_FLOW_INDEX_MAX_EVENTS = 500000
 
 
-def flow_counts_at(trace, minute, main, units):
+def _flow_index(trace, main, units):
     """Count full recorded entry/departure events, never the patient sample.
 
     The immutable event index is reused across seeks. A missing ledger remains
@@ -63,20 +64,40 @@ def flow_counts_at(trace, minute, main, units):
         while _flow_indexes and (
             len(_flow_indexes) >= 4
             or sum(len(times) for cached in _flow_indexes.values()
-                   for groups in cached.values() for times in groups.values()) + entries > 500000
+                   for groups in cached.values() for times in groups.values()) + entries > _FLOW_INDEX_MAX_EVENTS
         ):
             _flow_indexes.popitem(last=False)
-        if entries <= 500000:
+        if entries <= _FLOW_INDEX_MAX_EVENTS:
             _flow_indexes[key] = index
     else:
         _flow_indexes.move_to_end(key)
+    return index
+
+
+def _flow_counts(index, minute):
+    if index is None:
+        return None
     return {
         facility: {kind: bisect_right(times, minute) for kind, times in groups.items()}
         for facility, groups in index.items()
     }
 
 
-def exact_state(trace, at):
+def flow_counts_at(trace, minute, main, units):
+    # Playback calls this index directly; exact_state also holds this RLock.
+    # Keep lookup/build/LRU eviction atomic without locking a whole window.
+    with _lock:
+        return _flow_counts(_flow_index(trace, main, units), minute)
+
+
+def flow_counter_for(trace, main, units):
+    """Pin an immutable index for one window, even when too large for the LRU."""
+    with _lock:
+        index = _flow_index(trace, main, units)
+    return lambda minute: _flow_counts(index, minute)
+
+
+def exact_state(trace, at, *, flow_counter=None):
     minute = (
         float(at or 0)
         if at is None or isinstance(at, (int, float))
@@ -171,7 +192,7 @@ def exact_state(trace, at):
             queue_counts=dict(queues),
             blocker_summary=dict(blockers),
             blocker_counts_by_unit={unit_id: dict(reasons) for unit_id, reasons in unit_blockers.items()},
-            flow_counts=flow_counts_at(trace, minute, main, units),
+            flow_counts=(flow_counter(minute) if flow_counter is not None else flow_counts_at(trace, minute, main, units)),
             flow_counts_start_at=trace["start_at"],
             patient_groups=[
                 dict(

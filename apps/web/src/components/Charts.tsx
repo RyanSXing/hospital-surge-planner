@@ -7,7 +7,12 @@ import { fmt, localDate, num } from "../api";
 import { Badge, EmptyState } from "./ui";
 import DayDetailDialog from "./DayDetailDialog";
 import { forecastXDomain, isolatedForecastIndexes } from "./forecastGeometry";
-const COLORS = ["#2684cc", "#ce5266", "#a87614", "#1a9b87"];
+const COLORS = [
+  "var(--accent)",
+  "var(--danger)",
+  "var(--warning)",
+  "var(--success)",
+];
 export function ForecastChart({
   rows,
   keys = ["ward_occupied", "ward_staffed", "icu_occupied", "icu_staffed"],
@@ -63,11 +68,11 @@ export function ForecastChart({
   const colorFor = (k: string, i: number) =>
     colors?.[i] ||
     (k.startsWith("ward_")
-      ? "#2684cc"
+      ? "var(--accent)"
       : k.startsWith("icu_")
-        ? "#ce5266"
+        ? "var(--danger)"
         : k.startsWith("ed_")
-          ? "#1a9b87"
+          ? "var(--success)"
           : COLORS[i % 4]);
   const [tableOpen, setTableOpen] = useState(false),
     [hover, setHover] = useState<number | null>(null);
@@ -172,14 +177,14 @@ export function ForecastChart({
                   (W - pad.left - pad.right) / Math.max(1, rows.length - 1),
                 )}
                 height={H - pad.bottom - pad.top}
-                fill="#d39427"
+                fill="var(--warning)"
                 opacity={0.065}
               />
               <circle
                 cx={x(marker.index)}
                 cy={pad.top + 3}
                 r={3.5}
-                fill="#b77c15"
+                fill="var(--warning)"
               />
               <title>{marker.label}</title>
             </g>
@@ -191,7 +196,7 @@ export function ForecastChart({
                 x2={W - pad.right}
                 y1={y(t)}
                 y2={y(t)}
-                stroke="#e2e8f0"
+                stroke="var(--border-subtle)"
                 strokeDasharray="2 4"
               />
               <text x={pad.left - 10} y={y(t) + 4} textAnchor="end">
@@ -279,7 +284,7 @@ export function ForecastChart({
               x2={x(Math.min(selected, rows.length - 1))}
               y1={pad.top}
               y2={H - pad.bottom}
-              stroke="#1976c9"
+              stroke="var(--accent)"
               strokeDasharray="4 4"
             />
           ) : null}

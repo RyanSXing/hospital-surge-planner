@@ -1,11 +1,11 @@
 .decision-summary {
   margin: 0 24px 16px;
   padding: 17px 20px 12px;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-left: 3px solid #327fbb;
   border-radius: 8px;
   background: var(--surface, #fff);
-  color: var(--text, #172033);
+  color: var(--text);
 }
 .decision-summary > header {
   display: flex;
@@ -31,7 +31,7 @@
   line-height: 1.5;
 }
 .decision-summary-line > span {
-  color: var(--muted, #667085);
+  color: var(--muted);
 }
 .decision-summary-line strong {
   font-weight: 600;
@@ -43,7 +43,7 @@
   margin-top: 2px;
 }
 .decision-summary-line strong + p {
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 12px;
   margin-top: 2px;
 }
@@ -57,7 +57,7 @@
   gap: 24px;
   margin-top: 14px;
   padding-top: 10px;
-  border-top: 1px solid var(--border, #dfe4ea);
+  border-top: 1px solid var(--border);
   font-size: 12px;
 }
 .decision-summary details {
@@ -71,7 +71,7 @@
 .decision-summary-evidence {
   margin-top: 9px;
   max-width: 960px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   line-height: 1.55;
 }
 .decision-summary-evidence p {

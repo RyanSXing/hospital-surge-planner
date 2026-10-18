@@ -1,0 +1,45 @@
+{
+  "scenario_id": "scenario_c553a4282d9b45a38955",
+  "run_id": "run_6c6dcbea82da48b09320",
+  "horizon_days": 3,
+  "replications": 10,
+  "compared_scenario_ids": {
+    "left": "scenario_c553a4282d9b45a38955",
+    "right": "scenario_2ab5802ef0f2401b90e4"
+  },
+  "compared_scenario_run_id": "run_66686c34d5db4104a6ad",
+  "branch_run_id": "run_ed38659190d74b479667",
+  "baseline_unchanged_after_seek": true,
+  "baseline_serialized_sha256": "acd235fd7ca095496ae747c8cae6935cd0fb9f0182a90b7a27f8d6418b1c563b",
+  "baseline_inspection_accessible": true,
+  "saved_inputs_unchanged_by_navigation": true,
+  "unsaved_setup_retained": true,
+  "hidden_overview_dialog_does_not_trap_focus": true,
+  "context_keys": [
+    "scenario",
+    "dataset",
+    "run",
+    "replication",
+    "at",
+    "facility",
+    "grain",
+    "patient",
+    "unit",
+    "resource",
+    "resource_type",
+    "comparison"
+  ],
+  "reload_back_forward_context_preserved": true,
+  "delayed_popstate_response_ignored": true,
+  "saved_scenario_pair_survives_history": true,
+  "comparison_reopens_from_current_summary": true,
+  "overview_export_and_alerts_use_selected_run": true,
+  "resource_details_use_modal_and_clear_selection_on_close": true,
+  "export": {
+    "run_group_id": "run_ed38659190d74b479667",
+    "input_sha256": "4f92979f9f3a8d145f6770229e6e9353e92f36f51dd76e79a26740b536cac9fa",
+    "files": 22,
+    "all_checksums_verified": true
+  },
+  "page_errors": []
+}

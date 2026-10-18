@@ -3,7 +3,7 @@
   height: 100%;
   overflow: auto;
   padding-bottom: 32px;
-  background: var(--surface-app, #f5f7fa);
+  background: var(--surface-app, var(--canvas));
 }
 
 .outcome-context {
@@ -12,9 +12,9 @@
   gap: 1px;
   margin: 0 24px 12px;
   overflow: hidden;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: var(--border, #dfe4ea);
+  background: var(--border);
 }
 
 .outcome-context > div {
@@ -34,12 +34,12 @@
 }
 
 .outcome-context span {
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
 }
 
 .outcome-context strong {
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 12px;
 }
 
@@ -56,7 +56,7 @@
   flex-direction: column;
   gap: 4px;
   padding: 15px 16px;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface, #fff);
   box-shadow: 0 1px 2px rgb(16 24 40 / 4%);
@@ -64,13 +64,13 @@
 
 .outcome-highlights span,
 .outcome-highlights small {
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
 }
 
 .outcome-highlights strong {
   margin: 2px 0;
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 25px;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
@@ -85,12 +85,12 @@
   padding: 13px 15px;
   border: 1px solid #b9dfd2;
   border-radius: 10px;
-  background: #f1fbf7;
+  background: var(--success-soft);
 }
 
 .outcome-insight.warning {
   border-color: #f2d39a;
-  background: #fff9ee;
+  background: var(--warning-soft);
 }
 
 .outcome-insight-icon {
@@ -100,23 +100,23 @@
   place-items: center;
   border-radius: 9px;
   background: #daf2e7;
-  color: #187653;
+  color: var(--success);
 }
 
 .outcome-insight.warning .outcome-insight-icon {
   background: #ffedca;
-  color: #9b5b00;
+  color: var(--warning);
 }
 
 .outcome-insight > div > span,
 .outcome-insight p {
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
 }
 
 .outcome-insight h2 {
   margin: 2px 0;
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 15px;
 }
 
@@ -137,28 +137,28 @@
   gap: 6px;
   margin: -1px 0 18px;
   padding-bottom: 14px;
-  border-bottom: 1px solid var(--border, #dfe4ea);
+  border-bottom: 1px solid var(--border);
 }
 
 .outcome-chart-bookmarks .mantine-Tabs-tab {
   min-height: 34px;
   padding: 7px 10px;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-radius: 5px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 12px;
   font-weight: 500;
 }
 
 .outcome-chart-bookmarks .mantine-Tabs-tab[data-active] {
   border-color: #b7d7ef;
-  background: #edf6fd;
+  background: var(--accent-soft);
   color: #176eac;
 }
 
 .outcome-chart-bookmarks .mantine-Tabs-panel > p {
   margin: 9px 0;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.55;
 }
@@ -167,7 +167,7 @@
 .outcome-scalars {
   min-width: 0;
   padding: 16px;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface, #fff);
   box-shadow: 0 1px 2px rgb(16 24 40 / 4%);
@@ -182,7 +182,7 @@
 
 .outcome-chart-heading h2 {
   margin: 3px 0 0;
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 16px;
 }
 
@@ -193,7 +193,7 @@
 .outcome-chart > p,
 .outcome-scalars-heading p {
   margin: 9px 0;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
   line-height: 1.55;
 }
@@ -204,7 +204,7 @@
   gap: 8px;
   width: fit-content;
   margin-top: 7px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 12px;
 }
 
@@ -212,7 +212,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
   line-height: 1.6;
 }
@@ -236,14 +236,14 @@
 
 .outcome-details .mantine-Accordion-item {
   overflow: hidden;
-  border: 1px solid var(--border, #dfe4ea);
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface, #fff);
 }
 
 .outcome-details .mantine-Accordion-control {
   min-height: 56px;
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 13px;
   font-weight: 600;
 }
@@ -263,7 +263,7 @@
 .outcome-time-controls > p {
   flex-basis: 100%;
   margin: 0;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
   line-height: 1.55;
 }
@@ -288,7 +288,7 @@
 
 .outcome-scalars-heading h2 {
   margin: 0;
-  color: var(--text, #172033);
+  color: var(--text);
   font-size: 16px;
 }
 
@@ -298,7 +298,7 @@
 
 .outcome-scalars caption {
   padding: 6px 0 12px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   font-size: 11px;
   text-align: left;
 }
@@ -332,7 +332,7 @@
 
 .outcome-empty p {
   max-width: 600px;
-  color: var(--muted, #667085);
+  color: var(--muted);
   line-height: 1.7;
 }
 

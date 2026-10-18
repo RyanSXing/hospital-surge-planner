@@ -621,7 +621,7 @@ export default function Compare({
             rows={rows}
             keys={["left", "right"]}
             labels={[`Left · ${labels.left}`, `Right · ${labels.right}`]}
-            colors={["#2b7fbd", "#1a927c"]}
+            colors={["var(--accent)", "var(--success)"]}
             lineDashes={[undefined, "6 3"]}
             height={270}
             showBand={false}

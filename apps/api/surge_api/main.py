@@ -2381,6 +2381,45 @@ def create_app(database_url=None, *, seed=True, start_dispatcher=True):
         except (ValueError, TypeError):
             fail(422, "Invalid replay timestamp")
 
+    @router.get("/runs/{identity}/playback-window")
+    def run_playback_window(
+        identity: str,
+        start_at: str,
+        end_at: str,
+        user=Depends(current_user),
+        session=Depends(db),
+    ):
+        from .playback import PlaybackWindowError, playback_bounds, playback_window
+        from .responses import cached_response, json_response
+
+        # Authorization precedes even a cached response. The feed is frozen
+        # trace evidence, independent of edits to the current scenario draft.
+        row, trace = trace_for(session, user, identity)
+        run = owned_job(session, row.data["run_group_id"], user, "run")
+        try:
+            lower, upper, _, _ = playback_bounds(trace, start_at, end_at)
+            artifact = row.data["trace_artifact"]
+            key = (
+                "floor-playback-window-v1", str(session.bind.url), user["workspace_id"], identity,
+                artifact["object_key"], artifact["sha256"], run.payload.get("scenario_revision_id"),
+                lower, upper,
+            )
+            cached = cached_response(key)
+            if cached is not None:
+                return cached
+            value = playback_window(trace, lower, upper)
+        except PlaybackWindowError as error:
+            fail(error.status, str(error), error.code)
+        return json_response(
+            {
+                **value,
+                "context": context(
+                    run, replication_id=identity, state_origin="simulation", evidence="recorded_changes",
+                ),
+            },
+            key,
+        )
+
     @router.get("/runs/{identity}/state")
     def run_state(identity: str, at: str | None = None, user=Depends(current_user), session=Depends(db)):
         row, trace = trace_for(session, user, identity)

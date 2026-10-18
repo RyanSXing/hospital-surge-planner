@@ -30,9 +30,9 @@ const severityLabels: Record<PatientSeverity, string> = {
   high: "High",
 };
 const severityColors: Record<PatientSeverity, string> = {
-  low: "#3c9a8a",
-  medium: "#d8a03a",
-  high: "#c66a73",
+  low: "var(--success)",
+  medium: "var(--warning)",
+  high: "var(--danger)",
 };
 const noDisruptions: HospitalDisruption[] = [];
 
@@ -192,7 +192,7 @@ function SeverityPie({
             {...{ cx: position.x, cy: position.y }}
             r="7"
             fill="white"
-            stroke="#456d8b"
+            stroke="var(--text-secondary)"
             strokeWidth="2"
             className="severity-pie-handle"
             role="slider"

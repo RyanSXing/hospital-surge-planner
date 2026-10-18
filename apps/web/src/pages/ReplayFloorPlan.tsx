@@ -130,6 +130,8 @@ export default function ReplayFloorPlan({
   motionWindow = null,
   moving = false,
   motionDurationMs = 1000,
+  validUntil,
+  validUntilMs,
   onBedSelect,
   onUnitSelect,
   onAreaSelect,
@@ -144,6 +146,8 @@ export default function ReplayFloorPlan({
   motionWindow?: FloorMotionWindow | null;
   moving?: boolean;
   motionDurationMs?: number;
+  validUntil?: string;
+  validUntilMs?: number;
   onBedSelect: (bed: FloorBed, unit: FloorUnit) => void;
   onUnitSelect: (unit: FloorUnit) => void;
   onAreaSelect: (area: "ed" | "bed" | "discharge") => void;
@@ -218,6 +222,8 @@ export default function ReplayFloorPlan({
       className={`hospital-floor-plan${reducedMotion ? " hospital-floor-plan--still" : ""}`}
       data-testid="replay-floor-plan"
       data-recorded-at={plan.at || ""}
+      data-valid-until={validUntil}
+      data-valid-until-ms={validUntilMs}
       data-replication-id={plan.replicationId || ""}
       data-retaining={retaining ? "true" : "false"}
       data-fit-mode={zoom === 1 ? "fit" : "manual"}
@@ -400,6 +406,7 @@ export default function ReplayFloorPlan({
               active={moving && !reducedMotion}
               zoom={mapScale}
               motionDurationMs={motionDurationMs}
+              playback={motionWindow?.playback}
             />
           </div>
         </div>

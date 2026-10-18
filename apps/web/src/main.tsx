@@ -7,6 +7,7 @@ import { hospitalTheme } from "./theme";
 import App from "./App";
 import "./styles.css";
 import "./hospital.css";
+import "./clinical.css";
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 30000, retry: 1 } },
 });

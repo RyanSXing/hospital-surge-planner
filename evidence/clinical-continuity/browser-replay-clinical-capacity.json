@@ -1,0 +1,21 @@
+{
+  "run": "run_8a196511fb2a444995c1",
+  "wards": [
+    {
+      "id": "UNIT-WARD-A",
+      "occupied": 26,
+      "staffed": 32
+    },
+    {
+      "id": "UNIT-WARD-B",
+      "occupied": 25,
+      "staffed": 32
+    },
+    {
+      "id": "UNIT-WARD-C",
+      "occupied": 13,
+      "staffed": 16
+    }
+  ],
+  "actual_separate_wards": true
+}

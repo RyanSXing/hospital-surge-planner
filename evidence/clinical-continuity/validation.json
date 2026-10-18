@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-18T09:08:11.370420+00:00",
+  "frontend_tests": 414,
+  "backend_tests": 47,
+  "unique_desktop_browser_cases": 28,
+  "all_passed": true,
+  "production_build": "TypeScript and Vite passed",
+  "frozen_application_and_bundle_unchanged": true,
+  "scope": [
+    "Self-hosted Inter, darker clinical palette, visible keyboard focus and compact aligned bed/staff controls; duplicate capacity card removed while baseline inspection remains.",
+    "Continuously advancing recorded clock and state through transport boundaries, bounded exact windows, event-timed motion and retained bed DOM.",
+    "Exact pause, scrub, navigation handoff, delayed-response rejection, run/horizon changes, resize, fit/fullscreen and reduced motion.",
+    "Real local configuration and saved-scenario analysis/comparison workflows preserve baseline and immutable saved inputs; mobile is outside requested scope."
+  ]
+}

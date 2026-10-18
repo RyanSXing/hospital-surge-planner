@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-18T02:49:01.770Z",
+  "started_at": "2026-10-18T02:47:45.675Z",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "application_commit": "53be1024647134cf3d58bf6a7165328500b4253f",
+  "source_run_id": "run_d69728c5b6a9413ca4ae",
+  "new_simulations_created": 0,
+  "scenario_mutations": 0,
+  "hosted_export_download": "excluded",
+  "summary": {
+    "timelineCount": 1,
+    "outcomeCardCount": 4,
+    "outcomeText": "New arrivals\n721.5\npatients · median\nCompleted discharges\n700\npatients · median\nPlacement waiting\n307.6\npatient-hours · median\nWard utilization\n92%\nof staffed capacity · median",
+    "oldOccupancyHeadingCount": 0,
+    "oldTimelineDisclosureCount": 0
+  },
+  "replay": {
+    "before": {
+      "paintCount": 1,
+      "recordedAt": "2026-10-16T05:00:00.000Z",
+      "visualAt": "2026-10-16T05:00:00.000Z"
+    },
+    "during": {
+      "animating": "true",
+      "dischargeJourneys": 7,
+      "journeyEvents": 53,
+      "journeyRoutes": 82,
+      "paintCount": 992,
+      "recordedAt": "2026-10-17T13:00:00.000Z",
+      "visualAt": "2026-10-17T12:46:01.324Z"
+    },
+    "paused": {
+      "animating": "false",
+      "paintCount": 1034,
+      "recordedAt": "2026-10-17T14:04:55.493Z",
+      "visualAt": "2026-10-17T14:04:55.493Z"
+    },
+    "pauses_at_exact_recorded_instant": true,
+    "paint_count_increased": true
+  },
+  "browser_error_count": 0,
+  "final_view": "Analysis / Summary"
+}

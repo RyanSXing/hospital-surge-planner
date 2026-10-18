@@ -1,8 +1,24 @@
 # Hosted verification record
 
-[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) runs release **`3e9f792d43339a08ea0673b1c272527c28df102a`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
+[Hospital Surge Planner](https://hospital-surge.131.186.0.156.sslip.io) runs release **`53be1024647134cf3d58bf6a7165328500b4253f`**, with model and generator **1.1.0**. The private login handoff remains `data/deployment/access.md` (ignored, mode 0600).
 
-## Single-hospital workflow — 2026-10-18
+## Summary timeline and recorded patient journeys — 2026-10-18
+
+Summary now shows the four Analytics outcome cards and the exact forecast timeline in its main chart slot. Replay follows recorded physical care stages through clear corridors, includes visits absent from both sampled census endpoints, and carries discharged patients into a visible discharge-bay dwell before they leave.
+
+| Gate | Verified result |
+|---|---|
+| Local checks | **142 frontend unit tests**, **21 API contract tests**, and **93 distinct browser checks** passed with 19 intentional device skips. After a final Summary-only CSS correction, **eight affected-flow checks** passed with two skips. No unresolved failures. The full suite was not repeated after that CSS change. [Local results](../evidence/summary-replay/local-verification.json), [exact follow-up scope](../evidence/summary-replay/final-followup-scope.json) |
+| Recorded replay journey | A real local simulation supplies an event-only patient who waits at arrival, receives ED care, and visibly dwells in the discharge bay. Actual canvas coordinates and visual timestamps pass on desktop and mobile. [Journey proof](../evidence/summary-replay/replay-journey.json), [source review](../evidence/summary-replay/source-review.json) |
+| Exact deployed interface | All **43 frontend files** match the final tested production bundle. API, worker and web identify this release; all six services run, reported health checks pass, and named volumes are unchanged. [Assets](../evidence/summary-replay/live-assets.json), [runtime](../evidence/summary-replay/runtime-preservation.json), [source hashes](../evidence/summary-replay/release.json) |
+| Existing workspace | All **21 protected records**, the only active scenario and the workspace default remain unchanged. A fresh private PostgreSQL backup preceded deployment. No scenarios were reset or archived by this release. [Preservation](../evidence/summary-replay/preservation.json), [backup](../evidence/summary-replay/backup.json) |
+| Live interface | The preserved completed demo opens with the four outcome cards and one promoted timeline. Replay advances through recorded events and pauses at the exact displayed instant. **Zero browser errors** during this inspection; the handoff returns to Summary. [Live browser proof](../evidence/summary-replay/live-browser.json), [screenshots](../evidence/summary-replay/README.md#hosted-screenshots) |
+
+The API, engine, dependencies and hosting configuration are unchanged. Hosted inspection reuses the existing completed demo; no fresh hosted computation, performance benchmark, security scan or restore trial is claimed. Local browser checks include actual simulation, comparison, updates and checksum-verified ZIP export. Hosted export download is excluded. Earlier operational measurements retain their original release attribution below.
+
+## Previous single-hospital workflow — 2026-10-18
+
+Release `3e9f792d43339a08ea0673b1c272527c28df102a` established the following workflow and verification baseline.
 
 Configuration now centers on duration, arrival level and arrival pattern beside a live demand chart. Optional edits are under **More parameters**. Summary, Analytics and Comparison use clearer labels and hospital charts; the separate Resources page and alternate-site planning controls are removed. Replay keeps a continuous presentation clock with exact pause and seek behavior. Operational data is generated; the campus reference is centered on Vanderbilt University Hospital.
 

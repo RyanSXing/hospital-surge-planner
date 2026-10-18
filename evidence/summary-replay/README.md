@@ -16,3 +16,11 @@ Private credentials, database backups, raw operational logs and browser traces r
 - [Desktop Summary](browser-desktop-summary.png), [320px timeline](browser-mobile-summary-width-320.png), [390px timeline](browser-mobile-summary-width-390.png), and [replay](browser-desktop-replay-simple.png).
 
 The full suite was not repeated after the final Summary-only CSS correction. All replay, engine and API source is unchanged from that full run. The final bundle passed the affected timeline, keyboard/calendar, screen and comparison flows; the manifest comparison records this boundary explicitly.
+
+## Hosted screenshots
+
+- [Live Summary](live-summary.jpg)
+- [Live Replay playing](live-replay-playing.jpg)
+- [Live Replay paused at the exact instant](live-replay-paused.jpg)
+
+[Live browser checks](live-browser.json), [asset hashes](live-assets.json), [runtime and volume preservation](runtime-preservation.json), and [saved-data preservation](preservation.json) identify the deployed application commit. The browser inspection uses the existing completed demo and creates no new simulations or scenarios.

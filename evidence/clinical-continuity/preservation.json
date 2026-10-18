@@ -1,0 +1,158 @@
+{
+  "checked_at": "2026-10-18T09:12:33.899282+00:00",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "records": [
+    {
+      "path": "/datasets/demo-v1-1-0-hospital_baseline-41021-365",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "888cfd19c58425229fc6ac6619008bc4e178ace1414652efd6c2c5a3cf76e2a5"
+    },
+    {
+      "path": "/run-groups/run_2088efd055e04fac8875",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "83ea9106d13c9daae18d6077bd73f03c5d740f934bd2ee014de3489da4100a80"
+    },
+    {
+      "path": "/run-groups/run_22230710c2b74bdea7e1",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "caacb9fa00cfb5a1d77d81bb574a87a05d3832593d9624983abacfcfd23f14ec"
+    },
+    {
+      "path": "/run-groups/run_239b7869390d42aebfa8",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "4340d54bb873e9e32b55bb7141745d595f18727431a28cfd04ff69180041dff8"
+    },
+    {
+      "path": "/run-groups/run_24cd6fa73f354cd1a228",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "2a7cf6d7fd2d062f84e35de47d49ecf0af1e5b57a2180836c1f221068513d818"
+    },
+    {
+      "path": "/run-groups/run_3e4ba7b099cc4d8fa922",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "f8137eeeb3335ae0ef7229619b7e8133f8da563c5483587765d2547e5ed78332"
+    },
+    {
+      "path": "/run-groups/run_58029db949244a33aa4c",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "e1087cc76bd015288292bd74a3d47d6c87b5e830c96f9d0524b4b4e7fc40a770"
+    },
+    {
+      "path": "/run-groups/run_5b89ca558b16477392f2",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "36fea6b462bfb95e2f6a98709606ad5a8f9cd93d7e341c2903f6cafd59fae3da"
+    },
+    {
+      "path": "/run-groups/run_7648202b2e6f4d5e9d6b",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "91c5ba57a7a7f1012d72ee3058dc2ff636905b16d8a4a347547fddddfc599619"
+    },
+    {
+      "path": "/run-groups/run_784c123cf31840df9b19",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "31b54de88dca1f85b4401178585e33eee5b4590e5ea671cec9a6f2fd680f0188"
+    },
+    {
+      "path": "/run-groups/run_8896f968770e4f6f8380",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "561c87c7e767e30d6d92ca20103b1693f8b5aae25e6066f2f31729e502967cfc"
+    },
+    {
+      "path": "/run-groups/run_99810a8fc9fd427d963d",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "958a2a44af36150ff941f6590f5ca568075a4efa7ab899f6b9e31fdc48e2fe59"
+    },
+    {
+      "path": "/run-groups/run_9c06d4f198d649059437",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "5186ccfb55c1eac78fc21781e96fe7739634e3a806380673038babf13759e020"
+    },
+    {
+      "path": "/run-groups/run_aa30b33e88a54450b4bf",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "0f3bd1e63a79678d65a2c697a947b17161b3888f5d4656241b69241ade5cf3e3"
+    },
+    {
+      "path": "/run-groups/run_c52206dca21e42d3ac02",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "1063ef8b56a709547246081a4ea61e7c4f8870409cdf12f960b83dfd395187eb"
+    },
+    {
+      "path": "/run-groups/run_e4effd4adbdf4c54b019",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "0e622f643aa22a01cfd5890b0c162d0b2bc0914ecc7fa916062c57aaa6c13415"
+    },
+    {
+      "path": "/run-groups/run_eb7a81c8242e40a9b8a5",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "9d0ca9edcdbd4ebee0717be806835f5de6fcb1e30c584f8b13985092a5ec0dad"
+    },
+    {
+      "path": "/run-groups/run_f31561d990814cf2b842",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "2caf69df0a74a9315fdbbc6e7fb1fd1e181b7571238fff4087de2e043ee7ce43"
+    },
+    {
+      "path": "/run-groups/run_f42c31fb696c4872bab0",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "28e848d19ae7dae0f37860754cc7eb80a16bd393965b262e77abfbc5ea32b6ee"
+    },
+    {
+      "path": "/scenarios/scenario-demo-v1-1-0-hospital_baseline-41021-365",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "07256ff6c03544fdd61f17879cb919db4e7088ae6da40ae113bec4de85bb830d"
+    },
+    {
+      "path": "/scenarios/scenario_6cd01bff3f2e42fcbd59",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "a543a2db7d2de3e0ab899f887477bba27aef2a5f5268d7cdaa524081f8595267"
+    },
+    {
+      "path": "/scenarios/scenario_94af2d4fa6dc4d6f8863",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "f9337e97f4ea3c4b33a21e25fb0e8322d30ebf81d61c9c77b742ec6bc0f45255"
+    },
+    {
+      "path": "/scenarios/scenario_cec5bf0520c5499daf3a",
+      "unchanged": true,
+      "read_only_provenance_additions": [],
+      "sha256": "ab6d7927bb4fad6fab8eeb146603362fbd42077cf4ab3f6fa54bce626395b6aa"
+    }
+  ],
+  "all_protected_records_unchanged": true,
+  "default_preserved": true,
+  "default": {
+    "scenario": "scenario_94af2d4fa6dc4d6f8863",
+    "run": "run_99810a8fc9fd427d963d"
+  },
+  "active_scenario_ids_preserved": true,
+  "existing_scenarios_mutated_by_release": false,
+  "health": {
+    "status": "ready",
+    "database": "available",
+    "queue": "available",
+    "schema_version": "1.0"
+  }
+}

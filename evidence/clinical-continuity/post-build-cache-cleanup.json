@@ -1,0 +1,7 @@
+{
+  "checked_at": "2026-10-18T09:14:30.310651+00:00",
+  "operation": "docker builder prune --all --force",
+  "reclaimed": "Total:\t4.478GB",
+  "reason": "Remove unused build cache after the successful release, preserving running images, services and saved-data volumes.",
+  "filesystem_after": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1        48G   42G  5.7G  89% /"
+}

@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-18T09:16:17.418381+00:00",
+  "resolved_checks": [
+    {
+      "check": "runtime health",
+      "initial_observation": "The web container was still in its normal starting health state immediately after recreation.",
+      "final_observation": "All six services subsequently running; all reported health checks healthy."
+    },
+    {
+      "check": "saved-result smoke identity",
+      "initial_observation": "An operational helper retained an older egg wo run ID and its historical 100-bed assumption.",
+      "resolution": "The helper now validates the result matching saved revision 6 and compares bed count with that result\u2019s frozen configuration. Existing stored records remained unchanged throughout.",
+      "current_matching_run": "run_99810a8fc9fd427d963d",
+      "current_frozen_ward_a_beds": 30
+    }
+  ],
+  "application_source_changes_after_deployment": false
+}

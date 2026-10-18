@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-18T09:16:37.694Z",
+  "all_checks_passed": true,
+  "scope": "Native desktop review of deployed frozen bundle; no saved-input edits or production simulations",
+  "base_url": "https://hospital-surge.131.186.0.156.sslip.io",
+  "scenario": "scenario_94af2d4fa6dc4d6f8863",
+  "saved_revision": 6,
+  "run": "run_99810a8fc9fd427d963d",
+  "checks": {
+    "inter_font_rendered": true,
+    "darker_clinical_palette": true,
+    "duplicate_capacity_card_removed": true,
+    "baseline_inspection_preserved": true,
+    "aligned_bed_staff_controls": true,
+    "current_frozen_ward_a_beds": 30,
+    "entire_hospital_visible": true,
+    "recorded_motion_visible": true,
+    "continuous_playback": true,
+    "navigation_preserves_visible_time": "2026-10-20T01:39:20.160000Z",
+    "returned_replay_paused": true,
+    "comparison_missing_results_labeled": true,
+    "original_tab_refreshed_without_unsaved_changes": true
+  },
+  "rendered_font": {
+    "family": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+    "section_heading_weight": 600,
+    "color": "rgb(27, 36, 49)"
+  },
+  "replay_console_errors": [],
+  "comparison_console_errors": [],
+  "screenshots": [
+    "live-configuration.png",
+    "live-beds-staffing.png",
+    "live-replay.png",
+    "live-comparison.png"
+  ]
+}

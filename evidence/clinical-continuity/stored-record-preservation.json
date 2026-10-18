@@ -1,0 +1,99 @@
+{
+  "checked_at": "2026-10-18T09:12:24.707264+00:00",
+  "stored_records": 23,
+  "all_stored_record_bytes_unchanged": true,
+  "checks": [
+    {
+      "path": "/datasets/demo-v1-1-0-hospital_baseline-41021-365",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_2088efd055e04fac8875",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_22230710c2b74bdea7e1",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_239b7869390d42aebfa8",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_24cd6fa73f354cd1a228",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_3e4ba7b099cc4d8fa922",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_58029db949244a33aa4c",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_5b89ca558b16477392f2",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_7648202b2e6f4d5e9d6b",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_784c123cf31840df9b19",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_8896f968770e4f6f8380",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_99810a8fc9fd427d963d",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_9c06d4f198d649059437",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_aa30b33e88a54450b4bf",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_c52206dca21e42d3ac02",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_e4effd4adbdf4c54b019",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_eb7a81c8242e40a9b8a5",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_f31561d990814cf2b842",
+      "unchanged": true
+    },
+    {
+      "path": "/run-groups/run_f42c31fb696c4872bab0",
+      "unchanged": true
+    },
+    {
+      "path": "/scenarios/scenario-demo-v1-1-0-hospital_baseline-41021-365",
+      "unchanged": true
+    },
+    {
+      "path": "/scenarios/scenario_6cd01bff3f2e42fcbd59",
+      "unchanged": true
+    },
+    {
+      "path": "/scenarios/scenario_94af2d4fa6dc4d6f8863",
+      "unchanged": true
+    },
+    {
+      "path": "/scenarios/scenario_cec5bf0520c5499daf3a",
+      "unchanged": true
+    }
+  ]
+}

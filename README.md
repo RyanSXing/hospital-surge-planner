@@ -1,4 +1,4 @@
-# Hospital Surge Planner
+# AEGIS
 
 A planning workspace for configuring hospital surge scenarios, running constrained patient-flow simulations, comparing saved scenarios, and inspecting the events behind a forecast. The included operational data and medical parameters are synthetic engineering fixtures. The product does not dispatch patients or make clinical treatment decisions.
 

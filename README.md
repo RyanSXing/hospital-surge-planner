@@ -1,20 +1,67 @@
 # AEGIS
 
-A planning workspace for configuring hospital surge scenarios, running constrained patient-flow simulations, comparing saved scenarios, and inspecting the events behind a forecast. The included operational data and medical parameters are synthetic engineering fixtures. The product does not dispatch patients or make clinical treatment decisions.
+**Hospital Operations Intelligence**
 
-The complete initial scope is P0 and P1 in [the build specification](docs/reference/hospital-surge-planner-build-spec.md). Current implementation and verification are tracked separately in [the acceptance ledger](docs/acceptance-tracker.md). Deferred P2 items include live hospital integrations, calibrated prediction, generalized optimization and 3D. Sunfire adds the subsequently requested conversational planning workflow.
+Simulate patient surges. Find bottlenecks. Compare response plans.
 
-## Hosted application
+AEGIS is a full-stack hospital planning workspace that helps teams explore how changes in patient demand, beds, staffing, equipment and supplies affect patient flow. Configure a scenario, run a discrete-event simulation, and inspect where delays occur before testing a different response.
 
-Open [AEGIS Console](https://aegisconsole.131.186.0.156.sslip.io). The previous hospital-surge address remains available for saved links. Private sign-in details are saved locally in `data/deployment/access.md`, outside version control. [Hosted verification](docs/hosted-verification.md) records the deployed release, completed workloads, measured performance limits, recovery and backup evidence.
+**[Watch the demo video][demo] · [View the slide deck][slides] · [Open AEGIS Console][console]**
 
-The app has two primary pages: **Configuration** for the current hospital baseline and simulation inputs, and **Analysis** with **Summary**, **Replay**, **Analytics**, and **Comparison**. Analytics includes outcomes and patient/unit inspection. Main setup uses duration, draggable daily arrivals, editable bed counts and per-unit nurse/provider/support sliders. Exact optional settings are under **More parameters**. Summary identifies recorded bottlenecks; Analytics presents its charts in one bookmarked workspace. Replay shows recorded bed occupancy on a hospital floor plan; Comparison compares two saved library scenarios. See the [replay and comparison guide](docs/replay-and-scenario-comparison.md), [single-hospital workflow](docs/single-hospital-workflow.md), and [workflow guide](docs/overview-analysis-flow.md).
+The hosted console requires sign-in. Start with the video or slide deck for a product walkthrough.
 
-**Sunfire** opens from the bottom-right launcher and expands into a reserved sidebar. It shares the existing configuration and Undo history, prepares validated changes, starts real simulation jobs when requested, and reads recorded results. Chats and action receipts are private and durable. Its OCI model must have verified access; manual planning remains available independently. See the [Sunfire guide](docs/sunfire.md) and [provider setup](docs/sunfire-provider.md).
+[![AEGIS patient-flow replay with the Sunfire planning assistant, showing hospital bed occupancy and a recorded bottleneck](evidence/sunfire/live-replay-navigation.png)][demo]
 
-## Start locally
+*Patient-flow Replay and Sunfire: inspect recorded bed occupancy, trace a bottleneck, and ask questions about saved simulation results. Click the screenshot to watch the demo.*
 
-Prerequisites: Python 3.12, `uv`, Node.js 24 and npm. Docker is needed for the PostgreSQL/Redis deployment stack, but the local development path uses SQLite and local artifacts.
+## Why AEGIS?
+
+A hospital can have open beds and still lack the staff, equipment or supplies needed to use them. AEGIS makes those constraints visible so teams can explore questions such as: **What happens if arrivals rise, beds close, or staffing changes—and which response reduces the resulting delays?**
+
+The workflow connects scenario design to the evidence behind each result:
+
+| Step | What you can do |
+|---|---|
+| **Configure** | Adjust duration, drag the daily-arrivals curve, and edit beds, staffing, patient severity, supplies and disruptions. Save and revise scenarios. |
+| **Simulate** | Run constrained patient-flow simulations as background jobs, with progress, cancellation and retry support. |
+| **Analyze** | Review bottlenecks, waits, occupancy and resource pressure in Summary and Analytics; inspect individual patients and units. |
+| **Replay** | Follow recorded patient movements and bed states on an interactive hospital floor plan, with playback and time controls. |
+| **Compare** | Compare completed results from two saved scenarios to explore staffing and capacity tradeoffs. |
+| **Ask Sunfire** | Use the planning assistant to prepare validated configuration changes, start simulation jobs and explain recorded results. |
+
+<details>
+<summary><strong>See the scenario configuration workspace</strong></summary>
+
+![AEGIS scenario configuration with simulation duration, patient-arrival controls and an editable daily-arrivals chart](evidence/clinical-continuity/live-configuration.png)
+
+*Tune demand and capacity before running a simulation. Exact settings are available under More parameters.*
+
+</details>
+
+## Engineering highlights
+
+- **Reproducible simulation.** Completed runs preserve frozen inputs, model/generator versions, random seeds and checksums so results remain tied to the assumptions that produced them.
+- **Durable execution.** FastAPI records simulation jobs in PostgreSQL; Redis/RQ dispatches work to a separate Python worker. Private OCI Object Storage holds results, replay artifacts and backups.
+- **Traceable analysis.** Replay uses recorded patient events and bed states. Summary, Analytics and Comparison read saved simulation evidence.
+- **An integrated planning assistant.** Sunfire uses OpenAI GPT-OSS 120B through OCI Generative AI, shares the manual editor's draft and Undo history, and uses typed, validated actions. Conversations and action receipts persist; delayed replies cannot overwrite newer manual edits.
+- **Deployment and verification.** The application runs on OCI Compute with Docker Compose, HTTPS, database migrations and backup/restore tooling. [Hosted verification](docs/hosted-verification.md) documents tested releases, workflow checks and measured performance.
+
+## Tech stack
+
+| Layer | Technologies |
+|---|---|
+| Interface | React, TypeScript, Vite, Mantine |
+| API | Python, FastAPI, Alembic |
+| Simulation | SimPy, NumPy, SciPy |
+| Persistence & jobs | PostgreSQL, Redis, RQ |
+| Planning assistant | OpenAI GPT-OSS 120B via OCI Generative AI |
+| Hosting & storage | OCI Compute, private OCI Object Storage, Docker Compose, Caddy, Nginx |
+
+The browser configures scenarios and displays results; authoritative simulation calculations run on the server. Local development uses SQLite and local artifacts, while the deployment stack uses PostgreSQL, Redis/RQ and private object storage.
+
+## Run locally
+
+Prerequisites: **Python 3.12**, **uv**, **Node.js 24** and **npm**. Docker is required for the PostgreSQL/Redis container stack.
 
 ```sh
 make setup
@@ -23,41 +70,68 @@ make seed-demo
 make dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). The API is [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api); OpenAPI is available at `/openapi.json`. Local development uses a visibly marked seeded session. `make setup` creates private `.env` settings with unique generated secrets and preserves an existing `.env`.
+Open **[localhost:5173](http://localhost:5173)**. The API is available at [127.0.0.1:8000/api](http://127.0.0.1:8000/api), with its OpenAPI schema at [127.0.0.1:8000/openapi.json](http://127.0.0.1:8000/openapi.json).
 
-The frontend is React/TypeScript/Vite with Mantine components; the API is FastAPI; the model uses Python/NumPy/SimPy; durable deployment uses PostgreSQL, Redis/RQ, private OCI Object Storage and separate API/worker containers. Locked Python dependencies are in `uv.lock`; locked frontend dependencies are in `apps/web/package-lock.json`.
+Local development uses a visibly marked seeded session. `make setup` installs locked dependencies and creates private `.env` settings with unique generated secrets, preserving an existing `.env`. Python dependencies are locked in `uv.lock`; frontend dependencies are locked in `apps/web/package-lock.json`.
 
-## Data and visual assets
-
-`make generate-data` reproduces the planning and stress snapshots, historical arrivals, staff rosters, resource inventories and travel assumptions from the versioned generator in `packages/engine/surge_engine/generator.py`. Both snapshots pass the same import validation used by the app. Completed runs and exports retain their frozen inputs, generator version, seeds and checksums.
-
-Generator 1.1.0 includes the required historical admission timestamps. Its fixture IDs include the generator version, fixture, seed and coverage days (for example, `demo-v1-1-0-planning_baseline-41021-365`). Startup adds the current 365-day planning and stress fixtures and one current starter scenario if absent. Upgrades preserve every older dataset, scenario and run; repeated startup also preserves edits to the starter. Default navigation selects the newest scenario, so the newly added starter provides valid current input immediately after upgrade. Explicit historical links keep their original context.
-
-The campus geometry, product mark, charts, capacity grids, and Replay floor plan are code-native assets. `apps/web/public/assets/campus.geojson` contains synthetic local geographic context; `apps/web/src/pages/ReplayFloorPlan.tsx` renders the hospital map from exact recorded units and installed bed slots. The optional local reference is centered on Vanderbilt University Medical Center using official location and visitor-map sources; the floor plan is illustrative. Bed states, queue counts and movement evidence come from the selected recorded run. The original six supplied images remain references under `docs/reference/`; the subsequent user-supplied white hospital-management references govern the current visual style. Illustrative reference counts never replace computed results. Locally served Barlow Condensed and IBM Plex Sans include their Open Font License notices in `apps/web/public/fonts/`; interface icons use the locked Lucide dependency.
-
-## Developer commands
+<details>
+<summary><strong>Developer commands</strong></summary>
 
 | Command | Purpose |
 |---|---|
 | `make setup` | Install locked dependencies and create local settings |
-| `make dev` | Start local API and web server together |
-| `make migrate` | Apply versioned Alembic database migrations |
-| `make seed-demo` | Generate/validate fixtures and load the local workspace |
+| `make dev` | Start the local API and web server |
+| `make migrate` | Apply versioned database migrations |
+| `make seed-demo` | Generate and validate fixtures, then load the local workspace |
+| `make generate-data` | Reproduce the synthetic planning and stress datasets |
 | `make validate-data` | Validate both canonical synthetic snapshots |
 | `make simulate-demo` | Run the model without the browser |
-| `make test` | Run model/API/contract checks |
-| `make test-e2e` | Run the browser acceptance suite |
-| `make benchmark` | Measure the 30-day, 10-replication preview workload |
+| `make check` | Run backend/frontend tests and build the frontend |
+| `make test-e2e` | Run browser acceptance checks |
+| `make benchmark` | Measure a 30-day, 10-replication workload |
 | `make benchmark-full` | Measure 30-day and 365-day, 100-replication workloads |
 | `make build` | Build the frontend and production container images |
 | `make containers-up` | Start PostgreSQL/Redis, migrate, then start API/worker/web |
-| `make containers-down` | Stop containers without deleting named data volumes |
-| `make backup` | Make a consistent local SQLite backup |
+| `make containers-down` | Stop containers while preserving named data volumes |
+| `make backup` | Create a consistent local SQLite backup |
 | `make restore-check BACKUP=backups/<file>.sqlite` | Restore into a temporary database and verify integrity |
 | `make oci-readiness` | Read current OCI access/resources without provisioning |
 | `make deploy-demo` | Deploy to a configured, existing authorized OCI VM |
-| `make audit-status` | List requirements still awaiting acceptance evidence |
+| `make audit-status` | List requirements awaiting acceptance evidence |
 
-The `demo` command names identify the supplied synthetic fixtures, not a separate product. A successful container build is not proof of a completed hosted run; deployment, performance and restoration evidence belong under `evidence/`.
+The `demo` command names refer to the supplied synthetic fixtures. See the [runbook](docs/runbook.md) for identity and storage setup, hosted configuration, migrations, health checks, recovery and deployment verification.
 
-See [the runbook](docs/runbook.md) for hosted configuration, identity/storage setup, migrations, backups, recovery, health checks and deployment verification. The specification's numerical performance budgets remain targets until measured on the chosen host.
+</details>
+
+## Project structure
+
+```text
+apps/web/          React interface, charts and recorded patient replay
+apps/api/          FastAPI service, authentication, scenarios and jobs
+packages/engine/  Simulation engine and synthetic-data generator
+infra/            Container configuration and database migrations
+scripts/          Development, benchmarking, backup and deployment tools
+docs/             Workflow guides, architecture and verification records
+evidence/         Screenshots and release-specific acceptance results
+```
+
+## Documentation
+
+- **Product walkthrough:** [Single-hospital workflow](docs/single-hospital-workflow.md) · [Configuration and Analysis](docs/overview-analysis-flow.md) · [Replay and comparison](docs/replay-and-scenario-comparison.md)
+- **Sunfire:** [Planning assistant](docs/sunfire.md) · [Action and draft contract](docs/sunfire-contract.md) · [Provider setup](docs/sunfire-provider.md)
+- **Engineering:** [API integration](docs/api-integration.md) · [Storage design](docs/storage-design.md) · [Operations runbook](docs/runbook.md)
+- **Scope and evidence:** [Build specification](docs/reference/hospital-surge-planner-build-spec.md) · [Acceptance ledger](docs/acceptance-tracker.md) · [Hosted verification](docs/hosted-verification.md)
+
+## Data and scope
+
+AEGIS uses **synthetic operational data and medical parameters** for engineering demonstrations. It does not dispatch patients or make clinical treatment decisions. The optional Vanderbilt campus reference provides geographic context; the internal floor plan is illustrative and does not imply a hospital or EHR integration.
+
+`make generate-data` reproduces arrivals, staff rosters, resource inventories and travel assumptions from the versioned [generator](packages/engine/surge_engine/generator.py). Planning and stress snapshots pass the same import validation used by the app. Upgrades preserve older datasets, scenarios and runs; historical links retain their original context.
+
+Live hospital integrations, calibrated prediction, generalized optimization and 3D remain deferred. Performance measurements and verification claims are attributed to their tested release in the [hosted verification record](docs/hosted-verification.md).
+
+The product mark, campus geometry, charts and Replay floor plan are code-native assets. Original visual references are retained under `docs/reference/`; locally served fonts include their license notices in `apps/web/public/fonts/`.
+
+[demo]: https://drive.google.com/file/d/1prJO-x-6FVq2yElAnugoXhcneqvObUJW/view?usp=drivesdk
+[slides]: https://docs.google.com/presentation/d/1BtggTBE_sto_7kUav7wNeMWHjQIoSqrYEwspo8XEN-8/edit?slide=id.p1#slide=id.p1
+[console]: https://aegisconsole.131.186.0.156.sslip.io
